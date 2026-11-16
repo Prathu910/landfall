@@ -1,0 +1,32 @@
+# Landfall product direction
+
+17 November 2026. SPEC.md and the HTML files in the parent directory are exploratory context. RESEARCH.md records the evidence informing this direction.
+
+## Outcome
+
+Build a useful, trustworthy paid product that can become a sustainable second income. First demonstrate personal value with a working free check. Evaluate purchases and acquisition costs before expanding operational scope.
+
+## Phases
+
+1. **Useful first release (this implementation):** editorial homepage with interactive real-data pool explorer; multi-step points check; personal age/expiry timeline; generated free report; sourced state overview; readable sample and methodology. Browser-local opt-in saved progress. No personal data submitted to a server. A private review deployment.
+2. **First sales:** audited imports; protected report storage; checkout and payment webhooks; transactional email; generated PDFs; legal review; clear support/refund terms; explicit delivery and refresh entitlements. Acceptance: a real purchase delivers a reproducible, private report reliably.
+3. **Repeat value:** snapshot-triggered report versions, change summaries, opt-in alerts and reminders, timestamped forward predictions and public accuracy measures. Acceptance: each refresh can explain exactly what changed and why.
+4. **Growth:** occupation pages, search traffic, referrals and agent partnerships, prioritised by conversion, customer usefulness and support cost.
+
+Phases are outcome gates, not calendar promises. Do not take payments until paid delivery, legal review and data-quality gates are met.
+
+## First release design
+
+Use Landfall as a replaceable working name. Warm off-white, forest green, chartreuse accents, editorial serif headlines, clear sans-serif UI and restrained SVG charts. Desktop header with product navigation and a simple mobile menu. The page explains value through a working occupation/points explorer, pathway distinctions, a sample timeline and a readable sample report.
+
+The check groups input into four steps: profile; English and education; experience and other points; review. Results update as input changes. Required inputs are validated before a full report is shown. Date-only calculations use UTC calendar components; the browser's local calendar date determines today. No personal profile in a URL. Persistence is optional and clearable.
+
+The generated report contains points by category, conditional nomination totals, an official-snapshot comparison for supported occupations, a useful personal timeline and sourced state summaries. It never invents wait times, exact same-score ranks, probabilities, testimonials, completed purchases or live subscriptions. A browser print view is available; a downloadable paid PDF is a later phase.
+
+## Architecture
+
+Next.js App Router and TypeScript. Static export for the private first-release deployment; later add server features without replacing the component or computation boundaries. Versioned pure points/date functions are separate from UI. A checked-in source snapshot preserves masked counts as intervals. No database, secrets or third-party analytics is needed for this release.
+
+## Verification
+
+Test points thresholds, caps, missing inputs, date boundaries, English expiry, assessment maximum validity and timeline ordering. Test pool interval arithmetic. Run TypeScript and production build. Review desktop and mobile layouts and exercise the check, report, state filtering, persistence and print controls in a browser.
