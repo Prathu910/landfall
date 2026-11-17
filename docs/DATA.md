@@ -13,7 +13,7 @@ src/data/manifest.json               Snapshot id, as-at, checkedAt, import versi
 src/data/occupation-index.json       Code, name and hasData for every occupation. The only multi-occupation file a client component may import.
 src/data/occupations/<code>.json     Core record: pools, status history, invited-by-score, state pools and state invitations, 189 rounds.
 src/data/occupations/<code>.detail.json   Detail record: cohorts, cohorts by score, invited profiles.
-src/data/rounds.json                 Every parsed 189 round, all occupations, newest first.
+src/data/rounds.json                 { rounds, skipped }: every parsed 189 round (all occupations, newest first) and every skipped round with its reason.
 ```
 
 - Only the importer writes `data/raw/` and `src/data/`. Never hand-edit them.
@@ -70,7 +70,9 @@ Notes:
 ### Missing versus zero
 
 - Every view-month is paged to the reported row count (`qcy`), so the stored table is complete for its selections. The dashboard omits zero rows. Inside a fetched view-month, **an absent row means zero** for that combination. The validator relies on this for `status-history`.
-- **A month, view, visa or state that was not fetched is "not published", not zero.** For example, `stateInvited` covers only the latest 12 months, and `invitedProfileState` only the latest month. An accessor returns `undefined` for these, never 0.
+- **A month, view, visa or state that was not fetched is "not published", not zero.** For example, `stateInvited` covers only the latest 12 months, and `invitedProfileState` only the latest month. An accessor returns `undefined` for these, or lists them as `notPublished`, never 0.
+- **Every fetched month has a key (ruling R14).** The multi-month maps (`statusHistory`, `invitedByScore`, `stateInvited` per state including `ANY`, and `invitedProfile`) hold a key for every view-month that was fetched, for every visa the view selects, with `{}` when the occupation had no rows that month. `invitedProfileState` likewise holds `{}` for every fetched state and attribute. So a record shows on its own which months were fetched: a key with `{}` is a published zero, a missing key was not fetched.
+- **Accessors build calendar windows back from `asAt`** (`calendarMonths` in `src/lib/data/months.ts`), never from the keys a record happens to hold. In the window, a fetched month with no row is `{ min: 0, max: 0 }`; a month that was not fetched is left out and returned in `notPublished`. `similarProfileInvited(...).latest` is the as-at month only, and is absent when that month was not fetched. A state `peak` is `null` unless some month confirms an invitation (`min > 0`). The report's 12-month trend is the last 12 calendar months, zero where fetched.
 - `<20` is a masked count. It is always the interval `{ min: 0, max: 19 }` (`parseCountText`).
 - A 189 round cut-off of `null` means the occupation is **not listed** in that round. It does not mean a zero cut-off or that nobody was invited.
 
@@ -102,20 +104,25 @@ Rules that follow:
 ## Generated records
 
 - **`pool[visa]`** (core): `total` is the SUBMITTED total read with points hidden, from `status-history` at the as-at month (rulings R4 and R5). `byScore` is the SUBMITTED count per score from `pool-by-score`. The total is published directly, so it is never replaced by the sum of masked score cells. The validator checks that the total falls within that sum's interval.
-- **`statusHistory[visa][month][status]`**: every stored as-at month, newest revision first, including months that have left the dashboard's 24-month window.
+- **`statusHistory[visa][month][status]`**: every stored as-at month (newest revision of each), including months that have left the dashboard's 24-month window. `{}` means the month was fetched and the occupation had no rows.
 - **`invitedByScore[visa][month]`**: INVITED by score for each stored month.
 - **`statePool[visa][state]`** and **`stateInvited[visa][state][month]`**: per-state SUBMITTED and INVITED by score. `ANY` is its own key.
 - **`rounds189`**: every parsed round, newest first, with this occupation's cut-off or `null`.
-- **Detail**: `cohorts[visa][submittedMonth][status]`, `cohortsByScore[visa][score][submittedMonth]` (SUBMITTED only), `invitedProfile[visa][attribute][value][month]`, `invitedProfileState[visa][state][attribute][value]`.
+- **Detail**: `cohorts[visa][submittedMonth][status]`, `cohortsByScore[visa][score][submittedMonth]` (SUBMITTED only), `invitedProfile[visa][attribute][month][value]`, `invitedProfileState[visa][state][attribute][value]`.
+- **Profile values are the dashboard's displayed text.** Observed in every stored month: English Test Score `"20"`, `"10"`, `"0"` (English points); PartnerSkills Score `"10"`, `"5"`, `"0"` (partner points); Australian Study Flag `"Y"`, `"N"`; Professional Year `"N"` and `"-1"`, where `-1` appears to mean unknown or not recorded (no `"Y"` value appears). Callers pass these exact strings.
 - **`hasData`** (index and manifest) is true when any visa's SUBMITTED total may be above zero. A masked `<20` total counts as data. Occupations with `hasData: false` get the points-only behaviour in the UI and are never fetched.
-- **`snapshotId`** is `skillselect-<asAt>-<last day>`, for example `skillselect-2026-10-31`. Every record carries it, and the UI shows the snapshot date (the last day of `asAt`) and the manifest's `checkedAt` with every number.
+- **`snapshotId`** is `skillselect-<asAt>-<last day>`, for example `skillselect-2026-10-31`. Every record carries it. The UI shows the snapshot date (the last day of `asAt`) beside the data, and the manifest's `checkedAt` in the report footer ("sources checked").
 
 ### 189 invitation rounds
 
-- 20 rounds are parsed, from 11 Aug 2020 to 15 Oct 2026. Every occupation row is kept.
-- **One round is skipped: 6 October 2022.** Its page has no table with an Occupation column. The importer reports it; it is recoverable later.
+- 13 rounds are parsed, from 21 Jan 2022 to 15 Oct 2026. Every occupation row is kept.
+- **Eight rounds are skipped**, each with its reason in `rounds.json` `skipped` and printed by the CLI. A skipped round is absent from `rounds189`; it is never shown as "not listed".
+  - **6 October 2022.** Its page has no table with an Occupation column. It is recoverable later.
+  - **The seven rounds from 11 Aug 2020 to 29 Oct 2021 (ruling R15).** They use a `Subclass | Occupation ID | Description | Minimum points score` layout that lists 4-digit unit groups (for example `2211 Accountants`) and mixes 189 and 491 rows. A unit-group cut-off cannot honestly be attributed to one 6-digit occupation, so these rounds are skipped. Before this fix the parser read the 4-digit ID as the name and stored 491 rows as 189 cut-offs.
+- **The 189 column must be explicit.** A cut-off column header must name subclass 189 (`189`, `Subclass 189…`, `Lowest Points Score Invited subclass 189…`), or sit under a group label that does. Group labels are mapped to columns by `colspan`, and a group row that spans a different number of columns stops the import. The current-round page's `Minimum points score` column is accepted only when that round's totals table lists subclass 189 alone.
 - For the two-row-header rounds (Aug 2022 – May 2023), the cut-off is the lowest of the offshore and onshore 189 minimums: "the lowest score invited in that round" (ruling R7). A blank 189 cell, `N/A*` or "Not invited" gives no row, so `null` (ruling R6).
-- **Six round-table names match no dashboard occupation** and are listed in `manifest.roundsUnmatched`: `2335`, `2339`, `Life Scientist (nec)`, `Patho`, `Psychologist (nec)`, `Rheumatologist`. Most look like parsing artefacts on the round pages; `Rheumatologist` may simply be absent from the dashboard. Their cut-offs are not attributed to any occupation.
+- **Name variants.** Round pages sometimes spell an occupation differently from the dashboard. A small reviewed alias map (`ROUND_NAME_ALIASES` in `scripts/import/generate-rounds.ts`) handles the two seen on 13 June 2024: `Life Scientist (nec)` → `Life Scientists nec` (234599) and `Psychologist (nec)` → `Psychologists nec` (272399). A test checks that each alias appears on the recorded round pages and names an indexed occupation.
+- **Two round-table names still match no dashboard occupation** and are listed in `manifest.roundsUnmatched`: `Patho` (25 May 2023; the source's own text, apparently truncated, so the occupation it means is not stated and it is not aliased) and `Rheumatologist` (22 Aug 2022 and 25 May 2023; no such occupation is on the dashboard). Their cut-offs are not attributed to any occupation. (The earlier unmatched `2335` and `2339` were unit-group IDs from the skipped layout.)
 
 ## Known limits
 
@@ -147,7 +154,7 @@ The spec asked why Software Engineer 189 SUBMITTED rose from 1,129 (as at 11/202
 - In the 10/2026 `cohorts` table, every SUBMITTED Software Engineer EOI was submitted in 10/2024 or later (10/2024: `<20`; 11/2024: 483). EOIs submitted from 11/2022 to 10/2024 appear only as CLOSED (`<20` LODGED aside): 204–674 a month, 11,566 in total. That is almost all of the 12,354 CLOSED.
 - National 189 SUBMITTED across all occupations follows the same shape: about 19,000–20,000 as at 11/2024, rising to about 167,000 as at 10/2026.
 
-**What this implies.** The dashboard's data appears to start around October/November 2024. EOIs submitted before then are not counted while SUBMITTED in the early as-at months, and seem to enter the data only when they close. So most of the rise in SUBMITTED from 11/2024 is the coverage window filling, not the pool genuinely growing. The two-year validity window for as-at 10/2026 is 11/2024 – 10/2026, which lies inside the coverage. The current pool is therefore plausibly complete, but **monthly SUBMITTED totals before about late 2026 understate the real pool, and the 12-month trend overstates its growth.** Do not describe that rise as "more people applying". The report's existing caption already says a net change is not inflow.
+**What this implies.** The dashboard's data appears to start around October/November 2024. If so, EOIs submitted before then are not counted while SUBMITTED in the early as-at months, and seem to enter the data only when they close. If so, most of the rise in SUBMITTED from 11/2024 is the coverage window filling, not the pool genuinely growing. The two-year validity window for as-at 10/2026 is 11/2024 – 10/2026, which lies inside the coverage. The current pool is therefore plausibly complete, but **monthly SUBMITTED totals before about late 2026 understate the real pool, and the 12-month trend overstates its growth.** Do not describe that rise as "more people applying". The report no longer shows a net change for the trend; its caption says the data appears to cover EOIs submitted from about late 2024, so earlier months may undercount the pool (ruling R17).
 
 **What remains unknown.**
 
@@ -162,14 +169,14 @@ The spec asked why Software Engineer 189 SUBMITTED rose from 1,129 (as at 11/202
 - **The first dataset is pinned to `--as-at 2026-10`** so it matches the sample page and the legacy data. Moving to a newer snapshot is a separate, reviewed change.
 - **Revisions are never silently overwritten.** When a re-fetched month differs from the stored file, the importer writes `<view>.rev-<YYYY-MM-DD>.json` (or `-2`, `-3` the same day) beside it and prints the revision with row counts before and after. The generator always uses the newest revision. Identical re-fetches write nothing.
 - **Resumable fetches (ruling R10).** Each completed view-month raw file is written atomically as soon as it finishes, so a failed run leaves only complete files and a re-run skips them. `src/data` is written only after the whole dataset passes validation, all-or-nothing, with rollback.
-- `manifest.importVersion` is `"1"`. Records carry `schemaVersion: 1`; a breaking shape change bumps it, along with the guards in `src/lib/data/guards.ts`.
+- `manifest.importVersion` is `"1"`. Core and detail records carry `schemaVersion: 2` (ruling R14: explicit fetched months, and `invitedProfile` keyed attribute → month → value); the manifest stays at `1`. A breaking shape change bumps it, along with the guards in `src/lib/data/guards.ts`.
 
 ## Validation (the import fails on any issue)
 
 - Schema guards on every core, detail and the manifest. Counts are digit strings or `<20`; dates parse.
 - Every record carries the manifest's snapshot id and as-at month. No duplicate codes; every index code has a core and a detail, and no record lacks an index entry.
 - Per occupation, visa and month: the SUBMITTED pool total equals the status-history total and lies within the score-row interval sum. Each month's INVITED total lies within its invited score rows.
-- While fetching, every table is paged until it has returned `qcy` rows, and a changed table shape stops the run.
+- While fetching, every table is paged until it has returned `qcy` rows; a table that returns fewer rows than `qcy`, or a changed table shape, stops the run.
 - The as-at month is not older than the newest raw month, and the occupation count does not fall by more than 10% from the previous manifest.
 - State pools are not checked against national totals (EOIs select several states).
 
@@ -188,7 +195,7 @@ npm run data:generate -- --as-at 2026-10              # rebuild src/data from st
 - A **backfill** fetches every unstored month in each view's window up to the as-at month. It is resumable.
 - **Page-read budgets (ruling R11):** backfill 600, monthly 250. The as-at views alone cost about 203 reads, so the spec's original 150 a month was raised. The first backfill used about 440 reads in total; the stored dataset cost 428.
 - The dashboard streams at about 12–19 KB/s, so a full backfill takes about an hour.
-- `--generate-only` needs an existing `src/data/rounds.json`, because the raw round HTML is not stored.
+- `--generate-only` needs an existing `src/data/rounds.json` in the `{ rounds, skipped }` shape (checked by `readRoundsFile`), because the raw round HTML is not stored. The 2026-10 file was rebuilt from the round pages recorded on 17 November 2026 (`scripts/import/__fixtures__/`) when the parser changed.
 - The CLI prints parsed and skipped rounds, page reads used, revisions, the occupation count, unmatched round names and validation issues. It exits 1 on any issue.
 
 After an import:
@@ -201,4 +208,4 @@ After an import:
 
 The 11-occupation files that fed the site before this pipeline (`pool.json` and `report-evidence.json`, produced by the removed `scripts/import-report-evidence.py`) are kept verbatim in `src/lib/data/__fixtures__/legacy-2026-10/`. `src/lib/data/legacy.test.ts` checks that the new pipeline at as-at 2026-10 reproduces them: score distributions, three visa pools, twelve monthly 189 totals and six rounds for all 11 occupations.
 
-**It found zero differences.** The table of explained differences is empty, and the test asserts that it stays empty. The adapters `toPoolOccupation` and `toOccupationEvidence` in `src/lib/data/legacy.ts` give the current UI those same shapes from the new files.
+**It found zero differences**, and the test asserts exact equality. The test regenerates 2026-10 in memory from `data/raw` and the stored rounds up to 31 October 2026 (ruling R16), so a later import that replaces `src/data` does not break it. The adapters `toPoolOccupation` and `toOccupationEvidence` in `src/lib/data/legacy.ts` give the current UI those same shapes from the new files.

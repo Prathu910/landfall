@@ -23,7 +23,6 @@ npm run lint         # eslint (next core-web-vitals + typescript)
 npm run format       # prettier --write .
 npm run check        # format:check + lint + typecheck + test — must pass before every commit
 npm run build        # static export to out/
-npm run check        # prettier check, eslint, tsc and vitest (must pass before committing)
 npm run data:import -- --as-at YYYY-MM   # SkillSelect import (network); see docs/DATA.md
 npm run data:generate -- --as-at YYYY-MM # rebuild src/data from data/raw, no network
 python3 -m http.server 3017 --bind 127.0.0.1 --directory out   # serve the production build
