@@ -51,7 +51,9 @@ Read-only recon on 17 Nov 2026 used the same public SkillSelect Qlik dashboard a
 - `Score`
 - Profile attributes: `English Test Score` (0/5/10/20 points), `Australian Study Flag`, `Regional Study`, `Comm Language Qual`, `Specialist Education`, `Professional Year`, `PartnerSkills Score`
 
-There is **no onshore/offshore field.** Onshore/offshore treatment must come from the user's answers plus each state's published rules.
+There is **no onshore/offshore field.**
+
+**Publisher guardrail.** The table refuses queries that show more than 2 detail columns or filter on more than 2 detail fields (`vSelectionsLimit = 2`). Landfall always stays within it, never changes it, and never narrows masked cells by differencing. See `docs/superpowers/specs/2026-11-17-data-foundation-design.md`. Onshore/offshore treatment must come from the user's answers plus each state's published rules.
 
 Preliminary samples as at 10/2026 (unverified interpretation; do not publish until status semantics are confirmed):
 
