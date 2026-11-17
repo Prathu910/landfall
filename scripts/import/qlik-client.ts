@@ -10,6 +10,8 @@ import {
 export type Transport = {
   send(message: string): void;
   onMessage(handler: (message: string) => void): void;
+  /** Called once if the connection errors or closes; pending requests are failed. */
+  onClose(handler: (reason: Error) => void): void;
   close(): void;
 };
 
@@ -17,6 +19,8 @@ export type QlikSessionOptions = {
   throttleMs: number;
   transport?: Transport;
   maxPageReads: number;
+  /** Per-call timeout in milliseconds. Defaults to 60000. */
+  callTimeoutMs?: number;
 };
 
 export class GuardrailError extends Error {}
@@ -74,10 +78,11 @@ async function openLiveTransport(): Promise<Transport> {
     socket.addEventListener("open", () => resolve(), { once: true });
     socket.addEventListener(
       "error",
-      () => reject(new Error("WebSocket failed to open")),
-      {
-        once: true,
+      () => {
+        socket.close();
+        reject(new Error("WebSocket failed to open"));
       },
+      { once: true },
     );
   });
   return {
@@ -86,6 +91,14 @@ async function openLiveTransport(): Promise<Transport> {
       socket.addEventListener("message", (event) =>
         handler(String(event.data)),
       ),
+    onClose: (handler) => {
+      socket.addEventListener("error", () =>
+        handler(new Error("WebSocket error")),
+      );
+      socket.addEventListener("close", () =>
+        handler(new Error("WebSocket closed")),
+      );
+    },
     close: () => socket.close(),
   };
 }
@@ -94,10 +107,19 @@ export async function openQlikSession(
   options: QlikSessionOptions,
 ): Promise<QlikSession> {
   const transport = options.transport ?? (await openLiveTransport());
-  const pending = new Map<number, (reply: Reply) => void>();
+  const timeoutMs = options.callTimeoutMs ?? 60_000;
+  const pending = new Map<
+    number,
+    { resolve: (reply: Reply) => void; reject: (reason: Error) => void }
+  >();
   transport.onMessage((raw) => {
     const reply = JSON.parse(raw) as Reply;
-    if (typeof reply.id === "number") pending.get(reply.id)?.(reply);
+    if (typeof reply.id === "number") pending.get(reply.id)?.resolve(reply);
+  });
+
+  transport.onClose((reason) => {
+    for (const entry of pending.values()) entry.reject(reason);
+    pending.clear();
   });
 
   let nextId = 0;
@@ -112,12 +134,25 @@ export async function openQlikSession(
     const wait = lastCallAt + options.throttleMs - Date.now();
     if (lastCallAt && wait > 0) await sleep(wait);
     const id = ++nextId;
-    const reply = new Promise<Reply>((resolve) => pending.set(id, resolve));
-    transport.send(
-      JSON.stringify({ jsonrpc: "2.0", id, handle, method, params }),
-    );
-    const message = await reply;
-    pending.delete(id);
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const reply = new Promise<Reply>((resolve, reject) => {
+      pending.set(id, { resolve, reject });
+      timer = setTimeout(
+        () =>
+          reject(new Error(`Qlik ${method} timed out after ${timeoutMs} ms`)),
+        timeoutMs,
+      );
+    });
+    let message: Reply;
+    try {
+      transport.send(
+        JSON.stringify({ jsonrpc: "2.0", id, handle, method, params }),
+      );
+      message = await reply;
+    } finally {
+      clearTimeout(timer);
+      pending.delete(id);
+    }
     lastCallAt = Date.now();
     if (message.error !== undefined) {
       throw new Error(
@@ -130,11 +165,14 @@ export async function openQlikSession(
   type Handle = { qReturn: { qHandle: number } };
   const handleOf = (result: Handle) => result.qReturn.qHandle;
 
-  const app = handleOf(
-    await call<Handle>(GLOBAL_HANDLE, "OpenDoc", [QLIK_APP_ID]),
-  );
-
-  await call(app, "ApplyBookmark", [QLIK_BOOKMARK_ID]);
+  let app: number;
+  try {
+    app = handleOf(await call<Handle>(GLOBAL_HANDLE, "OpenDoc", [QLIK_APP_ID]));
+    await call(app, "ApplyBookmark", [QLIK_BOOKMARK_ID]);
+  } catch (error) {
+    transport.close();
+    throw error;
+  }
 
   async function field(name: string): Promise<number> {
     return handleOf(await call<Handle>(app, "GetField", [name]));

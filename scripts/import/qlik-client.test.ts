@@ -33,6 +33,7 @@ function fakeTransport(script: Script) {
     onMessage: (h) => {
       handler = h;
     },
+    onClose: () => {},
     close: () => {},
     send: (message) => {
       const req = JSON.parse(message) as Request;
@@ -143,5 +144,84 @@ describe("qlik client", () => {
   it("computes the month-end Excel serial", () => {
     const days = (Date.UTC(2026, 9, 31) - Date.UTC(1899, 11, 30)) / 86_400_000;
     expect(asAtSerial("2026-10")).toBe(days);
+  });
+
+  describe("failure handling", () => {
+    type Controls = {
+      transport: Transport;
+      closed: () => boolean;
+      fireClose: (reason: Error) => void;
+    };
+    function stubTransport(
+      onSend: (req: Request, reply: (r: unknown) => void) => void,
+    ): Controls {
+      let message: (m: string) => void = () => {};
+      let closeHandler: (reason: Error) => void = () => {};
+      let closed = false;
+      return {
+        closed: () => closed,
+        fireClose: (reason) => closeHandler(reason),
+        transport: {
+          onMessage: (h) => {
+            message = h;
+          },
+          onClose: (h) => {
+            closeHandler = h;
+          },
+          close: () => {
+            closed = true;
+          },
+          send: (raw) => {
+            const req = JSON.parse(raw) as Request;
+            onSend(req, (result) =>
+              queueMicrotask(() =>
+                message(JSON.stringify({ jsonrpc: "2.0", id: req.id, result })),
+              ),
+            );
+          },
+        },
+      };
+    }
+    const opts = { throttleMs: 0, maxPageReads: 5 };
+
+    it("rejects a call that never gets a reply after callTimeoutMs", async () => {
+      const stub = stubTransport(() => {});
+      await expect(
+        openQlikSession({
+          ...opts,
+          callTimeoutMs: 20,
+          transport: stub.transport,
+        }),
+      ).rejects.toThrow(/timed out/i);
+      expect(stub.closed()).toBe(true);
+    });
+
+    it("rejects pending requests when the connection closes", async () => {
+      const stub = stubTransport(() => {});
+      const opening = openQlikSession({ ...opts, transport: stub.transport });
+      await Promise.resolve();
+      stub.fireClose(new Error("socket dropped"));
+      await expect(opening).rejects.toThrow(/socket dropped/);
+    });
+
+    it("closes the transport when OpenDoc fails", async () => {
+      const failing = stubTransport(() => {});
+      let handler: (m: string) => void = () => {};
+      failing.transport.onMessage = (h) => {
+        handler = h;
+      };
+      failing.transport.send = (raw) => {
+        const req = JSON.parse(raw) as Request;
+        queueMicrotask(() =>
+          handler(
+            JSON.stringify({ id: req.id, error: { message: "no such app" } }),
+          ),
+        );
+      };
+      await expect(
+        openQlikSession({ ...opts, transport: failing.transport }),
+      ).rejects.toThrow(/OpenDoc failed/);
+      expect(failing.closed()).toBe(true);
+    });
   });
 });
