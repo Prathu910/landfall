@@ -7,3 +7,5 @@ out/
 *.tsbuildinfo
 .sites-runtime/
 .sites-checkout*
+.playwright-cli/
+output/

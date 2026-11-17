@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --hostname 127.0.0.1",
+    "dev": "next dev --webpack --hostname 127.0.0.1",
     "build": "next build --webpack",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
@@ -21,6 +21,6 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "typescript": "^5.9.0",
-    "vitest": "5.1.0"
+    "vitest": "4.1.12"
   }
 }

@@ -1,0 +1,766 @@
+{
+  "id": "skillselect-2026-10-31-189-submitted",
+  "snapshotDate": "2026-10-31",
+  "checkedAt": "2026-11-17",
+  "sourceUrl": "https://api.dynamic.reports.employment.gov.au/anonap/extensions/hSKLS02_SkillSelect_EOI_Data/hSKLS02_SkillSelect_EOI_Data.html",
+  "sourceName": "Department of Home Affairs \u00b7 SkillSelect",
+  "status": "SUBMITTED",
+  "visaType": "189PTS",
+  "suppression": "Counts below 20 are published as <20. They remain intervals of 0\u201319 in this app.",
+  "occupations": [
+    {
+      "code": "261111",
+      "name": "ICT Business Analyst",
+      "points": [
+        {
+          "score": 40,
+          "count": "<20"
+        },
+        {
+          "score": 45,
+          "count": "23"
+        },
+        {
+          "score": 50,
+          "count": "36"
+        },
+        {
+          "score": 55,
+          "count": "133"
+        },
+        {
+          "score": 60,
+          "count": "259"
+        },
+        {
+          "score": 65,
+          "count": "854"
+        },
+        {
+          "score": 70,
+          "count": "995"
+        },
+        {
+          "score": 75,
+          "count": "1200"
+        },
+        {
+          "score": 80,
+          "count": "1198"
+        },
+        {
+          "score": 85,
+          "count": "1093"
+        },
+        {
+          "score": 90,
+          "count": "1093"
+        },
+        {
+          "score": 95,
+          "count": "623"
+        },
+        {
+          "score": 100,
+          "count": "242"
+        },
+        {
+          "score": 105,
+          "count": "<20"
+        },
+        {
+          "score": 110,
+          "count": "<20"
+        }
+      ]
+    },
+    {
+      "code": "261312",
+      "name": "Developer Programmer",
+      "points": [
+        {
+          "score": 30,
+          "count": "<20"
+        },
+        {
+          "score": 35,
+          "count": "<20"
+        },
+        {
+          "score": 40,
+          "count": "<20"
+        },
+        {
+          "score": 45,
+          "count": "<20"
+        },
+        {
+          "score": 50,
+          "count": "40"
+        },
+        {
+          "score": 55,
+          "count": "120"
+        },
+        {
+          "score": 60,
+          "count": "213"
+        },
+        {
+          "score": 65,
+          "count": "784"
+        },
+        {
+          "score": 70,
+          "count": "966"
+        },
+        {
+          "score": 75,
+          "count": "1088"
+        },
+        {
+          "score": 80,
+          "count": "1001"
+        },
+        {
+          "score": 85,
+          "count": "966"
+        },
+        {
+          "score": 90,
+          "count": "857"
+        },
+        {
+          "score": 95,
+          "count": "497"
+        },
+        {
+          "score": 100,
+          "count": "205"
+        },
+        {
+          "score": 105,
+          "count": "24"
+        },
+        {
+          "score": 110,
+          "count": "<20"
+        },
+        {
+          "score": 115,
+          "count": "<20"
+        },
+        {
+          "score": 120,
+          "count": "<20"
+        },
+        {
+          "score": 125,
+          "count": "<20"
+        }
+      ]
+    },
+    {
+      "code": "261313",
+      "name": "Software Engineer",
+      "points": [
+        {
+          "score": 25,
+          "count": "<20"
+        },
+        {
+          "score": 30,
+          "count": "<20"
+        },
+        {
+          "score": 35,
+          "count": "<20"
+        },
+        {
+          "score": 40,
+          "count": "<20"
+        },
+        {
+          "score": 45,
+          "count": "30"
+        },
+        {
+          "score": 50,
+          "count": "83"
+        },
+        {
+          "score": 55,
+          "count": "206"
+        },
+        {
+          "score": 60,
+          "count": "406"
+        },
+        {
+          "score": 65,
+          "count": "1219"
+        },
+        {
+          "score": 70,
+          "count": "1393"
+        },
+        {
+          "score": 75,
+          "count": "1552"
+        },
+        {
+          "score": 80,
+          "count": "1338"
+        },
+        {
+          "score": 85,
+          "count": "1213"
+        },
+        {
+          "score": 90,
+          "count": "1132"
+        },
+        {
+          "score": 95,
+          "count": "608"
+        },
+        {
+          "score": 100,
+          "count": "229"
+        },
+        {
+          "score": 105,
+          "count": "35"
+        },
+        {
+          "score": 110,
+          "count": "<20"
+        }
+      ]
+    },
+    {
+      "code": "221111",
+      "name": "Accountant (General)",
+      "points": [
+        {
+          "score": 35,
+          "count": "<20"
+        },
+        {
+          "score": 40,
+          "count": "<20"
+        },
+        {
+          "score": 45,
+          "count": "<20"
+        },
+        {
+          "score": 50,
+          "count": "33"
+        },
+        {
+          "score": 55,
+          "count": "121"
+        },
+        {
+          "score": 60,
+          "count": "286"
+        },
+        {
+          "score": 65,
+          "count": "920"
+        },
+        {
+          "score": 70,
+          "count": "1275"
+        },
+        {
+          "score": 75,
+          "count": "1316"
+        },
+        {
+          "score": 80,
+          "count": "1076"
+        },
+        {
+          "score": 85,
+          "count": "933"
+        },
+        {
+          "score": 90,
+          "count": "566"
+        },
+        {
+          "score": 95,
+          "count": "339"
+        },
+        {
+          "score": 100,
+          "count": "107"
+        },
+        {
+          "score": 105,
+          "count": "<20"
+        },
+        {
+          "score": 110,
+          "count": "<20"
+        }
+      ]
+    },
+    {
+      "code": "233211",
+      "name": "Civil Engineer",
+      "points": [
+        {
+          "score": 25,
+          "count": "<20"
+        },
+        {
+          "score": 30,
+          "count": "<20"
+        },
+        {
+          "score": 35,
+          "count": "<20"
+        },
+        {
+          "score": 40,
+          "count": "<20"
+        },
+        {
+          "score": 45,
+          "count": "37"
+        },
+        {
+          "score": 50,
+          "count": "112"
+        },
+        {
+          "score": 55,
+          "count": "312"
+        },
+        {
+          "score": 60,
+          "count": "588"
+        },
+        {
+          "score": 65,
+          "count": "1541"
+        },
+        {
+          "score": 70,
+          "count": "1582"
+        },
+        {
+          "score": 75,
+          "count": "1542"
+        },
+        {
+          "score": 80,
+          "count": "1271"
+        },
+        {
+          "score": 85,
+          "count": "915"
+        },
+        {
+          "score": 90,
+          "count": "526"
+        },
+        {
+          "score": 95,
+          "count": "212"
+        },
+        {
+          "score": 100,
+          "count": "43"
+        },
+        {
+          "score": 105,
+          "count": "<20"
+        },
+        {
+          "score": 110,
+          "count": "<20"
+        },
+        {
+          "score": 120,
+          "count": "<20"
+        }
+      ]
+    },
+    {
+      "code": "233512",
+      "name": "Mechanical Engineer",
+      "points": [
+        {
+          "score": 25,
+          "count": "<20"
+        },
+        {
+          "score": 30,
+          "count": "<20"
+        },
+        {
+          "score": 35,
+          "count": "<20"
+        },
+        {
+          "score": 40,
+          "count": "<20"
+        },
+        {
+          "score": 45,
+          "count": "31"
+        },
+        {
+          "score": 50,
+          "count": "95"
+        },
+        {
+          "score": 55,
+          "count": "273"
+        },
+        {
+          "score": 60,
+          "count": "531"
+        },
+        {
+          "score": 65,
+          "count": "1135"
+        },
+        {
+          "score": 70,
+          "count": "1212"
+        },
+        {
+          "score": 75,
+          "count": "1309"
+        },
+        {
+          "score": 80,
+          "count": "1014"
+        },
+        {
+          "score": 85,
+          "count": "975"
+        },
+        {
+          "score": 90,
+          "count": "633"
+        },
+        {
+          "score": 95,
+          "count": "226"
+        },
+        {
+          "score": 100,
+          "count": "48"
+        },
+        {
+          "score": 105,
+          "count": "<20"
+        }
+      ]
+    },
+    {
+      "code": "233311",
+      "name": "Electrical Engineer",
+      "points": [
+        {
+          "score": 35,
+          "count": "<20"
+        },
+        {
+          "score": 40,
+          "count": "<20"
+        },
+        {
+          "score": 45,
+          "count": "<20"
+        },
+        {
+          "score": 50,
+          "count": "73"
+        },
+        {
+          "score": 55,
+          "count": "209"
+        },
+        {
+          "score": 60,
+          "count": "308"
+        },
+        {
+          "score": 65,
+          "count": "726"
+        },
+        {
+          "score": 70,
+          "count": "743"
+        },
+        {
+          "score": 75,
+          "count": "718"
+        },
+        {
+          "score": 80,
+          "count": "634"
+        },
+        {
+          "score": 85,
+          "count": "456"
+        },
+        {
+          "score": 90,
+          "count": "291"
+        },
+        {
+          "score": 95,
+          "count": "117"
+        },
+        {
+          "score": 100,
+          "count": "26"
+        },
+        {
+          "score": 105,
+          "count": "<20"
+        }
+      ]
+    },
+    {
+      "code": "254499",
+      "name": "Registered Nurses nec",
+      "points": [
+        {
+          "score": 30,
+          "count": "<20"
+        },
+        {
+          "score": 35,
+          "count": "<20"
+        },
+        {
+          "score": 40,
+          "count": "<20"
+        },
+        {
+          "score": 45,
+          "count": "24"
+        },
+        {
+          "score": 50,
+          "count": "68"
+        },
+        {
+          "score": 55,
+          "count": "197"
+        },
+        {
+          "score": 60,
+          "count": "496"
+        },
+        {
+          "score": 65,
+          "count": "1532"
+        },
+        {
+          "score": 70,
+          "count": "1841"
+        },
+        {
+          "score": 75,
+          "count": "80"
+        },
+        {
+          "score": 80,
+          "count": "27"
+        },
+        {
+          "score": 85,
+          "count": "<20"
+        }
+      ]
+    },
+    {
+      "code": "351311",
+      "name": "Chef",
+      "points": [
+        {
+          "score": 30,
+          "count": "<20"
+        },
+        {
+          "score": 35,
+          "count": "<20"
+        },
+        {
+          "score": 40,
+          "count": "<20"
+        },
+        {
+          "score": 45,
+          "count": "52"
+        },
+        {
+          "score": 50,
+          "count": "191"
+        },
+        {
+          "score": 55,
+          "count": "557"
+        },
+        {
+          "score": 60,
+          "count": "1172"
+        },
+        {
+          "score": 65,
+          "count": "2492"
+        },
+        {
+          "score": 70,
+          "count": "2392"
+        },
+        {
+          "score": 75,
+          "count": "1888"
+        },
+        {
+          "score": 80,
+          "count": "1136"
+        },
+        {
+          "score": 85,
+          "count": "546"
+        },
+        {
+          "score": 90,
+          "count": "246"
+        },
+        {
+          "score": 95,
+          "count": "81"
+        },
+        {
+          "score": 100,
+          "count": "<20"
+        },
+        {
+          "score": 105,
+          "count": "<20"
+        }
+      ]
+    },
+    {
+      "code": "241111",
+      "name": "Early Childhood (Pre-primary School) Teacher",
+      "points": [
+        {
+          "score": 35,
+          "count": "<20"
+        },
+        {
+          "score": 40,
+          "count": "<20"
+        },
+        {
+          "score": 45,
+          "count": "29"
+        },
+        {
+          "score": 50,
+          "count": "161"
+        },
+        {
+          "score": 55,
+          "count": "339"
+        },
+        {
+          "score": 60,
+          "count": "919"
+        },
+        {
+          "score": 65,
+          "count": "2115"
+        },
+        {
+          "score": 70,
+          "count": "2859"
+        },
+        {
+          "score": 75,
+          "count": "2682"
+        },
+        {
+          "score": 80,
+          "count": "2138"
+        },
+        {
+          "score": 85,
+          "count": "2222"
+        },
+        {
+          "score": 90,
+          "count": "222"
+        },
+        {
+          "score": 95,
+          "count": "<20"
+        }
+      ]
+    },
+    {
+      "code": "241411",
+      "name": "Secondary School Teacher",
+      "points": [
+        {
+          "score": 40,
+          "count": "<20"
+        },
+        {
+          "score": 45,
+          "count": "<20"
+        },
+        {
+          "score": 50,
+          "count": "35"
+        },
+        {
+          "score": 55,
+          "count": "103"
+        },
+        {
+          "score": 60,
+          "count": "225"
+        },
+        {
+          "score": 65,
+          "count": "679"
+        },
+        {
+          "score": 70,
+          "count": "729"
+        },
+        {
+          "score": 75,
+          "count": "724"
+        },
+        {
+          "score": 80,
+          "count": "174"
+        },
+        {
+          "score": 85,
+          "count": "<20"
+        },
+        {
+          "score": 90,
+          "count": "<20"
+        }
+      ]
+    }
+  ]
+}

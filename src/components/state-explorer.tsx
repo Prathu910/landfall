@@ -1,0 +1,11 @@
+"use client";
+import { useState } from "react";
+import { ArrowUpRight, Info, Search } from "lucide-react";
+import { statePrograms } from "@/data/states";
+
+export function StateExplorer(){
+ const [search,setSearch]=useState("");
+ const [filter,setFilter]=useState("all");
+ const filtered=statePrograms.filter(s=>(filter==="all" || (filter==="scored" ? ["VIC","ACT","TAS"].includes(s.code) : ["WA","NT"].includes(s.code))) && `${s.name} ${s.code} ${s.system}`.toLowerCase().includes(search.toLowerCase()));
+ return <><div className="notice" style={{marginBottom:25}}><Info size={17}/><p>These are sourced program summaries, not a personal eligibility assessment. A state’s scoring system is separate from the federal points test. Places, pathways and opening conditions can change.</p></div><div className="states-controls"><div className="state-filters" aria-label="Filter state programs">{[["all","All eight"],["scored","Published state scoring"],["review","Further verification needed"]].map(([value,label])=><button key={value} className={filter===value?"active":""} aria-pressed={filter===value} onClick={()=>setFilter(value)}>{label}</button>)}</div><label className="field state-search"><span className="sr-only">Search a state or scoring system</span><input placeholder="Search a state or system…" type="search" value={search} onChange={e=>setSearch(e.target.value)}/></label></div><p className="subtle" style={{marginBottom:20,fontSize:11}} aria-live="polite">{filtered.length} {filtered.length===1?"jurisdiction":"jurisdictions"} shown</p><div className="states-grid">{filtered.map(s=><article className="state-card" key={s.code}><div className="state-card-top"><span className="state-code">{s.code}</span><h2>{s.name}</h2></div><span className="pill" style={{marginBottom:15}}>{s.system}</span><p>{s.summary}</p><h3>What changes the picture</h3><p>{s.considerations}</p><a className="text-link" href={s.url} target="_blank" rel="noreferrer">Read the official criteria<ArrowUpRight size={14}/></a><div className="state-footnote">{s.checked}</div></article>)}{filtered.length===0&&<div className="report-empty"><Search size={20}/><p>No matching jurisdiction. Try the state name or abbreviation, or clear the filter.</p></div>}</div></>;
+}
