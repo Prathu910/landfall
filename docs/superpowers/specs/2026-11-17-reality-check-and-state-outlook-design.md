@@ -263,9 +263,6 @@ Every panel is fully expanded in print.
 - How the 190 / 491 segmented control and panel expansion animate (respecting reduced motion).
 - The importer details for each state list, within ENGINEERING.md.
 
-## Open questions for the founder
+## Founder decisions after the draft
 
-1. **Which jurisdictions to verify before launch.** ACT, VIC, TAS and NT can only be verified in a browser; their sites block automated reads. Until someone verifies them, those four tiles show "Not yet verified", with their published evidence. Options:
-   - the founder checks them;
-   - the founder connects the Claude Chrome extension so Claude can read them in the founder's browser;
-   - ship with them "Not yet verified".
+1. **Unverified jurisdictions (17 Nov 2026):** ship with ACT, VIC, TAS and NT tiles showing "Not yet verified", with their published evidence still visible. The founder will come back later with how to verify them. Building this does not depend on that answer.
