@@ -58,7 +58,7 @@ const KNOWN_TITLES: Partial<Record<Column, string[]>> = {
   count: ["Count EOIs"],
 };
 
-const STATE_KEYS: StateKey[] = [
+export const STATE_KEYS: StateKey[] = [
   "ACT",
   "NSW",
   "NT",

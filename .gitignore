@@ -10,3 +10,4 @@ out/
 .playwright-cli/
 output/
 public/data/
+src/data/.generate-*

@@ -141,6 +141,61 @@ describe("qlik client", () => {
     );
   });
 
+  it("returns the header and no rows for an empty table, without a page read", async () => {
+    const { session, requests } = await open({ qcx: 3, qcy: 0 });
+    const table = await session.readTable("eymDb");
+    expect(table).toEqual({ header: ["a", "b", "c"], rows: [] });
+    expect(session.pageReads()).toBe(0);
+    expect(requests.some((r) => r.method === "GetHyperCubeData")).toBe(false);
+  });
+
+  describe("call economy", () => {
+    const methods = (requests: Request[], method: string) =>
+      requests.filter((r) => r.method === method);
+
+    it("reuses field handles and skips clearing a field it already cleared", async () => {
+      const { session, requests } = await open({ qcx: 3, qcy: 1 });
+      await session.clear("Score");
+      await session.clear("Score");
+      expect(methods(requests, "GetField")).toHaveLength(1);
+      expect(methods(requests, "Clear")).toHaveLength(1);
+      await session.select("Score", [{ text: "65" }]);
+      await session.clear("Score");
+      expect(methods(requests, "GetField")).toHaveLength(1);
+      expect(methods(requests, "Clear")).toHaveLength(2);
+    });
+
+    it("sets a toggle only when its value changes", async () => {
+      const { session, requests } = await open({ qcx: 3, qcy: 1 });
+      await session.setToggle("vShowPoints", true);
+      await session.setToggle("vShowPoints", true);
+      expect(methods(requests, "GetVariableByName")).toHaveLength(1);
+      expect(methods(requests, "SetStringValue")).toHaveLength(1);
+      await session.setToggle("vShowPoints", false);
+      expect(methods(requests, "SetStringValue")).toHaveLength(2);
+      expect(methods(requests, "SetStringValue")[1].params).toEqual(["N"]);
+    });
+
+    it("forgets known selections and toggles after applying a bookmark", async () => {
+      const { session, requests } = await open({ qcx: 3, qcy: 1 });
+      await session.clear("Score");
+      await session.setToggle("vShowPoints", true);
+      await session.applyBookmark("b1");
+      await session.clear("Score");
+      await session.setToggle("vShowPoints", true);
+      expect(methods(requests, "Clear")).toHaveLength(2);
+      expect(methods(requests, "SetStringValue")).toHaveLength(2);
+    });
+
+    it("reuses the table object handle across reads", async () => {
+      const { session, requests } = await open({ qcx: 3, qcy: 1 });
+      await session.readTable("eymDb");
+      await session.readTable("eymDb");
+      expect(methods(requests, "GetObject")).toHaveLength(1);
+      expect(methods(requests, "GetLayout")).toHaveLength(2);
+    });
+  });
+
   it("computes the month-end Excel serial", () => {
     const days = (Date.UTC(2026, 9, 31) - Date.UTC(1899, 11, 30)) / 86_400_000;
     expect(asAtSerial("2026-10")).toBe(days);

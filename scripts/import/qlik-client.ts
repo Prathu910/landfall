@@ -174,12 +174,30 @@ export async function openQlikSession(
     throw error;
   }
 
-  async function field(name: string): Promise<number> {
-    return handleOf(await call<Handle>(app, "GetField", [name]));
+  // Engine handles stay valid for the whole session, so each is fetched once.
+  const handles = new Map<string, number>();
+  async function cachedHandle(
+    method: "GetField" | "GetVariableByName" | "GetObject",
+    name: string,
+  ): Promise<number> {
+    const key = `${method} ${name}`;
+    let handle = handles.get(key);
+    if (handle === undefined) {
+      handle = handleOf(await call<Handle>(app, method, [name]));
+      handles.set(key, handle);
+    }
+    return handle;
   }
+
+  // Only this session's own calls change selections and toggles after the
+  // bookmark, so repeating a known state would just load the server.
+  const clearedFields = new Set<string>();
+  const toggles = new Map<string, boolean>();
 
   return {
     async applyBookmark(id) {
+      clearedFields.clear();
+      toggles.clear();
       await call(app, "ApplyBookmark", [id]);
     },
     async setToggle(name, on) {
@@ -188,10 +206,11 @@ export async function openQlikSession(
           `Refusing to set variable "${name}": only vShow* toggles are allowed`,
         );
       }
-      const variable = handleOf(
-        await call<Handle>(app, "GetVariableByName", [name]),
-      );
+      if (toggles.get(name) === on) return;
+      const variable = await cachedHandle("GetVariableByName", name);
+      toggles.delete(name);
       await call(variable, "SetStringValue", [on ? "Y" : "N"]);
+      toggles.set(name, on);
     },
     async select(name, values) {
       const qValues = values.map((value) =>
@@ -199,13 +218,17 @@ export async function openQlikSession(
           ? { qNumber: value.number, qIsNumeric: true }
           : { qText: value.text },
       );
-      await call(await field(name), "SelectValues", [qValues, false, false]);
+      const field = await cachedHandle("GetField", name);
+      clearedFields.delete(name);
+      await call(field, "SelectValues", [qValues, false, false]);
     },
     async clear(name) {
-      await call(await field(name), "Clear", []);
+      if (clearedFields.has(name)) return;
+      await call(await cachedHandle("GetField", name), "Clear", []);
+      clearedFields.add(name);
     },
     async readTable(objectId) {
-      const object = handleOf(await call<Handle>(app, "GetObject", [objectId]));
+      const object = await cachedHandle("GetObject", objectId);
       const { qLayout } = await call<{ qLayout: { qHyperCube: Hypercube } }>(
         object,
         "GetLayout",
