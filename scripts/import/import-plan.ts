@@ -6,9 +6,9 @@ import { VIEWS, type ViewDefinition, type ViewId } from "./views";
 export type ImportMode = "monthly" | "backfill";
 export type FetchJob = { view: ViewDefinition; month: MonthKey };
 
-/** Page-read budgets from the spec. */
+/** Page-read budgets: backfill from the spec, monthly raised to 250 by ruling R11. */
 export const PAGE_READ_BUDGET: Record<ImportMode, number> = {
-  monthly: 150,
+  monthly: 250,
   backfill: 600,
 };
 

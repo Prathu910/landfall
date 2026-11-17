@@ -1,12 +1,23 @@
 import { describe, expect, it } from "vitest";
 import { HEADERS, NURSE, SOFTWARE_ENGINEER } from "./generate-fixture";
-import { planFetches, poolScores, shiftMonth } from "./import-plan";
+import {
+  PAGE_READ_BUDGET,
+  planFetches,
+  poolScores,
+  shiftMonth,
+} from "./import-plan";
 import { VISA_NAMES } from "./qlik-constants";
 import { encodeRaw, type RawViewFile } from "./raw-store";
 import { VIEWS } from "./views";
 
 const jobs = (plan: ReturnType<typeof planFetches>) =>
   plan.map((job) => `${job.view.id} ${job.month}`);
+
+describe("PAGE_READ_BUDGET", () => {
+  it("allows 250 page reads a month and 600 for a backfill (ruling R11)", () => {
+    expect(PAGE_READ_BUDGET).toEqual({ monthly: 250, backfill: 600 });
+  });
+});
 
 describe("shiftMonth", () => {
   it("moves across year boundaries", () => {
