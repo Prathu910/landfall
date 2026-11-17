@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Free points check | Landfall</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css">
+<style>
+:root{--surface-0:#ebe9e3;--surface-1:#f5f4f0;--surface-2:#fff;--text-primary:#1b1b19;--text-secondary:#57564f;--text-muted:#8b8a83;--text-success:#3B6D11;--text-warning:#854F0B;--text-accent:#185FA5;--text-danger:#A32D2D;--bg-success:#EAF3DE;--bg-warning:#FAEEDA;--bg-accent:#E6F1FB;--bg-danger:#FCEBEB;--border:rgba(27,27,25,.1);--border-strong:rgba(27,27,25,.18);--border-stronger:rgba(27,27,25,.4);--brand:#0F6E56;--brand-dark:#085041;--brand-mid:#1D9E75;--brand-tint:#EEF6F2;--radius:8px;--font-sans:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',sans-serif;--font-voice:'Source Serif 4',Georgia,serif;color-scheme:light}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--surface-0);color:var(--text-primary);font-family:var(--font-sans);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-weight:500;line-height:1.3;margin:0}
+p{margin:0}
+a{color:var(--text-accent)}
+button{font:inherit;font-size:14px;line-height:1;padding:10px 16px;border-radius:var(--radius);border:0.5px solid var(--border-stronger);background:#fff;color:var(--text-primary);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+button:hover{background:var(--surface-1)}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,h2:focus-visible{outline:2px solid var(--text-accent);outline-offset:2px}
+button .ti{font-size:16px}
+.btn-primary{background:var(--brand);border-color:var(--brand);color:#fff;padding:12px 22px;font-size:15px}.btn-primary:hover{background:var(--brand-dark)}
+.btn-ghost{border-color:transparent;background:transparent;color:var(--text-secondary);padding:8px 10px}
+.m{font-size:13px;color:var(--text-secondary);line-height:1.5}
+.n{font-variant-numeric:tabular-nums lining-nums}
+.hero{font-family:var(--font-voice);font-variant-numeric:tabular-nums lining-nums;line-height:1}
+.toolbar{display:flex;justify-content:center;align-items:center;gap:8px;padding:14px 12px 0;font-size:13px;color:var(--text-secondary)}
+.toolbar button.on{border-color:var(--text-primary);background:#fff}
+.app{container-type:inline-size;max-width:1100px;margin:0 auto 60px;transition:max-width .25s ease}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 24px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{width:28px;height:28px;border-radius:8px;background:var(--brand);display:flex;align-items:center;justify-content:center;color:#E1F5EE;font-size:17px}
+.intro{padding:4px 24px 20px;max-width:760px}
+.intro h1{font-family:var(--font-voice);font-weight:400;font-size:32px;line-height:1.2;margin-bottom:8px}
+.trust{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:12px}.trust span{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-secondary)}.trust .ti{color:var(--brand);font-size:16px}
+.shell{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:24px;align-items:start;padding:0 24px}
+.formcard{background:#fff;border:0.5px solid var(--border);border-radius:16px;padding:24px 32px 24px;scroll-margin-top:16px}
+.sp-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.pbar-track{height:4px;border-radius:2px;background:var(--border);margin:10px 0 12px;overflow:hidden}.pbar-track span{display:block;height:100%;background:var(--brand);transition:width .3s ease}
+.steps{display:flex;flex-wrap:wrap;gap:6px;list-style:none;margin:0 0 22px;padding:0}
+.steps button{font-size:12px;padding:5px 9px;color:var(--text-muted);border-color:var(--border)}
+.steps button.done{color:var(--text-secondary)}.steps button.cur{color:var(--text-primary);border-color:var(--border-stronger);background:var(--surface-1)}
+.steps button:disabled{cursor:default;opacity:.6}
+.step h2{font-family:var(--font-voice);font-weight:400;font-size:26px;margin-bottom:6px}
+.lede{font-size:15px;color:var(--text-secondary);margin-bottom:22px;max-width:62ch}
+.field{margin:0 0 22px;border:0;padding:0;min-width:0}
+.field>label,.field>legend{display:block;font-weight:500;font-size:15px;margin-bottom:2px;padding:0}
+.help{font-size:13.5px;color:var(--text-secondary);margin:0 0 8px;line-height:1.5}
+input[type=text],input[type=email],input[type=date],input[type=number],select{width:100%;height:44px;padding:0 12px;border:0.5px solid var(--border-stronger);border-radius:var(--radius);font:inherit;font-size:15px;background:#fff;color:var(--text-primary)}
+input:focus,select:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px rgba(15,110,86,.15)}
+input:disabled{background:var(--surface-1);color:var(--text-muted)}
+.why{display:flex;gap:6px;font-size:12.5px;color:var(--text-muted);margin-top:7px;line-height:1.45}.why .ti{font-size:14px;margin-top:2px;flex:none}
+details.rule{margin-top:8px}details.rule summary{cursor:pointer;font-size:13px;color:var(--text-accent)}details.rule ul{margin:6px 0 0;padding-left:18px;font-size:13px;color:var(--text-secondary);line-height:1.55}
+.opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.opt{position:relative;display:block;border:0.5px solid var(--border-stronger);border-radius:12px;padding:12px 14px;cursor:pointer;background:#fff}
+.opt input{position:absolute;opacity:0;pointer-events:none}
+.opt b{display:block;font-size:14.5px;font-weight:500}
+.opt span{display:block;font-size:13px;color:var(--text-secondary);margin-top:2px;line-height:1.45}
+.opt:has(input:checked){border-color:var(--brand);background:var(--brand-tint);box-shadow:inset 0 0 0 1px var(--brand)}
+.opt:has(input:focus-visible){outline:2px solid var(--text-accent);outline-offset:2px}
+.seg{display:flex;gap:8px}.seg .opt{padding:9px 18px}
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}
+.g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.g4 label{font-size:13px;color:var(--text-secondary)}
+.chk{display:flex;align-items:center;gap:8px;font-size:13.5px;margin-top:8px;cursor:pointer}
+.chips{display:flex;flex-wrap:wrap;gap:8px}.chip{cursor:pointer}.chip input{position:absolute;opacity:0}.chip span{display:inline-block;font-size:13.5px;padding:7px 12px;border-radius:var(--radius);border:0.5px solid var(--border-stronger)}.chip input:checked+span{border-color:var(--brand);background:var(--brand-tint);box-shadow:inset 0 0 0 1px var(--brand)}.chip input:focus-visible+span{outline:2px solid var(--text-accent);outline-offset:2px}
+.result{display:flex;gap:10px;align-items:flex-start;background:var(--brand-tint);border-radius:12px;padding:12px 14px;font-size:14px;color:var(--brand-dark);margin-top:12px;line-height:1.5}.result .ti{font-size:18px;margin-top:1px;flex:none}
+.result.warn{background:var(--bg-warning);color:var(--text-warning)}.result.bad{background:var(--bg-danger);color:var(--text-danger)}.result.neutral{background:var(--surface-1);color:var(--text-secondary)}
+.err{color:var(--text-danger);font-size:13px;margin-top:6px}.err:empty{display:none}
+.eg{display:grid;grid-template-columns:100px repeat(4,minmax(0,1fr));gap:4px;margin-top:14px;font-size:13px}
+.eg>div{padding:7px 8px;border-radius:6px;background:var(--surface-1);text-align:center}.eg>div.h{background:transparent;color:var(--text-muted);padding:2px 8px}.eg>div.l{text-align:left;background:transparent;color:var(--text-secondary)}.eg>div.you{background:#fff;border:0.5px solid var(--border-stronger);font-weight:500}.eg>div.ok{background:var(--bg-success);color:var(--text-success)}.eg>div.lvl{font-weight:500;color:var(--text-primary)}
+.job{border:0.5px solid var(--border-stronger);border-radius:12px;padding:16px 16px 4px;margin-bottom:12px}
+.job-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.nav{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:26px;padding-top:20px;border-top:0.5px solid var(--border)}
+.aside{position:sticky;top:16px}
+.panel{background:#fff;border:0.5px solid var(--border);border-radius:16px}
+.pbar{display:none;width:100%;justify-content:space-between;border:0;border-radius:16px 16px 0 0;padding:14px 16px;background:#fff}
+.pbody{padding:20px}
+.bigrow{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin:8px 0 6px}
+.subn{display:flex;gap:16px}.subn div{text-align:right}.subn b{font-family:var(--font-voice);font-weight:500;font-size:22px;display:block;font-variant-numeric:tabular-nums lining-nums}
+.pass{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 14px}.pass span{font-size:12px;padding:2px 8px;border-radius:var(--radius)}.pass .y{background:var(--bg-success);color:var(--text-success)}.pass .x{background:var(--surface-1);color:var(--text-secondary)}
+.cat{display:grid;grid-template-columns:minmax(0,1fr) 64px 44px;gap:10px;align-items:center;font-size:13px;padding:5px 0}.cb{height:6px;border-radius:3px;background:var(--border)}.cb span{display:block;height:100%;border-radius:3px;background:var(--brand-mid)}.cat .n{text-align:right}
+.ph{font-size:13px;font-weight:500;margin:16px 0 6px}
+.ck{display:flex;gap:8px;align-items:flex-start;font-size:13px;padding:3px 0;line-height:1.45}.ck .ti{font-size:16px;flex:none;margin-top:1px}.ck .y{color:var(--text-success)}.ck .x{color:var(--text-danger)}.ck .o{color:var(--text-muted)}
+.rv{display:grid;grid-template-columns:minmax(0,1fr) 64px 60px;gap:10px;align-items:center;padding:11px 0;border-bottom:0.5px solid var(--border);font-size:14px}.rv .n{text-align:right}.rv .ed{justify-self:end;font-size:13px;padding:6px 8px}
+.rv.tot{font-weight:500;border-bottom:0}
+.tl{display:grid;grid-template-columns:104px 12px minmax(0,1fr);column-gap:12px}.tl .d{font-size:13px;color:var(--text-secondary)}.tl .ax{display:flex;flex-direction:column;align-items:center}.tl .dot{width:10px;height:10px;border-radius:50%;margin-top:5px;flex:none}.tl .ln{flex:1;width:1px;background:var(--border-strong);margin-top:4px}.tl .bd{padding-bottom:14px;font-size:14px}
+.done{text-align:left;padding:8px 0}
+.foot{padding:20px 24px 0;font-size:12px;color:var(--text-muted);max-width:760px;line-height:1.6}
+@container (max-width:820px){
+.shell{grid-template-columns:minmax(0,1fr);padding:0 10px;gap:12px}
+.top{padding:12px 14px}.intro{padding:0 14px 14px}.intro h1{font-size:26px}.foot{padding:16px 14px 0}
+.formcard{padding:20px 16px}
+.steps{display:none}
+.opts,.g2{grid-template-columns:minmax(0,1fr)}.g4{grid-template-columns:repeat(2,minmax(0,1fr))}
+.seg .opt{flex:1;text-align:center}
+.aside{top:auto;bottom:0;z-index:5}
+.panel{border-radius:16px 16px 0 0;box-shadow:0 -6px 24px rgba(27,27,25,.1)}
+.pbar{display:flex}.pbody{display:none;padding:4px 16px 16px}
+.panel.open .pbody{display:block;max-height:60vh;overflow:auto}
+.hide-m{display:none}
+.tl{grid-template-columns:84px 12px minmax(0,1fr)}
+.eg{grid-template-columns:78px repeat(4,minmax(0,1fr));font-size:12px}
+}
+@media (prefers-reduced-motion:reduce){.app,.pbar-track span{transition:none}}
+</style>
+</head>
+<body>
+<div class="toolbar"><span>Preview as</span><button id="vD" class="on" aria-pressed="true"><i class="ti ti-device-desktop" aria-hidden="true"></i>Desktop</button><button id="vM" aria-pressed="false"><i class="ti ti-device-mobile" aria-hidden="true"></i>Mobile</button></div>
+
+<div class="app" id="app">
+<header class="top">
+<div class="brand"><span class="logo"><i class="ti ti-route" aria-hidden="true"></i></span><span style="font-weight:500">Landfall</span></div>
+<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><span class="m hide-m" style="display:flex;align-items:center;gap:6px"><i class="ti ti-device-floppy" aria-hidden="true"></i>Saved on this device</span><button id="sample" class="btn-ghost"><i class="ti ti-wand" aria-hidden="true"></i>Try sample answers</button><button id="reset" class="btn-ghost"><i class="ti ti-refresh" aria-hidden="true"></i>Start over</button></div>
+</header>
+
+<div class="intro">
+<h1>Check your points, and what changes them</h1>
+<p class="lede" style="margin:0">Eight short steps, about 6 minutes. Your score updates as you answer, and every question says why we need it.</p>
+<div class="trust"><span><i class="ti ti-lock" aria-hidden="true"></i>No passport numbers or documents</span><span><i class="ti ti-device-floppy" aria-hidden="true"></i>Kept on this device until you continue</span><span><i class="ti ti-scale" aria-hidden="true"></i>Current points test rules, checked November 2026</span></div>
+</div>
+
+<div class="shell">
+<main class="formcard" id="formTop">
+<div id="flow">
+<div class="sp-top"><span class="m" id="stepLbl">Step 1 of 8</span><span style="font-size:14px;font-weight:500" id="stepName">About you</span></div>
+<div class="pbar-track"><span id="barFill" style="width:12.5%"></span></div>
+<ol class="steps" id="stepList"></ol>
+
+<!-- STEP 1 -->
+<section class="step" data-step="1">
+<h2 tabindex="-1">About you</h2>
+<p class="lede">A few basics. Your date of birth matters most, because age points are counted on the day you're invited.</p>
+<div class="field" data-req="name" data-msg="Enter your first name"><label for="f-name">First name</label><p class="help">Just your first name, so your report can speak to you.</p><input id="f-name" type="text" data-k="name" autocomplete="given-name" placeholder="Aarav"><p class="why"><i class="ti ti-lock" aria-hidden="true"></i>Only shown in your report. We never ask for your full legal name.</p><p class="err"></p></div>
+<div class="field" data-req="dob" data-msg="Enter your date of birth"><label for="f-dob">Date of birth</label><p class="help">Used to work out your age on the day you're invited.</p><input id="f-dob" type="date" data-k="dob" autocomplete="bday"><p class="why"><i class="ti ti-info-circle" aria-hidden="true"></i>Age is worth up to 30 points and changes on your 25th, 33rd, 40th and 45th birthdays.</p><p class="err"></p><div id="r-age"></div></div>
+<div class="field" data-req="citizenship" data-msg="Choose your country of citizenship"><label for="f-cit">Country of citizenship</label><select id="f-cit" data-k="citizenship"><option value="">Select a country</option><option>India</option><option>Nepal</option><option>Sri Lanka</option><option>Pakistan</option><option>Bangladesh</option><option>Philippines</option><option>China</option><option>Vietnam</option><option>Other</option></select><p class="why"><i class="ti ti-info-circle" aria-hidden="true"></i>Lets your report compare you with people from the same country who were granted visas.</p><p class="err"></p></div>
+<fieldset class="field" data-req="location" data-msg="Choose where you live now"><legend>Where do you live now?</legend><div class="opts"><label class="opt"><input type="radio" name="location" value="onshore" data-k="location"><b>In Australia</b><span>On any visa, including a bridging visa</span></label><label class="opt"><input type="radio" name="location" value="offshore" data-k="location"><b>Outside Australia</b><span>Living in another country</span></label></div><p class="why"><i class="ti ti-info-circle" aria-hidden="true"></i>Some states only nominate people already living in that state.</p><p class="err"></p></fieldset>
+<div data-if="location:onshore">
+<div class="g2">
+<div class="field" data-req="state" data-msg="Choose a state or territory"><label for="f-state">State or territory</label><select id="f-state" data-k="state"><option value="">Select</option><option value="NSW">New South Wales</option><option value="VIC">Victoria</option><option value="QLD">Queensland</option><option value="WA">Western Australia</option><option value="SA">South Australia</option><option value="TAS">Tasmania</option><option value="ACT">Australian Capital Territory</option><option value="NT">Northern Territory</option></select><p class="err"></p></div>
+<div class="field" data-req="visa" data-msg="Choose your current visa"><label for="f-visa">Current visa</label><select id="f-visa" data-k="visa"><option value="">Select</option><option value="485">485 Temporary Graduate</option><option value="500">500 Student</option><option value="482">482 Skills in Demand</option><option value="494">494 Regional employer</option><option value="407">407 Training</option><option value="bridging">Bridging visa</option><option value="other">Other</option></select><p class="err"></p></div>
+</div>
+<div class="field"><label for="f-vexp">When does your current visa end? <span class="m">Optional</span></label><input id="f-vexp" type="date" data-k="visaExpiry"><p class="why"><i class="ti ti-info-circle" aria-hidden="true"></i>Shown next to your estimated invitation window, so you can see whether they overlap.</p></div>
+</div>
+</section>
+
+<!-- STEP 2 -->
+<section class="step" data-step="2" hidden>
+<h2 tabindex="-1">Your occupation</h2>
+<p class="lede">These come from your skills assessment letter. Have it open if you can.</p>
+<div class="field" data-req="occupation" data-msg="Enter your occupation"><label for="f-occ">Nominated occupation</label><p class="help">The occupation in your skills assessment and EOI. Search by name or six-digit ANZSCO code.</p><input id="f-occ" type="text" list="anzsco" data-k="occupation" placeholder="ICT Business Analyst (261111)"><datalist id="anzsco"><option value="ICT Business Analyst (261111)"><option value="Systems Analyst (261112)"><option value="Analyst Programmer (261311)"><option value="Developer Programmer (261312)"><option value="Software Engineer (261313)"><option value="Accountant (General) (221111)"><option value="Civil Engineer (233211)"><option value="Mechanical Engineer (233512)"><option value="Electrical Engineer (233311)"><option value="Registered Nurses nec (254499)"><option value="Chef (351311)"><option value="Early Childhood (Pre-primary School) Teacher (241111)"><option value="Secondary School Teacher (241411)"></datalist><p class="why"><i class="ti ti-info-circle" aria-hidden="true"></i>Sets the queue, cut-offs and state lists your report uses. It doesn't change your points.</p><p class="err"></p></div>
+<div class="g2">
+<div class="field" data-req="authority" data-msg="Choose your assessing authority"><label for="f-auth">Assessing authority</label><select id="f-auth" data-k="authority"><option value="">Select</option><option value="ACS">ACS</option><option value="EA">Engineers Australia</option><option value="CPA">CPA Australia</option><option value="CAANZ">CA ANZ</option><option value="IPA">IPA</option><option value="ANMAC">ANMAC</option><option value="AITSL">AITSL</option><option value="VETASSESS">VETASSESS</option><option value="TRA">TRA</option><option value="other">Other</option></select><p class="err"></p></div>
+<div class="field" data-req="saDate" data-msg="Enter your outcome date"><label for="f-sad">Outcome date</label><input id="f-sad" type="date" data-k="saDate"><p class="err"></p></div>
+</div>
+<div class="field"><label for="f-saexp">Assessment expiry date <span class="m">Optional</span></label><p class="help">Printed on your letter. Usually 3 years from the outcome date unless your letter says otherwise.</p><input id="f-saexp" type="date" data-k="saExpiry"><p class="why"><i class="ti ti-info-circle" aria-hidden="true"></i>Your assessment must be valid on the day you're invited. If you leave this blank, we assume 3 years.</p></div>
+<div class="field"><label for="f-sf">Date you're assessed as skilled from <span class="m">Optional, but important</span></label><p class="help">Some assessing authorities, such as ACS, only count work after a certain date. Your letter states it, often as "skilled employment after" a date.</p><input id="f-sf" type="date" data-k="skilledFrom"><p class="why"><i class="ti ti-info-circle" aria-hidden="true"></i>We only count work from this date, the way Home Affairs does. Leaving it blank can overstate your points.</p></div>
+<div id="r-sa"></div>
+</section>
+
+<!-- STEP 3 -->
+<section class="step" data-step="3" hidden>
+<h2 tabindex="-1">English</h2>
+<p class="lede">English is worth up to 20 points: 10 for Proficient, 20 for Superior. Competent English is required but earns no points.</p>
+<fieldset class="field" data-req="testType" data-msg="Choose an option"><legend>Which English test have you taken?</legend><div class="opts">
+<label class="opt"><input type="radio" name="testType" value="pte" data-k="testType"><b>PTE Academic</b></label>
+<label class="opt"><input type="radio" name="testType" value="ielts" data-k="testType"><b>IELTS</b><span>Academic or General Training</span></label>
+<label class="opt"><input type="radio" name="testType" value="toefl" data-k="testType"><b>TOEFL iBT</b></label>
+<label class="opt"><input type="radio" name="testType" value="other" data-k="testType"><b>Another accepted test</b><span>OET, Cambridge C1, CELPIP, LanguageCert or Michigan</span></label>
+<label class="opt"><input type="radio" name="testType" value="passport" data-k="testType"><b>No test: passport</b><span>UK, US, Canada, New Zealand or Ireland passport</span></label>
+<label class="opt"><input type="radio" name="testType" value="none" data-k="testType"><b>I haven't taken a test yet</b></label>
+</div><p class="err"></p></fieldset>
+<div data-if="testType:ielts|pte|toefl|other">
+<div class="field" data-req="testDate" data-msg="Enter your test date"><label for="f-td">Test date</label><input id="f-td" type="date" data-k="testDate"><p class="why"><i class="ti ti-info-circle" aria-hidden="true"></i>A result counts only if the test was taken in the 3 years before you're invited. For PTE and TOEFL, the scores needed changed for tests taken from 7 August 2025, so the date sets which scale applies.</p><p class="err"></p></div>
+</div>
+<div data-if="testType:ielts|pte|toefl">
+<fieldset class="field" id="scoresField"><legend>Your score in each skill</legend><p class="help">Copy each skill from your result. Your overall score doesn't count: every skill must reach the line.</p>
+<div class="g4">
+<div><label for="sc-L">Listening</label><input id="sc-L" type="number" inputmode="decimal" data-k="L"></div>
+<div><label for="sc-R">Reading</label><input id="sc-R" type="number" inputmode="decimal" data-k="R"></div>
+<div><label for="sc-W">Writing</label><input id="sc-W" type="number" inputmode="decimal" data-k="W"></div>
+<div><label for="sc-Sp">Speaking</label><input id="sc-Sp" type="number" inputmode="decimal" data-k="Sp"></div>
+</div><p class="err" id="scoresErr"></p></fieldset>
+</div>
+<div data-if="testType:other">
+<div class="field" data-req="otherLevel" data-msg="Choose your level"><label for="f-ol">Your English level</label><p class="help">Check each skill against the official Home Affairs score table for your test.</p><select id="f-ol" data-k="otherLevel"><option value="">Select</option><option value="competent">Competent</option><option value="proficient">Proficient</option><option value="superior">Superior</option></select><p class="err"></p></div>
+</div>
+<div id="r-eng"></div>
+</section>
+
+<!-- STEP 4 -->
+<section class="step" data-step="4" hidden>
+<h2 tabindex="-1">Education</h2>
+<p class="lede">Only your highest qualification counts, but some Australian study earns extra points on top.</p>
+<fieldset class="field" data-req="qual" data-msg="Choose your highest qualification"><legend>Highest qualification</legend><p class="help">For overseas study, use the level your skills assessment says it's comparable to.</p><div class="opts">
+<label class="opt"><input type="radio" name="qual" value="doctorate" data-k="qual"><b>Doctorate</b><span>20 points</span></label>
+<label class="opt"><input type="radio" name="qual" value="bachelor" data-k="qual"><b>Bachelor's or master's degree</b><span>15 points</span></label>
+<label class="opt"><input type="radio" name="qual" value="diploma" data-k="qual"><b>Australian diploma or trade qualification</b><span>10 points</span></label>
+<label class="opt"><input type="radio" name="qual" value="recognised" data-k="qual"><b>Other qualification recognised by your assessing authority</b><span>10 points</span></label>
+<label class="opt"><input type="radio" name="qual" value="none" data-k="qual"><b>None of these</b><span>0 points</span></label>
+</div><p class="err"></p></fieldset>
+<fieldset class="field" data-req="ausStudy" data-msg="Choose yes or no"><legend>Do you meet the Australian study requirement?</legend><p class="help">At least 2 academic years of CRICOS-registered study in Australia, completed over at least 16 months, taught in English, while you were in Australia.</p><div class="seg"><label class="opt"><input type="radio" name="ausStudy" value="yes" data-k="ausStudy"><b>Yes</b></label><label class="opt"><input type="radio" name="ausStudy" value="no" data-k="ausStudy"><b>No</b></label></div><p class="why"><i class="ti ti-info-circle" aria-hidden="true"></i>Worth 5 points, and it's needed before regional study points can count.</p><p class="err"></p></fieldset>
+<div data-if="ausStudy:yes">
+<fieldset class="field" data-req="regional" data-msg="Choose yes or no"><legend>Did you live and study in a designated regional area for that study?</legend><p class="help">Major cities such as Sydney, Melbourne and Brisbane don't count.</p><div class="seg"><label class="opt"><input type="radio" name="regional" value="yes" data-k="regional"><b>Yes</b></label><label class="opt"><input type="radio" name="regional" value="no" data-k="regional"><b>No</b></label></div><p class="why"><i class="ti ti-info-circle" aria-hidden="true"></i>Worth 5 more points.</p><p class="err"></p></fieldset>
+</div>
+<fieldset class="field" data-req="specialist" data-msg="Choose yes or no"><legend>Do you have a specialist education qualification?</legend><p class="help">A master's by research or doctorate from an Australian institution in an eligible STEM or ICT field, with at least 2 academic years of study.</p><div class="seg"><label class="opt"><input type="radio" name="specialist" value="yes" data-k="specialist"><b>Yes</b></label><label class="opt"><input type="radio" name="specialist" value="no" data-k="specialist"><b>No</b></label></div><p class="why"><i class="ti ti-info-circle" aria-hidden="true"></i>Worth 10 points. A coursework master's doesn't count here.</p><p class="err"></p></fieldset>
+<div id="r-edu"></div>
+</section>
+
+<!-- STEP 5 -->
+<section class="step" data-step="5" hidden>
+<h2 tabindex="-1">Work experience</h2>
+<p class="lede">Add each paid job in your nominated or a closely related occupation. We count it the way the points test does, so you don't have to work out years yourself.</p>
+<div id="jobs"></div>
+<button type="button" id="addJob"><i class="ti ti-plus" aria-hidden="true"></i>Add a job</button>
+<details class="rule"><summary>What counts as skilled employment</summary><ul><li>Paid work in your nominated or a closely related occupation, at least 20 hours a week.</li><li>Only within the 10 years before you're invited, and only after the date your assessment treats you as skilled.</li><li>Overseas: 3 years earns 5 points, 5 years 10, 8 years 15. In Australia: 1 year earns 5, 3 years 10, 5 years 15, 8 years 20.</li><li>Overseas and Australian points together are capped at 20.</li><li>We count calendar days including start and end dates. Home Affairs checks your evidence, so claims close to a threshold need care.</li></ul></details>
+<div id="r-work"></div>
+</section>
+
+<!-- STEP 6 -->
+<section class="step" data-step="6" hidden>
+<h2 tabindex="-1">Partner</h2>
+<p class="lede">Partner points depend on your relationship and, if your partner is applying with you, their English and skills.</p>
+<fieldset class="field" data-req="partner" data-msg="Choose an option"><legend>Which describes you?</legend><div class="opts">
+<label class="opt"><input type="radio" name="partner" value="single" data-k="partner"><b>Single</b><span>No spouse or de facto partner. 10 points</span></label>
+<label class="opt"><input type="radio" name="partner" value="citizen" data-k="partner"><b>Partner is an Australian citizen or PR</b><span>10 points</span></label>
+<label class="opt"><input type="radio" name="partner" value="skilled" data-k="partner"><b>Partner is applying with me and has a skills assessment</b><span>Up to 10 points</span></label>
+<label class="opt"><input type="radio" name="partner" value="english" data-k="partner"><b>Partner is applying with me and has Competent English only</b><span>5 points</span></label>
+<label class="opt"><input type="radio" name="partner" value="none" data-k="partner"><b>Partner is applying with me without either</b><span>0 points</span></label>
+</div><p class="err"></p></fieldset>
+<div data-if="partner:skilled">
+<div class="field" data-req="pDob" data-msg="Enter your partner's date of birth"><label for="f-pdob">Partner's date of birth</label><input id="f-pdob" type="date" data-k="pDob"><p class="why"><i class="ti ti-info-circle" aria-hidden="true"></i>Your partner must be under 45 on the day you're invited for the full 10 points.</p><p class="err"></p></div>
+<fieldset class="field" data-req="pEnglish" data-msg="Choose yes or no"><legend>Does your partner have Competent English?</legend><p class="help">From a test taken in the last 3 years.</p><div class="seg"><label class="opt"><input type="radio" name="pEnglish" value="yes" data-k="pEnglish"><b>Yes</b></label><label class="opt"><input type="radio" name="pEnglish" value="no" data-k="pEnglish"><b>No</b></label></div><p class="err"></p></fieldset>
+<fieldset class="field" data-req="pAssessed" data-msg="Choose yes or no"><legend>Is your partner's skills assessment in an occupation on the same list as yours?</legend><div class="seg"><label class="opt"><input type="radio" name="pAssessed" value="yes" data-k="pAssessed"><b>Yes</b></label><label class="opt"><input type="radio" name="pAssessed" value="no" data-k="pAssessed"><b>No</b></label></div><p class="err"></p></fieldset>
+</div>
+<div id="r-partner"></div>
+</section>
+
+<!-- STEP 7 -->
+<section class="step" data-step="7" hidden>
+<h2 tabindex="-1">A few more details</h2>
+<p class="lede">Two last ways to earn points, then details your report uses for queue and state comparisons.</p>
+<fieldset class="field" data-req="py" data-msg="Choose yes or no"><legend>Have you completed a Professional Year in Australia?</legend><p class="help">An approved program in your nominated or a closely related occupation.</p><div class="seg"><label class="opt"><input type="radio" name="py" value="yes" data-k="py"><b>Yes</b></label><label class="opt"><input type="radio" name="py" value="no" data-k="py"><b>No</b></label></div><p class="why"><i class="ti ti-info-circle" aria-hidden="true"></i>Worth 5 points if completed in the 4 years before you're invited.</p><p class="err"></p></fieldset>
+<div data-if="py:yes"><div class="field" data-req="pyDate" data-msg="Enter your completion date"><label for="f-pyd">Completion date</label><input id="f-pyd" type="date" data-k="pyDate"><p class="err"></p></div></div>
+<fieldset class="field" data-req="ccl" data-msg="Choose yes or no"><legend>Do you hold a NAATI community language credential?</legend><p class="help">A credentialled community language (CCL) result, or a NAATI translator or interpreter credential.</p><div class="seg"><label class="opt"><input type="radio" name="ccl" value="yes" data-k="ccl"><b>Yes</b></label><label class="opt"><input type="radio" name="ccl" value="no" data-k="ccl"><b>No</b></label></div><p class="why"><i class="ti ti-info-circle" aria-hidden="true"></i>Worth 5 points while the credential is valid.</p><p class="err"></p></fieldset>
+<div data-if="ccl:yes"><div class="field"><label for="f-ccle">Credential expiry date <span class="m">Optional</span></label><p class="help">Use the expiry date on your NAATI credential letter.</p><input id="f-ccle" type="date" data-k="cclExpiry"></div></div>
+<fieldset class="field" data-req="eoi" data-msg="Choose yes or no"><legend>Have you submitted an EOI in SkillSelect?</legend><div class="seg"><label class="opt"><input type="radio" name="eoi" value="yes" data-k="eoi"><b>Yes</b></label><label class="opt"><input type="radio" name="eoi" value="no" data-k="eoi"><b>Not yet</b></label></div><p class="why"><i class="ti ti-info-circle" aria-hidden="true"></i>Your date of effect sets your place among people on the same points.</p><p class="err"></p></fieldset>
+<div data-if="eoi:yes"><div class="g2">
+<div class="field"><label for="f-doe">Date of effect</label><input id="f-doe" type="date" data-k="doe"><p class="help" style="margin-top:6px">Shown in your EOI. It's the date your EOI reached its current score.</p></div>
+<div class="field"><label for="f-cl">Points claimed for 189</label><input id="f-cl" type="number" inputmode="numeric" min="0" max="140" step="5" data-k="claimed"><p class="help" style="margin-top:6px">We'll flag it if this differs from our calculation.</p></div>
+</div></div>
+<fieldset class="field"><legend>States you're interested in <span class="m">Optional</span></legend><div class="chips">
+<label class="chip"><input type="checkbox" data-k="states" value="NSW"><span>NSW</span></label><label class="chip"><input type="checkbox" data-k="states" value="VIC"><span>VIC</span></label><label class="chip"><input type="checkbox" data-k="states" value="QLD"><span>QLD</span></label><label class="chip"><input type="checkbox" data-k="states" value="WA"><span>WA</span></label><label class="chip"><input type="checkbox" data-k="states" value="SA"><span>SA</span></label><label class="chip"><input type="checkbox" data-k="states" value="TAS"><span>TAS</span></label><label class="chip"><input type="checkbox" data-k="states" value="ACT"><span>ACT</span></label><label class="chip"><input type="checkbox" data-k="states" value="NT"><span>NT</span></label>
+</div><p class="why"><i class="ti ti-info-circle" aria-hidden="true"></i>Your report covers every state; these get extra detail.</p></fieldset>
+<div class="field"><label for="f-sal">Current salary <span class="m">Optional</span></label><select id="f-sal" data-k="salary"><option value="">Prefer not to say</option><option value="lt70">Under A$70,000</option><option value="70-90">A$70,000 to A$90,000</option><option value="90-110">A$90,000 to A$110,000</option><option value="110-130">A$110,000 to A$130,000</option><option value="gt130">Over A$130,000</option></select><p class="why"><i class="ti ti-info-circle" aria-hidden="true"></i>Some states weigh salary when choosing who to nominate. Used only to compare you with reported invitees.</p></div>
+<div id="r-extra"></div>
+</section>
+
+<!-- STEP 8 -->
+<section class="step" data-step="8" hidden>
+<h2 tabindex="-1">Check your answers</h2>
+<p class="lede">Here's how each answer scores. Points are counted on the day you're invited, so you can also check a future date.</p>
+<div class="field" style="max-width:260px"><label for="f-asat">Calculate my points as at</label><input id="f-asat" type="date" data-k="asAt"></div>
+<div id="rvTable"></div>
+<h3 style="font-size:17px;margin:26px 0 6px">Eligibility checks</h3>
+<div id="rvChecks"></div>
+<h3 style="font-size:17px;margin:26px 0 4px">Changes in the next 3 years</h3>
+<p class="m" style="margin-bottom:12px">Worked out day by day from your answers, assuming you stay in any current job.</p>
+<div id="rvTimeline"></div>
+<div style="border-top:0.5px solid var(--border);margin-top:22px;padding-top:22px">
+<div class="field" data-req="email" data-msg="Enter a valid email address"><label for="f-email">Email</label><p class="help">We'll send your free preview and keep your answers so you can come back.</p><input id="f-email" type="email" data-k="email" autocomplete="email" placeholder="you@example.com"><p class="err"></p></div>
+<div class="field" data-req="consent" data-msg="Tick to continue"><label class="chk" style="margin:0;font-weight:400;align-items:flex-start"><input type="checkbox" data-k="consent" style="margin-top:5px"> <span style="font-size:14px">I agree to the terms and privacy policy. This is general information, not migration advice.</span></label><p class="err"></p></div>
+</div>
+</section>
+
+<div class="nav"><button type="button" id="back" hidden><i class="ti ti-arrow-left" aria-hidden="true"></i>Back</button><span></span><button type="button" id="next" class="btn-primary">Continue</button></div>
+</div>
+
+<div id="done" class="done" hidden>
+<div class="result" style="font-size:15px"><i class="ti ti-circle-check" aria-hidden="true"></i><div><b style="font-weight:500">Your free preview is ready</b><br>In the live product this opens your preview: your 189 queue position, your occupation's latest cut-off, and how many states list it. This mockup stops here.</div></div>
+<p style="margin-top:16px"><button type="button" id="editAgain"><i class="ti ti-edit" aria-hidden="true"></i>Edit my answers</button></p>
+</div>
+</main>
+
+<aside class="aside" aria-label="Your points">
+<div class="panel" id="panel">
+<button class="pbar" id="pbar" aria-expanded="false" aria-controls="pbody"><span style="display:flex;align-items:baseline;gap:8px"><span class="hero" id="pbN" style="font-size:28px">0</span><span class="m">points for 189</span></span><span style="display:flex;align-items:center;gap:10px"><span class="m n" id="pbSub"></span><i class="ti ti-chevron-up" aria-hidden="true"></i></span></button>
+<div class="pbody" id="pbody">
+<div class="m" id="asAtLbl" aria-live="polite">Your points today</div>
+<div class="bigrow"><div><div class="hero" id="p189" style="font-size:60px">0</div><div class="m">for 189</div></div><div class="subn"><div><b id="p190">5</b><span class="m">190</span></div><div><b id="p491">15</b><span class="m">491</span></div></div></div>
+<div class="pass" id="pass"></div>
+<div id="cats"></div>
+<div class="ph">Eligibility</div><div id="checks"></div>
+<div class="ph">Next change</div><div id="nextChange"></div>
+<div id="mismatch"></div>
+</div>
+</div>
+</aside>
+</div>
+
+<p class="foot">Points rules as at November 2026, based on the current Home Affairs points table for subclasses 189, 190 and 491. Your score assumes you can prove each claim with documents. General information, not migration advice. Landfall is not a registered migration agent.</p>
+</div>
+
+<script>
+const DAY=864e5,KEY='lf-check-v1';
+const STEPS=['About you','Your occupation','English','Education','Work experience','Partner','A few more details','Review'];
+const LBL={age:'Age',english:'English',employment:'Skilled employment',qual:'Qualification',specialist:'Specialist education',study:'Australian study',regional:'Regional study',py:'Professional Year',ccl:'Community language',partner:'Partner'};
+const MAX={age:30,english:20,employment:20,qual:20,specialist:10,study:5,regional:5,py:5,ccl:5,partner:10};
+const QUAL={doctorate:'Doctorate',bachelor:"Bachelor's or master's degree",diploma:'Australian diploma or trade qualification',recognised:'Recognised by your assessing authority',none:'None of these'};
+const PARTNER={single:'Single',citizen:'Partner is an Australian citizen or PR',skilled:'Partner applying with a skills assessment',english:'Partner applying with Competent English only',none:'Partner applying without English or assessment'};
+const TESTN={ielts:'IELTS',pte:'PTE Academic',toefl:'TOEFL iBT',other:'Another accepted test',passport:'Passport',none:'No test yet'};
+const LEVELN={superior:'Superior',proficient:'Proficient',competent:'Competent',below:'Below Competent'};
+const SAMPLE={name:'Aarav',dob:'1994-08-09',citizenship:'India',location:'onshore',state:'VIC',visa:'485',visaExpiry:'2027-09-30',occupation:'ICT Business Analyst (261111)',authority:'ACS',saDate:'2026-02-20',saExpiry:'2029-02-20',skilledFrom:'2019-06-01',testType:'pte',testDate:'2025-02-02',L:'84',R:'82',W:'80',Sp:'86',otherLevel:'',qual:'bachelor',ausStudy:'yes',regional:'no',specialist:'no',jobs:[{where:'os',label:'Business analyst, Pune',start:'2019-06-01',end:'2022-06-01',current:false,hours:'yes',related:'yes'},{where:'au',label:'Business analyst, Melbourne',start:'2025-03-14',end:'',current:true,hours:'yes',related:'yes'}],partner:'single',pDob:'',pEnglish:'',pAssessed:'',py:'no',pyDate:'',ccl:'no',cclExpiry:'',eoi:'yes',doe:'2026-03-14',claimed:'90',states:['VIC','SA','QLD'],salary:'90-110',email:'',consent:false,asAt:''};
+
+function blank(){return{name:'',dob:'',citizenship:'',location:'',state:'',visa:'',visaExpiry:'',occupation:'',authority:'',saDate:'',saExpiry:'',skilledFrom:'',testType:'',testDate:'',L:'',R:'',W:'',Sp:'',otherLevel:'',qual:'',ausStudy:'',regional:'',specialist:'',jobs:[],partner:'',pDob:'',pEnglish:'',pAssessed:'',py:'',pyDate:'',ccl:'',cclExpiry:'',eoi:'',doe:'',claimed:'',states:[],salary:'',email:'',consent:false,asAt:''};}
+let S=blank(),step=1,reached=1;
+try{const raw=localStorage.getItem(KEY);if(raw){const o=JSON.parse(raw);S=Object.assign(blank(),o.S||{});reached=o.reached||1;}}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({S,reached}));}catch(e){}}
+
+/* dates (UTC, day precision) */
+const D=s=>{if(!s)return null;const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(s);return m?Date.UTC(+m[1],+m[2]-1,+m[3]):null;};
+const addY=(t,n)=>{const d=new Date(t);return Date.UTC(d.getUTCFullYear()+n,d.getUTCMonth(),d.getUTCDate());};
+const today=(()=>{const n=new Date();return Date.UTC(n.getFullYear(),n.getMonth(),n.getDate());})();
+const fmt=t=>new Date(t).toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'});
+const asAt=()=>D(S.asAt)??today;
+function ageAt(dob,t){const a=new Date(dob),b=new Date(t);let y=b.getUTCFullYear()-a.getUTCFullYear();if(b.getUTCMonth()<a.getUTCMonth()||(b.getUTCMonth()===a.getUTCMonth()&&b.getUTCDate()<a.getUTCDate()))y--;return y;}
+const agePts=a=>a<18?null:a<25?25:a<33?30:a<40?25:a<45?15:null;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const yrs=y=>{const t=Math.floor(y*12+1e-9);return `${Math.floor(t/12)} yr ${t%12} mo`;};
+
+/* English: thresholds per skill [L,R,W,S]. Verify against Home Affairs before launch. */
+const CUT=Date.UTC(2025,7,7);
+const IELTS={c:[6,6,6,6],p:[7,7,7,7],s:[8,8,8,8]};
+const PTE_NEW={c:[47,48,51,54],p:[58,59,69,76],s:[69,70,85,88]};
+const PTE_OLD={c:[50,50,50,50],p:[65,65,65,65],s:[79,79,79,79]};
+const TOEFL_NEW={c:[16,16,19,19],p:[24,24,27,23],s:[28,29,30,26]};
+const TOEFL_OLD={c:[12,13,21,18],p:[24,24,27,23],s:[28,29,30,26]};
+function tableFor(ty,td){if(ty==='ielts')return IELTS;if(ty==='pte')return td>=CUT?PTE_NEW:PTE_OLD;if(ty==='toefl')return td>=CUT?TOEFL_NEW:TOEFL_OLD;return null;}
+function levelOf(sc,tb){const ok=k=>tb[k].every((v,i)=>sc[i]>=v);return ok('s')?'superior':ok('p')?'proficient':ok('c')?'competent':'below';}
+function scores(){return['L','R','W','Sp'].map(k=>S[k]===''?NaN:parseFloat(S[k]));}
+function english(t){
+  const ty=S.testType;
+  if(ty==='passport')return{level:'competent',pts:0,valid:true,passport:true};
+  if(!ty||ty==='none')return{level:null,pts:0,valid:false};
+  const td=D(S.testDate);if(td==null)return{level:null,pts:0,valid:false};
+  const valid=td<=t&&td>=addY(t,-3);
+  let level=null;
+  if(ty==='other')level=S.otherLevel||null;
+  else{const sc=scores();if(sc.some(isNaN))return{level:null,pts:0,valid:false,td};level=levelOf(sc,tableFor(ty,td));}
+  const pts=valid?(level==='superior'?20:level==='proficient'?10:0):0;
+  return{level,pts,valid,td,until:addY(td,3)};
+}
+
+/* Employment: inclusive days, merged per location, within 10-year window and after skilled-from date */
+function employment(t){
+  const win=addY(t,-10),sf=D(S.skilledFrom),floor=sf!=null?Math.max(win,sf):win,out={};
+  for(const w of['au','os']){
+    const iv=S.jobs.filter(j=>j.where===w&&j.hours==='yes'&&j.related==='yes').map(j=>{const s=D(j.start),e=j.current?t:D(j.end);if(s==null||e==null)return null;return[Math.max(s,floor),Math.min(e,t)+DAY];}).filter(x=>x&&x[0]<x[1]).sort((a,b)=>a[0]-b[0]);
+    let ms=0,cs=null,ce=null;
+    for(const[s,e]of iv){if(cs===null){cs=s;ce=e;}else if(s<=ce){ce=Math.max(ce,e);}else{ms+=ce-cs;cs=s;ce=e;}}
+    if(cs!==null)ms+=ce-cs;
+    out[w]=ms/DAY/365.25;
+  }
+  const os=out.os>=8?15:out.os>=5?10:out.os>=3?5:0;
+  const au=out.au>=8?20:out.au>=5?15:out.au>=3?10:out.au>=1?5:0;
+  return{osY:out.os,auY:out.au,os,au,total:Math.min(20,os+au),floor};
+}
+function partnerPts(t){
+  const p=S.partner;
+  if(p==='single'||p==='citizen')return 10;
+  if(p==='english')return 5;
+  if(p==='skilled'){const pd=D(S.pDob);const u45=pd!=null&&ageAt(pd,t)<45;const eng=S.pEnglish==='yes';if(u45&&eng&&S.pAssessed==='yes')return 10;return eng?5:0;}
+  return 0;
+}
+function saExpiry(){return D(S.saExpiry)??(D(S.saDate)!=null?addY(D(S.saDate),3):null);}
+function pointsAt(t){
+  const dob=D(S.dob),a=dob!=null?ageAt(dob,t):null,ap=a==null?0:(agePts(a)??0);
+  const en=english(t),em=employment(t);
+  const q={doctorate:20,bachelor:15,diploma:10,recognised:10,none:0}[S.qual]||0;
+  const pyd=D(S.pyDate),ce=D(S.cclExpiry);
+  const cats={age:ap,english:en.pts,employment:em.total,qual:q,specialist:S.specialist==='yes'?10:0,study:S.ausStudy==='yes'?5:0,regional:S.ausStudy==='yes'&&S.regional==='yes'?5:0,py:S.py==='yes'&&pyd!=null&&pyd<=t&&pyd>=addY(t,-4)?5:0,ccl:S.ccl==='yes'&&(ce==null||ce>=t)?5:0,partner:partnerPts(t)};
+  const base=Object.values(cats).reduce((x,y)=>x+y,0);
+  const sa=saExpiry();
+  const elig={age:a==null?null:(a>=18&&a<45),english:!S.testType?null:(en.passport||(en.valid&&!!en.level&&en.level!=='below')),sa:sa==null?null:sa>=t};
+  return{t,a,cats,base,en,em,elig};
+}
+function changes(from,days=1095){
+  const list=[];let prev=pointsAt(from);
+  for(let i=1;i<=days;i++){
+    const t=from+i*DAY,cur=pointsAt(t),diffs=[],ed=[];
+    for(const k in cur.cats)if(cur.cats[k]!==prev.cats[k])diffs.push({k,from:prev.cats[k],to:cur.cats[k]});
+    for(const k of['age','english','sa'])if(prev.elig[k]!==null&&cur.elig[k]!==null&&cur.elig[k]!==prev.elig[k])ed.push({k,to:cur.elig[k]});
+    if(diffs.length||ed.length)list.push({t,diffs,ed,base:cur.base,delta:cur.base-prev.base});
+    prev=cur;
+  }
+  return list;
+}
+function changeLines(c){
+  const out=c.diffs.map(d=>{switch(d.k){
+    case'age':return `You turn ${ageAt(D(S.dob),c.t)}: age points ${d.from} to ${d.to}`;
+    case'english':return `Your English test passes 3 years: English points ${d.from} to ${d.to}`;
+    case'employment':return d.to>d.from?`Employment points ${d.from} to ${d.to} as your experience grows`:`Employment points ${d.from} to ${d.to} as older work leaves the 10-year window`;
+    case'py':return `Professional Year passes 4 years: ${d.from} to ${d.to}`;
+    case'ccl':return `NAATI credential expires: ${d.from} to ${d.to}`;
+    case'partner':return `Your partner turns 45: partner points ${d.from} to ${d.to}`;
+    default:return `${LBL[d.k]} ${d.from} to ${d.to}`;}});
+  c.ed.forEach(e=>{if(!e.to)out.push({age:'You turn 45 and can no longer be invited',english:'You no longer have valid Competent English evidence',sa:'Your skills assessment expires and needs renewing'}[e.k]);});
+  return out;
+}
+
+/* inline results */
+function box(kind,icon,html){return `<div class="result ${kind}"><i class="ti ti-${icon}" aria-hidden="true"></i><div>${html}</div></div>`;}
+function inline(){
+  const dob=D(S.dob);let h='';
+  if(dob!=null){
+    const a=ageAt(dob,today),p=agePts(a);
+    if(dob>today)h=box('bad','alert-circle','That date is in the future.');
+    else if(p==null)h=box('bad','alert-circle',a>=45?`You're ${a}. You need to be under 45 when invited for these visas.`:`You're ${a}. You need to be at least 18.`);
+    else{const nx=[25,33,40,45].find(x=>x>a),d=addY(dob,nx);h=box('','circle-check',`You're ${a}: <b>${p} points</b>. On ${fmt(d)} you turn ${nx}, and ${nx===45?'you can no longer be invited':`your age points change to ${agePts(nx)}`}.`);}
+  }
+  document.getElementById('r-age').innerHTML=h;
+  h='';const sae=saExpiry();
+  if(sae!=null){h=sae>=today?box('','circle-check',`Your assessment is valid until ${fmt(sae)}${S.saExpiry?'':' (assumed 3 years)'}.${D(S.skilledFrom)!=null?` We'll count work from ${fmt(D(S.skilledFrom))}.`:''}`):box('bad','alert-circle',`Your assessment expired on ${fmt(sae)}. You'd need a new one before you can be invited.`);}
+  document.getElementById('r-sa').innerHTML=h;
+  document.getElementById('r-eng').innerHTML=engResult();
+  const r=pointsAt(today),c=r.cats;
+  document.getElementById('r-edu').innerHTML=S.qual?box('','circle-check',`Qualification ${c.qual} + Australian study ${c.study} + regional study ${c.regional} + specialist education ${c.specialist} = <b>${c.qual+c.study+c.regional+c.specialist} points</b>`):'';
+  const em=r.em;
+  document.getElementById('r-work').innerHTML=S.jobs.length?box(em.os+em.au>20?'warn':'','briefcase',`Overseas: ${yrs(em.osY)} counted, <b>${em.os} points</b>. In Australia: ${yrs(em.auY)} counted, <b>${em.au} points</b>. Total: <b>${em.total} of 20</b>${em.os+em.au>20?' (capped)':''}.<br><span style="font-size:13px">Counting work from ${fmt(em.floor)}${D(S.skilledFrom)!=null&&D(S.skilledFrom)>=addY(today,-10)?', the date you were assessed as skilled':', the start of the 10-year window'}.</span>`):box('neutral','info-circle','No jobs added yet. That counts as 0 points, which is fine if you don\'t have skilled work yet.');
+  let ph='';
+  if(S.partner){const p=c.partner;
+    if(S.partner==='skilled'){const pd=D(S.pDob);let extra='';if(pd!=null){const pa=ageAt(pd,today);extra=pa>=45?' Your partner is 45 or older, so partner skills points don\'t apply.':` Your partner turns 45 on ${fmt(addY(pd,45))}.`;}
+      ph=box(p===10?'':'warn','users',`<b>${p} points.</b>${p<10?' Full points need all three: under 45, Competent English, and a skills assessment on the same list as yours.':''}${extra}`);}
+    else ph=box('','users',`<b>${p} points.</b>`);}
+  document.getElementById('r-partner').innerHTML=ph;
+  let xh='';
+  if(S.py==='yes'&&D(S.pyDate)!=null)xh+=c.py?`Professional Year: <b>5 points</b>, until ${fmt(addY(D(S.pyDate),4))}. `:'Professional Year: completed more than 4 years ago, so 0 points. ';
+  if(S.ccl==='yes')xh+=c.ccl?`Community language: <b>5 points</b>${D(S.cclExpiry)!=null?`, until ${fmt(D(S.cclExpiry))}`:''}.`:'Community language: credential expired, so 0 points.';
+  document.getElementById('r-extra').innerHTML=xh?box('','circle-check',xh):'';
+}
+function engResult(){
+  const ty=S.testType;if(!ty)return'';
+  if(ty==='none')return box('warn','alert-triangle','You need at least Competent English before you can be invited. Proficient would add 10 points and Superior 20.');
+  if(ty==='passport')return box('','circle-check','Your passport gives you Competent English, which earns 0 points. To earn points, you\'d need a test showing Proficient or Superior English.');
+  const td=D(S.testDate);if(td==null)return'';
+  if(td>today)return box('bad','alert-circle','That test date is in the future.');
+  const en=english(today);let grid='';
+  const tb=tableFor(ty,td);
+  if(tb){const sc=scores();
+    const scale=ty==='ielts'?'':td>=CUT?', tests taken from 7 Aug 2025':', tests taken before 7 Aug 2025';
+    const cells=(lbl,arr,cls)=>`<div class="l ${cls||''}">${lbl}</div>`+arr.map((v,i)=>`<div class="${cls==='you'?'you':(!isNaN(sc[i])&&sc[i]>=v?'ok':'')}">${isNaN(v)?'–':v}</div>`).join('');
+    grid=`<div class="eg" role="table" aria-label="Your scores against the thresholds"><div class="h"></div><div class="h">L</div><div class="h">R</div><div class="h">W</div><div class="h">S</div>${cells('Your scores',sc,'you')}${cells('Competent',tb.c)}${cells('Proficient',tb.p)}${cells('Superior',tb.s)}</div><p class="m" style="margin-top:6px">Required scores for ${TESTN[ty]}${scale}. Green means you meet that score.</p>`;
+    if(sc.some(isNaN))return grid;}
+  if(!en.level)return grid;
+  let msg;
+  if(en.level==='below')msg=box('bad','alert-circle','Below Competent English in at least one skill. You need Competent English in every skill to be invited.');
+  else if(!en.valid)msg=box('bad','alert-circle',`${LEVELN[en.level]} English, but the test is more than 3 years old, so it can't be used.`);
+  else msg=box(en.pts?'':'neutral','circle-check',`<b>${LEVELN[en.level]} English: ${en.pts} points.</b> This result can be used until ${fmt(en.until)}.`);
+  return grid+msg;
+}
+
+/* score panel */
+function renderPanel(){
+  const t=asAt(),r=pointsAt(t),b=r.base;
+  document.getElementById('asAtLbl').textContent=t===today?'Your points today':`Your points on ${fmt(t)}`;
+  document.getElementById('p189').textContent=b;document.getElementById('p190').textContent=b+5;document.getElementById('p491').textContent=b+15;
+  document.getElementById('pbN').textContent=b;document.getElementById('pbSub').textContent=`190: ${b+5}  491: ${b+15}`;
+  document.getElementById('pass').innerHTML=[['189',b],['190',b+5],['491',b+15]].map(([v,p])=>`<span class="${p>=65?'y':'x'}">${v} ${p>=65?'meets 65':`${65-p} short of 65`}</span>`).join('');
+  document.getElementById('cats').innerHTML=Object.keys(LBL).map(k=>`<div class="cat"><span>${LBL[k]}</span><span class="cb"><span style="width:${r.cats[k]/MAX[k]*100}%"></span></span><span class="n">${r.cats[k]}<span class="m"> / ${MAX[k]}</span></span></div>`).join('');
+  const ck=(v,yes,no,wait)=>`<div class="ck">${v===null?`<i class="ti ti-circle-dashed o" aria-hidden="true"></i><span class="m">${wait}</span>`:v?`<i class="ti ti-circle-check y" aria-hidden="true"></i><span>${yes}</span>`:`<i class="ti ti-circle-x x" aria-hidden="true"></i><span>${no}</span>`}</div>`;
+  document.getElementById('checks').innerHTML=ck(r.elig.age,'Under 45','Not between 18 and 44','Age not entered')+ck(r.elig.english,'Competent English or better','No valid Competent English','English not entered')+ck(r.elig.sa,'Skills assessment valid','Skills assessment expired','Assessment not entered');
+  const ch=changes(t);
+  document.getElementById('nextChange').innerHTML=ch.length?`<div class="ck"><i class="ti ti-calendar-event o" aria-hidden="true"></i><span><b style="font-weight:500">${fmt(ch[0].t)}</b>: ${changeLines(ch[0]).join('. ')}${ch[0].delta?` (${ch[0].delta>0?'+':''}${ch[0].delta}, total ${ch[0].base})`:''}</span></div>`:'<p class="m">No changes in the next 3 years from your answers so far.</p>';
+  let mm='';const now=pointsAt(today).base;
+  if(S.eoi==='yes'&&S.claimed!==''&&!isNaN(+S.claimed)&&+S.claimed!==now)mm=box('warn','alert-triangle',`Your EOI claims ${+S.claimed} points, but your answers add up to ${now}. Check the categories before relying on either.`);
+  document.getElementById('mismatch').innerHTML=mm;
+}
+
+/* review */
+function renderReview(){
+  const t=asAt(),r=pointsAt(t),c=r.cats,en=r.en;
+  const yn=v=>v==='yes'?'Yes':v==='no'?'No':'Not answered';
+  const engAns=!S.testType?'Not answered':S.testType==='passport'?'Passport: Competent English':S.testType==='none'?'No test yet':en.level?`${LEVELN[en.level]}, ${TESTN[S.testType]} taken ${fmt(en.td)}${en.valid?'':' (older than 3 years)'}`:'Scores incomplete';
+  const rows=[
+    ['age',r.a!=null?`${r.a} years old on ${fmt(t)}`:'Not answered',1],
+    ['english',engAns,3],
+    ['employment',`Overseas ${yrs(r.em.osY)}, ${r.em.os} pts. Australia ${yrs(r.em.auY)}, ${r.em.au} pts${r.em.os+r.em.au>20?'. Capped at 20':''}`,5],
+    ['qual',QUAL[S.qual]||'Not answered',4],
+    ['study',yn(S.ausStudy),4],
+    ['regional',S.ausStudy==='yes'?yn(S.regional):'Needs the Australian study requirement',4],
+    ['specialist',yn(S.specialist),4],
+    ['py',S.py==='yes'?(c.py?`Completed ${fmt(D(S.pyDate))}`:'Completed more than 4 years ago'):yn(S.py),7],
+    ['ccl',S.ccl==='yes'?(c.ccl?'Credential held':'Credential expired'):yn(S.ccl),7],
+    ['partner',PARTNER[S.partner]||'Not answered',6]];
+  document.getElementById('rvTable').innerHTML=rows.map(([k,ans,g])=>`<div class="rv"><div><div style="font-weight:500">${LBL[k]}</div><div class="m">${esc(ans)}</div></div><div class="n">${c[k]}<span class="m"> / ${MAX[k]}</span></div><button type="button" class="btn-ghost ed" data-goto="${g}">Edit</button></div>`).join('')+
+  `<div class="rv tot"><div>Total for 189</div><div class="n hero" style="font-size:24px">${r.base}</div><div></div></div><div class="rv" style="border:0;padding-top:0"><div class="m">With state nomination for 190 (+5) or regional nomination for 491 (+15)</div><div class="n m">${r.base+5} / ${r.base+15}</div><div></div></div>`;
+  const ck=(v,yes,no,wait)=>`<div class="ck" style="font-size:14px">${v===null?`<i class="ti ti-circle-dashed o" aria-hidden="true"></i><span class="m">${wait}</span>`:v?`<i class="ti ti-circle-check y" aria-hidden="true"></i><span>${yes}</span>`:`<i class="ti ti-circle-x x" aria-hidden="true"></i><span>${no}</span>`}</div>`;
+  document.getElementById('rvChecks').innerHTML=ck(r.elig.age,'Under 45 on this date','Not between 18 and 44 on this date','Date of birth missing')+ck(r.elig.english,'Competent English or better, with valid evidence','No valid Competent English evidence on this date','English missing')+ck(r.elig.sa,'Skills assessment valid on this date','Skills assessment expired on this date','Assessment date missing')+ck(r.base>=65,`Meets the 65-point pass mark for 189`,`${65-r.base} points short of 65 for 189`,'');
+  const ch=changes(t).map(x=>({t:x.t,lines:changeLines(x),delta:x.delta,base:x.base}));
+  const ve=D(S.visaExpiry);if(S.location==='onshore'&&ve!=null&&ve>t)ch.push({t:ve,lines:['Your current visa ends'],delta:0,info:true});
+  ch.sort((a,b)=>a.t-b.t);
+  document.getElementById('rvTimeline').innerHTML=ch.length?ch.map((x,i)=>{const col=x.info?'var(--text-warning)':x.delta>0?'var(--text-success)':x.delta<0?'var(--text-danger)':'var(--text-danger)';return `<div class="tl"><div class="d n">${fmt(x.t)}</div><div class="ax"><span class="dot" style="background:${col}"></span>${i<ch.length-1?'<span class="ln"></span>':''}</div><div class="bd">${x.lines.map(esc).join('. ')}${x.info?'':x.delta?`<div class="m">${x.delta>0?'+':''}${x.delta} points, total ${x.base} for 189</div>`:''}</div></div>`;}).join(''):'<p class="m">No changes in the next 3 years from your answers.</p>';
+}
+
+/* jobs */
+function renderJobs(){
+  const yn=(i,f,v)=>`<label class="opt"><input type="radio" name="${f}-${i}" value="yes" data-j="${i}.${f}" ${v==='yes'?'checked':''}><b>Yes</b></label><label class="opt"><input type="radio" name="${f}-${i}" value="no" data-j="${i}.${f}" ${v==='no'?'checked':''}><b>No</b></label>`;
+  document.getElementById('jobs').innerHTML=S.jobs.map((j,i)=>`<div class="job">
+<div class="job-h"><b style="font-weight:500">Job ${i+1}</b><button type="button" class="btn-ghost" data-rm="${i}"><i class="ti ti-trash" aria-hidden="true"></i>Remove</button></div>
+<fieldset class="field"><legend>Where was this job?</legend><div class="opts"><label class="opt"><input type="radio" name="where-${i}" value="au" data-j="${i}.where" ${j.where==='au'?'checked':''}><b>In Australia</b></label><label class="opt"><input type="radio" name="where-${i}" value="os" data-j="${i}.where" ${j.where==='os'?'checked':''}><b>Overseas</b></label></div><p class="err" data-jerr="${i}.where"></p></fieldset>
+<div class="field"><label for="jl-${i}">Label <span class="m">Optional, just for you</span></label><input id="jl-${i}" type="text" data-j="${i}.label" value="${esc(j.label||'')}" placeholder="Business analyst, Pune"></div>
+<div class="g2"><div class="field"><label for="js-${i}">Start date</label><input id="js-${i}" type="date" data-j="${i}.start" value="${j.start||''}"><p class="err" data-jerr="${i}.start"></p></div>
+<div class="field"><label for="je-${i}">End date</label><input id="je-${i}" type="date" data-j="${i}.end" value="${j.end||''}" ${j.current?'disabled':''}><label class="chk"><input type="checkbox" data-j="${i}.current" ${j.current?'checked':''}> I still work here</label><p class="err" data-jerr="${i}.end"></p></div></div>
+<fieldset class="field"><legend>At least 20 hours a week?</legend><div class="seg">${yn(i,'hours',j.hours)}</div><p class="err" data-jerr="${i}.hours"></p></fieldset>
+<fieldset class="field"><legend>In your nominated or a closely related occupation?</legend><div class="seg">${yn(i,'related',j.related)}</div><p class="err" data-jerr="${i}.related"></p></fieldset>
+</div>`).join('');
+}
+
+/* bindings */
+function restoreInputs(){
+  document.querySelectorAll('[data-k]').forEach(el=>{const k=el.dataset.k;
+    if(el.type==='radio')el.checked=S[k]===el.value;
+    else if(el.type==='checkbox')el.checked=k==='states'?S.states.includes(el.value):!!S[k];
+    else el.value=S[k]??'';});
+  updateScoreInputs();renderJobs();applyIf();
+}
+function applyIf(){document.querySelectorAll('[data-if]').forEach(el=>{const[k,v]=el.dataset.if.split(':');el.hidden=!v.split('|').includes(String(S[k]??''));});}
+function updateScoreInputs(){
+  const cfg={ielts:{min:0,max:9,step:0.5,ph:'7.5'},pte:{min:10,max:90,step:1,ph:'79'},toefl:{min:0,max:30,step:1,ph:'27'}}[S.testType];if(!cfg)return;
+  ['L','R','W','Sp'].forEach(k=>{const el=document.getElementById('sc-'+k);el.min=cfg.min;el.max=cfg.max;el.step=cfg.step;el.placeholder=cfg.ph;});
+}
+let tmr;function schedule(){clearTimeout(tmr);tmr=setTimeout(()=>{inline();renderPanel();if(step===STEPS.length)renderReview();},100);}
+document.addEventListener('input',e=>{
+  const el=e.target;
+  if(el.dataset.k){const k=el.dataset.k;
+    if(k==='states')S.states=[...document.querySelectorAll('input[data-k="states"]:checked')].map(x=>x.value);
+    else S[k]=el.type==='checkbox'?el.checked:el.value;
+    if(k==='testType')updateScoreInputs();
+    clearErr(el);applyIf();save();schedule();}
+  else if(el.dataset.j){const[i,f]=el.dataset.j.split('.');S.jobs[+i][f]=el.type==='checkbox'?el.checked:el.value;
+    if(f==='current'){if(el.checked)S.jobs[+i].end='';renderJobs();}
+    const er=document.querySelector(`[data-jerr="${i}.${f}"]`);if(er)er.textContent='';
+    save();schedule();}
+});
+document.addEventListener('click',e=>{
+  const rm=e.target.closest('[data-rm]');if(rm){S.jobs.splice(+rm.dataset.rm,1);renderJobs();save();schedule();}
+  const g=e.target.closest('[data-goto]');if(g)show(+g.dataset.goto);
+  const sb=e.target.closest('[data-step-btn]');if(sb&&!sb.disabled)show(+sb.dataset.stepBtn);
+});
+document.getElementById('addJob').addEventListener('click',()=>{S.jobs.push({where:'',label:'',start:'',end:'',current:false,hours:'',related:''});renderJobs();save();schedule();const i=S.jobs.length-1;const f=document.querySelector(`input[name="where-${i}"]`);if(f)f.focus();});
+
+/* validation */
+function fieldWrap(el){return el.closest('.field');}
+function clearErr(el){const w=fieldWrap(el);if(w){const e=w.querySelector(':scope > .err');if(e)e.textContent='';}}
+function setErr(w,msg){let e=w.querySelector(':scope > .err');if(!e){e=document.createElement('p');e.className='err';w.appendChild(e);}e.textContent=msg;}
+function validate(n){
+  const sec=document.querySelector(`.step[data-step="${n}"]`);let first=null;
+  const fail=(w,msg)=>{setErr(w,msg);if(!first)first=w;};
+  sec.querySelectorAll('[data-req]').forEach(w=>{if(w.closest('[hidden]'))return;const k=w.dataset.req,v=S[k];
+    const bad=v==null||v===''||v===false||(Array.isArray(v)&&!v.length);
+    if(bad)fail(w,w.dataset.msg||'Answer this to continue');else setErr(w,'');});
+  const dateFuture=(k,label)=>{const t=D(S[k]);if(t!=null&&t>today){const el=sec.querySelector(`[data-k="${k}"]`);if(el)fail(fieldWrap(el),`${label} can't be in the future`);}};
+  if(n===1)dateFuture('dob','Date of birth');
+  if(n===2)dateFuture('saDate','The outcome date');
+  if(n===3){dateFuture('testDate','The test date');
+    if(['ielts','pte','toefl'].includes(S.testType)){const cfg={ielts:[0,9],pte:[10,90],toefl:[0,30]}[S.testType];const sc=scores();const er=document.getElementById('scoresErr');
+      if(sc.some(isNaN)){er.textContent='Enter all four scores';if(!first)first=document.getElementById('scoresField');}
+      else if(sc.some(v=>v<cfg[0]||v>cfg[1])){er.textContent=`Scores for ${TESTN[S.testType]} run from ${cfg[0]} to ${cfg[1]}`;if(!first)first=document.getElementById('scoresField');}
+      else if(S.testType==='ielts'&&sc.some(v=>v*2%1!==0)){er.textContent='IELTS scores go up in half bands, like 6.5 or 7';if(!first)first=document.getElementById('scoresField');}
+      else er.textContent='';}}
+  if(n===5)S.jobs.forEach((j,i)=>{
+    const je=(f,m)=>{const e=document.querySelector(`[data-jerr="${i}.${f}"]`);if(e)e.textContent=m;if(m&&!first)first=e.closest('.field');};
+    je('where',j.where?'':'Choose where this job was');
+    je('start',!j.start?'Enter a start date':D(j.start)>today?'Start date can\'t be in the future':'');
+    je('end',j.current?'':!j.end?'Enter an end date or tick "I still work here"':(j.start&&D(j.end)<D(j.start))?'End date is before the start date':D(j.end)>today?'End date can\'t be in the future':'');
+    je('hours',j.hours?'':'Choose yes or no');je('related',j.related?'':'Choose yes or no');});
+  if(n===7&&S.py==='yes')dateFuture('pyDate','The completion date');
+  if(n===8&&S.email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(S.email))fail(fieldWrap(document.getElementById('f-email')),'Enter a valid email address');
+  if(first){first.scrollIntoView({behavior:'smooth',block:'center'});const f=first.querySelector('input,select');if(f)f.focus({preventScroll:true});return false;}
+  return true;
+}
+
+/* steps */
+function renderStepList(){
+  document.getElementById('stepList').innerHTML=STEPS.map((s,i)=>{const n=i+1;const cls=n===step?'cur':n<=reached?'done':'';return `<li><button type="button" class="${cls}" data-step-btn="${n}" ${n>reached?'disabled':''}${n===step?' aria-current="step"':''}>${n}. ${s}</button></li>`;}).join('');
+}
+function show(n){
+  step=n;document.getElementById('flow').hidden=false;document.getElementById('done').hidden=true;
+  document.querySelectorAll('.step').forEach(s=>s.hidden=+s.dataset.step!==n);
+  document.getElementById('stepLbl').textContent=`Step ${n} of ${STEPS.length}`;
+  document.getElementById('stepName').textContent=STEPS[n-1];
+  document.getElementById('barFill').style.width=(n/STEPS.length*100)+'%';
+  document.getElementById('back').hidden=n===1;
+  document.getElementById('next').textContent=n===STEPS.length?'See my free preview':'Continue';
+  renderStepList();if(n===STEPS.length)renderReview();
+  document.getElementById('formTop').scrollIntoView({behavior:'smooth',block:'start'});
+  const h=document.querySelector(`.step[data-step="${n}"] h2`);if(h)h.focus({preventScroll:true});
+}
+document.getElementById('next').addEventListener('click',()=>{
+  if(!validate(step))return;
+  if(step<STEPS.length){reached=Math.max(reached,step+1);save();show(step+1);}
+  else{document.getElementById('flow').hidden=true;document.getElementById('done').hidden=false;document.getElementById('formTop').scrollIntoView({behavior:'smooth'});}
+});
+document.getElementById('back').addEventListener('click',()=>show(Math.max(1,step-1)));
+document.getElementById('editAgain').addEventListener('click',()=>show(STEPS.length));
+document.getElementById('sample').addEventListener('click',()=>{S=Object.assign(blank(),JSON.parse(JSON.stringify(SAMPLE)));reached=STEPS.length;save();restoreInputs();inline();renderPanel();show(step);});
+document.getElementById('reset').addEventListener('click',()=>{S=blank();reached=1;save();restoreInputs();inline();renderPanel();show(1);});
+document.getElementById('pbar').addEventListener('click',()=>{const p=document.getElementById('panel');const o=p.classList.toggle('open');document.getElementById('pbar').setAttribute('aria-expanded',String(o));});
+
+/* preview toggle */
+const app=document.getElementById('app'),vD=document.getElementById('vD'),vM=document.getElementById('vM');
+function setView(m){app.style.maxWidth=m?'390px':'1100px';vD.classList.toggle('on',!m);vM.classList.toggle('on',m);vD.setAttribute('aria-pressed',String(!m));vM.setAttribute('aria-pressed',String(m));}
+vD.addEventListener('click',()=>setView(false));vM.addEventListener('click',()=>setView(true));
+
+restoreInputs();inline();renderPanel();show(1);
+</script>
+</body>
+</html>

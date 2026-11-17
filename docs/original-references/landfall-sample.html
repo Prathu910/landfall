@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sample report | Landfall</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css">
+<style>
+:root{--surface-0:#ebe9e3;--surface-1:#f5f4f0;--surface-2:#fff;--text-primary:#1b1b19;--text-secondary:#57564f;--text-muted:#8b8a83;--text-success:#3B6D11;--text-warning:#854F0B;--text-accent:#185FA5;--text-danger:#A32D2D;--bg-success:#EAF3DE;--bg-warning:#FAEEDA;--bg-accent:#E6F1FB;--border:rgba(27,27,25,.1);--border-strong:rgba(27,27,25,.18);--border-stronger:rgba(27,27,25,.4);--radius:8px;--brand:#0F6E56;--font-sans:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',sans-serif;--font-voice:'Source Serif 4',Georgia,serif;color-scheme:light}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--surface-0);color:var(--text-primary);font-family:var(--font-sans);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-weight:500;line-height:1.3;margin:0}
+h3{font-size:18px}h4{font-size:15px}
+p{margin:0}
+a{color:var(--text-accent)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+button{font:inherit;font-size:14px;line-height:1;padding:9px 14px;border-radius:var(--radius);border:0.5px solid var(--border-stronger);background:transparent;color:var(--text-primary);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+button:hover{background:var(--surface-1)}
+button:focus-visible,a:focus-visible{outline:2px solid var(--text-accent);outline-offset:2px}
+button .ti{font-size:16px}
+.btn-primary{background:var(--brand);border-color:var(--brand);color:#fff}.btn-primary:hover{background:#085041}
+.toolbar{display:flex;justify-content:center;align-items:center;gap:8px;padding:16px 12px;font-size:13px;color:var(--text-secondary)}
+.toolbar button.on{background:var(--surface-2);border-color:var(--text-primary)}
+.rp{container-type:inline-size;max-width:880px;margin:0 auto 40px;background:var(--surface-2);border:0.5px solid var(--border);border-radius:12px;transition:max-width .25s ease}
+.stick{position:sticky;top:0;z-index:10;background:var(--surface-2);border-bottom:0.5px solid var(--border);border-radius:12px 12px 0 0}
+.apphdr{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 28px}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{width:28px;height:28px;border-radius:8px;background:var(--brand);display:flex;align-items:center;justify-content:center;color:#E1F5EE;font-size:17px}
+.toc{position:relative;display:flex;gap:6px;padding:0 28px 12px;overflow-x:auto;scrollbar-width:none}.toc::-webkit-scrollbar{display:none}
+.toc a{flex:none;font-size:13px;padding:5px 10px;border-radius:var(--radius);color:var(--text-secondary);border:0.5px solid var(--border);text-decoration:none}
+.toc a.on{color:var(--text-primary);border-color:var(--border-stronger);background:var(--surface-1)}
+main{padding:32px 36px 36px}
+.part+.part{border-top:1px solid var(--border-strong);margin-top:44px;padding-top:36px}
+.partlbl{font-size:13px;color:var(--text-secondary);margin-bottom:2px}
+.parttitle{font-family:var(--font-voice);font-size:28px;font-weight:400;margin-bottom:4px}
+h1.cover{font-family:var(--font-voice);font-size:34px;font-weight:400;line-height:1.2;margin:4px 0 10px}
+[id]{scroll-margin-top:112px}
+.n{font-variant-numeric:tabular-nums lining-nums}
+.hero{font-family:var(--font-voice);font-variant-numeric:tabular-nums lining-nums;line-height:1.05}
+.sec{border-top:0.5px solid var(--border);margin-top:28px;padding-top:22px}.sec.first{border-top:0;margin-top:20px;padding-top:0}
+.sh{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:8px}
+.card{background:var(--surface-1);border-radius:12px;padding:14px 16px}
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.qrow{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:28px;align-items:start}
+.lede{font-size:15px;line-height:1.6;margin:0 0 16px;max-width:64ch}
+.m{font-size:13px;color:var(--text-secondary);line-height:1.5}
+.pill{font-size:12px;line-height:1.5;padding:2px 8px;border-radius:var(--radius);white-space:nowrap}
+.ok{background:var(--bg-success);color:var(--text-success)}.mid{background:var(--bg-warning);color:var(--text-warning)}.info{background:var(--bg-accent);color:var(--text-accent)}.neu{border:0.5px solid var(--border-strong);color:var(--text-secondary)}
+.row{display:flex;justify-content:space-between;gap:12px;font-size:14px;padding:8px 0;border-bottom:0.5px solid var(--border)}
+.cf{display:inline-flex;gap:2px;vertical-align:-1px;margin-right:6px}.cf span{width:4px;height:11px;border-radius:1px;background:var(--border-strong)}.cf span.f{background:var(--text-secondary)}
+.lg{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--text-secondary)}.lg>span{display:flex;align-items:center;gap:5px}
+.sw{width:10px;height:10px;border-radius:2px;display:inline-block}
+.tl{display:grid;grid-template-columns:108px 12px minmax(0,1fr);column-gap:12px}.tl .d{font-size:13px;color:var(--text-secondary);padding-top:1px}.tl .ax{display:flex;flex-direction:column;align-items:center}.tl .dot{width:10px;height:10px;border-radius:50%;margin-top:5px;flex:none}.tl .ln{flex:1;width:1px;background:var(--border-strong);margin-top:4px}.tl .bd{padding-bottom:18px}.tl .t{font-size:15px;font-weight:500;margin:0 0 2px}
+.ar{display:grid;grid-template-columns:minmax(0,1fr) 120px 64px;gap:14px;align-items:center;padding:10px 0;border-bottom:0.5px solid var(--border)}.ar .bar{height:6px;border-radius:3px;background:var(--border)}.ar .bar span{display:block;height:100%;background:#1D9E75;border-radius:3px}.ar .sc{text-align:right;font-size:15px}.ar .nm{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.ar .nm b{font-size:14px;font-weight:500}
+.sb{display:grid;grid-template-columns:minmax(0,210px) minmax(0,1fr) 64px;gap:12px;align-items:center;padding:7px 0;font-size:14px}.sb .tr span{display:block;height:14px;border-radius:0 4px 4px 0;min-width:3px}.sb .v{text-align:right}
+.st{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1.5fr) 120px;gap:14px;align-items:center;padding:11px 0;border-bottom:0.5px solid var(--border)}.st .fit{text-align:right}.st b{font-size:14px;font-weight:500;display:block}
+.tc{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) minmax(0,1.2fr) 22px;gap:10px;align-items:center;font-size:13px;padding:8px 0;border-bottom:0.5px solid var(--border)}
+.hb{display:grid;grid-template-columns:64px minmax(0,1fr) 52px;gap:10px;align-items:center;font-size:13px;padding:4px 0}.hb .tr span{display:block;height:12px;border-radius:0 4px 4px 0;background:rgba(27,27,25,.3)}.hb .v{text-align:right}
+.ih{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;font-size:14px;padding:8px 0;border-bottom:0.5px solid var(--border)}
+.ro{display:grid;grid-template-columns:minmax(0,1.6fr) 64px 72px 56px;gap:10px;align-items:center;font-size:13px;padding:9px 0;border-bottom:0.5px solid var(--border)}.ro>span:not(:first-child){text-align:right}
+.wc{display:grid;grid-template-columns:170px minmax(0,1fr);gap:14px;padding:11px 0;border-bottom:0.5px solid var(--border)}.wc b{font-size:14px;font-weight:500;display:block}
+.dl{display:flex;gap:10px;align-items:flex-start;font-size:14px;padding:8px 0;border-bottom:0.5px solid var(--border)}.dl .ti{font-size:18px;color:var(--text-secondary);margin-top:1px}
+.tk{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) 22px;gap:10px;align-items:center;font-size:14px;padding:8px 0;border-bottom:0.5px solid var(--border)}
+.ic{font-size:18px}.ic.y{color:var(--text-success)}.ic.x{color:var(--text-danger)}
+.gl dt{font-size:14px;font-weight:500;margin:0}.gl dd{margin:0 0 12px;font-size:13px;color:var(--text-secondary);line-height:1.5}
+.foot{font-size:12px;color:var(--text-muted);line-height:1.6;padding:0 36px 28px}
+.last{border-bottom:0!important}
+@container (max-width:560px){
+main{padding:20px 16px 24px}.apphdr{padding:10px 16px}.toc{padding:0 16px 10px}.foot{padding:0 16px 20px}
+.g2,.g3,.qrow{grid-template-columns:minmax(0,1fr)}.g4{grid-template-columns:repeat(2,minmax(0,1fr))}
+.hide-m{display:none}.big{font-size:44px!important}h1.cover{font-size:28px}.parttitle{font-size:23px}
+.tl{grid-template-columns:82px 12px minmax(0,1fr)}
+.ar{grid-template-columns:minmax(0,1fr) 64px}.ar .bar{grid-column:1/-1;grid-row:2}
+.sb{grid-template-columns:minmax(0,1fr) 64px}.sb .tr{grid-column:1/-1;grid-row:2}
+.st{grid-template-columns:minmax(0,1fr) auto}.st .lt{grid-column:1/-1;grid-row:2}
+.ro{grid-template-columns:minmax(0,1fr) 56px 54px 46px;font-size:12px}
+.wc{grid-template-columns:minmax(0,1fr);gap:2px}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.rp{transition:none}}
+@media print{
+@page{size:A4;margin:14mm}
+body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.toolbar,.toc,.noprint{display:none!important}
+.stick{position:static;border-radius:0}
+.rp{border:0;max-width:none!important;margin:0}
+main{padding:12px 0 0}.apphdr{padding:0 0 10px}.foot{padding:16px 0 0}
+.part+.part{break-before:page;border-top:0;margin-top:0;padding-top:0}
+.card,.ar,.st,.tc,.tl,.row,.hb,.ih,.ro,.tk,.wc,.dl,.sb,svg,.g3,.g4{break-inside:avoid}
+.sh,h2,h3,h4{break-after:avoid}
+}
+</style>
+</head>
+<body>
+<div class="toolbar noprint"><span>Preview as</span><button id="bD" class="on" aria-pressed="true"><i class="ti ti-device-desktop" aria-hidden="true"></i>Desktop</button><button id="bM" aria-pressed="false"><i class="ti ti-device-mobile" aria-hidden="true"></i>Mobile</button></div>
+
+<div class="rp" id="rp">
+<div class="stick">
+<header class="apphdr">
+<div class="brand"><span class="logo"><i class="ti ti-route" aria-hidden="true"></i></span><span style="font-weight:500">Landfall</span><span class="pill mid">Sample report</span></div>
+<div style="display:flex;gap:12px;align-items:center"><span class="m hide-m">Data as at October 2026</span><button class="btn-primary noprint" onclick="window.print()"><i class="ti ti-download" aria-hidden="true"></i>Download PDF</button></div>
+</header>
+<nav class="toc" aria-label="Report sections">
+<a href="#summary">Summary</a><a href="#key-dates">Key dates</a><a href="#points">Points</a><a href="#s189">189</a><a href="#states">190 and 491</a><a href="#occupation">Occupation</a><a href="#planning">Planning</a><a href="#method">Method</a>
+</nav>
+</div>
+
+<main>
+
+<section class="part" id="cover">
+<h1 class="cover">Your skilled migration report</h1>
+<p class="lede" style="color:var(--text-secondary)">Prepared for Aarav M., ICT Business Analyst (261111), on 16 November 2026. Report LF-2611-0418, version 1.</p>
+<div class="g4">
+<div class="card"><div class="hero" style="font-size:28px">7,774</div><div class="m" style="font-size:12px;margin-top:4px">EOIs in your occupation's 189 pool</div></div>
+<div class="card"><div class="hero" style="font-size:28px">36</div><div class="m" style="font-size:12px;margin-top:4px">invitation rounds analysed</div></div>
+<div class="card"><div class="hero" style="font-size:28px">8</div><div class="m" style="font-size:12px;margin-top:4px">state and territory programs checked</div></div>
+<div class="card"><div class="hero" style="font-size:28px">11</div><div class="m" style="font-size:12px;margin-top:4px">years of visa grant data</div></div>
+</div>
+<p class="m" style="margin-top:12px">Data as at the October 2026 SkillSelect snapshot and the 15 October 2026 invitation round. Free refreshes until 16 February 2027.</p>
+<div class="sec"><div class="sh"><h3>What's inside</h3><span class="m">15 pages</span></div>
+<div class="g2" style="row-gap:20px;column-gap:28px">
+<div><h4 style="font-size:14px;margin-bottom:2px">Part 1: your answer</h4><div class="row"><span>Summary</span><span class="n m">2</span></div><div class="row"><span>Your key dates</span><span class="n m">3</span></div></div>
+<div><h4 style="font-size:14px;margin-bottom:2px">Part 2: your points</h4><div class="row"><span>Points audit</span><span class="n m">4</span></div><div class="row"><span>Points scenarios</span><span class="n m">5</span></div><div class="row"><span>Old vs new points test</span><span class="n m">5</span></div></div>
+<div><h4 style="font-size:14px;margin-bottom:2px">Part 3: your pathways</h4><div class="row"><span>189 skilled independent</span><span class="n m">6</span></div><div class="row"><span>190 and 491 by state</span><span class="n m">7</span></div><div class="row"><span>Other pathways</span><span class="n m">9</span></div></div>
+<div><h4 style="font-size:14px;margin-bottom:2px">Part 4: your occupation</h4><div class="row"><span>Your occupation's pool</span><span class="n m">10</span></div><div class="row"><span>Invitation history</span><span class="n m">11</span></div><div class="row"><span>People like you</span><span class="n m">11</span></div><div class="row"><span>Related occupations</span><span class="n m">12</span></div></div>
+<div><h4 style="font-size:14px;margin-bottom:2px">Part 5: planning ahead</h4><div class="row"><span>What could change</span><span class="n m">13</span></div><div class="row"><span>If you're invited</span><span class="n m">13</span></div><div class="row"><span>Our track record</span><span class="n m">14</span></div></div>
+<div><h4 style="font-size:14px;margin-bottom:2px">Appendix</h4><div class="row"><span>Glossary</span><span class="n m">15</span></div><div class="row"><span>Method and sources</span><span class="n m">15</span></div></div>
+</div></div>
+</section>
+
+<section class="part" id="p1">
+<p class="partlbl">Part 1 of 5</p><h2 class="parttitle">Your answer</h2>
+
+<section class="sec first" id="summary">
+<div class="sh"><h3>Summary</h3><span class="m n">Page 2</span></div>
+<p style="font-family:var(--font-voice);font-size:21px;line-height:1.4;margin:4px 0 16px">Your best near-term chance is state nomination, not 189.</p>
+<div class="g3">
+<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px"><span class="m">189 independent</span><span class="pill neu">Slow</span></div><div class="hero" style="font-size:30px">1,940</div><div class="m" style="margin:4px 0 10px">EOIs ahead of you at 90 points</div><p style="font-size:13px;margin:0 0 10px;line-height:1.5">Cut-offs for your occupation have stayed at 95 or above for a year.</p><div class="m" style="font-size:12px"><span class="cf"><span class="f"></span><span class="f"></span><span class="f"></span></span>High confidence</div></div>
+<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px"><span class="m">190 state nominated</span><span class="pill mid">Possible</span></div><div class="hero" style="font-size:30px">4 of 6</div><div class="m" style="margin:4px 0 10px">traits match recent VIC invitees</div><p style="font-size:13px;margin:0 0 10px;line-height:1.5">Victoria is the only state listing your occupation for 190 this year.</p><div class="m" style="font-size:12px"><span class="cf"><span class="f"></span><span class="f"></span><span></span></span>Medium confidence</div></div>
+<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px"><span class="m">491 regional</span><span class="pill ok">Good</span></div><div class="hero" style="font-size:30px">105</div><div class="m" style="margin:4px 0 10px">points with regional nomination</div><p style="font-size:13px;margin:0 0 10px;line-height:1.5">Above the last reported cut-offs in SA and QLD.</p><div class="m" style="font-size:12px"><span class="cf"><span class="f"></span><span></span><span></span></span>Low confidence, community-reported</div></div>
+</div>
+</section>
+
+<section class="sec" id="key-dates">
+<div class="sh"><h3>Your key dates</h3><span class="m n">Page 3</span></div>
+<p class="lede">Dates from your own details that change your points, your eligibility or your outlook.</p>
+<div style="background:var(--bg-warning);border-radius:12px;padding:14px 16px;margin-bottom:18px"><p style="font-size:14px;line-height:1.6;color:var(--text-warning)"><i class="ti ti-alert-triangle" aria-hidden="true" style="margin-right:6px"></i>Your estimated 189 window overlaps your 33rd birthday. From 9 August 2027 your 189 score falls to 85, which would put about 2,250 EOIs on higher points ahead of you, unless you gain points before then.</p></div>
+<div class="lg" style="margin-bottom:16px;font-size:13px">
+<span><span class="sw" style="border-radius:50%;background:var(--text-success)"></span>Points gain</span>
+<span><span class="sw" style="border-radius:50%;background:var(--text-danger)"></span>Points loss</span>
+<span><span class="sw" style="border-radius:50%;background:var(--text-warning)"></span>Expiry</span>
+<span><span class="sw" style="border-radius:50%;background:var(--text-accent)"></span>Estimate or policy</span>
+</div>
+<div class="tl"><div class="d n">14 Mar 2026</div><div class="ax"><span class="dot" style="background:var(--text-muted)"></span><span class="ln"></span></div><div class="bd"><p class="t">Your date of effect</p><div class="m">Australian experience reached one year, taking your 189 score to 90.</div></div></div>
+<div class="tl"><div class="d n">16 Nov 2026</div><div class="ax"><span class="dot" style="background:var(--text-primary)"></span><span class="ln"></span></div><div class="bd"><p class="t">This report</p><div class="m">90 points for 189, 95 for 190 and 105 for 491.</div></div></div>
+<div class="tl"><div class="d n">Apr 2027 to Feb 2028</div><div class="ax"><span class="dot" style="background:var(--text-accent)"></span><span class="ln"></span></div><div class="bd"><p class="t">Estimated 189 window</p><div class="m">If cut-offs for your occupation ease to 90. Medium confidence.</div></div></div>
+<div class="tl"><div class="d n">1 Jul 2027</div><div class="ax"><span class="dot" style="background:var(--text-accent)"></span><span class="ln"></span></div><div class="bd"><p class="t">New points test expected</p><div class="m">Your score may be recalculated. This report updates once the final rules are published.</div></div></div>
+<div class="tl"><div class="d n">9 Aug 2027</div><div class="ax"><span class="dot" style="background:var(--text-danger)"></span><span class="ln"></span></div><div class="bd"><p class="t">You turn 33</p><div class="m">Age points fall from 30 to 25. Your scores become 85 for 189, 90 for 190 and 100 for 491.</div></div></div>
+<div class="tl"><div class="d n">30 Sep 2027</div><div class="ax"><span class="dot" style="background:var(--text-warning)"></span><span class="ln"></span></div><div class="bd"><p class="t">Your subclass 485 visa expires</p><div class="m">Your current visa's end date, shown against your estimated windows above.</div></div></div>
+<div class="tl"><div class="d n">2 Feb 2028</div><div class="ax"><span class="dot" style="background:var(--text-warning)"></span><span class="ln"></span></div><div class="bd"><p class="t">Your English test turns three years old</p><div class="m">After this date your PTE result can no longer be used for points.</div></div></div>
+<div class="tl"><div class="d n">14 Mar 2028</div><div class="ax"><span class="dot" style="background:var(--text-success)"></span></div><div class="bd" style="padding-bottom:0"><p class="t">Three years of Australian experience</p><div class="m">Plus 5 points under the current test. Categories may differ if the new test is in effect by then.</div></div></div>
+</section>
+</section>
+
+<section class="part" id="points">
+<p class="partlbl">Part 2 of 5</p><h2 class="parttitle">Your points</h2>
+
+<section class="sec first">
+<div class="sh"><h3>Points audit</h3><span class="m n">Page 4</span></div>
+<div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:6px 0 4px"><span class="hero" style="font-size:52px">90</span><span class="m" style="font-size:15px">points for 189, plus 5 with 190 nomination or 15 with 491 nomination</span></div>
+<p class="lede">How each category of the current points test scores you. Two categories you haven't claimed are open to you.</p>
+<div class="lg" style="font-size:13px;margin-bottom:6px"><span><span class="pill ok">Claimed</span> counted in your score</span><span><span class="pill info">Possible</span> open to your profile</span><span><span class="pill neu">Not applicable</span> doesn't fit your profile</span></div>
+<div class="ar"><div><div class="nm"><b>Age</b><span class="pill ok">Claimed</span></div><div class="m">32, in the 25 to 32 bracket</div></div><div class="bar"><span style="width:100%"></span></div><div class="sc n">30 <span class="m">/ 30</span></div></div>
+<div class="ar"><div><div class="nm"><b>English</b><span class="pill ok">Claimed</span></div><div class="m">Superior, PTE taken 2 Feb 2025</div></div><div class="bar"><span style="width:100%"></span></div><div class="sc n">20 <span class="m">/ 20</span></div></div>
+<div class="ar"><div><div class="nm"><b>Qualification</b><span class="pill ok">Claimed</span></div><div class="m">Master's degree</div></div><div class="bar"><span style="width:75%"></span></div><div class="sc n">15 <span class="m">/ 20</span></div></div>
+<div class="ar"><div><div class="nm"><b>Overseas experience</b><span class="pill ok">Claimed</span></div><div class="m">3 years as an ICT business analyst</div></div><div class="bar"><span style="width:33%"></span></div><div class="sc n">5 <span class="m">/ 15</span></div></div>
+<div class="ar"><div><div class="nm"><b>Australian experience</b><span class="pill ok">Claimed</span></div><div class="m">1 year; overseas and Australian combined cap at 20</div></div><div class="bar"><span style="width:25%"></span></div><div class="sc n">5 <span class="m">/ 20</span></div></div>
+<div class="ar"><div><div class="nm"><b>Australian study</b><span class="pill ok">Claimed</span></div><div class="m">Requirement met</div></div><div class="bar"><span style="width:100%"></span></div><div class="sc n">5 <span class="m">/ 5</span></div></div>
+<div class="ar"><div><div class="nm"><b>Partner</b><span class="pill ok">Claimed</span></div><div class="m">Single</div></div><div class="bar"><span style="width:100%"></span></div><div class="sc n">10 <span class="m">/ 10</span></div></div>
+<div class="ar"><div><div class="nm"><b>Professional Year</b><span class="pill info">Possible</span></div><div class="m">Not completed</div></div><div class="bar"><span style="width:0"></span></div><div class="sc n">0 <span class="m">/ 5</span></div></div>
+<div class="ar"><div><div class="nm"><b>Community language</b><span class="pill info">Possible</span></div><div class="m">No NAATI credential yet</div></div><div class="bar"><span style="width:0"></span></div><div class="sc n">0 <span class="m">/ 5</span></div></div>
+<div class="ar"><div><div class="nm"><b>Specialist education</b><span class="pill neu">Not applicable</span></div><div class="m">No Australian research degree</div></div><div class="bar"><span style="width:0"></span></div><div class="sc n">0 <span class="m">/ 10</span></div></div>
+<div class="ar last"><div><div class="nm"><b>Regional study</b><span class="pill neu">Not applicable</span></div><div class="m">Studied in Melbourne</div></div><div class="bar"><span style="width:0"></span></div><div class="sc n">0 <span class="m">/ 5</span></div></div>
+</section>
+
+<section class="sec">
+<div class="sh"><h3>Points scenarios</h3><span class="m n">Page 5</span></div>
+<p class="lede">How each points change would move you in the 189 queue, using the October 2026 pool.</p>
+<div class="m" style="margin-bottom:6px">EOIs ahead of you</div>
+<div class="sb"><span>Today, 90 points</span><div class="tr"><span style="width:86%;background:var(--text-secondary)"></span></div><span class="v n">1,940</span></div>
+<div class="sb"><span>With community language, 95</span><div class="tr"><span style="width:19%;background:#1D9E75"></span></div><span class="v n">420</span></div>
+<div class="sb"><span>With Professional Year, 95</span><div class="tr"><span style="width:19%;background:#1D9E75"></span></div><span class="v n">420</span></div>
+<div class="sb"><span>With both, 100</span><div class="tr"><span style="width:3%;background:#1D9E75"></span></div><span class="v n">60</span></div>
+<div class="sb"><span>From 9 Aug 2027, 85</span><div class="tr"><span style="width:100%;background:#E24B4A"></span></div><span class="v n">2,250+</span></div>
+<p class="m" style="margin:10px 0 18px">Assumes the rest of the pool stays as it is. New EOIs, rounds and policy changes will move these numbers.</p>
+<div class="g2">
+<div class="card"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><i class="ti ti-language" aria-hidden="true" style="font-size:18px;color:var(--text-secondary)"></i><span style="font-size:14px;font-weight:500">Community language</span></div><p class="m">Worth 5 points. Requires a NAATI credentialled community language test in a language you speak.</p></div>
+<div class="card"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><i class="ti ti-school" aria-hidden="true" style="font-size:18px;color:var(--text-secondary)"></i><span style="font-size:14px;font-weight:500">Professional Year</span></div><p class="m">Worth 5 points. Requires completing an approved Professional Year program in your field.</p></div>
+</div>
+</section>
+
+<section class="sec">
+<div class="sh"><h3>Old vs new points test</h3><span class="m n">Page 5</span></div>
+<p class="lede">The government has announced a redesigned points test, expected from 1 July 2027. Its stated aim is to favour younger, higher-skilled and more highly educated applicants.</p>
+<div class="g2">
+<div class="card"><div class="m">Current test</div><div class="hero" style="font-size:44px;margin:6px 0">90</div><div class="m">Calculated from your details</div></div>
+<div style="border:0.5px dashed var(--border-stronger);border-radius:12px;padding:14px 16px"><div class="m">New test</div><div class="hero" style="font-size:44px;margin:6px 0;color:var(--text-muted)">Pending</div><div class="m">Calculated once the final rules are published. You'll get an updated report.</div></div>
+</div>
+</section>
+</section>
+
+<section class="part" id="pathways">
+<p class="partlbl">Part 3 of 5</p><h2 class="parttitle">Your pathways</h2>
+
+<section class="sec first" id="s189">
+<div class="sh"><h3>189 skilled independent</h3><span class="m n">Page 6</span></div>
+<div class="qrow" style="margin-top:12px">
+<div>
+<div class="hero big" style="font-size:56px">1,940</div>
+<p style="font-size:15px;margin:6px 0 14px;line-height:1.6">EOIs for your occupation rank ahead of you: 1,630 with more points, plus 310 on 90 points with an earlier date of effect.</p>
+<div style="display:flex;height:12px;gap:2px;border-radius:4px;overflow:hidden;margin-bottom:8px" role="img" aria-label="Queue of 7,774 EOIs: 1,630 with more points, 310 on equal points with an earlier date, then you, then 5,833 behind"><span style="width:21%;background:#0F6E56"></span><span style="width:4%;background:#5DCAA5"></span><span style="width:3px;background:var(--text-primary)"></span><span style="flex:1;background:var(--border-strong)"></span></div>
+<div class="lg"><span><span class="sw" style="background:#0F6E56"></span>More points <span class="n">1,630</span></span><span><span class="sw" style="background:#5DCAA5"></span>Same points, earlier <span class="n">310</span></span><span><span class="sw" style="background:var(--border-strong)"></span>Behind you <span class="n">5,833</span></span></div>
+</div>
+<div class="card">
+<h4 style="margin:0 0 6px">Occupation ceiling, 2026-27</h4>
+<div class="row"><span>Ceiling</span><span class="n">1,250</span></div>
+<div class="row"><span>Invited so far, estimated</span><span class="n">230</span></div>
+<div class="row last"><span>Places remaining, estimated</span><span class="n" style="color:var(--text-success)">1,020</span></div>
+</div>
+</div>
+<h4 style="margin:26px 0 4px">Lowest points invited for your occupation, last six rounds</h4>
+<div class="lg" style="margin-bottom:4px"><span><span class="sw" style="border-radius:50%;background:var(--text-primary)"></span>Cut-off</span><span><span class="sw" style="border-radius:50%;border:1.5px solid var(--text-muted)"></span>Not invited that round</span><span><span style="width:14px;border-top:2px dashed #1D9E75"></span>Your 90 points</span></div>
+<svg viewBox="0 0 600 210" width="100%" role="img" aria-label="Cut-offs: Nov 2025 95, Jan 2026 not invited, Apr 2026 95, Jun 2026 100, Aug 2026 not invited, Oct 2026 95. Your score is 90.">
+<g style="stroke:var(--border)" stroke-width="1"><line x1="44" y1="140" x2="590" y2="140"/><line x1="44" y1="80" x2="590" y2="80"/><line x1="44" y1="50" x2="590" y2="50"/><line x1="44" y1="170" x2="590" y2="170"/></g>
+<g style="fill:var(--text-muted)" font-size="12" text-anchor="end"><text x="36" y="174">80</text><text x="36" y="144">85</text><text x="36" y="114">90</text><text x="36" y="84">95</text><text x="36" y="54">100</text></g>
+<line x1="44" y1="110" x2="590" y2="110" stroke="#1D9E75" stroke-width="2" stroke-dasharray="6 5"/>
+<g style="fill:var(--text-primary)"><circle cx="80" cy="80" r="5"/><circle cx="278" cy="80" r="5"/><circle cx="377" cy="50" r="5"/><circle cx="575" cy="80" r="5"/></g>
+<g style="stroke:var(--text-muted);fill:var(--surface-2)" stroke-width="1.5"><circle cx="179" cy="170" r="5"/><circle cx="476" cy="170" r="5"/></g>
+<g style="fill:var(--text-primary)" font-size="12" text-anchor="middle"><text x="80" y="68">95</text><text x="278" y="68">95</text><text x="377" y="38">100</text><text x="560" y="68">95</text></g>
+<g style="fill:var(--text-muted)" font-size="12" text-anchor="middle"><text x="80" y="198">Nov 25</text><text x="179" y="198">Jan 26</text><text x="278" y="198">Apr 26</text><text x="377" y="198">Jun 26</text><text x="476" y="198">Aug 26</text><text x="560" y="198">Oct 26</text></g>
+</svg>
+<p style="font-size:14px;margin-top:10px;padding-top:12px;border-top:0.5px solid var(--border)"><span class="cf"><span class="f"></span><span class="f"></span><span></span></span>Estimated wait: 4 to 7 rounds, if cut-offs ease to 90. Your age change on 9 Aug 2027 falls inside this window.</p>
+</section>
+
+<section class="sec" id="states">
+<div class="sh"><h3>190 and 491 by state</h3><span class="m n">Pages 7 to 8</span></div>
+<p class="lede">Your occupation is on one state list for 190 and five for 491. Two more states would need you to live there first.</p>
+<div class="st hide-m" style="padding:4px 0" aria-hidden="true"><span class="m">State</span><span class="m">Latest reported invitation</span><span class="m" style="text-align:right">Your fit</span></div>
+<div class="st"><div><b>Victoria</b><div class="m">190 and 491. Onshore applicants prioritised.</div></div><div class="lt m">190 invites at similar profiles, 10 Nov 2026 <span class="pill neu">Community</span></div><div class="fit"><span class="pill mid">Possible</span></div></div>
+<div class="st"><div><b>South Australia</b><div class="m">491 only. Onshore applicants only.</div></div><div class="lt m">491 at 105 points, 29 Apr 2026 <span class="pill neu">Community</span></div><div class="fit"><span class="pill ok">Good</span></div></div>
+<div class="st"><div><b>Queensland</b><div class="m">491 only. Onshore applicants only.</div></div><div class="lt m">491 at 95 points, 5 May 2026 <span class="pill neu">Community</span></div><div class="fit"><span class="pill ok">Good</span></div></div>
+<div class="st"><div><b>New South Wales</b><div class="m">491 only. Onshore and offshore.</div></div><div class="lt m">491 at 95 points, 7 Apr 2026 <span class="pill neu">Community</span></div><div class="fit"><span class="pill mid">Possible</span></div></div>
+<div class="st"><div><b>Northern Territory</b><div class="m">491 only.</div></div><div class="lt m">Too few reports to estimate</div><div class="fit"><span class="pill neu">Limited data</span></div></div>
+<div class="st"><div><b>Western Australia</b><div class="m">Not on the 2026-27 list.</div></div><div class="lt m">Published list, 1 Jul 2026 <span class="pill neu">Official</span></div><div class="fit"><span class="pill neu">Not listed</span></div></div>
+<div class="st"><div><b>Tasmania</b><div class="m">Requires living in Tasmania.</div></div><div class="lt m">Published criteria <span class="pill neu">Official</span></div><div class="fit"><span class="pill neu">Not eligible now</span></div></div>
+<div class="st last"><div><b>Australian Capital Territory</b><div class="m">Requires living in Canberra.</div></div><div class="lt m">Published criteria <span class="pill neu">Official</span></div><div class="fit"><span class="pill neu">Not eligible now</span></div></div>
+<div class="card" style="margin-top:20px">
+<h4 style="margin:0 0 4px">How you compare with reported Victorian 190 invitees</h4>
+<p class="m" style="margin:0 0 6px">You match 4 of 6 traits. Based on 64 community reports since July 2026.</p>
+<div class="tc" aria-hidden="true"><span class="m">Trait</span><span class="m">You</span><span class="m">Typical invitee</span><span></span></div>
+<div class="tc"><span>Points for 190</span><span class="n">95</span><span class="n">median 90</span><i class="ti ti-circle-check ic y" aria-label="Match"></i></div>
+<div class="tc"><span>English</span><span>Superior</span><span>mostly Superior</span><i class="ti ti-circle-check ic y" aria-label="Match"></i></div>
+<div class="tc"><span>Living in Victoria</span><span>Yes</span><span class="n">92% onshore</span><i class="ti ti-circle-check ic y" aria-label="Match"></i></div>
+<div class="tc"><span>Salary</span><span class="n">A$95,000</span><span class="n">A$90k to A$110k</span><i class="ti ti-circle-check ic y" aria-label="Match"></i></div>
+<div class="tc"><span>Working in Victoria</span><span class="n">1 year</span><span>usually 2+ years</span><i class="ti ti-circle-x ic x" aria-label="Below"></i></div>
+<div class="tc last"><span>NAATI language</span><span>No</span><span class="n">31% had it</span><i class="ti ti-circle-x ic x" aria-label="Below"></i></div>
+</div>
+</section>
+
+<section class="sec">
+<div class="sh"><h3>Other pathways</h3><span class="m n">Page 9</span></div>
+<p class="lede">Employer-sponsored visas granted to ICT business analysts in 2024-25. All three need an employer to sponsor you.</p>
+<div class="g3">
+<div class="card"><div class="m">186 employer nomination</div><div class="hero" style="font-size:30px;margin:8px 0 4px">640</div><div class="m">grants, permanent</div></div>
+<div class="card"><div class="m">482 skills in demand</div><div class="hero" style="font-size:30px;margin:8px 0 4px">1,120</div><div class="m">grants, temporary, can lead to 186</div></div>
+<div class="card"><div class="m">494 regional employer</div><div class="hero" style="font-size:30px;margin:8px 0 4px">85</div><div class="m">grants, provisional, regional</div></div>
+</div>
+<p class="m" style="margin-top:12px">Shown for comparison only. A registered migration agent can tell you whether any of these suits your situation.</p>
+</section>
+</section>
+
+<section class="part" id="occupation">
+<p class="partlbl">Part 4 of 5</p><h2 class="parttitle">Your occupation</h2>
+
+<section class="sec first">
+<div class="sh"><h3>Your occupation's pool</h3><span class="m n">Page 10</span></div>
+<p class="lede">More ICT business analysts are joining the 189 pool than leaving it. The queue grew 12% in a year.</p>
+<div class="g3">
+<div class="card"><div class="hero" style="font-size:28px">7,774</div><div class="m" style="margin-top:4px">in the 189 pool, up 12% in a year</div></div>
+<div class="card"><div class="hero" style="font-size:28px">11,420</div><div class="m" style="margin-top:4px">in the 190 pool</div></div>
+<div class="card"><div class="hero" style="font-size:28px">11,890</div><div class="m" style="margin-top:4px">in the 491 pool</div></div>
+</div>
+<p class="m" style="margin-top:8px">One EOI can select all three visas, so these overlap.</p>
+<h4 style="margin:24px 0 4px">189 pool size, last 12 months</h4>
+<svg viewBox="0 0 600 200" width="100%" role="img" aria-label="189 pool for ICT Business Analyst rose from 6,940 in November 2025 to 7,774 in October 2026.">
+<g style="stroke:var(--border)" stroke-width="1"><line x1="44" y1="20" x2="590" y2="20"/><line x1="44" y1="70" x2="590" y2="70"/><line x1="44" y1="120" x2="590" y2="120"/><line x1="44" y1="170" x2="590" y2="170"/></g>
+<g style="fill:var(--text-muted)" font-size="12" text-anchor="end"><text x="36" y="24">8,000</text><text x="36" y="74">7,500</text><text x="36" y="124">7,000</text><text x="36" y="174">6,500</text></g>
+<polygon points="50,126 98,119 146,108 194,102 242,94 290,87 338,80 386,89 434,78 482,64 530,51 578,42.6 578,170 50,170" fill="#1D9E75" fill-opacity="0.1"/>
+<polyline points="50,126 98,119 146,108 194,102 242,94 290,87 338,80 386,89 434,78 482,64 530,51 578,42.6" fill="none" stroke="#1D9E75" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="578" cy="42.6" r="5" fill="#1D9E75" style="stroke:var(--surface-2)" stroke-width="2"/>
+<text x="566" y="34" font-size="12" text-anchor="end" style="fill:var(--text-primary)">7,774</text>
+<g style="fill:var(--text-muted)" font-size="11" text-anchor="middle"><text x="50" y="190">Nov</text><text x="98" y="190">Dec</text><text x="146" y="190">Jan</text><text x="194" y="190">Feb</text><text x="242" y="190">Mar</text><text x="290" y="190">Apr</text><text x="338" y="190">May</text><text x="386" y="190">Jun</text><text x="434" y="190">Jul</text><text x="482" y="190">Aug</text><text x="530" y="190">Sep</text><text x="578" y="190">Oct</text></g>
+</svg>
+<h4 style="margin:20px 0 4px">New EOIs and EOIs leaving, by month</h4>
+<div class="lg" style="margin-bottom:2px"><span><span class="sw" style="background:#1D9E75"></span>New</span><span><span class="sw" style="background:#888780"></span>Leaving: invited, withdrawn or expired</span></div>
+<svg viewBox="0 0 600 170" width="100%" role="img" aria-label="New versus leaving EOIs, May to October 2026: May 310 and 240, June 260 and 350, July 340 and 230, August 380 and 240, September 360 and 230, October 330 and 246.">
+<g style="stroke:var(--border)" stroke-width="1"><line x1="44" y1="140" x2="590" y2="140"/><line x1="44" y1="80" x2="590" y2="80"/><line x1="44" y1="20" x2="590" y2="20"/></g>
+<g style="fill:var(--text-muted)" font-size="12" text-anchor="end"><text x="36" y="144">0</text><text x="36" y="84">200</text><text x="36" y="24">400</text></g>
+<g fill="#1D9E75"><rect x="70" y="47" width="22" height="93" rx="3"/><rect x="160" y="62" width="22" height="78" rx="3"/><rect x="250" y="38" width="22" height="102" rx="3"/><rect x="340" y="26" width="22" height="114" rx="3"/><rect x="430" y="32" width="22" height="108" rx="3"/><rect x="520" y="41" width="22" height="99" rx="3"/></g>
+<g fill="#888780"><rect x="94" y="68" width="22" height="72" rx="3"/><rect x="184" y="35" width="22" height="105" rx="3"/><rect x="274" y="71" width="22" height="69" rx="3"/><rect x="364" y="68" width="22" height="72" rx="3"/><rect x="454" y="71" width="22" height="69" rx="3"/><rect x="544" y="66" width="22" height="74" rx="3"/></g>
+<g style="fill:var(--text-muted)" font-size="12" text-anchor="middle"><text x="93" y="160">May</text><text x="183" y="160">Jun</text><text x="273" y="160">Jul</text><text x="363" y="160">Aug</text><text x="453" y="160">Sep</text><text x="543" y="160">Oct</text></g>
+</svg>
+<div class="g2" style="margin-top:20px;column-gap:28px">
+<div><h4 style="margin:0 0 8px">189 pool by points</h4>
+<div class="hb"><span>95 or more</span><div class="tr"><span style="width:100%"></span></div><span class="v n">1,630</span></div>
+<div class="hb"><span style="font-weight:500">90, you</span><div class="tr"><span style="width:38%;background:#1D9E75"></span></div><span class="v n" style="font-weight:500">620</span></div>
+<div class="hb"><span>85</span><div class="tr"><span style="width:72%"></span></div><span class="v n">1,180</span></div>
+<div class="hb"><span>80</span><div class="tr"><span style="width:87%"></span></div><span class="v n">1,420</span></div>
+<div class="hb"><span>75</span><div class="tr"><span style="width:89%"></span></div><span class="v n">1,450</span></div>
+<div class="hb"><span>70</span><div class="tr"><span style="width:65%"></span></div><span class="v n">1,060</span></div>
+<div class="hb"><span>65</span><div class="tr"><span style="width:25%"></span></div><span class="v n">414</span></div>
+</div>
+<div><h4 style="margin:0 0 8px">States your competitors select for 190 and 491</h4>
+<div class="hb"><span>VIC</span><div class="tr"><span style="width:100%"></span></div><span class="v n">34%</span></div>
+<div class="hb"><span>NSW</span><div class="tr"><span style="width:85%"></span></div><span class="v n">29%</span></div>
+<div class="hb"><span>QLD</span><div class="tr"><span style="width:35%"></span></div><span class="v n">12%</span></div>
+<div class="hb"><span>SA</span><div class="tr"><span style="width:29%"></span></div><span class="v n">10%</span></div>
+<div class="hb"><span>WA</span><div class="tr"><span style="width:24%"></span></div><span class="v n">8%</span></div>
+<div class="hb"><span>Other</span><div class="tr"><span style="width:21%"></span></div><span class="v n">7%</span></div>
+</div>
+</div>
+</section>
+
+<section class="sec">
+<div class="sh"><h3>Invitation history</h3><span class="m n">Page 11</span></div>
+<p class="lede">Your occupation was invited in 4 of the last 6 rounds, always at 95 points or more.</p>
+<div class="ih" aria-hidden="true"><span class="m">Round</span><span class="m">Cut-off</span><span class="m">Invited, estimated</span></div>
+<div class="ih"><span class="n">15 Oct 2026</span><span class="n">95</span><span class="n">about 60</span></div>
+<div class="ih"><span class="n">20 Aug 2026</span><span class="m">Not invited</span><span class="m">none</span></div>
+<div class="ih"><span class="n">12 Jun 2026</span><span class="n">100</span><span class="n">about 25</span></div>
+<div class="ih"><span class="n">10 Apr 2026</span><span class="n">95</span><span class="n">about 80</span></div>
+<div class="ih"><span class="n">22 Jan 2026</span><span class="m">Not invited</span><span class="m">none</span></div>
+<div class="ih last"><span class="n">13 Nov 2025</span><span class="n">95</span><span class="n">about 70</span></div>
+</section>
+
+<section class="sec">
+<div class="sh"><h3>People like you</h3><span class="m n">Page 11</span></div>
+<div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:6px 0 16px"><span class="hero" style="font-size:52px">43%</span><span style="font-size:15px;line-height:1.5;max-width:44ch">of ICT business analyst visa grants in 2024-25 went to Indian citizens, the largest group.</span></div>
+<div class="g2" style="column-gap:28px">
+<div><h4 style="margin:0 0 8px">Grants by citizenship</h4>
+<div class="hb"><span style="font-weight:500">India</span><div class="tr"><span style="width:100%;background:#1D9E75"></span></div><span class="v n" style="font-weight:500">43%</span></div>
+<div class="hb"><span>Nepal</span><div class="tr"><span style="width:21%"></span></div><span class="v n">9%</span></div>
+<div class="hb"><span>Sri Lanka</span><div class="tr"><span style="width:16%"></span></div><span class="v n">7%</span></div>
+<div class="hb"><span>China</span><div class="tr"><span style="width:14%"></span></div><span class="v n">6%</span></div>
+<div class="hb"><span>Pakistan</span><div class="tr"><span style="width:12%"></span></div><span class="v n">5%</span></div>
+<div class="hb"><span>Other</span><div class="tr"><span style="width:70%"></span></div><span class="v n">30%</span></div>
+</div>
+<div><h4 style="margin:0 0 8px">Grants by state</h4>
+<div class="hb"><span style="font-weight:500">VIC</span><div class="tr"><span style="width:100%;background:#1D9E75"></span></div><span class="v n" style="font-weight:500">36%</span></div>
+<div class="hb"><span>NSW</span><div class="tr"><span style="width:92%"></span></div><span class="v n">33%</span></div>
+<div class="hb"><span>QLD</span><div class="tr"><span style="width:31%"></span></div><span class="v n">11%</span></div>
+<div class="hb"><span>SA</span><div class="tr"><span style="width:22%"></span></div><span class="v n">8%</span></div>
+<div class="hb"><span>WA</span><div class="tr"><span style="width:19%"></span></div><span class="v n">7%</span></div>
+<div class="hb"><span>Other</span><div class="tr"><span style="width:14%"></span></div><span class="v n">5%</span></div>
+</div>
+</div>
+</section>
+
+<section class="sec">
+<div class="sh"><h3>Related occupations</h3><span class="m n">Page 12</span></div>
+<p class="lede">Nearby occupation codes and how their 189 queues compare with yours.</p>
+<div class="ro" aria-hidden="true"><span class="m">Occupation</span><span class="m">189 pool</span><span class="m">Last cut-off</span><span class="m">Invited</span></div>
+<div class="ro" style="background:var(--surface-1);border-radius:var(--radius);padding:9px 8px"><span><span style="font-weight:500">ICT Business Analyst, yours</span><br><span class="m n">261111</span></span><span class="n">7,774</span><span class="n">95</span><span class="n">4 of 6</span></div>
+<div class="ro"><span>Systems Analyst<br><span class="m n">261112</span></span><span class="n">4,210</span><span class="n">95</span><span class="n">3 of 6</span></div>
+<div class="ro"><span>ICT Project Manager<br><span class="m n">135112</span></span><span class="n">3,870</span><span class="n">90</span><span class="n">4 of 6</span></div>
+<div class="ro"><span>Developer Programmer<br><span class="m n">261312</span></span><span class="n">31,900</span><span class="m">none</span><span class="n">0 of 6</span></div>
+<div class="ro last"><span>Software Engineer<br><span class="m n">261313</span></span><span class="n">48,200</span><span class="m">none</span><span class="n">0 of 6</span></div>
+<p class="m" style="margin-top:12px">For comparison only. The occupation in your EOI must match your skills assessment, and changing it means a new assessment. Speak to a registered migration agent before acting on this.</p>
+</section>
+</section>
+
+<section class="part" id="planning">
+<p class="partlbl">Part 5 of 5</p><h2 class="parttitle">Planning ahead</h2>
+
+<section class="sec first">
+<div class="sh"><h3>What could change</h3><span class="m n">Page 13</span></div>
+<p class="lede">Four upcoming events that could move your outlook. Your report refreshes when each one happens.</p>
+<div class="wc"><span class="m n">Expected 1 Jul 2027</span><div><b>New points test</b><div class="m">Your score may change. We'll recalculate it under the final rules.</div></div></div>
+<div class="wc"><span class="m">Usually May</span><div><b>2027-28 planning levels</b><div class="m">Sets how many 189, 190 and 491 places there are next year.</div></div></div>
+<div class="wc"><span class="m">Usually July</span><div><b>New occupation ceilings</b><div class="m">Caps how many people in your occupation can be invited.</div></div></div>
+<div class="wc last"><span class="m">Usually July to September</span><div><b>State programs reopen</b><div class="m">New 190 and 491 lists and criteria, including Victoria's.</div></div></div>
+</section>
+
+<section class="sec">
+<div class="sh"><h3>If you're invited</h3><span class="m n">Pages 13 to 14</span></div>
+<p class="lede">An invitation gives you 60 days to lodge your visa application. Most documents can be gathered before then.</p>
+<div class="g2" style="column-gap:24px">
+<div><h4 style="margin:0 0 4px">Documents to have ready</h4>
+<div class="dl"><i class="ti ti-id" aria-hidden="true"></i><span>Passport and identity documents</span></div>
+<div class="dl"><i class="ti ti-certificate" aria-hidden="true"></i><span>Skills assessment and qualification documents</span></div>
+<div class="dl"><i class="ti ti-language" aria-hidden="true"></i><span>English test result</span></div>
+<div class="dl"><i class="ti ti-briefcase" aria-hidden="true"></i><span>Evidence for each period of claimed work experience</span></div>
+<div class="dl"><i class="ti ti-shield-check" aria-hidden="true"></i><span>Police certificates for India and Australia, for countries lived in 12 months or more in the last 10 years since turning 16</span></div>
+<div class="dl last"><i class="ti ti-stethoscope" aria-hidden="true"></i><span>Health examinations, usually arranged after you lodge</span></div>
+<p class="m" style="margin-top:6px">Based on the Home Affairs document checklist for subclass 189.</p>
+</div>
+<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:4px"><h4>Estimated costs, single applicant</h4><span class="pill mid">Illustrative</span></div>
+<div class="row"><span>Visa application charge</span><span class="n">A$4,910</span></div>
+<div class="row"><span>Health examinations</span><span class="n">about A$400</span></div>
+<div class="row"><span>Police certificates</span><span class="n">about A$100</span></div>
+<div class="row last" style="font-weight:500"><span>Total</span><span class="n">about A$5,410</span></div>
+<p class="m" style="margin-top:6px">Live reports use official Home Affairs charges on the report date. Adding a partner or children raises the charge.</p>
+</div>
+</div>
+</section>
+
+<section class="sec">
+<div class="sh"><h3>Our track record</h3><span class="m n">Page 14</span></div>
+<div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:6px 0 14px"><span class="hero" style="font-size:52px">4 of 6</span><span style="font-size:15px;line-height:1.5;max-width:46ch">past predictions for your occupation were exactly right. Each is saved before the round and published unchanged.</span></div>
+<div class="tk" aria-hidden="true"><span class="m">Round</span><span class="m">We predicted</span><span class="m">Actual</span><span></span></div>
+<div class="tk"><span class="n">Oct 2026</span><span class="n">95</span><span class="n">95</span><i class="ti ti-circle-check ic y" aria-label="Correct"></i></div>
+<div class="tk"><span class="n">Aug 2026</span><span class="n">95</span><span class="m">Not invited</span><i class="ti ti-circle-x ic x" aria-label="Missed"></i></div>
+<div class="tk"><span class="n">Jun 2026</span><span class="n">95</span><span class="n">100</span><i class="ti ti-circle-x ic x" aria-label="Missed by 5 points"></i></div>
+<div class="tk"><span class="n">Apr 2026</span><span class="n">95</span><span class="n">95</span><i class="ti ti-circle-check ic y" aria-label="Correct"></i></div>
+<div class="tk"><span class="n">Jan 2026</span><span class="m">Not invited</span><span class="m">Not invited</span><i class="ti ti-circle-check ic y" aria-label="Correct"></i></div>
+<div class="tk last"><span class="n">Nov 2025</span><span class="n">95</span><span class="n">95</span><i class="ti ti-circle-check ic y" aria-label="Correct"></i></div>
+</section>
+
+<section class="sec">
+<div class="sh"><h3>Glossary</h3><span class="m n">Page 15</span></div>
+<dl class="gl g2" style="margin:10px 0 0;row-gap:0;column-gap:28px">
+<div><dt>EOI</dt><dd>Expression of interest. Your profile in SkillSelect, which the government invites from.</dd><dt>Date of effect</dt><dd>When your points last changed. It breaks ties between people on the same points.</dd><dt>Invitation</dt><dd>The government's offer to apply for a visa. You then have 60 days to lodge.</dd><dt>Cut-off</dt><dd>The lowest points score invited for an occupation in a round.</dd></div>
+<div><dt>Occupation ceiling</dt><dd>The most people in one occupation who can be invited in a program year.</dd><dt>ANZSCO</dt><dd>The six-digit code for your occupation, such as 261111.</dd><dt>Nomination</dt><dd>A state's backing for a 190 or 491 visa. It adds 5 or 15 points.</dd><dt>Pool</dt><dd>All submitted EOIs waiting for an invitation.</dd></div>
+</dl>
+</section>
+
+<section class="sec" id="method">
+<div class="sh"><h3>Method and sources</h3><span class="m n">Page 15</span></div>
+<div class="row"><span>SkillSelect EOI data, Home Affairs</span><span class="m">Monthly</span></div>
+<div class="row"><span>Invitation round results, Home Affairs</span><span class="m">Each round</span></div>
+<div class="row"><span>State nomination announcements</span><span class="m">As published</span></div>
+<div class="row"><span>Community-reported invitations, marked in the report</span><span class="m">Weekly</span></div>
+<div class="row"><span>Visa grant statistics, Home Affairs</span><span class="m">Yearly</span></div>
+<p class="m" style="margin-top:12px">Queue positions come from the latest EOI snapshot. Wait estimates come from past cut-offs and pool movement, and are shown as ranges with a confidence level. Home Affairs data is used under a Creative Commons Attribution 3.0 Australia licence.</p>
+<p class="m" style="margin-top:10px">This report is general information based on public data and our estimates. It isn't migration advice, and Landfall is not a registered migration agent. For advice on your situation, speak to a registered migration agent or an Australian lawyer.</p>
+<div class="card" style="margin-top:16px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><span class="m">Version 1, generated 16 Nov 2026. Free refreshes until 16 Feb 2027.</span><button class="noprint"><i class="ti ti-refresh" aria-hidden="true"></i>Check for updates</button></div>
+</section>
+</section>
+
+</main>
+<p class="foot">Report LF-2611-0418 for Aarav M. Illustrative sample data. General information, not migration advice. Landfall is not a registered migration agent.</p>
+</div>
+
+<script>
+const rp=document.getElementById('rp'),bD=document.getElementById('bD'),bM=document.getElementById('bM');
+function setView(m){rp.style.maxWidth=m?'390px':'880px';bD.classList.toggle('on',!m);bM.classList.toggle('on',m);bD.setAttribute('aria-pressed',String(!m));bM.setAttribute('aria-pressed',String(m));requestAnimationFrame(update);}
+bD.addEventListener('click',()=>setView(false));
+bM.addEventListener('click',()=>setView(true));
+const nav=document.querySelector('.toc'),links=[...nav.querySelectorAll('a')],targets=links.map(a=>document.querySelector(a.getAttribute('href')));
+let active=-2;
+function update(){
+  let cur=-1;
+  targets.forEach((t,i)=>{if(t&&t.getBoundingClientRect().top<=150)cur=i;});
+  if(cur===active)return;
+  active=cur;
+  links.forEach((l,i)=>l.classList.toggle('on',i===cur));
+  if(cur>=0){const a=links[cur];nav.scrollTo({left:a.offsetLeft-nav.clientWidth/2+a.offsetWidth/2,behavior:'smooth'});}
+}
+window.addEventListener('scroll',update,{passive:true});
+window.addEventListener('resize',update);
+update();
+</script>
+</body>
+</html>
