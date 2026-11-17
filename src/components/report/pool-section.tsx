@@ -4,7 +4,7 @@ import { NumberInput, SegmentedControl } from "@mantine/core";
 import { Info } from "lucide-react";
 import { formatDate } from "@/lib/migration";
 import { comparePool, formatInterval, normalizePoolScore } from "@/lib/pool";
-import { netPoolChange, type VisaPathway } from "@/lib/report-evidence";
+import type { VisaPathway } from "@/lib/report-evidence";
 import type { ReportOccupation } from "../data/report-occupation";
 import { PoolChart } from "../pool-chart";
 import { AnimatedNumber } from "../reveal";
@@ -48,9 +48,6 @@ function PublishedPool({
   const { evidence } = occupation;
   const pathway = evidence.pathways.find((p) => p.visa === visa);
   const pool = pathway ? comparePool(pathway, score) : null;
-  const trendChange = evidence.trend.length
-    ? netPoolChange(evidence.trend[0].total, evidence.trend.at(-1)!.total)
-    : null;
   return (
     <>
       <p>
@@ -129,13 +126,11 @@ function PublishedPool({
         <span className="pill">189 occupation totals</span>
       </div>
       <TrendChart rows={evidence.trend} />
-      {trendChange && (
+      {evidence.trend.length > 0 && (
         <p className="data-caption">
-          Net change from {formatDate(evidence.trend[0].date)} to{" "}
-          {formatDate(evidence.trend.at(-1)!.date)}:{" "}
-          <strong>{formatInterval(trendChange)} EOIs</strong>. These are
-          published monthly totals. A net change does not reveal new entries,
-          invitations, withdrawals or score movement separately.
+          These are published monthly totals. The published data appears to
+          include EOIs submitted from about late 2024 onward, so earlier months
+          may undercount the pool; treat month-to-month rises with caution.
         </p>
       )}
     </>
