@@ -1,0 +1,83 @@
+<style>
+  .rc { font-family: system-ui, sans-serif; color: #12352b; background: #fbfaf6; border-radius: 12px; padding: 20px; font-size: 14px; line-height: 1.45; }
+  .rc h4 { margin: 0 0 4px; font-size: 19px; line-height: 1.25; }
+  .rc .eyebrow { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #5b7a6f; margin-bottom: 6px; }
+  .rc .muted { color: #5b7a6f; font-size: 12.5px; }
+  .rc .big { font-size: 30px; font-weight: 600; letter-spacing: -.02em; }
+  .rc .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 14px 0; }
+  .rc .tile { background: #fff; border: 1px solid #dfe8e3; border-radius: 10px; padding: 10px; }
+  .rc .tile .lbl { font-size: 12px; color: #5b7a6f; }
+  .rc .alert { background: #fff4e5; border: 1px solid #f1d3a6; border-radius: 10px; padding: 10px 12px; margin-top: 10px; }
+  .rc .bar { display: flex; height: 26px; border-radius: 6px; overflow: hidden; margin: 10px 0 6px; font-size: 11px; }
+  .rc .bar span { display: flex; align-items: center; justify-content: center; color: #fff; white-space: nowrap; }
+  .rc .cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
+  .rc .col { background: #fff; border: 1px solid #dfe8e3; border-radius: 10px; padding: 10px; }
+  .rc .chip { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 99px; margin: 4px 0 8px; }
+  .rc .red { background: #fde8e4; color: #8a2b1a; } .rc .amber { background: #fff1d6; color: #7a4d00; } .rc .green { background: #e2f5ea; color: #1d5e3a; }
+  .rc .row { display: flex; justify-content: space-between; font-size: 12.5px; padding: 3px 0; border-bottom: 1px dashed #e4ebe7; }
+</style>
+
+<h2>How should the reality check open?</h2>
+<p class="subtitle">Real data: a Software Engineer with 90 points, as at 31 Oct 2026. This is the first thing someone sees in their report. Pick the direction that feels right (you can mix).</p>
+
+<div class="cards">
+  <div class="card" data-choice="a-verdict" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="rc">
+        <div class="eyebrow">Your reality check · 189</div>
+        <h4>189 hasn't listed Software Engineer in its last four rounds.</h4>
+        <div class="muted">The last published cut-off was 95 points, on 7 Nov 2024. You have 90.</div>
+        <div class="tiles">
+          <div class="tile"><div class="lbl">EOIs ahead of you</div><div class="big">872–891</div><div class="muted">higher score</div></div>
+          <div class="tile"><div class="lbl">At your score</div><div class="big">1,132</div><div class="muted">also 90 points</div></div>
+          <div class="tile"><div class="lbl">Pool size</div><div class="big">9,464</div><div class="muted">+1,613 in 11 months</div></div>
+        </div>
+        <div class="alert"><b>What this means:</b> there's no recent evidence of 189 invitations for your occupation, so no wait estimate is possible. Your state options are below.</div>
+      </div>
+    </div>
+    <div class="card-body"><h3>A · Verdict first</h3><p>A plain-English headline, then the numbers. Blunt and fast to grasp. Closest to "the report Y-Axis wouldn't write".</p></div>
+  </div>
+
+  <div class="card" data-choice="b-queue" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="rc">
+        <div class="eyebrow">Where you stand in the 189 pool</div>
+        <h4>You're behind about 880 EOIs, tied with 1,132.</h4>
+        <div class="bar">
+          <span style="width:9.3%;background:#0f5a43">ahead</span>
+          <span style="width:12%;background:#e0a33a;color:#12352b">your score</span>
+          <span style="width:78.7%;background:#cfdcd5;color:#12352b">lower scores · 7,452</span>
+        </div>
+        <div class="muted">Pool of 9,464 submitted EOIs. Ties are broken by date of effect, which isn't published.</div>
+        <div class="alert" style="background:#fff;border-color:#dfe8e3;margin-top:14px">
+          <b>What happened to Software Engineer 189 EOIs (Oct 2026)</b>
+          <div class="row"><span>Invited (awaiting application)</span><b>under 20</b></div>
+          <div class="row"><span>Lodged a visa</span><b>119</b></div>
+          <div class="row"><span>Closed (expired, withdrawn or finalised)</span><b>12,354</b></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body"><h3>B · The queue picture</h3><p>Shows your position visually, then what happened to EOIs like yours. More emotional and easier to screenshot and share.</p></div>
+  </div>
+
+  <div class="card" data-choice="c-scorecard" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="rc">
+        <div class="eyebrow">Your three pathways at a glance</div>
+        <h4>Each visa is a different queue.</h4>
+        <div class="cols">
+          <div class="col"><b>189</b><br><span class="chip red">No recent invitations</span>
+            <div class="row"><span>Ahead</span><b>872–891</b></div><div class="row"><span>Same score</span><b>1,132</b></div><div class="row"><span>Your points</span><b>90</b></div></div>
+          <div class="col"><b>190</b><br><span class="chip amber">State decides</span>
+            <div class="row"><span>Ahead</span><b>919–938</b></div><div class="row"><span>Same score</span><b>1,731</b></div><div class="row"><span>With +5</span><b>95</b></div></div>
+          <div class="col"><b>491</b><br><span class="chip amber">State decides</span>
+            <div class="row"><span>Ahead</span><b>420–458</b></div><div class="row"><span>Same score</span><b>1,208</b></div><div class="row"><span>With +15</span><b>105</b></div></div>
+        </div>
+        <div class="muted" style="margin-top:10px">Pools overlap: one EOI can select several visas. See your state outlook for 190 and 491.</div>
+      </div>
+    </div>
+    <div class="card-body"><h3>C · Three-pathway scorecard</h3><p>Compares 189, 190 and 491 side by side. Best for "where should I focus?", but less of a gut-punch headline.</p></div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:18px">Ranges like "872–891" appear because the government hides counts under 20. We show the honest range instead of guessing.</p>

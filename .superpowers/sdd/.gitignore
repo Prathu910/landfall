@@ -1,0 +1,2 @@
+# Regenerable copies of git diffs used only during reviews.
+**/review-*.diff
