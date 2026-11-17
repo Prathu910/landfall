@@ -96,61 +96,129 @@ function cellText(html: string): string {
     .trim();
 }
 
-function extractTables(html: string): string[][][] {
-  const tables: string[][][] = [];
-  for (const table of html.match(/<table[\s>][\s\S]*?<\/table>/gi) ?? []) {
-    const rows = (table.match(/<tr[\s>][\s\S]*?<\/tr>/gi) ?? []).map((row) =>
-      (row.match(/<t[dh][\s>][\s\S]*?<\/t[dh]>/gi) ?? []).map(cellText),
-    );
-    tables.push(rows);
-  }
-  return tables;
+type Cell = { text: string; span: number };
+type Table = Cell[][];
+
+function readCell(html: string): Cell {
+  const colspan = /^<t[dh][^>]*\scolspan="?(\d+)/i.exec(html);
+  return { text: cellText(html), span: colspan ? Number(colspan[1]) : 1 };
+}
+
+function extractTables(html: string): Table[] {
+  return (html.match(/<table[\s>][\s\S]*?<\/table>/gi) ?? []).map((table) =>
+    (table.match(/<tr[\s>][\s\S]*?<\/tr>/gi) ?? []).map((row) =>
+      (row.match(/<t[dh][\s>][\s\S]*?<\/t[dh]>/gi) ?? []).map(readCell),
+    ),
+  );
+}
+
+const texts = (row: Cell[]): string[] => row.map((cell) => cell.text);
+
+/** One label per data column: a cell spanning n columns labels all n. */
+function expandSpans(row: Cell[]): string[] {
+  return row.flatMap((cell) => Array<string>(cell.span).fill(cell.text));
+}
+
+function indexesWhere(
+  cells: string[],
+  test: (text: string, index: number) => boolean,
+): number[] {
+  return cells.flatMap((text, index) => (test(text, index) ? [index] : []));
 }
 
 const NOT_LISTED = /^(n\/?a\b|not invited|$)/i;
+/** A header naming subclass 189 alone, e.g. "189", "Subclass 189* Minimum scored". */
+const SUBCLASS_189 =
+  /^(?:lowest points score invited )?(?:subclass )?189(?![\d/])/i;
+const ANY_SUBCLASS = /\b(?:189|190|491)\b/;
+const MINIMUM_POINTS = /^minimum points score$/i;
+/** 2020-21 rounds list 4-digit unit groups: "Subclass | Occupation ID | Description". */
+const UNIT_GROUP_COLUMN = /^occupation id$/i;
 
 type BlockResult = { round: ParsedRound } | { reason: string };
 
-// Finds the 189 data columns. Most layouts have one header row. The 2022-23
-// layouts put group labels (189 / 491) above an offshore/onshore row; each
-// group then spans an equal share of the data columns.
-function cutoffColumns(table: string[][], headerRow: number): number[] {
-  const header = table[headerRow].map((cell) => cell.toLowerCase());
-  const single = header.findIndex(
-    (cell, index) =>
-      index > 0 && (cell.includes("189") || cell.includes("minimum points")),
+/**
+ * True when the round's own totals table (the first "Visa subclass" table;
+ * later ones cover the programme year) lists subclass 189 alone.
+ */
+function listsOnly189(tables: Table[]): boolean {
+  const totals = tables.find((table) =>
+    /^visa subclass$/i.test(table[0]?.[0]?.text ?? ""),
   );
-  if (single >= 0) return [single];
-  if (headerRow === 0) return [];
-  const groups = table[0].map((cell) => cell.toLowerCase()).slice(1);
-  const group = groups.findIndex(
-    (cell) => cell.includes("189") || cell.includes("minimum points"),
+  const visas = (totals ?? [])
+    .slice(1)
+    .map((row) => row[0]?.text ?? "")
+    .filter((text) => text !== "");
+  return (
+    visas.length > 0 && visas.every((visa) => /\(subclass 189\)/i.test(visa))
   );
-  const width = Math.floor((header.length - 1) / groups.length);
-  if (group < 0 || width < 1) return [];
-  return Array.from({ length: width }, (_, i) => 1 + group * width + i);
 }
 
-function parseRoundBlock(date: string, block: string): BlockResult {
-  const tables = extractTables(block);
-  let table: string[][] | undefined;
-  let headerRow = 0;
-  for (const candidate of tables) {
-    const found = candidate
-      .slice(0, 2)
-      .findIndex((row) => row.some((c) => /occupation/i.test(c)));
-    if (found >= 0) {
-      table = candidate;
-      headerRow = found;
-      break;
+// Finds the 189 data columns. A column must name subclass 189 explicitly,
+// either in its own header or in a group label above it (2022-23 layouts put
+// 189 / 491 above an offshore/onshore row; the group cells carry colspans).
+// The current-round page lists 189 only, under "Minimum points score".
+function cutoffColumns(
+  table: Table,
+  headerRow: number,
+  only189: boolean,
+): number[] {
+  const header = texts(table[headerRow]);
+  const explicit = indexesWhere(
+    header,
+    (text, index) => index > 0 && SUBCLASS_189.test(text),
+  );
+  if (explicit.length > 0) return explicit;
+  if (headerRow > 0) {
+    const groups = expandSpans(table[0]);
+    if (groups.length !== header.length) {
+      throw new Error(
+        `Round group header spans ${groups.length} columns but the table has ${header.length}`,
+      );
     }
+    const grouped = indexesWhere(
+      groups,
+      (text, index) => index > 0 && SUBCLASS_189.test(text),
+    );
+    if (grouped.length > 0) return grouped;
   }
-  if (!table) return { reason: "no table with an Occupation column" };
-  const nameColumn = table[headerRow].findIndex((c) => /occupation/i.test(c));
-  const columns = cutoffColumns(table, headerRow);
-  if (columns.length === 0) throw new Error("Occupation table columns changed");
+  if (only189 && !header.some((text) => ANY_SUBCLASS.test(text))) {
+    const minimum = indexesWhere(header, (text) => MINIMUM_POINTS.test(text));
+    if (minimum.length === 1) return minimum;
+  }
+  throw new Error(
+    `Occupation table has no explicit 189 column: ${JSON.stringify(header)}`,
+  );
+}
+
+function findOccupationTable(
+  tables: Table[],
+): { table: Table; headerRow: number } | undefined {
+  for (const table of tables) {
+    const headerRow = table
+      .slice(0, 2)
+      .findIndex((row) => row.some((cell) => /occupation/i.test(cell.text)));
+    if (headerRow >= 0) return { table, headerRow };
+  }
+  return undefined;
+}
+
+export function parseRoundBlock(date: string, block: string): BlockResult {
+  const tables = extractTables(block);
+  const found = findOccupationTable(tables);
+  if (!found) return { reason: "no table with an Occupation column" };
+  const { table, headerRow } = found;
+  const header = texts(table[headerRow]);
+  if (header.some((text) => UNIT_GROUP_COLUMN.test(text))) {
+    return {
+      reason:
+        "unit-group layout (Subclass | Occupation ID | Description): its cut-offs cover a 4-digit occupation group and cannot be attributed to one 6-digit occupation",
+    };
+  }
+  const nameColumn = header.findIndex((text) => /occupation/i.test(text));
+  const columns = cutoffColumns(table, headerRow, listsOnly189(tables));
   const rows: ParsedRound["rows"] = [];
-  for (const cells of table.slice(headerRow + 1)) {
+  for (const cells of table.slice(headerRow + 1).map(texts)) {
     if (cells.length === 0) continue;
     const occupationName = cells[nameColumn];
     const values: number[] = [];
@@ -174,11 +242,12 @@ function parseRoundBlock(date: string, block: string): BlockResult {
 }
 
 export type SkippedRound = { date: string; reason: string };
+export type RoundPages = { rounds: ParsedRound[]; skipped: SkippedRound[] };
 
 export function parseRoundPagesDetailed(
   currentHtml: string,
   previousHtml: string,
-): { rounds: ParsedRound[]; skipped: SkippedRound[] } {
+): RoundPages {
   const current = readSchema(currentHtml);
   const currentBlock = arrayField(current, "content").find(
     (item) => stringField(item, "text") === "Current round",

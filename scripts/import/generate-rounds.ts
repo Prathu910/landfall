@@ -1,12 +1,32 @@
-import { normalizeOccupationName, type ParsedRound } from "./rounds";
+import {
+  normalizeOccupationName,
+  type ParsedRound,
+  type RoundPages,
+  type SkippedRound,
+} from "./rounds";
 
-export type RoundsFile = {
+export type MatchedRound = {
   date: string;
   rows: { name: string; code: string | null; cutoff: number }[];
-}[];
+};
+
+/** src/data/rounds.json: parsed rounds newest first, plus rounds the parser skipped. */
+export type RoundsFile = { rounds: MatchedRound[]; skipped: SkippedRound[] };
+
+/**
+ * Reviewed source spellings that differ from the dashboard name, keyed by
+ * the round page's exact text. Each one appears on the recorded round pages
+ * (13 June 2024) and names an occupation in the index (generate-rounds.test).
+ * "Patho" is left unmatched: the page's text is truncated, so the occupation
+ * it means is not stated.
+ */
+export const ROUND_NAME_ALIASES: Record<string, string> = {
+  "Life Scientist (nec)": "Life Scientists nec",
+  "Psychologist (nec)": "Psychologists nec",
+};
 
 export type MatchedRounds = {
-  file: RoundsFile; // newest first
+  file: MatchedRound[]; // newest first
   unmatched: string[]; // round names with no dashboard occupation, sorted
   /** Per code, every round newest first; null = not listed in that round. */
   cutoffs: (code: string) => { date: string; cutoff: number | null }[];
@@ -34,7 +54,9 @@ export function matchRounds(
   const perRound = newestFirst.map((round) => {
     const cutoffByCode = new Map<string, number>();
     const rows = round.rows.map(({ occupationName, cutoff }) => {
-      const codes = byName.get(normalizeOccupationName(occupationName)) ?? [];
+      const dashboardName =
+        ROUND_NAME_ALIASES[occupationName] ?? occupationName;
+      const codes = byName.get(normalizeOccupationName(dashboardName)) ?? [];
       if (codes.length > 1) {
         throw new Error(
           `Round ${round.date}: "${occupationName}" matches several occupations (${codes.join(", ")})`,
@@ -63,5 +85,65 @@ export function matchRounds(
         date,
         cutoff: cutoffByCode.get(code) ?? null,
       })),
+  };
+}
+
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+function isObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function isStoredRow(row: unknown): boolean {
+  return (
+    isObject(row) &&
+    typeof row.name === "string" &&
+    row.name !== "" &&
+    (row.code === null || typeof row.code === "string") &&
+    typeof row.cutoff === "number" &&
+    Number.isInteger(row.cutoff)
+  );
+}
+
+function isRoundsFile(value: unknown): value is RoundsFile {
+  return (
+    isObject(value) &&
+    Array.isArray(value.rounds) &&
+    value.rounds.every(
+      (round) =>
+        isObject(round) &&
+        typeof round.date === "string" &&
+        DATE_RE.test(round.date) &&
+        Array.isArray(round.rows) &&
+        round.rows.every(isStoredRow),
+    ) &&
+    Array.isArray(value.skipped) &&
+    value.skipped.every(
+      (skip) =>
+        isObject(skip) &&
+        typeof skip.date === "string" &&
+        DATE_RE.test(skip.date) &&
+        typeof skip.reason === "string" &&
+        skip.reason !== "",
+    )
+  );
+}
+
+/** Rebuilds parsed rounds from a stored rounds.json (for --generate-only). */
+export function readRoundsFile(value: unknown): RoundPages {
+  if (!isRoundsFile(value)) {
+    throw new Error(
+      "src/data/rounds.json is missing or not a { rounds, skipped } file; run data:import",
+    );
+  }
+  return {
+    rounds: value.rounds.map((round) => ({
+      date: round.date,
+      rows: round.rows.map(({ name, cutoff }) => ({
+        occupationName: name,
+        cutoff,
+      })),
+    })),
+    skipped: value.skipped.map(({ date, reason }) => ({ date, reason })),
   };
 }

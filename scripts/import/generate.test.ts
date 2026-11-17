@@ -12,6 +12,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildRawFixture,
   fixtureInput,
+  fixtureSkippedRounds,
   HEADERS,
   NURSE,
   SOFTWARE_ENGINEER,
@@ -138,19 +139,24 @@ describe("generate", () => {
       { code: "254499", name: "Registered Nurses nec", hasData: true },
       { code: "261313", name: "Software Engineer", hasData: true },
     ]);
-    expect(data.rounds).toEqual([
-      {
-        date: "2026-10-15",
-        rows: [
-          { name: "Software Engineer", code: "261313", cutoff: 95 },
-          { name: "Chef", code: null, cutoff: 90 },
-        ],
-      },
-      {
-        date: "2026-06-04",
-        rows: [{ name: "Registered Nurses (nec)", code: "254499", cutoff: 65 }],
-      },
-    ]);
+    expect(data.rounds).toEqual({
+      rounds: [
+        {
+          date: "2026-10-15",
+          rows: [
+            { name: "Software Engineer", code: "261313", cutoff: 95 },
+            { name: "Chef", code: null, cutoff: 90 },
+          ],
+        },
+        {
+          date: "2026-06-04",
+          rows: [
+            { name: "Registered Nurses (nec)", code: "254499", cutoff: 65 },
+          ],
+        },
+      ],
+      skipped: fixtureSkippedRounds,
+    });
     expect(data.newestRawMonth).toBe("2026-10");
   });
 

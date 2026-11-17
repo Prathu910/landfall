@@ -6,7 +6,7 @@ import { join } from "node:path";
 import type { MonthKey } from "../../src/lib/data/types";
 import { VISA_NAMES } from "./qlik-constants";
 import { encodeRaw, writeRawView } from "./raw-store";
-import type { ParsedRound } from "./rounds";
+import type { ParsedRound, SkippedRound } from "./rounds";
 import type { ViewId } from "./views";
 
 export const SOFTWARE_ENGINEER = "261313 Software Engineer";
@@ -203,9 +203,13 @@ export const fixtureRounds: ParsedRound[] = [
   },
 ];
 
+export const fixtureSkippedRounds: SkippedRound[] = [
+  { date: "2021-01-21", reason: "unit-group layout" },
+];
+
 export const fixtureInput = {
   asAt: "2026-10",
   checkedAt: "2026-11-17",
-  rounds: fixtureRounds,
+  rounds: { rounds: fixtureRounds, skipped: fixtureSkippedRounds },
   importVersion: "test-1",
 };

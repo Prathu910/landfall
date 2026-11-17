@@ -16,7 +16,7 @@ import { readRawView } from "./raw-store";
 import {
   CURRENT_ROUNDS_URL,
   PREVIOUS_ROUNDS_URL,
-  type ParsedRound,
+  type RoundPages,
 } from "./rounds";
 import { VIEWS } from "./views";
 
@@ -36,7 +36,7 @@ export type GenerateInput = {
   rawRoot: string;
   asAt: MonthKey;
   checkedAt: string;
-  rounds: ParsedRound[];
+  rounds: RoundPages;
   importVersion: string;
 };
 
@@ -119,7 +119,7 @@ export function generate(input: GenerateInput): GeneratedData {
     { snapshotId, asAt: input.asAt },
   );
   const rounds = matchRounds(
-    input.rounds,
+    input.rounds.rounds,
     occupations.map(({ core }) => core),
   );
   const cores = occupations.map(({ core }) => ({
@@ -145,7 +145,7 @@ export function generate(input: GenerateInput): GeneratedData {
     index: entries.map(({ code, name, hasData }) => ({ code, name, hasData })),
     cores,
     details: occupations.map(({ detail }) => detail),
-    rounds: rounds.file,
+    rounds: { rounds: rounds.file, skipped: input.rounds.skipped },
     newestRawMonth: months.at(-1) ?? null,
   };
 }

@@ -4,12 +4,8 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { isManifest } from "../../src/lib/data/guards";
 import type { Manifest, MonthKey } from "../../src/lib/data/types";
-import {
-  generate,
-  writeGenerated,
-  type GeneratedData,
-  type RoundsFile,
-} from "./generate";
+import { generate, writeGenerated, type GeneratedData } from "./generate";
+import { readRoundsFile } from "./generate-rounds";
 import { fetchViews } from "./import-fetch";
 import { PAGE_READ_BUDGET, planFetches, type ImportMode } from "./import-plan";
 import { openQlikSession } from "./qlik-client";
@@ -17,7 +13,7 @@ import { readRawView, writeRawView, type RawViewFile } from "./raw-store";
 import {
   fetchRoundPages,
   parseRoundPagesDetailed,
-  type ParsedRound,
+  type RoundPages,
 } from "./rounds";
 import { validateGenerated } from "./validate-generated";
 
@@ -90,31 +86,22 @@ function readPreviousManifest(): Manifest | null {
 }
 
 /** --generate-only rebuilds from the rounds stored by the last import. */
-function readStoredRounds(): ParsedRound[] {
-  const stored = readJson(join(OUT_ROOT, "rounds.json")) as
-    RoundsFile | undefined;
-  if (!Array.isArray(stored)) {
-    throw new Error(`${OUT_ROOT}/rounds.json is missing; run data:import`);
-  }
-  return stored.map((round) => ({
-    date: round.date,
-    rows: round.rows.map(({ name, cutoff }) => ({
-      occupationName: name,
-      cutoff,
-    })),
-  }));
+function readStoredRounds(): RoundPages {
+  return readRoundsFile(readJson(join(OUT_ROOT, "rounds.json")));
 }
 
-async function fetchRounds(): Promise<ParsedRound[]> {
+function printSkipped(pages: RoundPages): void {
+  console.log(`Skipped rounds: ${pages.skipped.length}`);
+  for (const round of pages.skipped) {
+    console.log(`  ${round.date}: ${round.reason}`);
+  }
+}
+
+async function fetchRounds(): Promise<RoundPages> {
   const { currentHtml, previousHtml } = await fetchRoundPages();
-  const { rounds, skipped } = parseRoundPagesDetailed(
-    currentHtml,
-    previousHtml,
-  );
-  console.log(`189 rounds parsed: ${rounds.length}`);
-  console.log(`Skipped rounds: ${skipped.length}`);
-  for (const round of skipped) console.log(`  ${round.date}: ${round.reason}`);
-  return rounds;
+  const pages = parseRoundPagesDetailed(currentHtml, previousHtml);
+  console.log(`189 rounds parsed: ${pages.rounds.length}`);
+  return pages;
 }
 
 function rowCount(file: RawViewFile | undefined): number {
@@ -180,13 +167,14 @@ async function main(): Promise<void> {
   const started = Date.now();
   try {
     const args = parseArgs(process.argv.slice(2));
-    let rounds: ParsedRound[];
+    let rounds: RoundPages;
     if (args.generateOnly) {
       rounds = readStoredRounds();
     } else {
       rounds = await fetchRounds();
       await fetchRaw(args);
     }
+    printSkipped(rounds);
     const data = generate({
       rawRoot: RAW_ROOT,
       asAt: args.asAt,
