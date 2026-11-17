@@ -194,6 +194,10 @@ function viewVisas(id: ViewId): Visa[] {
   return VIEWS.find((view) => view.id === id)?.visas ?? [];
 }
 
+function viewStateVisas(id: ViewId): StateVisa[] {
+  return viewVisas(id).filter((visa): visa is StateVisa => visa !== "189");
+}
+
 function needPart<K extends keyof CoveredPart>(
   part: CoveredPart,
   key: K,
@@ -203,7 +207,7 @@ function needPart<K extends keyof CoveredPart>(
   if (value === undefined) {
     throw new Error(`${view} ${part.asAt}: fetched part has no ${key}`);
   }
-  return value as NonNullable<CoveredPart[K]>;
+  return value;
 }
 
 /**
@@ -223,7 +227,7 @@ function fillCoverage(o: Builder, coverage: CoverageByView): void {
       child(child(o.core.invitedByScore, visa), part.asAt);
     }
   }
-  for (const visa of viewVisas("state-invited") as StateVisa[]) {
+  for (const visa of viewStateVisas("state-invited")) {
     for (const part of coverage["state-invited"]) {
       const state = needPart(part, "state", "state-invited");
       child(child(child(o.core.stateInvited, visa), state), part.asAt);
@@ -235,7 +239,7 @@ function fillCoverage(o: Builder, coverage: CoverageByView): void {
       child(child(child(o.detail.invitedProfile, visa), attribute), part.asAt);
     }
   }
-  for (const visa of viewVisas("invited-profile-state") as StateVisa[]) {
+  for (const visa of viewStateVisas("invited-profile-state")) {
     for (const part of coverage["invited-profile-state"]) {
       const view = "invited-profile-state";
       const state = needPart(part, "state", view);
