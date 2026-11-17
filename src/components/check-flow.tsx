@@ -34,7 +34,11 @@ import {
   formatDate,
   type Profile,
 } from "@/lib/migration";
-import { snapshot } from "@/lib/pool";
+import type { ReportSource } from "@/lib/data/report-source";
+import { publishedOccupationCode } from "@/lib/data/occupation-url";
+import { occupationIndex } from "./data/occupation-index";
+import { toReportOccupation } from "./data/report-occupation";
+import { useOccupationCore } from "./data/use-occupation-core";
 import { Report } from "./report";
 import styles from "./check-flow.module.css";
 
@@ -78,7 +82,7 @@ function isProfile(value: unknown): value is Profile {
   );
 }
 
-export function CheckFlow() {
+export function CheckFlow({ source }: { source: ReportSource }) {
   const [profile, setProfile] = useState<Profile>({ ...emptyProfile });
   const [step, setStep] = useState(0);
   const [asOf, setAsOf] = useState("2026-11-17");
@@ -106,7 +110,7 @@ export function CheckFlow() {
       /* A blocked store never prevents the free check. */
     }
     const code = new URLSearchParams(window.location.search).get("occupation");
-    if (code && snapshot.occupations.some((o) => o.code === code))
+    if (code && occupationIndex.some((o) => o.code === code))
       setProfile((p) => ({ ...p, occupation: code }));
     setLoaded(true);
   }, []);
@@ -120,6 +124,13 @@ export function CheckFlow() {
     }
   }, [profile, save, loaded]);
   const result = calculatePoints(profile, asOf);
+  // Fetched as soon as an occupation is chosen, so the report is usually ready.
+  const occupation = toReportOccupation(
+    useOccupationCore(
+      publishedOccupationCode(profile.occupation, occupationIndex),
+      occupationIndex,
+    ),
+  );
   const update = <K extends keyof Profile>(key: K, value: Profile[K]) => {
     setProfile((p) => ({ ...p, [key]: value }));
     setError("");
@@ -228,6 +239,9 @@ export function CheckFlow() {
       <Report
         profile={profile}
         asOf={asOf}
+        occupation={occupation}
+        comparisonIndex={occupationIndex}
+        source={source}
         onEdit={() => {
           setReport(false);
           changeStep(3);
@@ -337,7 +351,7 @@ export function CheckFlow() {
                       value={profile.occupation || null}
                       onChange={(value) => update("occupation", value ?? "")}
                       data={[
-                        ...snapshot.occupations.map((o) => ({
+                        ...occupationIndex.map((o) => ({
                           value: o.code,
                           label: `${o.name} · ${o.code}`,
                         })),
@@ -652,7 +666,7 @@ export function CheckFlow() {
                         ["Date of birth", formatDate(profile.dob)],
                         [
                           "Occupation",
-                          snapshot.occupations.find(
+                          occupationIndex.find(
                             (o) => o.code === profile.occupation,
                           )?.name ?? "Other · points check only",
                         ],

@@ -5,6 +5,7 @@ import type {
   VisaPathway,
 } from "../report-evidence";
 import { parseCountText } from "./published-count";
+import { monthEnd } from "./report-source";
 import type { CountText, OccupationCore, ScoreCounts } from "./types";
 
 /** Adapters from the all-occupation pipeline to the shapes the current UI reads. */
@@ -34,13 +35,6 @@ export function toPoolOccupation(core: OccupationCore): PoolOccupation | null {
     name: core.name,
     points: pointsAscending(pool.byScore),
   };
-}
-
-/** Last calendar day of a "YYYY-MM" month, as YYYY-MM-DD. */
-function monthEnd(month: string): string {
-  const [year, mon] = month.split("-").map(Number);
-  const day = new Date(Date.UTC(year, mon, 0)).getUTCDate();
-  return `${month}-${String(day).padStart(2, "0")}`;
 }
 
 function trendFor(core: OccupationCore): TrendEvidence[] {

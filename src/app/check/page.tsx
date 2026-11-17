@@ -1,8 +1,12 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { CheckFlow } from "@/components/check-flow";
+import { loadManifest } from "@/lib/data/load-server";
+import { reportSource } from "@/lib/data/report-source";
 export const metadata = { title: "Your free points check" };
 export default function CheckPage() {
+  // Every occupation file shares the manifest's as-at month.
+  const manifest = loadManifest();
   return (
     <main id="main" className="container">
       <div className="page-head">
@@ -20,7 +24,7 @@ export default function CheckPage() {
           score with published occupation data. Free, with no account needed.
         </p>
       </div>
-      <CheckFlow />
+      <CheckFlow source={reportSource(manifest.asAt, manifest)} />
     </main>
   );
 }

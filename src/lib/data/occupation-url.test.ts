@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { occupationDataUrl } from "./occupation-url";
+import { occupationDataUrl, publishedOccupationCode } from "./occupation-url";
 
 const index = [
   { code: "261313", name: "Software Engineer", hasData: true },
@@ -19,5 +19,18 @@ describe("occupationDataUrl", () => {
   it("returns null for path traversal and unknown codes", () => {
     expect(occupationDataUrl("../etc", index, "core")).toBeNull();
     expect(occupationDataUrl("999999", index, "core")).toBeNull();
+  });
+});
+
+describe("publishedOccupationCode", () => {
+  it("returns an indexed code that has published data", () => {
+    expect(publishedOccupationCode("261313", index)).toBe("261313");
+  });
+
+  it("returns null for an indexed code without data, an unknown code and the points-only choice", () => {
+    expect(publishedOccupationCode("221111", index)).toBeNull();
+    expect(publishedOccupationCode("999999", index)).toBeNull();
+    expect(publishedOccupationCode("other", index)).toBeNull();
+    expect(publishedOccupationCode("", index)).toBeNull();
   });
 });

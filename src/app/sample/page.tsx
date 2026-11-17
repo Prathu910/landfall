@@ -1,7 +1,24 @@
+import { occupationIndex } from "@/components/data/occupation-index";
 import { Report } from "@/components/report";
+import { toOccupationEvidence, toPoolOccupation } from "@/lib/data/legacy";
+import { loadManifest, loadOccupationCore } from "@/lib/data/load-server";
+import { reportSource } from "@/lib/data/report-source";
+import type { OccupationCore } from "@/lib/data/types";
 import { sampleProfile } from "@/lib/migration";
 export const metadata = { title: "Explore the sample report" };
+
+/** Aarav's comparison occupation, rendered into the static HTML. */
+const SAMPLE_COMPARISON = "261313";
+
+function requireCore(code: string): OccupationCore {
+  const core = loadOccupationCore(code);
+  if (!core) throw new Error(`Sample report needs occupation ${code}`);
+  return core;
+}
+
 export default function SamplePage() {
+  const nominated = requireCore(sampleProfile.occupation);
+  const comparison = requireCore(SAMPLE_COMPARISON);
   const profile = {
     ...sampleProfile,
     onshore: true,
@@ -25,7 +42,19 @@ export default function SamplePage() {
           snapshot are real. Your own overview uses your answers.
         </p>
       </div>
-      <Report profile={profile} asOf="2026-11-17" sample />
+      <Report
+        profile={profile}
+        asOf="2026-11-17"
+        sample
+        occupation={{
+          status: "ready",
+          pool: toPoolOccupation(nominated),
+          evidence: toOccupationEvidence(nominated),
+        }}
+        comparisonIndex={occupationIndex}
+        initialComparison={toOccupationEvidence(comparison)}
+        source={reportSource(nominated.asAt, loadManifest())}
+      />
     </main>
   );
 }

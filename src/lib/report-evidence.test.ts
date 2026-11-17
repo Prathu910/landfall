@@ -1,21 +1,46 @@
 import { describe, expect, it } from "vitest";
-import {
-  evidence,
-  getOccupationEvidence,
-  netPoolChange,
-  validateOccupationEvidence,
-} from "./report-evidence";
-import { snapshot } from "./pool";
+import { toOccupationEvidence } from "./data/legacy";
+import { loadManifest, loadOccupationCore } from "./data/load-server";
+import type { OccupationEvidence } from "./report-evidence";
+import { netPoolChange, validateOccupationEvidence } from "./report-evidence";
+
+function generatedEvidence(code: string): OccupationEvidence {
+  const core = loadOccupationCore(code);
+  if (!core) throw new Error(`No generated core for ${code}`);
+  return toOccupationEvidence(core);
+}
+
+const LEGACY_CODES = [
+  "261111",
+  "261312",
+  "261313",
+  "221111",
+  "233211",
+  "233512",
+  "233311",
+  "254499",
+  "351311",
+  "241111",
+  "241411",
+];
 
 describe("published report evidence", () => {
-  it("covers the imported occupations with twelve dated snapshots and six actual rounds", () => {
-    expect(evidence.occupations.map((o) => o.code)).toEqual(
-      snapshot.occupations.map((o) => o.code),
-    );
-    for (const occupation of evidence.occupations) {
+  it("passes the consistency checks for every generated occupation", () => {
+    const codes = loadManifest().occupations.map((o) => o.code);
+    expect(codes.length).toBeGreaterThan(400);
+    for (const code of codes) {
+      expect(validateOccupationEvidence(generatedEvidence(code)), code).toEqual(
+        [],
+      );
+    }
+  });
+
+  it("gives the original occupations twelve dated snapshots, six actual rounds and three pathways", () => {
+    for (const code of LEGACY_CODES) {
+      const occupation = generatedEvidence(code);
       expect(occupation.trend).toHaveLength(12);
       expect(occupation.trend[0].date).toBe("2025-11-30");
-      expect(occupation.trend.at(-1)?.date).toBe(evidence.snapshotDate);
+      expect(occupation.trend.at(-1)?.date).toBe("2026-10-31");
       expect(occupation.rounds.map((r) => r.date)).toEqual([
         "2026-10-15",
         "2026-06-04",
@@ -29,33 +54,29 @@ describe("published report evidence", () => {
         "190",
         "491",
       ]);
-      expect(validateOccupationEvidence(occupation)).toEqual([]);
-      expect(occupation.pathways[0].points).toEqual(
-        snapshot.occupations.find((o) => o.code === occupation.code)?.points,
-      );
       expect(occupation.trend.at(-1)?.total).toEqual(
         occupation.pathways[0].total,
       );
     }
   });
+
   it("uses the directly published aggregate instead of summing suppressed cells to an exact value", () => {
-    const occupation = getOccupationEvidence("261111")!;
+    const occupation = generatedEvidence("261111");
     expect(occupation.pathways[0].total).toEqual({ min: 7774, max: 7774 });
-    expect(occupation.pathways[0].points).toEqual(
-      snapshot.occupations[0].points,
-    );
     expect(occupation.pathways[0].points.some((p) => p.count === "<20")).toBe(
       true,
     );
   });
+
   it("keeps unlisted cutoffs distinct from zero and uses occupation-specific published cutoffs", () => {
-    expect(getOccupationEvidence("261111")?.rounds[0].cutoff).toBeNull();
-    expect(getOccupationEvidence("261111")?.rounds[4].cutoff).toBe(95);
-    expect(getOccupationEvidence("254499")?.rounds[0].cutoff).toBe(70);
-    expect(getOccupationEvidence("241111")?.rounds[0].cutoff).toBe(90);
-    expect(getOccupationEvidence("241411")?.rounds[0].cutoff).toBe(80);
-    expect(getOccupationEvidence("not-imported")).toBeUndefined();
+    expect(generatedEvidence("261111").rounds[0].cutoff).toBeNull();
+    expect(generatedEvidence("261111").rounds[4].cutoff).toBe(95);
+    expect(generatedEvidence("254499").rounds[0].cutoff).toBe(70);
+    expect(generatedEvidence("241111").rounds[0].cutoff).toBe(90);
+    expect(generatedEvidence("241411").rounds[0].cutoff).toBe(80);
+    expect(loadOccupationCore("not-imported")).toBeNull();
   });
+
   it("bounds a net change across masked snapshots without treating it as gross inflow", () => {
     expect(netPoolChange({ min: 0, max: 19 }, { min: 30, max: 30 })).toEqual({
       min: 11,
@@ -66,8 +87,9 @@ describe("published report evidence", () => {
       max: -11,
     });
   });
+
   it("rejects duplicate dates and inconsistent aggregate/distribution relationships", () => {
-    const occupation = structuredClone(getOccupationEvidence("261111")!);
+    const occupation = structuredClone(generatedEvidence("261111"));
     occupation.trend[1].date = occupation.trend[0].date;
     occupation.pathways[0].total = { min: 1, max: 1 };
     expect(validateOccupationEvidence(occupation)).toEqual([

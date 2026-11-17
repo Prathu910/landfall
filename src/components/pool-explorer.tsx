@@ -11,122 +11,68 @@ import {
   Plus,
   SlidersHorizontal,
 } from "lucide-react";
-import {
-  snapshot,
-  comparePool,
-  countInterval,
-  formatInterval,
-  normalizePoolScore,
-  type Occupation,
-} from "@/lib/pool";
+import { formatDate } from "@/lib/migration";
+import { comparePool, formatInterval, type PoolOccupation } from "@/lib/pool";
+import { toPoolOccupation } from "@/lib/data/legacy";
+import { publishedOccupationCode } from "@/lib/data/occupation-url";
+import { occupationIndex } from "./data/occupation-index";
+import { useOccupationCore } from "./data/use-occupation-core";
+import { PoolChart } from "./pool-chart";
 import { AnimatedNumber } from "./reveal";
+import styles from "./pool-explorer.module.css";
 
-export function PoolChart({
-  occupation,
-  score: requestedScore,
+type ExplorerPool =
+  | { status: "loading" }
+  | { status: "ready"; occupation: PoolOccupation }
+  | { status: "none" } // no 189 submitted pool in this snapshot
+  | { status: "unavailable" }; // the data file could not be loaded
+
+/** The server-rendered occupation needs no fetch; any other is loaded on demand. */
+function useExplorerPool(code: string, initial: PoolOccupation): ExplorerPool {
+  const isInitial = code === initial.code;
+  const fetchCode = isInitial
+    ? null
+    : publishedOccupationCode(code, occupationIndex);
+  const load = useOccupationCore(fetchCode, occupationIndex);
+  if (isInitial) return { status: "ready", occupation: initial };
+  if (fetchCode === null) return { status: "none" };
+  if (load.status === "ready") {
+    const occupation = toPoolOccupation(load.core);
+    return occupation ? { status: "ready", occupation } : { status: "none" };
+  }
+  return load.status === "loading" ? load : { status: "unavailable" };
+}
+
+const STATUS_MESSAGE: Record<
+  Exclude<ExplorerPool["status"], "ready">,
+  string
+> = {
+  loading: "Loading published data…",
+  none: "No 189 submitted EOIs are published for this occupation in this snapshot. The points check still works.",
+  unavailable:
+    "Published data for this occupation could not be loaded. Try again, or continue with the points check.",
+};
+
+export function PoolExplorer({
+  initial,
+  snapshotDate,
 }: {
-  occupation: Pick<Occupation, "name" | "points">;
-  score: number;
+  initial: PoolOccupation;
+  snapshotDate: string;
 }) {
   const reduced = useReducedMotion();
-  const [hover, setHover] = useState<number | null>(null);
-  const score = normalizePoolScore(requestedScore);
-  const first = Math.min(65, Math.floor(score / 5) * 5),
-    last = Math.max(110, Math.ceil(score / 5) * 5);
-  const bands = Array.from(
-      { length: (last - first) / 5 + 1 },
-      (_, i) => first + i * 5,
-    ),
-    spacing = 420 / bands.length;
-  const values = bands.map((value) =>
-    occupation.points
-      .filter((p) => p.score === value)
-      .reduce((sum, p) => sum + countInterval(p.count).max, 0),
-  );
-  const max = Math.max(...values, 1);
-  return (
-    <div className="chart-wrap">
-      <svg
-        className="pool-chart"
-        viewBox="0 0 440 180"
-        role="img"
-        aria-label={`Published EOI distribution for ${occupation.name}. Score ${score} is highlighted. Bar heights use interval upper bounds for masked counts.`}
-      >
-        {[0, 1, 2].map((i) => (
-          <line
-            key={i}
-            x1="10"
-            x2="430"
-            y1={20 + i * 52}
-            y2={20 + i * 52}
-            stroke="#e4ebe7"
-            strokeDasharray="3 5"
-          />
-        ))}
-        {bands.map((band, i) => {
-          const height = Math.max(3, (values[i] / max) * 105),
-            center = 10 + spacing * (i + 0.5);
-          const raw =
-            occupation.points.find((p) => p.score === band)?.count ?? "0";
-          return (
-            <g
-              key={band}
-              onMouseEnter={() => setHover(band)}
-              onMouseLeave={() => setHover(null)}
-            >
-              <title>{`${band} points: ${raw} EOIs`}</title>
-              <motion.rect
-                initial={false}
-                animate={{ y: 128 - height, height }}
-                transition={{
-                  duration: reduced ? 0 : 0.55,
-                  type: "spring",
-                  bounce: 0.1,
-                }}
-                x={center - spacing * 0.35}
-                width={spacing * 0.7}
-                rx="4"
-                fill={
-                  hover === band
-                    ? "#3a9f80"
-                    : band === score
-                      ? "#91dcb8"
-                      : band > score
-                        ? "#16634f"
-                        : "#e1ece6"
-                }
-              />
-              <text
-                x={center}
-                y="152"
-                textAnchor="middle"
-                fontSize="11"
-                fill={band === score ? "#102e29" : "#5c7066"}
-                fontWeight={band === score ? 700 : 400}
-              >
-                {band}
-              </text>
-              {band === score && (
-                <circle cx={center} cy="167" r="3" fill="#127b61" />
-              )}
-            </g>
-          );
-        })}
-      </svg>
-      <span className="chart-hover" aria-live="polite">
-        {hover !== null
-          ? `${hover} points · ${occupation.points.find((p) => p.score === hover)?.count ?? 0} published EOIs`
-          : "Explore a bar to see the published count"}
-      </span>
-    </div>
-  );
-}
-export function PoolExplorer() {
-  const reduced = useReducedMotion();
-  const [code, setCode] = useState("261111"),
-    [score, setScore] = useState(90);
-  const occupation = snapshot.occupations.find((o) => o.code === code)!,
-    pool = comparePool(occupation, score);
+  const [code, setCode] = useState(initial.code);
+  const [score, setScore] = useState(90);
+  const explorer = useExplorerPool(code, initial);
+  const ready =
+    explorer.status === "ready"
+      ? {
+          occupation: explorer.occupation,
+          pool: comparePool(explorer.occupation, score),
+        }
+      : null;
+  const message =
+    explorer.status === "ready" ? null : STATUS_MESSAGE[explorer.status];
   return (
     <motion.div
       className="explorer"
@@ -155,38 +101,46 @@ export function PoolExplorer() {
         nothingFoundMessage="No match in this snapshot"
         value={code}
         onChange={(value) => value && setCode(value)}
-        data={snapshot.occupations.map((o) => ({
+        data={occupationIndex.map((o) => ({
           value: o.code,
           label: o.name,
         }))}
       />
-      <div className="explorer-metric" aria-live="polite">
-        <span className="big-number">
-          <AnimatedNumber value={formatInterval(pool.higher)} />
-        </span>
-        <span>
-          EOIs with higher points
-          <br />
-          in this occupation
-        </span>
-        <Tooltip label="A range preserves Home Affairs counts masked below 20. This is not your queue position.">
-          <ActionIcon variant="subtle" aria-label="About the EOI count">
-            <Info size={16} />
-          </ActionIcon>
-        </Tooltip>
-      </div>
-      <PoolChart occupation={occupation} score={score} />
-      <div className="chart-key">
-        <span>
-          <i className="key-dot dark" /> Higher points
-        </span>
-        <span>
-          <i className="key-dot lime" /> Your score
-        </span>
-        <span>
-          <i className="key-dot pale" /> Lower points
-        </span>
-      </div>
+      {ready ? (
+        <>
+          <div className="explorer-metric" aria-live="polite">
+            <span className="big-number">
+              <AnimatedNumber value={formatInterval(ready.pool.higher)} />
+            </span>
+            <span>
+              EOIs with higher points
+              <br />
+              in this occupation
+            </span>
+            <Tooltip label="A range preserves Home Affairs counts masked below 20. This is not your queue position.">
+              <ActionIcon variant="subtle" aria-label="About the EOI count">
+                <Info size={16} />
+              </ActionIcon>
+            </Tooltip>
+          </div>
+          <PoolChart occupation={ready.occupation} score={score} />
+          <div className="chart-key">
+            <span>
+              <i className="key-dot dark" /> Higher points
+            </span>
+            <span>
+              <i className="key-dot lime" /> Your score
+            </span>
+            <span>
+              <i className="key-dot pale" /> Lower points
+            </span>
+          </div>
+        </>
+      ) : (
+        <p className={styles.status} role="status">
+          {message}
+        </p>
+      )}
       <div className="explorer-slider">
         <div>
           <span>Try a different score</span>
@@ -226,18 +180,20 @@ export function PoolExplorer() {
           </ActionIcon>
         </div>
       </div>
-      <div className="explorer-note">
-        <Info size={15} />
-        <p>
-          Another <strong>{formatInterval(pool.same)}</strong> share this score.
-          Same-score order is not available in this dataset.
-        </p>
-      </div>
+      {ready && (
+        <div className="explorer-note">
+          <Info size={15} />
+          <p>
+            Another <strong>{formatInterval(ready.pool.same)}</strong> share
+            this score. Same-score order is not available in this dataset.
+          </p>
+        </div>
+      )}
       <div className="explorer-bottom">
         <Link href={`/check/?occupation=${code}`} className="text-link">
           Make it personal <ArrowRight size={15} />
         </Link>
-        <span>31 Oct 2026 snapshot</span>
+        <span>{formatDate(snapshotDate)} snapshot</span>
       </div>
     </motion.div>
   );

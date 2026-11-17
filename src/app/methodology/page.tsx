@@ -1,13 +1,14 @@
 import { ArrowUpRight } from "lucide-react";
 import { Faq } from "@/components/faq";
-import { snapshot } from "@/lib/pool";
+import { loadManifest } from "@/lib/data/load-server";
+const manifest = loadManifest();
 export const metadata = { title: "Our methodology and sources" };
 const sources = [
   {
     name: "SkillSelect EOI dashboard",
     description:
       "31 October 2026 · 189, 190 and state 491 submitted pools · twelve monthly 189 occupation totals",
-    url: snapshot.sourceUrl,
+    url: manifest.sources.dashboard,
   },
   {
     name: "Federal points table",
@@ -244,7 +245,7 @@ export default function MethodologyPage() {
                 ],
                 [
                   "What if my occupation is not listed?",
-                  "Choose Other occupation for the points check. The report will clearly show that no pool comparison is available. The current imported snapshot covers 11 occupations.",
+                  `Choose Other occupation for the points check. The report will clearly show that no pool comparison is available. The current imported snapshot covers ${manifest.occupations.length} occupations.`,
                 ],
               ]}
             />

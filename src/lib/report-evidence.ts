@@ -1,4 +1,3 @@
-import imported from "../data/report-evidence.json";
 import { countInterval, type Interval } from "./pool";
 
 export type VisaPathway = "189" | "190" | "491";
@@ -16,18 +15,6 @@ export type OccupationEvidence = {
   trend: TrendEvidence[];
   pathways: PathwayEvidence[];
 };
-export type ReportEvidence = Omit<typeof imported, "occupations"> & {
-  occupations: OccupationEvidence[];
-};
-
-export const evidence = imported as ReportEvidence;
-
-export function getOccupationEvidence(
-  code: string,
-): OccupationEvidence | undefined {
-  return evidence.occupations.find((occupation) => occupation.code === code);
-}
-
 /** Difference of bounded published counts. No midpoint is invented for masked cells. */
 export function netPoolChange(previous: Interval, current: Interval): Interval {
   return { min: current.min - previous.max, max: current.max - previous.min };

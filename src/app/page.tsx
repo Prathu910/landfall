@@ -13,7 +13,25 @@ import {
 } from "lucide-react";
 import { HomeExperience } from "@/components/home-experience";
 import { Reveal } from "@/components/reveal";
+import { toPoolOccupation } from "@/lib/data/legacy";
+import { loadOccupationCore } from "@/lib/data/load-server";
+import { monthEnd } from "@/lib/data/report-source";
+
+/** The explorer opens on ICT Business Analyst, rendered into the static HTML. */
+const EXPLORER_OCCUPATION = "261111";
+
+function explorerPool() {
+  const core = loadOccupationCore(EXPLORER_OCCUPATION);
+  const pool = core && toPoolOccupation(core);
+  if (!core || !pool)
+    throw new Error(
+      `No 189 pool for explorer occupation ${EXPLORER_OCCUPATION}`,
+    );
+  return { pool, snapshotDate: monthEnd(core.asAt) };
+}
+
 export default function Home() {
+  const explorer = explorerPool();
   return (
     <main id="main">
       <section className="hero container">
@@ -57,7 +75,10 @@ export default function Home() {
             </span>
           </div>
         </div>
-        <HomeExperience />
+        <HomeExperience
+          initialPool={explorer.pool}
+          snapshotDate={explorer.snapshotDate}
+        />
       </section>
       <div className="trust-strip">
         <div className="container">

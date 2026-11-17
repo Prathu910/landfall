@@ -17,8 +17,12 @@ type LegacyPool = {
     points: { score: number; count: string }[];
   }[];
 };
-const legacyPool = readJson("src/data/pool.json") as LegacyPool;
-const legacyEvidence = readJson("src/data/report-evidence.json") as {
+const legacyPool = readJson(
+  "src/lib/data/__fixtures__/legacy-2026-10/pool.json",
+) as LegacyPool;
+const legacyEvidence = readJson(
+  "src/lib/data/__fixtures__/legacy-2026-10/report-evidence.json",
+) as {
   occupations: OccupationEvidence[];
 };
 

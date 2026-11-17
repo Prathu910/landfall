@@ -1,10 +1,8 @@
-import snapshot from "../data/pool.json";
 import { parseCountText } from "./data/published-count";
 import type { Interval } from "./data/types";
 
 export type { Interval };
-export type Occupation = (typeof snapshot.occupations)[number];
-export { snapshot };
+export type { PoolOccupation } from "./data/legacy";
 
 export const countInterval = parseCountText;
 
