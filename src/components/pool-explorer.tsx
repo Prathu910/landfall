@@ -23,14 +23,14 @@ import { AnimatedNumber } from "./reveal";
 
 export function PoolChart({
   occupation,
-  score,
+  score: requestedScore,
 }: {
   occupation: Pick<Occupation, "name" | "points">;
   score: number;
 }) {
   const reduced = useReducedMotion();
   const [hover, setHover] = useState<number | null>(null);
-  score = normalizePoolScore(score);
+  const score = normalizePoolScore(requestedScore);
   const first = Math.min(65, Math.floor(score / 5) * 5),
     last = Math.max(110, Math.ceil(score / 5) * 5);
   const bands = Array.from(

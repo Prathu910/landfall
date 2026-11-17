@@ -88,7 +88,10 @@ export function CheckFlow() {
   const [error, setError] = useState("");
   const heading = useRef<HTMLHeadingElement>(null);
   const reduceMotion = useReducedMotion();
+  // Browser-only state (local date, opt-in saved profile, ?occupation=) is read
+  // after hydration so the statically exported HTML matches the first render.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- post-hydration sync with browser storage
     setAsOf(localToday());
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
