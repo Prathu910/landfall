@@ -55,11 +55,11 @@ There is **no onshore/offshore field.** Onshore/offshore treatment must come fro
 
 Preliminary samples as at 10/2026 (unverified interpretation; do not publish until status semantics are confirmed):
 
-| 189, as at 10/2026 | INVITED | LODGED | HOLD | CLOSED |
-| --- | --- | --- | --- | --- |
-| 261313 Software Engineer | <20 | 119 | 343 | 12,354 |
-| 254499 Registered Nurses nec | 2,730 | 989 | 91 | 7,936 |
-| 241411 Secondary School Teacher | 243 | 204 | 63 | 2,538 |
+| 189, as at 10/2026              | INVITED | LODGED | HOLD | CLOSED |
+| ------------------------------- | ------- | ------ | ---- | ------ |
+| 261313 Software Engineer        | <20     | 119    | 343  | 12,354 |
+| 254499 Registered Nurses nec    | 2,730   | 989    | 91   | 7,936  |
+| 241411 Secondary School Teacher | 243     | 204    | 63   | 2,538  |
 
 Victoria 190 INVITED for Registered Nurses nec, by points: 75 → 36, 80 → 215, 85 → 86, 90 → <20, 95 → <20.
 
@@ -105,7 +105,7 @@ Data limits are shown inline.
    - Requires: a final brand name and domain (Landfall is a working name), sitemap, robots, a unique meta description per page, OG images, JSON-LD (FAQPage, Dataset, Organization) and "last updated" stamps.
 5. **Polish.**
    - Readability: about 125 font-size declarations are under 11px, some at 7–8px. Raise them.
-   - Copy: make the hero specific to Australian PR and points, and drop the repeated "Short line. *Italic line.*" pattern.
+   - Copy: make the hero specific to Australian PR and points, and drop the repeated "Short line. _Italic line._" pattern.
    - Sample report: show its best moments, not empty states.
    - Fix the `npm ci` lockfile mismatch (`@emnapi/*` missing).
 6. **Content engine.**
@@ -148,13 +148,13 @@ Also planned:
 
 ## Decision log
 
-| Date | Decision |
-| --- | --- |
-| 17 Nov 2026 | Claude acts as co-founder; candid critique is expected. |
-| 17 Nov 2026 | The product's core is a reality check: where you stand, who is ahead, what happened to EOIs like yours. |
-| 17 Nov 2026 | No percentage chances for now. Show counts: ahead of you, at your score, outcomes and history. |
+| Date        | Decision                                                                                                                                             |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 17 Nov 2026 | Claude acts as co-founder; candid critique is expected.                                                                                              |
+| 17 Nov 2026 | The product's core is a reality check: where you stand, who is ahead, what happened to EOIs like yours.                                              |
+| 17 Nov 2026 | No percentage chances for now. Show counts: ahead of you, at your score, outcomes and history.                                                       |
 | 17 Nov 2026 | Publish pages for every occupation, in tiers, with noindex where all counts are masked. Blogs, data stories and backlinks are planned strategically. |
-| 17 Nov 2026 | The founder stays anonymous for now. |
-| 17 Nov 2026 | The 190/491 state outlook uses three layers (rules, evidence, points) and ranks states into groups. |
-| 17 Nov 2026 | Extra questions: "Where are you now?" in step 1; the rest in an optional post-report step (option A). |
-| 17 Nov 2026 | Roadmap order approved as listed above. |
+| 17 Nov 2026 | The founder stays anonymous for now.                                                                                                                 |
+| 17 Nov 2026 | The 190/491 state outlook uses three layers (rules, evidence, points) and ranks states into groups.                                                  |
+| 17 Nov 2026 | Extra questions: "Where are you now?" in step 1; the rest in an optional post-report step (option A).                                                |
+| 17 Nov 2026 | Roadmap order approved as listed above.                                                                                                              |
