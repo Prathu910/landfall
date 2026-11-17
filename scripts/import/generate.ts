@@ -1,0 +1,151 @@
+import { existsSync, readdirSync } from "node:fs";
+import { parseCountText } from "../../src/lib/data/published-count";
+import type {
+  Manifest,
+  MonthKey,
+  OccupationCore,
+  OccupationDetail,
+  OccupationIndexEntry,
+  Visa,
+} from "../../src/lib/data/types";
+import { assembleOccupations, type RowsByView } from "./generate-assemble";
+import { matchRounds, type RoundsFile } from "./generate-rounds";
+import { parseViewRows } from "./generate-rows";
+import { DASHBOARD_PAGE_URL } from "./qlik-constants";
+import { readRawView } from "./raw-store";
+import {
+  CURRENT_ROUNDS_URL,
+  PREVIOUS_ROUNDS_URL,
+  type ParsedRound,
+} from "./rounds";
+import { VIEWS } from "./views";
+
+export { writeGenerated, type WriteOptions } from "./generate-write";
+export type { RoundsFile } from "./generate-rounds";
+
+export type GeneratedData = {
+  manifest: Manifest;
+  index: OccupationIndexEntry[];
+  cores: OccupationCore[];
+  details: OccupationDetail[];
+  rounds: RoundsFile; // written to src/data/rounds.json
+  newestRawMonth: MonthKey | null; // newest data/raw folder, for continuity checks
+};
+
+export type GenerateInput = {
+  rawRoot: string;
+  asAt: MonthKey;
+  checkedAt: string;
+  rounds: ParsedRound[];
+  importVersion: string;
+};
+
+const VISAS: Visa[] = ["189", "190", "491"];
+
+function rawMonths(rawRoot: string): MonthKey[] {
+  if (!existsSync(rawRoot)) return [];
+  return readdirSync(rawRoot)
+    .filter((name) => /^\d{4}-(0[1-9]|1[0-2])$/.test(name))
+    .sort();
+}
+
+export function snapshotIdFor(asAt: MonthKey): string {
+  const year = Number(asAt.slice(0, 4));
+  const month = Number(asAt.slice(5, 7));
+  const lastDay = new Date(Date.UTC(year, month, 0)).getUTCDate();
+  return `skillselect-${asAt}-${lastDay}`;
+}
+
+/**
+ * Latest-only views come from the asAt folder. Multi-month views come from
+ * every stored folder up to asAt (newest revision each), which keeps history
+ * older than the dashboard's own 24-month window.
+ */
+function readRows(
+  rawRoot: string,
+  asAt: MonthKey,
+  months: MonthKey[],
+): RowsByView {
+  const rowsByView = {} as RowsByView;
+  for (const view of VIEWS) {
+    const viewMonths = view.months === "latest" ? [asAt] : months;
+    rowsByView[view.id] = viewMonths.flatMap((month) => {
+      const file = readRawView(rawRoot, month, view.id);
+      if (!file) {
+        if (month === asAt) {
+          throw new Error(`${view.id} ${asAt}: raw view is missing`);
+        }
+        return [];
+      }
+      if (file.viewId !== view.id || file.asAt !== month) {
+        throw new Error(
+          `${view.id} ${month}: raw file holds ${file.viewId} ${file.asAt}`,
+        );
+      }
+      return parseViewRows(view, file);
+    });
+  }
+  return rowsByView;
+}
+
+function manifestEntry(core: OccupationCore): Manifest["occupations"][number] {
+  const totals: Partial<Record<Visa, string>> = {};
+  for (const visa of VISAS) {
+    const total = core.pool[visa]?.total;
+    if (total !== undefined) totals[visa] = total;
+  }
+  // A masked "<20" total may hold EOIs, so it counts as data.
+  const hasData = Object.values(totals).some(
+    (total) => parseCountText(total).max > 0,
+  );
+  return {
+    code: core.code,
+    name: core.name,
+    group: core.group,
+    hasData,
+    totals,
+  };
+}
+
+export function generate(input: GenerateInput): GeneratedData {
+  const months = rawMonths(input.rawRoot);
+  const snapshotId = snapshotIdFor(input.asAt);
+  const occupations = assembleOccupations(
+    readRows(
+      input.rawRoot,
+      input.asAt,
+      months.filter((month) => month <= input.asAt),
+    ),
+    { snapshotId, asAt: input.asAt },
+  );
+  const rounds = matchRounds(
+    input.rounds,
+    occupations.map(({ core }) => core),
+  );
+  const cores = occupations.map(({ core }) => ({
+    ...core,
+    rounds189: rounds.cutoffs(core.code),
+  }));
+  const entries = cores.map(manifestEntry);
+  return {
+    manifest: {
+      schemaVersion: 1,
+      snapshotId,
+      asAt: input.asAt,
+      checkedAt: input.checkedAt,
+      importVersion: input.importVersion,
+      sources: {
+        dashboard: DASHBOARD_PAGE_URL,
+        currentRounds: CURRENT_ROUNDS_URL,
+        previousRounds: PREVIOUS_ROUNDS_URL,
+      },
+      roundsUnmatched: rounds.unmatched,
+      occupations: entries,
+    },
+    index: entries.map(({ code, name, hasData }) => ({ code, name, hasData })),
+    cores,
+    details: occupations.map(({ detail }) => detail),
+    rounds: rounds.file,
+    newestRawMonth: months.at(-1) ?? null,
+  };
+}

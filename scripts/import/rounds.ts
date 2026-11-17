@@ -5,6 +5,8 @@ export type ParsedRound = {
 
 const BASE =
   "https://immi.homeaffairs.gov.au/visas/working-in-australia/skillselect/";
+export const CURRENT_ROUNDS_URL = `${BASE}invitation-rounds`;
+export const PREVIOUS_ROUNDS_URL = `${BASE}previous-rounds`;
 const SCHEMA_INPUT_ID = "ctl00_PlaceHolderMain_PageSchemaHiddenField_Input";
 
 const MONTHS = [
@@ -213,19 +215,19 @@ export async function fetchRoundPages(): Promise<{
   currentHtml: string;
   previousHtml: string;
 }> {
-  const get = async (page: string) => {
-    const response = await fetch(BASE + page, {
+  const get = async (url: string) => {
+    const response = await fetch(url, {
       headers: { "User-Agent": "Mozilla/5.0" },
       signal: AbortSignal.timeout(40_000),
     });
     if (!response.ok) {
-      throw new Error(`${page} returned HTTP ${response.status}`);
+      throw new Error(`${url} returned HTTP ${response.status}`);
     }
     return response.text();
   };
   const [currentHtml, previousHtml] = await Promise.all([
-    get("invitation-rounds"),
-    get("previous-rounds"),
+    get(CURRENT_ROUNDS_URL),
+    get(PREVIOUS_ROUNDS_URL),
   ]);
   return { currentHtml, previousHtml };
 }

@@ -1,12 +1,7 @@
-import {
-  existsSync,
-  mkdirSync,
-  readdirSync,
-  readFileSync,
-  writeFileSync,
-} from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { MonthKey } from "../../src/lib/data/types";
+import { writeFileAtomic, type WriteFile } from "./atomic-write";
 import type { ViewId } from "./views";
 
 export type RawTable = {
@@ -105,13 +100,14 @@ export function readRawView(
 export function writeRawView(
   root: string,
   file: RawViewFile,
+  options: { writeFile?: WriteFile } = {},
 ): { path: string; revised: boolean } {
   const dir = directory(root, file.asAt);
   mkdirSync(dir, { recursive: true });
   const base = join(dir, `${file.viewId}.json`);
   const current = readRawView(root, file.asAt, file.viewId);
   if (!current) {
-    writeFileSync(base, JSON.stringify(file));
+    writeFileAtomic(base, JSON.stringify(file), options.writeFile);
     return { path: base, revised: false };
   }
   if (sameContent(current, file)) {
@@ -123,6 +119,6 @@ export function writeRawView(
   for (let n = 2; existsSync(path); n++) {
     path = join(dir, `${file.viewId}.rev-${date}-${n}.json`);
   }
-  writeFileSync(path, JSON.stringify(file));
+  writeFileAtomic(path, JSON.stringify(file), options.writeFile);
   return { path, revised: true };
 }

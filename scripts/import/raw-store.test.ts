@@ -1,4 +1,10 @@
-import { mkdtempSync, existsSync } from "node:fs";
+import {
+  existsSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
@@ -64,6 +70,36 @@ describe("raw store", () => {
     expect(existsSync(rev2.path)).toBe(true);
     const read = readRawView(root, "2026-10", "status-history");
     expect(decodeRaw(read!.parts[0].table).rows[0][2]).toBe("14");
+  });
+
+  it("leaves no partial file when a first write fails partway", () => {
+    const root = mkdtempSync(join(tmpdir(), "raw-"));
+    const failing = (path: string, text: string): void => {
+      writeFileSync(path, text.slice(0, 10));
+      throw new Error("disk full");
+    };
+    expect(() =>
+      writeRawView(root, file("2026-11-17T01:00:00Z"), { writeFile: failing }),
+    ).toThrow("disk full");
+    expect(readdirSync(join(root, "2026-10"))).toEqual([]);
+    expect(readRawView(root, "2026-10", "status-history")).toBeUndefined();
+  });
+
+  it("keeps the stored view intact when a revision write fails partway", () => {
+    const root = mkdtempSync(join(tmpdir(), "raw-"));
+    const first = writeRawView(root, file("2026-11-17T01:00:00Z"));
+    const before = readFileSync(first.path, "utf8");
+    const failing = (path: string, text: string): void => {
+      writeFileSync(path, text.slice(0, 10));
+      throw new Error("disk full");
+    };
+    expect(() =>
+      writeRawView(root, file("2026-11-18T01:00:00Z", "13"), {
+        writeFile: failing,
+      }),
+    ).toThrow("disk full");
+    expect(readdirSync(join(root, "2026-10"))).toEqual(["status-history.json"]);
+    expect(readFileSync(first.path, "utf8")).toBe(before);
   });
 
   it("returns undefined when nothing is stored", () => {
