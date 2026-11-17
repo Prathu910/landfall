@@ -1,8 +1,9 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
+import { generate } from "../../../scripts/import/generate";
+import { readRoundsFile } from "../../../scripts/import/generate-rounds";
 import { coreFixture } from "./__fixtures__/occupation";
-import { isOccupationCore } from "./guards";
 import { toOccupationEvidence, toPoolOccupation } from "./legacy";
 import type { OccupationEvidence } from "../report-evidence";
 import type { OccupationCore } from "./types";
@@ -27,28 +28,40 @@ const legacyEvidence = readJson(
   occupations: OccupationEvidence[];
 };
 
-/** Known, reasoned differences between the legacy files and the new pipeline. */
-const explainedDifferences: { code: string; field: string; reason: string }[] =
-  [];
-
-function loadCore(code: string): OccupationCore {
-  const value = readJson(`src/data/occupations/${code}.json`);
-  if (!isOccupationCore(value)) throw new Error(`Invalid core ${code}`);
-  return value;
+/**
+ * Rebuilds the 2026-10 snapshot in memory from the permanent raw history and
+ * the stored rounds up to 31 Oct 2026, so later imports (which replace
+ * src/data) cannot break this comparison (R16).
+ */
+function generate202610(): Map<string, OccupationCore> {
+  const stored = readRoundsFile(readJson("src/data/rounds.json"));
+  const upTo = (date: string) => date <= "2026-10-31";
+  const data = generate({
+    rawRoot: path.resolve(root, "data/raw"),
+    asAt: "2026-10",
+    checkedAt: "2026-11-17",
+    rounds: {
+      rounds: stored.rounds.filter((round) => upTo(round.date)),
+      skipped: stored.skipped.filter((round) => upTo(round.date)),
+    },
+    importVersion: "legacy-test",
+  });
+  return new Map(data.cores.map((core) => [core.code, core]));
 }
 
 describe("legacy adapters reproduce the 2026-10 site data", () => {
+  const cores = generate202610();
+
   it("covers the 11 original occupations", () => {
     expect(legacyPool.occupations).toHaveLength(11);
-    expect(explainedDifferences).toEqual([]);
   });
 
   for (const legacy of legacyPool.occupations) {
     describe(legacy.code, () => {
-      const core = loadCore(legacy.code);
+      const core = cores.get(legacy.code);
 
       it("pool points match", () => {
-        const pool = toPoolOccupation(core);
+        const pool = core && toPoolOccupation(core);
         expect(pool?.name).toBe(legacy.name);
         expect(pool?.points).toEqual(legacy.points);
       });
@@ -57,7 +70,7 @@ describe("legacy adapters reproduce the 2026-10 site data", () => {
         const expected = legacyEvidence.occupations.find(
           (o) => o.code === legacy.code,
         );
-        expect(toOccupationEvidence(core)).toEqual(expected);
+        expect(core && toOccupationEvidence(core)).toEqual(expected);
       });
     });
   }
