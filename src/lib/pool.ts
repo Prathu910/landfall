@@ -1,17 +1,12 @@
 import snapshot from "../data/pool.json";
+import { parseCountText } from "./data/published-count";
+import type { Interval } from "./data/types";
 
-export type Interval = { min: number; max: number };
+export type { Interval };
 export type Occupation = (typeof snapshot.occupations)[number];
 export { snapshot };
 
-export function countInterval(raw: string): Interval {
-  if (raw === "<20") return { min: 0, max: 19 };
-  if (!/^\d+$/.test(raw)) throw new Error(`Invalid published count: ${raw}`);
-  const value = Number(raw);
-  if (!Number.isSafeInteger(value))
-    throw new Error("Published count is too large");
-  return { min: value, max: value };
-}
+export const countInterval = parseCountText;
 
 export function comparePool(
   occupation: { points: { score: number; count: string }[] },
