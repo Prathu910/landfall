@@ -10,15 +10,15 @@ export function TrendChart({ rows }: { rows: TrendEvidence[] }) {
   const [selected, setSelected] = useState<number | null>(null);
   const reduced = useReducedMotion();
   if (!rows.length) return null;
-  const min = Math.min(...rows.map((r) => r.total.min)) * 0.94,
-    max = Math.max(...rows.map((r) => r.total.max)) * 1.03,
-    span = Math.max(1, max - min);
-  const x = (i: number) => 20 + (i / (rows.length - 1 || 1)) * 560,
-    y = (n: number) => 145 - ((n - min) / span) * 115;
+  const min = Math.min(...rows.map((r) => r.total.min)) * 0.94;
+  const max = Math.max(...rows.map((r) => r.total.max)) * 1.03;
+  const span = Math.max(1, max - min);
+  const x = (i: number) => 20 + (i / (rows.length - 1 || 1)) * 560;
+  const y = (n: number) => 145 - ((n - min) / span) * 115;
   const path = rows
-      .map((r, i) => `${i ? "L" : "M"}${x(i)},${y(r.total.max)}`)
-      .join(" "),
-    active = rows[selected ?? rows.length - 1];
+    .map((r, i) => `${i ? "L" : "M"}${x(i)},${y(r.total.max)}`)
+    .join(" ");
+  const active = rows[selected ?? rows.length - 1];
   return (
     <div className="trend-chart">
       <svg
