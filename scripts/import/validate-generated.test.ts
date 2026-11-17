@@ -107,6 +107,61 @@ describe("validateGenerated", () => {
     ).toEqual([]);
   });
 
+  it("reports a drop when the asAt tables lose codes that older months still hold (R9)", () => {
+    const extra = Array.from(
+      { length: 20 },
+      (_, i) => `1000${10 + i} Test Occupation ${i}`,
+    );
+    const baseRows = (m: string, submitted: Record<string, string>) =>
+      Object.entries(submitted).map(([occupation, count]) => [
+        m,
+        VISA_NAMES["189"],
+        occupation,
+        "SUBMITTED",
+        count,
+      ]);
+    const october = [
+      ...baseRows("10/2026", { [SOFTWARE_ENGINEER]: "150", [NURSE]: "40" }),
+      ["10/2026", VISA_NAMES["189"], SOFTWARE_ENGINEER, "INVITED", "<20"],
+      ["10/2026", VISA_NAMES["189"], SOFTWARE_ENGINEER, "LODGED", "119"],
+      ["10/2026", VISA_NAMES["189"], NURSE, "INVITED", "2730"],
+      ["10/2026", VISA_NAMES["190"], NURSE, "SUBMITTED", "<20"],
+    ];
+    const extraRows = (m: string) =>
+      extra.map((occupation) => [
+        m,
+        VISA_NAMES["189"],
+        occupation,
+        "HOLD",
+        "3",
+      ]);
+
+    const previousRoot = buildRawFixture();
+    writeFixtureView(previousRoot, "status-history", "2026-10", [
+      {
+        header: HEADERS.byOccupation,
+        rows: [...october, ...extraRows("10/2026")],
+      },
+    ]);
+    const previous = generate({ ...fixtureInput, rawRoot: previousRoot });
+    expect(previous.manifest.occupations).toHaveLength(22);
+
+    const currentRoot = buildRawFixture();
+    writeFixtureView(currentRoot, "status-history", "2026-09", [
+      {
+        header: HEADERS.byOccupation,
+        rows: [
+          ...baseRows("09/2026", { [SOFTWARE_ENGINEER]: "140", [NURSE]: "60" }),
+          ...extraRows("09/2026"),
+        ],
+      },
+    ]);
+    const current = generate({ ...fixtureInput, rawRoot: currentRoot });
+    expect(validateGenerated(current, previous.manifest)).toEqual([
+      "Occupation count fell from 22 to 2 (more than 10%)",
+    ]);
+  });
+
   it("reports an asAt older than the previous snapshot or the newest raw month", () => {
     expect(
       validateGenerated(valid(), previousManifest({ asAt: "2026-11" })),

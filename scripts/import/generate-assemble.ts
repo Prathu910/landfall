@@ -8,7 +8,7 @@ import type {
   Visa,
 } from "../../src/lib/data/types";
 import type { ParsedRow } from "./generate-rows";
-import type { ViewId } from "./views";
+import { VIEWS, type ViewId } from "./views";
 
 export type RowsByView = Record<ViewId, ParsedRow[]>;
 export type AssembledOccupation = {
@@ -200,16 +200,34 @@ function finishPool(o: Builder, asAt: MonthKey): void {
 }
 
 /**
- * Builds one core and detail per occupation code, sorted by code. Rows are
- * applied oldest as-at first, so the newest displayed name wins.
+ * Codes present at asAt: any row of a latest-only view, or an asAt row of
+ * status-history (R9). History-only codes stay in data/raw but are not
+ * surfaced, so a broken latest import shows up as a drop in the count.
+ */
+function presentCodes(rowsByView: RowsByView, asAt: MonthKey): Set<string> {
+  const codes = new Set<string>();
+  for (const view of VIEWS) {
+    if (view.months !== "latest" && view.id !== "status-history") continue;
+    for (const row of rowsByView[view.id]) {
+      if (row.asAt === asAt) codes.add(row.code);
+    }
+  }
+  return codes;
+}
+
+/**
+ * Builds one core and detail per code present at asAt, sorted by code. Rows
+ * are applied oldest as-at first, so the newest displayed name wins.
  */
 export function assembleOccupations(
   rowsByView: RowsByView,
   identity: { snapshotId: string; asAt: MonthKey },
 ): AssembledOccupation[] {
   const apply = handlers(identity.asAt);
+  const present = presentCodes(rowsByView, identity.asAt);
   const tagged = (Object.keys(rowsByView) as ViewId[])
     .flatMap((view) => rowsByView[view].map((row) => ({ view, row })))
+    .filter(({ row }) => present.has(row.code))
     .sort((a, b) => a.row.asAt.localeCompare(b.row.asAt));
   const builders = new Map<string, Builder>();
   for (const { view, row } of tagged) {

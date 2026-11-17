@@ -154,7 +154,7 @@ describe("generate", () => {
     expect(data.newestRawMonth).toBe("2026-10");
   });
 
-  it("keeps an occupation seen only in older history, without data", () => {
+  it("omits occupations seen only in older months (R9)", () => {
     const rawRoot = buildRawFixture();
     writeFixtureView(rawRoot, "status-history", "2026-09", [
       {
@@ -163,19 +163,26 @@ describe("generate", () => {
           ["09/2026", VISA_NAMES["189"], SOFTWARE_ENGINEER, "SUBMITTED", "140"],
           ["09/2026", VISA_NAMES["189"], NURSE, "SUBMITTED", "60"],
           ["09/2026", VISA_NAMES["189"], "233211 Civil Engineer", "HOLD", "3"],
+          // A renumbered code keeping its name must not clash in round matching.
+          [
+            "09/2026",
+            VISA_NAMES["189"],
+            "261399 Software Engineer",
+            "HOLD",
+            "4",
+          ],
         ],
       },
     ]);
     const data = generate({ ...fixtureInput, rawRoot });
-    const civil = data.cores.find((core) => core.code === "233211");
-    expect(civil?.statusHistory).toEqual({
-      "189": { "2026-09": { HOLD: "3" } },
-    });
-    expect(civil?.pool).toEqual({});
-    expect(data.index.find((entry) => entry.code === "233211")).toEqual({
-      code: "233211",
-      name: "Civil Engineer",
-      hasData: false,
+    const codes = ["254499", "261313"];
+    expect(data.index.map((entry) => entry.code)).toEqual(codes);
+    expect(data.cores.map((core) => core.code)).toEqual(codes);
+    expect(data.details.map((detail) => detail.code)).toEqual(codes);
+    expect(data.manifest.occupations.map((entry) => entry.code)).toEqual(codes);
+    expect(data.cores[1].rounds189[0]).toEqual({
+      date: "2026-10-15",
+      cutoff: 95,
     });
   });
 
