@@ -10,4 +10,4 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## Landfall project context
 
-Before any product, data, copy or SEO work, read `docs/STRATEGY.md`. It records the founder's goals, the decisions made so far and the approved roadmap, and it overrides older docs where they conflict. Also read `CLAUDE.md` for commands, architecture and product constraints. Add each new founder decision to the decision log in `docs/STRATEGY.md`.
+Before any product, data, copy or SEO work, read `docs/STRATEGY.md`. It records the founder's goals, the decisions made so far and the approved roadmap, and it overrides older docs where they conflict. Follow `docs/ENGINEERING.md` for every code change (architecture, readability, styling, testing, definition of done: `npm run check` and `npm run build` must pass). Also read `CLAUDE.md` for commands, architecture and product constraints. Add each new founder decision to the decision log in `docs/STRATEGY.md`.

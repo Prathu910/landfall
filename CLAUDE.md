@@ -8,7 +8,7 @@ Next.js 16 is newer than most training data. Before using any Next.js API or con
 
 ## What this is
 
-Landfall is a personalised Australian skilled-migration (189/190/491) information tool. The current phase is the "useful first release": a free points check and report built from real published SkillSelect data. It has no backend, accounts, payments, email or PDF worker. The site must not claim that any of those exist. **Read `docs/STRATEGY.md` first.** It holds the founder's goals, decisions and approved roadmap, and it overrides older docs where they conflict. Background direction is in `docs/PRODUCT.md`. The resume point and open QA list are in `docs/HANDOFF.md`. `docs/REPORT-COVERAGE.md` records which report sections are supported, limited or deferred.
+Landfall is a personalised Australian skilled-migration (189/190/491) information tool. The current phase is the "useful first release": a free points check and report built from real published SkillSelect data. It has no backend, accounts, payments, email or PDF worker. The site must not claim that any of those exist. **Read `docs/STRATEGY.md` first.** It holds the founder's goals, decisions and approved roadmap, and it overrides older docs where they conflict. **Follow `docs/ENGINEERING.md`** for every code change: architecture, readability limits, styling, testing and the definition of done. Background direction is in `docs/PRODUCT.md`. The resume point and open QA list are in `docs/HANDOFF.md`. `docs/REPORT-COVERAGE.md` records which report sections are supported, limited or deferred.
 
 ## Commands
 
@@ -19,6 +19,9 @@ npm test             # vitest run (domain/data tests in src/lib/*.test.ts)
 npx vitest run src/lib/pool.test.ts          # single file
 npx vitest run -t "rejects duplicate dates"  # single test by name
 npm run typecheck    # tsc --noEmit
+npm run lint         # eslint (next core-web-vitals + typescript)
+npm run format       # prettier --write .
+npm run check        # format:check + lint + typecheck + test — must pass before every commit
 npm run build        # static export to out/
 python3 -m http.server 3017 --bind 127.0.0.1 --directory out   # serve the production build
 ```
