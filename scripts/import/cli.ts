@@ -145,6 +145,8 @@ async function fetchRaw(args: CliArgs): Promise<void> {
     (viewId, month) => readRawView(RAW_ROOT, month, viewId) !== undefined,
   );
   console.log(`${args.mode}: ${jobs.length} view-months, budget ${budget}`);
+  // A finished backfill has nothing left to fetch; don't connect at all.
+  if (jobs.length === 0) return;
   const revisions: string[] = [];
   const session = await openQlikSession({
     throttleMs: THROTTLE_MS,
