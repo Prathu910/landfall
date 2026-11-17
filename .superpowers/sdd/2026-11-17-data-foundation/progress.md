@@ -109,3 +109,7 @@ Final fix wave: dispatched (opus) with I1–I4 + must-fix minors + trend-chart c
 Final fix wave: done (13b251f..c21d23f), check 237 tests + build + headless OK.
 Ruling R18: accept that 610a791 alone fails check (schema-2 guards vs schema-1 data until b0e0e7c) — history kept as is, no rewrite; branch head is green — cost if wrong: a bisect step lands on a red commit.
 Ruling R19: rounds.json rebuilt once from the recorded 2026-11-17 fixture pages (no network) because stored rounds were misparsed — same capture date, kept rounds identical.
+Final fix wave re-review: all findings addressed, no new Critical/Important (13b251f..c21d23f).
+Final: minor (deferred → step 2+): rounds.ts 189 lookahead accepts "189 / 491" with spaces (latent); HANDOFF.md:8 misplaced sentence; DATA.md:157 bold conclusion should be hedged ("would"); legacy.test still coupled to live rounds.json/raw revisions; validator doesn't check R14 month-key invariant; netPoolChange unused; cohortWindowStart duplicates month arithmetic; generate-assemble.ts 310 lines.
+Workspace kept (founder wants .superpowers in git) — not deleted.
+PLAN COMPLETE.

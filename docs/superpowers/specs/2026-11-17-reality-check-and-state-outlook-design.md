@@ -103,8 +103,8 @@ The pool-overlap note sits under the cards: "One EOI can select several visas, s
 
 1. **Where you stand.**
    - A queue bar: ahead, at your score, lower scores.
-   - A sentence with the published total and the net change across the stored history ("up 1,613 in 11 months").
-   - The net change is a difference of published totals, not inflows.
+   - A sentence with the published total at the snapshot. No growth figure: `docs/DATA.md` found that the dashboard appears to cover EOIs only from about late 2024, so month-to-month rises mostly reflect coverage, not real growth (founder informed 17 Nov 2026).
+   - Revisit after the 2026-11 import confirms the pattern. Until then, any trend shown carries the coverage caveat (step 1 ruling R17).
 2. **Among EOIs at your score.** `poolPosition(...).sameSubmitted` split around the user's EOI submission month: before, same month and after.
    - Always labelled approximate, because tie-breaks use the unpublished date of effect.
    - If the user has no EOI date, show: "Add your EOI date to see how many same-score EOIs were submitted before yours."
