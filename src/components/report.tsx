@@ -26,7 +26,11 @@ import type { OccupationIndexEntry } from "@/lib/data/types";
 import type { OccupationEvidence, VisaPathway } from "@/lib/report-evidence";
 import { buildScenarios, applyScenarios } from "@/lib/scenarios";
 import { statePrograms } from "@/data/states";
-import type { ReportOccupation } from "./data/report-occupation";
+import {
+  poolUnavailableMessage,
+  unavailableReason,
+  type ReportOccupation,
+} from "./data/report-occupation";
 import { CompareSection } from "./report/compare-section";
 import { PoolSection } from "./report/pool-section";
 import { RoundsSection } from "./report/rounds-section";
@@ -385,6 +389,10 @@ export function Report({
             </section>
             <PoolSection
               occupation={occupation}
+              unavailableMessage={poolUnavailableMessage(
+                profile.occupation,
+                comparisonIndex,
+              )}
               visa={visa}
               score={score}
               snapshotDate={source.snapshotDate}
@@ -396,6 +404,10 @@ export function Report({
             />
             <RoundsSection
               occupation={occupation}
+              loadFailed={
+                unavailableReason(profile.occupation, comparisonIndex) ===
+                "loadFailed"
+              }
               score={result.base}
               roundsUrl={source.roundsUrl}
               previousRoundsUrl={source.previousRoundsUrl}

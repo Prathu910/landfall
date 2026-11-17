@@ -144,8 +144,13 @@ function PublishedPool({
 
 export function PoolSection({
   occupation,
+  unavailableMessage,
   ...controls
-}: PoolControls & { occupation: ReportOccupation }) {
+}: PoolControls & {
+  occupation: ReportOccupation;
+  /** Shown when there is no data; see `poolUnavailableMessage`. */
+  unavailableMessage: string;
+}) {
   return (
     <section className="report-section" id="pool">
       <span className="section-label">03 / THE PUBLISHED OCCUPATION POOL</span>
@@ -168,10 +173,7 @@ export function PoolSection({
           invented.
         </EmptyPool>
       ) : (
-        <EmptyPool>
-          This occupation is not in the imported snapshot. Your points are
-          available; no pool comparison has been invented.
-        </EmptyPool>
+        <EmptyPool>{unavailableMessage}</EmptyPool>
       )}
     </section>
   );

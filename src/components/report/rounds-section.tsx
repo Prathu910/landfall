@@ -46,11 +46,14 @@ function RoundsTable({
 
 export function RoundsSection({
   occupation,
+  loadFailed,
   score,
   roundsUrl,
   previousRoundsUrl,
 }: {
   occupation: ReportOccupation;
+  /** The occupation is published but its file did not load. */
+  loadFailed: boolean;
   score: number;
   roundsUrl: string;
   previousRoundsUrl: string;
@@ -74,8 +77,9 @@ export function RoundsSection({
         <RoundsTable rounds={occupation.evidence.rounds} score={score} />
       ) : (
         <div className="report-empty">
-          Occupation-matched invitation results are unavailable for this
-          profile.
+          {loadFailed
+            ? "Invitation results for this occupation could not be loaded. Try again later."
+            : "Occupation-matched invitation results are unavailable for this profile."}
         </div>
       )}
       <p className="data-caption">

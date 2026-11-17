@@ -8,6 +8,7 @@ import type { OccupationIndexEntry } from "@/lib/data/types";
 import type { OccupationEvidence } from "@/lib/report-evidence";
 import {
   toReportOccupation,
+  unavailableReason,
   type ReportOccupation,
 } from "../data/report-occupation";
 import { useOccupationCore } from "../data/use-occupation-core";
@@ -40,12 +41,15 @@ function CompareCard({
   label,
   name,
   occupation,
+  loadFailed,
   score,
   snapshotDate,
 }: {
   label: string;
   name: string;
   occupation: CardData;
+  /** The occupation is published but its file did not load. */
+  loadFailed: boolean;
   score: number;
   snapshotDate: string;
 }) {
@@ -69,7 +73,11 @@ function CompareCard({
           Loading published data…
         </p>
       ) : (
-        <p className="data-caption">No imported pool available.</p>
+        <p className="data-caption">
+          {occupation.status === "unavailable" && loadFailed
+            ? "Published data could not be loaded. Try again later."
+            : "No imported pool available."}
+        </p>
       )}
     </div>
   );
@@ -119,6 +127,7 @@ export function CompareSection({
           label="YOUR NOMINATED OCCUPATION"
           name={nameOf(occupationCode) ?? "Your occupation"}
           occupation={occupation}
+          loadFailed={unavailableReason(occupationCode, index) === "loadFailed"}
           score={score}
           snapshotDate={snapshotDate}
         />
@@ -126,6 +135,7 @@ export function CompareSection({
           label="COMPARISON OCCUPATION"
           name={nameOf(comparison) ?? "Comparison"}
           occupation={compared}
+          loadFailed={unavailableReason(comparison, index) === "loadFailed"}
           score={score}
           snapshotDate={snapshotDate}
         />

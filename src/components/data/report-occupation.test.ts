@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { coreFixture } from "../../lib/data/__fixtures__/occupation";
 import { toOccupationEvidence } from "../../lib/data/legacy";
-import { toReportOccupation } from "./report-occupation";
+import {
+  poolUnavailableMessage,
+  toReportOccupation,
+  unavailableReason,
+} from "./report-occupation";
 
 describe("toReportOccupation", () => {
   it("keeps loading distinct from unavailable", () => {
@@ -43,5 +47,35 @@ describe("toReportOccupation", () => {
       pool: null,
       evidence: toOccupationEvidence(core),
     });
+  });
+});
+
+describe("unavailableReason and poolUnavailableMessage", () => {
+  const index = [
+    { code: "261313", name: "Software Engineer", hasData: true },
+    { code: "121316", name: "Horse Breeder", hasData: false },
+  ];
+
+  it("treats the points-only choice and unknown codes as not in the snapshot, with the original text", () => {
+    for (const code of ["other", "", "999999"]) {
+      expect(unavailableReason(code, index)).toBe("notIndexed");
+      expect(poolUnavailableMessage(code, index)).toBe(
+        "This occupation is not in the imported snapshot. Your points are available; no pool comparison has been invented.",
+      );
+    }
+  });
+
+  it("says an indexed occupation without data has no published EOIs, not that it is missing", () => {
+    expect(unavailableReason("121316", index)).toBe("noData");
+    expect(poolUnavailableMessage("121316", index)).toBe(
+      "No submitted EOIs are published for this occupation in this snapshot. Your points are available; no pool comparison has been invented.",
+    );
+  });
+
+  it("reports a failed load of a published occupation without a claim about the dataset", () => {
+    expect(unavailableReason("261313", index)).toBe("loadFailed");
+    expect(poolUnavailableMessage("261313", index)).toBe(
+      "Published data for this occupation could not be loaded. Your points are still calculated; try again later.",
+    );
   });
 });
