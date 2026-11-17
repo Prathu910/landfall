@@ -19,6 +19,8 @@ type Script = {
   qcy: number;
   qError?: { qErrorCode: number };
   header?: string[];
+  /** Rows the fake server leaves out of its last page, as a dropped page would. */
+  missingRows?: number;
 };
 
 function fakeTransport(script: Script) {
@@ -62,9 +64,11 @@ function fakeTransport(script: Script) {
           const page = (
             req.params[1] as { qTop: number; qHeight: number }[]
           )[0];
+          const isLastPage = page.qTop + page.qHeight >= script.qcy;
           const count = Math.max(
             0,
-            Math.min(page.qHeight, script.qcy - page.qTop),
+            Math.min(page.qHeight, script.qcy - page.qTop) -
+              (isLastPage ? (script.missingRows ?? 0) : 0),
           );
           return reply(req.id, {
             qDataPages: [
@@ -106,6 +110,13 @@ describe("qlik client", () => {
       .filter((r) => r.method === "GetHyperCubeData")
       .map((r) => (r.params[1] as { qHeight: number }[])[0].qHeight);
     expect(heights).toEqual([3333, 3333, 3333]);
+  });
+
+  it("fails when the pages return fewer rows than the reported row count", async () => {
+    const { session } = await open({ qcx: 3, qcy: 7000, missingRows: 5 });
+    await expect(session.readTable("eymDb")).rejects.toThrow(
+      /eymDb returned 6995 rows but reported 7000/,
+    );
   });
 
   it("rejects a guardrail refusal", async () => {

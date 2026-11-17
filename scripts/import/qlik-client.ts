@@ -268,6 +268,12 @@ export async function openQlikSession(
         for (const row of qDataPages[0].qMatrix)
           rows.push(row.map((cell) => cell.qText));
       }
+      // A short page would silently turn missing rows into zeros downstream.
+      if (rows.length !== qcy) {
+        throw new Error(
+          `Incomplete table: ${objectId} returned ${rows.length} rows but reported ${qcy}`,
+        );
+      }
       return { header, rows };
     },
     pageReads: () => pageReads,
