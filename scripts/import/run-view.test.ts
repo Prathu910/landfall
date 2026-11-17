@@ -66,6 +66,22 @@ describe("runView", () => {
     expect(calls.filter((c) => c === "read")).toHaveLength(2);
   });
 
+  it("selects a score partition by number, since a text match on Score is ignored", async () => {
+    const { session } = recorder();
+    const selected: { text?: string; number?: number }[][] = [];
+    session.select = async (field, values) => {
+      if (field === "Score") selected.push(values);
+    };
+    const file = await runView(session, view("cohorts-by-score"), "2026-10", {
+      score: ["65", "100"],
+    });
+    expect(selected).toEqual([[{ number: 65 }], [{ number: 100 }]]);
+    expect(file.parts.map((p) => p.partition)).toEqual([
+      { score: "65" },
+      { score: "100" },
+    ]);
+  });
+
   it("runs every attribute variant, showing that attribute", async () => {
     const { calls, session } = recorder();
     const file = await runView(

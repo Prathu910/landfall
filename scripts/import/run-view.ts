@@ -22,6 +22,17 @@ function partitionField(key: PartitionKey): string {
   return FIELD_NAMES[key].field;
 }
 
+/**
+ * Score is numeric: the engine accepts a text match on it but selects nothing,
+ * which leaves the table unfiltered. Verified live on 17 Nov 2026.
+ */
+function partitionValue(
+  key: PartitionKey,
+  value: string,
+): { text?: string; number?: number } {
+  return key === "score" ? { number: Number(value) } : { text: value };
+}
+
 function combinations(
   keys: PartitionKey[],
   values: Record<string, string[]>,
@@ -73,7 +84,7 @@ export async function runView(
       await session.select("As At Month", [{ number: asAtSerial(asAt) }]);
       for (const [key, value] of Object.entries(combo)) {
         await session.select(partitionField(key as PartitionKey), [
-          { text: value },
+          partitionValue(key as PartitionKey, value),
         ]);
       }
 
