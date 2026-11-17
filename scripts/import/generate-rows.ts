@@ -245,3 +245,21 @@ export function parseViewRows(
   }
   return rows;
 }
+
+/** One fetched part of a view-month. It was paged to completion, so a missing row is zero. */
+export type CoveredPart = Partition & { asAt: MonthKey };
+
+/** The parts a raw view file covers, with validated partitions. */
+export function parseViewCoverage(
+  view: ViewDefinition,
+  file: RawViewFile,
+): CoveredPart[] {
+  return file.parts.map((part) => {
+    const fail: Fail = (message) => {
+      throw new Error(
+        `${view.id} ${file.asAt} ${JSON.stringify(part.partition)}: ${message}`,
+      );
+    };
+    return { asAt: file.asAt, ...readPartition(view, part.partition, fail) };
+  });
+}

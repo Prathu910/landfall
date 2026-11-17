@@ -32,7 +32,7 @@ describe("generate", () => {
 
     const engineer = data.cores[1];
     expect(engineer).toMatchObject({
-      schemaVersion: 1,
+      schemaVersion: 2,
       snapshotId: "skillselect-2026-10-31",
       asAt: "2026-10",
       code: "261313",
@@ -45,14 +45,19 @@ describe("generate", () => {
         byScore: { "85": "100", "90": "<20", "95": "50" },
       },
     });
+    // Every fetched month has a key for every visa; {} means no rows (zero).
     expect(engineer.statusHistory).toEqual({
       "189": {
         "2026-09": { SUBMITTED: "140" },
         "2026-10": { SUBMITTED: "150", INVITED: "<20", LODGED: "119" },
       },
+      "190": { "2026-09": {}, "2026-10": {} },
+      "491": { "2026-09": {}, "2026-10": {} },
     });
     expect(engineer.invitedByScore).toEqual({
-      "189": { "2026-10": { "100": "<20" } },
+      "189": { "2026-09": {}, "2026-10": { "100": "<20" } },
+      "190": { "2026-09": {}, "2026-10": {} },
+      "491": { "2026-09": {}, "2026-10": {} },
     });
     expect(engineer.rounds189).toEqual([
       { date: "2026-10-15", cutoff: 95 },
@@ -69,10 +74,12 @@ describe("generate", () => {
     expect(nurse.statePool).toEqual({
       "190": { VIC: { "95": "<20" }, ANY: { "90": "7" } },
     });
+    // Only the VIC partition was fetched in this fixture.
     expect(nurse.stateInvited).toEqual({
       "190": {
         VIC: { "2026-09": { "90": "25" }, "2026-10": { "95": "<20" } },
       },
+      "491": { VIC: { "2026-09": {}, "2026-10": {} } },
     });
     expect(nurse.rounds189).toEqual([
       { date: "2026-10-15", cutoff: null },
@@ -83,7 +90,7 @@ describe("generate", () => {
   it("splits cohorts and profile slices into the detail file", () => {
     const [nurse, engineer] = generateFixture().details;
     expect(nurse).toEqual({
-      schemaVersion: 1,
+      schemaVersion: 2,
       snapshotId: "skillselect-2026-10-31",
       asAt: "2026-10",
       code: "254499",
@@ -95,14 +102,22 @@ describe("generate", () => {
       invitedProfile: {
         "189": {
           english: {
-            "20": { "2026-09": "12", "2026-10": "1500" },
-            "10": { "2026-10": "<20" },
+            "2026-09": { "20": "12" },
+            "2026-10": { "20": "1500", "10": "<20" },
           },
         },
+        "190": { english: { "2026-09": {}, "2026-10": {} } },
+        "491": { english: { "2026-09": {}, "2026-10": {} } },
       },
-      invitedProfileState: { "190": { VIC: { english: { "20": "<20" } } } },
+      invitedProfileState: {
+        "190": { VIC: { english: { "20": "<20" } } },
+        "491": { VIC: { english: {} } },
+      },
     });
     // 11/2023 is the first of the 36 submitted months to 10/2026; 10/2023 is dropped.
+    expect(engineer.invitedProfile["189"]).toEqual({
+      english: { "2026-09": {}, "2026-10": {} },
+    });
     expect(engineer.cohorts).toEqual({
       "189": { "2023-11": { LODGED: "<20" } },
     });
@@ -158,6 +173,29 @@ describe("generate", () => {
       skipped: fixtureSkippedRounds,
     });
     expect(data.newestRawMonth).toBe("2026-10");
+  });
+
+  it("keeps a month key for a covered month with no rows, and none for an unfetched month", () => {
+    const rawRoot = buildRawFixture();
+    // August: status-history fetched with no rows for either occupation;
+    // invited-by-score not fetched at all.
+    writeFixtureView(rawRoot, "status-history", "2026-08", [
+      {
+        header: HEADERS.byOccupation,
+        rows: [
+          ["08/2026", VISA_NAMES["189"], "233211 Civil Engineer", "HOLD", "3"],
+        ],
+      },
+    ]);
+    const nurse = generate({ ...fixtureInput, rawRoot }).cores[0];
+    expect(nurse.statusHistory["189"]?.["2026-08"]).toEqual({});
+    expect(nurse.statusHistory["491"]?.["2026-08"]).toEqual({});
+    expect(nurse.invitedByScore["189"]).not.toHaveProperty("2026-08");
+    expect(Object.keys(nurse.statusHistory["189"] ?? {})).toEqual([
+      "2026-08",
+      "2026-09",
+      "2026-10",
+    ]);
   });
 
   it("omits occupations seen only in older months (R9)", () => {

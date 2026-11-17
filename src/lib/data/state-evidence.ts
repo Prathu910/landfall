@@ -1,9 +1,11 @@
 import { normalizePoolScore } from "../pool";
-import { latestMonthKeys, positiveScoreRange } from "./invitations";
+import { positiveScoreRange } from "./invitations";
 import type { MonthlyInvited } from "./invitations";
+import { calendarMonths, splitCoverage } from "./months";
 import { parseCountText, sumIntervals } from "./published-count";
 import type {
   Interval,
+  MonthKey,
   OccupationCore,
   ScoreCounts,
   StateCode,
@@ -13,8 +15,9 @@ import type {
 
 export type StateSide = {
   competitorsAtOrAbove: Interval;
-  invitedAtOrBelow: MonthlyInvited[];
-  peak: MonthlyInvited | null;
+  invitedAtOrBelow: MonthlyInvited[]; // fetched months in the window, oldest first
+  notPublished: MonthKey[]; // window months that were not fetched
+  peak: MonthlyInvited | null; // null unless some month confirms an invitation
   scoreRange: { min: number; max: number } | null;
 };
 
@@ -29,6 +32,17 @@ function sumScores(
   );
 }
 
+/** The latest month with the highest confirmed (min > 0) count. */
+function peakMonth(months: MonthlyInvited[]): MonthlyInvited | null {
+  return months.reduce<MonthlyInvited | null>((best, m) => {
+    if (m.invitedAtLeast.min === 0) return best;
+    // Strictly-greater comparison on ascending months would keep the earlier tie.
+    return best === null || m.invitedAtLeast.min >= best.invitedAtLeast.min
+      ? m
+      : best;
+  }, null);
+}
+
 function side(
   core: OccupationCore,
   visa: StateVisa,
@@ -37,28 +51,24 @@ function side(
   months: number,
 ): StateSide {
   const pool = core.statePool[visa]?.[key];
-  const invited = core.stateInvited[visa]?.[key] ?? {};
-  const keys = latestMonthKeys(invited, months);
-
-  const invitedAtOrBelow = keys.map((asAt) => ({
-    asAt,
-    invitedAtLeast: sumScores(invited[asAt], (s) => s <= score),
-  }));
-  // Strictly-greater comparison on ascending months would keep the earlier tie.
-  const peak = invitedAtOrBelow.reduce<MonthlyInvited | null>(
-    (best, m) =>
-      best === null || m.invitedAtLeast.min >= best.invitedAtLeast.min
-        ? m
-        : best,
-    null,
+  const invited = core.stateInvited[visa]?.[key];
+  const { covered, notPublished } = splitCoverage(
+    calendarMonths(core.asAt, months),
+    invited,
   );
+  const cells = covered.map((asAt) => invited?.[asAt] ?? {});
+  const invitedAtOrBelow = covered.map((asAt, i) => ({
+    asAt,
+    invitedAtLeast: sumScores(cells[i], (s) => s <= score),
+  }));
   return {
     competitorsAtOrAbove: pool
       ? sumScores(pool, (s) => s >= score)
       : { min: 0, max: 0 },
     invitedAtOrBelow,
-    peak,
-    scoreRange: positiveScoreRange(keys.map((k) => invited[k])),
+    notPublished,
+    peak: peakMonth(invitedAtOrBelow),
+    scoreRange: positiveScoreRange(cells),
   };
 }
 

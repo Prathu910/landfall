@@ -8,14 +8,14 @@ import {
 
 function core(): Record<string, unknown> {
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
     snapshotId: "2026-10",
     asAt: "2026-10",
     code: "261313",
     name: "Software Engineer",
     group: null,
     pool: { "189": { total: "<20", byScore: { "90": "12" } } },
-    statusHistory: { "189": { "2026-10": { SUBMITTED: "5" } } },
+    statusHistory: { "189": { "2026-09": {}, "2026-10": { SUBMITTED: "5" } } },
     invitedByScore: { "189": { "2026-10": { "90": "<20" } } },
     statePool: { "190": { NSW: { "80": "3" } } },
     stateInvited: { "190": { NSW: { "2026-10": { "80": "3" } } } },
@@ -28,7 +28,7 @@ function core(): Record<string, unknown> {
 
 function detail(): Record<string, unknown> {
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
     snapshotId: "2026-10",
     asAt: "2026-10",
     code: "261313",
@@ -36,8 +36,12 @@ function detail(): Record<string, unknown> {
       "189": { older: { SUBMITTED: "4" }, "2026-10": { INVITED: "<20" } },
     },
     cohortsByScore: { "189": { "90": { older: "3", "2026-09": "1" } } },
-    invitedProfile: { "189": { english: { Superior: { "2026-10": "2" } } } },
-    invitedProfileState: { "190": { NSW: { partnerSkills: { Yes: "2" } } } },
+    invitedProfile: {
+      "189": { english: { "2026-09": {}, "2026-10": { "20": "2" } } },
+    },
+    invitedProfileState: {
+      "190": { NSW: { partnerSkills: { "5": "2" }, english: {} } },
+    },
   };
 }
 
@@ -78,8 +82,8 @@ describe("isOccupationCore", () => {
   });
   it.each([
     [
-      "schemaVersion 2",
-      (c: Record<string, unknown>) => ((c.schemaVersion = 2), c),
+      "schemaVersion 1",
+      (c: Record<string, unknown>) => ((c.schemaVersion = 1), c),
     ],
     [
       "bad count",
@@ -154,6 +158,16 @@ describe("isOccupationDetail", () => {
   it("rejects a bad cohort key", () => {
     const d = detail();
     d.cohorts = { "189": { newer: {} } };
+    expect(isOccupationDetail(d)).toBe(false);
+  });
+  it("rejects profile counts keyed by value before month (schema 1)", () => {
+    const d = detail();
+    d.invitedProfile = { "189": { english: { "20": { "2026-10": "2" } } } };
+    expect(isOccupationDetail(d)).toBe(false);
+  });
+  it("rejects a schema 1 record", () => {
+    const d = detail();
+    d.schemaVersion = 1;
     expect(isOccupationDetail(d)).toBe(false);
   });
   it("rejects a bad profile attribute and bad count", () => {

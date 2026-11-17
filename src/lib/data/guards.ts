@@ -3,7 +3,10 @@ import type {
   Manifest,
   OccupationCore,
   OccupationDetail,
+  RecordSchemaVersion,
 } from "./types";
+
+const RECORD_SCHEMA_VERSION: RecordSchemaVersion = 2;
 
 type Obj = Record<string, unknown>;
 
@@ -107,7 +110,7 @@ function isRound(v: unknown): boolean {
 
 function hasIdentity(v: Obj): boolean {
   return (
-    v.schemaVersion === 1 &&
+    v.schemaVersion === RECORD_SCHEMA_VERSION &&
     isStr(v.snapshotId) &&
     isStr(v.asAt) &&
     isMonth(v.asAt) &&
@@ -136,14 +139,19 @@ export function isOccupationCore(v: unknown): v is OccupationCore {
 export function isOccupationDetail(v: unknown): v is OccupationDetail {
   if (!isObj(v) || !hasIdentity(v)) return false;
   const attributes = (valueOk: (x: unknown) => boolean) => (x: unknown) =>
-    isMap(x, inSet(ATTRIBUTES), (a) => isMap(a, anyKey, valueOk));
+    isMap(x, inSet(ATTRIBUTES), valueOk);
   return (
     byVisa(byMonthOrOlder(isStatusCounts))(v.cohorts) &&
     byVisa((s) => isMap(s, anyKey, byMonthOrOlder(isCountText)))(
       v.cohortsByScore,
     ) &&
-    byVisa(attributes(byMonth(isCountText)))(v.invitedProfile) &&
-    byVisa(byState(attributes(isCountText)), STATE_VISAS)(v.invitedProfileState)
+    byVisa(attributes(byMonth((m) => isMap(m, anyKey, isCountText))))(
+      v.invitedProfile,
+    ) &&
+    byVisa(
+      byState(attributes((a) => isMap(a, anyKey, isCountText))),
+      STATE_VISAS,
+    )(v.invitedProfileState)
   );
 }
 

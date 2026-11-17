@@ -7,10 +7,11 @@ import type {
   StateVisa,
   Visa,
 } from "../../src/lib/data/types";
-import type { ParsedRow } from "./generate-rows";
+import type { CoveredPart, ParsedRow } from "./generate-rows";
 import { VIEWS, type ViewId } from "./views";
 
 export type RowsByView = Record<ViewId, ParsedRow[]>;
+export type CoverageByView = Record<ViewId, CoveredPart[]>;
 export type AssembledOccupation = {
   core: OccupationCore;
   detail: OccupationDetail;
@@ -145,8 +146,12 @@ function handlers(asAt: MonthKey): Record<ViewId, Handler> {
     "invited-profile": (o, row, view) => {
       const visa = child(o.detail.invitedProfile, row.visa);
       const attribute = child(visa, need(row, "attribute", view));
-      const value = child(attribute, need(row, "attributeValue", view));
-      put(value, row.asAt, row, view);
+      put(
+        child(attribute, row.asAt),
+        need(row, "attributeValue", view),
+        row,
+        view,
+      );
     },
     "invited-profile-state": (o, row, view) => {
       const visa = child(o.detail.invitedProfileState, stateVisa(row, view));
@@ -161,7 +166,7 @@ function newBuilder(
   row: ParsedRow,
   identity: { snapshotId: string; asAt: MonthKey },
 ): Builder {
-  const base = { schemaVersion: 1 as const, ...identity, code: row.code };
+  const base = { schemaVersion: 2 as const, ...identity, code: row.code };
   return {
     core: {
       ...base,
@@ -183,6 +188,61 @@ function newBuilder(
     },
     poolByScore: {},
   };
+}
+
+function viewVisas(id: ViewId): Visa[] {
+  return VIEWS.find((view) => view.id === id)?.visas ?? [];
+}
+
+function needPart<K extends keyof CoveredPart>(
+  part: CoveredPart,
+  key: K,
+  view: ViewId,
+): NonNullable<CoveredPart[K]> {
+  const value = part[key];
+  if (value === undefined) {
+    throw new Error(`${view} ${part.asAt}: fetched part has no ${key}`);
+  }
+  return value as NonNullable<CoveredPart[K]>;
+}
+
+/**
+ * Gives every fetched view-month part an explicit (possibly empty) map, for
+ * every visa the view selects, so a record shows which months were fetched:
+ * an empty month is a published zero, a missing month was not fetched (R14).
+ * Runs before any row, so month keys keep the fetch order (oldest first).
+ */
+function fillCoverage(o: Builder, coverage: CoverageByView): void {
+  for (const visa of viewVisas("status-history")) {
+    for (const part of coverage["status-history"]) {
+      child(child(o.core.statusHistory, visa), part.asAt);
+    }
+  }
+  for (const visa of viewVisas("invited-by-score")) {
+    for (const part of coverage["invited-by-score"]) {
+      child(child(o.core.invitedByScore, visa), part.asAt);
+    }
+  }
+  for (const visa of viewVisas("state-invited") as StateVisa[]) {
+    for (const part of coverage["state-invited"]) {
+      const state = needPart(part, "state", "state-invited");
+      child(child(child(o.core.stateInvited, visa), state), part.asAt);
+    }
+  }
+  for (const visa of viewVisas("invited-profile")) {
+    for (const part of coverage["invited-profile"]) {
+      const attribute = needPart(part, "attribute", "invited-profile");
+      child(child(child(o.detail.invitedProfile, visa), attribute), part.asAt);
+    }
+  }
+  for (const visa of viewVisas("invited-profile-state") as StateVisa[]) {
+    for (const part of coverage["invited-profile-state"]) {
+      const view = "invited-profile-state";
+      const state = needPart(part, "state", view);
+      const attribute = needPart(part, "attribute", view);
+      child(child(child(o.detail.invitedProfileState, visa), state), attribute);
+    }
+  }
 }
 
 /**
@@ -221,6 +281,7 @@ function presentCodes(rowsByView: RowsByView, asAt: MonthKey): Set<string> {
  */
 export function assembleOccupations(
   rowsByView: RowsByView,
+  coverage: CoverageByView,
   identity: { snapshotId: string; asAt: MonthKey },
 ): AssembledOccupation[] {
   const apply = handlers(identity.asAt);
@@ -234,6 +295,7 @@ export function assembleOccupations(
     let builder = builders.get(row.code);
     if (!builder) {
       builder = newBuilder(row, identity);
+      fillCoverage(builder, coverage);
       builders.set(row.code, builder);
     }
     builder.core.name = row.name;

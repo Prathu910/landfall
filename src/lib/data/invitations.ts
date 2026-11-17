@@ -1,3 +1,4 @@
+import { calendarMonths, splitCoverage } from "./months";
 import { isPositive, parseCountText } from "./published-count";
 import type {
   Interval,
@@ -11,18 +12,16 @@ import type {
 export type MonthlyInvited = { asAt: MonthKey; invitedAtLeast: Interval };
 
 export type InvitationActivity = {
-  months: MonthlyInvited[];
+  months: MonthlyInvited[]; // fetched months in the window, oldest first
+  notPublished: MonthKey[]; // window months that were not fetched
   lastConfirmedMonth: MonthKey | null;
   lastPossibleMonth: MonthKey | null;
   scoreRange: { min: number; max: number } | null;
 };
 
-export function latestMonthKeys(
-  byMonth: Record<MonthKey, unknown>,
-  count: number,
-): MonthKey[] {
-  return Object.keys(byMonth).sort().slice(-count);
-}
+/** The dashboard keeps 24 as-at months. */
+const HISTORY_MONTHS = 24;
+const SCORE_RANGE_MONTHS = 12;
 
 /** Min and max score among cells with a positive (min > 0) count. */
 export function positiveScoreRange(
@@ -37,35 +36,38 @@ export function positiveScoreRange(
   return { min: Math.min(...scores), max: Math.max(...scores) };
 }
 
+/**
+ * INVITED per as-at month over the `months` calendar months ending at
+ * core.asAt. A fetched month with no INVITED row is zero.
+ */
 export function invitationActivity(
   core: OccupationCore,
   visa: Visa,
+  months = HISTORY_MONTHS,
 ): InvitationActivity {
   const history = core.statusHistory[visa];
-  if (!history) {
+  const { covered, notPublished } = splitCoverage(
+    calendarMonths(core.asAt, months),
+    history,
+  );
+  const perMonth: MonthlyInvited[] = covered.map((asAt) => {
+    const text = history?.[asAt]?.INVITED;
     return {
-      months: [],
-      lastConfirmedMonth: null,
-      lastPossibleMonth: null,
-      scoreRange: null,
+      asAt,
+      invitedAtLeast: text ? parseCountText(text) : { min: 0, max: 0 },
     };
-  }
-  const months: MonthlyInvited[] = Object.keys(history)
-    .sort()
-    .map((asAt) => {
-      const text = history[asAt].INVITED;
-      return {
-        asAt,
-        invitedAtLeast: text ? parseCountText(text) : { min: 0, max: 0 },
-      };
-    });
+  });
   const last = (test: (i: Interval) => boolean): MonthKey | null =>
-    [...months].reverse().find((m) => test(m.invitedAtLeast))?.asAt ?? null;
+    perMonth.findLast((m) => test(m.invitedAtLeast))?.asAt ?? null;
 
-  const byScore = core.invitedByScore[visa] ?? {};
-  const recent = latestMonthKeys(byScore, 12).map((key) => byScore[key]);
+  const byScore = core.invitedByScore[visa];
+  const recent = splitCoverage(
+    calendarMonths(core.asAt, SCORE_RANGE_MONTHS),
+    byScore,
+  ).covered.map((month) => byScore?.[month] ?? {});
   return {
-    months,
+    months: perMonth,
+    notPublished,
     lastConfirmedMonth: last((i) => i.min > 0),
     lastPossibleMonth: last((i) => i.max > 0),
     scoreRange: positiveScoreRange(recent),

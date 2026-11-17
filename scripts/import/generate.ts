@@ -8,9 +8,13 @@ import type {
   OccupationIndexEntry,
   Visa,
 } from "../../src/lib/data/types";
-import { assembleOccupations, type RowsByView } from "./generate-assemble";
+import {
+  assembleOccupations,
+  type CoverageByView,
+  type RowsByView,
+} from "./generate-assemble";
 import { matchRounds, type RoundsFile } from "./generate-rounds";
-import { parseViewRows } from "./generate-rows";
+import { parseViewCoverage, parseViewRows } from "./generate-rows";
 import { DASHBOARD_PAGE_URL } from "./qlik-constants";
 import { readRawView } from "./raw-store";
 import {
@@ -59,17 +63,19 @@ export function snapshotIdFor(asAt: MonthKey): string {
 /**
  * Latest-only views come from the asAt folder. Multi-month views come from
  * every stored folder up to asAt (newest revision each), which keeps history
- * older than the dashboard's own 24-month window.
+ * older than the dashboard's own 24-month window. Coverage lists every
+ * fetched part, so a month with no rows still counts as fetched (zero).
  */
 function readRows(
   rawRoot: string,
   asAt: MonthKey,
   months: MonthKey[],
-): RowsByView {
-  const rowsByView = {} as RowsByView;
+): { rows: RowsByView; coverage: CoverageByView } {
+  const rows = {} as RowsByView;
+  const coverage = {} as CoverageByView;
   for (const view of VIEWS) {
     const viewMonths = view.months === "latest" ? [asAt] : months;
-    rowsByView[view.id] = viewMonths.flatMap((month) => {
+    const files = viewMonths.flatMap((month) => {
       const file = readRawView(rawRoot, month, view.id);
       if (!file) {
         if (month === asAt) {
@@ -82,10 +88,12 @@ function readRows(
           `${view.id} ${month}: raw file holds ${file.viewId} ${file.asAt}`,
         );
       }
-      return parseViewRows(view, file);
+      return [file];
     });
+    rows[view.id] = files.flatMap((file) => parseViewRows(view, file));
+    coverage[view.id] = files.flatMap((file) => parseViewCoverage(view, file));
   }
-  return rowsByView;
+  return { rows, coverage };
 }
 
 function manifestEntry(core: OccupationCore): Manifest["occupations"][number] {
@@ -110,14 +118,15 @@ function manifestEntry(core: OccupationCore): Manifest["occupations"][number] {
 export function generate(input: GenerateInput): GeneratedData {
   const months = rawMonths(input.rawRoot);
   const snapshotId = snapshotIdFor(input.asAt);
-  const occupations = assembleOccupations(
-    readRows(
-      input.rawRoot,
-      input.asAt,
-      months.filter((month) => month <= input.asAt),
-    ),
-    { snapshotId, asAt: input.asAt },
+  const { rows, coverage } = readRows(
+    input.rawRoot,
+    input.asAt,
+    months.filter((month) => month <= input.asAt),
   );
+  const occupations = assembleOccupations(rows, coverage, {
+    snapshotId,
+    asAt: input.asAt,
+  });
   const rounds = matchRounds(
     input.rounds.rounds,
     occupations.map(({ core }) => core),

@@ -4,6 +4,7 @@ import type {
   TrendEvidence,
   VisaPathway,
 } from "../report-evidence";
+import { calendarMonths, splitCoverage } from "./months";
 import { parseCountText } from "./published-count";
 import { monthEnd } from "./report-source";
 import type { CountText, OccupationCore, ScoreCounts } from "./types";
@@ -37,17 +38,26 @@ export function toPoolOccupation(core: OccupationCore): PoolOccupation | null {
   };
 }
 
+/**
+ * The last 12 calendar months to core.asAt. A fetched month with no SUBMITTED
+ * row is zero; a month that was not fetched is left out.
+ */
 function trendFor(core: OccupationCore): TrendEvidence[] {
-  const history = core.statusHistory["189"] ?? {};
-  return Object.keys(history)
-    .sort()
-    .flatMap((month) => {
-      const submitted = history[month]?.SUBMITTED;
-      return submitted === undefined
-        ? []
-        : [{ date: monthEnd(month), total: parseCountText(submitted) }];
-    })
-    .slice(-LEGACY_TREND_MONTHS);
+  const history = core.statusHistory["189"];
+  const { covered } = splitCoverage(
+    calendarMonths(core.asAt, LEGACY_TREND_MONTHS),
+    history,
+  );
+  return covered.map((month) => {
+    const submitted = history?.[month]?.SUBMITTED;
+    return {
+      date: monthEnd(month),
+      total:
+        submitted === undefined
+          ? { min: 0, max: 0 }
+          : parseCountText(submitted),
+    };
+  });
 }
 
 function pathwaysFor(core: OccupationCore): PathwayEvidence[] {

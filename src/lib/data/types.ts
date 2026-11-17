@@ -11,8 +11,16 @@ export type CountText = string; // displayed qText: digits or "<20"
 export type ScoreCounts = Record<string, CountText>; // key = score as string, e.g. "90"
 export type Interval = { min: number; max: number };
 
+/**
+ * Multi-month maps (statusHistory, invitedByScore, stateInvited and
+ * invitedProfile) hold a key for every month that was fetched, `{}` when the
+ * occupation had no rows that month (zero). A month without a key was not
+ * fetched: "not published", never zero.
+ */
+export type RecordSchemaVersion = 2;
+
 export type OccupationCore = {
-  schemaVersion: 1;
+  schemaVersion: RecordSchemaVersion;
   snapshotId: string;
   asAt: MonthKey;
   code: string;
@@ -31,7 +39,7 @@ export type OccupationCore = {
 };
 
 export type OccupationDetail = {
-  schemaVersion: 1;
+  schemaVersion: RecordSchemaVersion;
   snapshotId: string;
   asAt: MonthKey;
   code: string;
@@ -48,10 +56,10 @@ export type OccupationDetail = {
     Record<
       Visa,
       Partial<
-        Record<ProfileAttribute, Record<string, Record<MonthKey, CountText>>>
+        Record<ProfileAttribute, Record<MonthKey, Record<string, CountText>>>
       >
     >
-  >;
+  >; // attribute -> as-at month -> displayed value -> count
   invitedProfileState: Partial<
     Record<
       StateVisa,
