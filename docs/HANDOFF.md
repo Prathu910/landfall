@@ -18,10 +18,16 @@ Production browser checks exercised homepage searchable occupation, keyboard sco
 
 ## Continue next time
 
-1. Finish visual QA across mobile/tablet, reduced motion, state filters and every report section. Check complete printed/PDF pagination, beyond the verified collapsed-content visibility.
-2. Improve step-to-step scrolling: after continuing a long form, ensure the next heading and progress stay visibly below the sticky header.
-3. Review the coverage audit with the owner. Decide which verified occupation/state detail provides the next useful improvement.
-4. Rebuild and publish the reviewed version to the existing private Sites project. Preserve `.openai/hosting.json` project identity and current audience.
-5. Continue commercial delivery infrastructure only after the free report is accepted: secure persistence, payments, reproducible PDFs, email and refresh entitlements.
+As of 17 November 2026, follow the approved roadmap in `docs/STRATEGY.md`, in order:
 
-`docs/REPORT-COVERAGE.md` records every original report section and the evidence or product dependency behind each remaining gap. `docs/DESIGN.md` records the design approach and library choices. Exact queue positions, invitation waits, personal probabilities and current ceiling utilisation remain unsupported and are not fabricated.
+1. Data foundation: import all occupations, EOI statuses, Month Submitted cohorts, Nominated State and profile attributes. First resolve the open status-semantics questions listed there.
+2. A reality-check section in the report.
+3. A 190/491 state outlook, covering rules, evidence and points, ranked into groups.
+4. SEO foundation and occupation pages for every occupation.
+5. Polish: readability, copy, sample report, `npm ci` lockfile.
+6. Content engine.
+7. Monetisation, with lawyer review first.
+
+The earlier QA items still apply as part of step 5: mobile/tablet visual QA, print pagination and step-to-step scrolling under the sticky header. Preserve `.openai/hosting.json` when publishing.
+
+`docs/REPORT-COVERAGE.md` records every original report section and the evidence or product dependency behind each remaining gap. `docs/DESIGN.md` records the design approach and library choices. Exact queue positions, forecast waits, percentage chances and current ceiling utilisation remain unsupported and are not fabricated. History-based outcome counts and historical waits are now planned; see `docs/STRATEGY.md`.

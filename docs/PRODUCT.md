@@ -1,5 +1,7 @@
 # Landfall product direction
 
+> **Superseded in part.** As of 17 November 2026, `docs/STRATEGY.md` holds the founder's decisions and the approved roadmap. Where the two conflict, it wins. Examples: history-based outcome counts are now allowed, and SEO occupation pages come before monetisation.
+
 17 November 2026. SPEC.md and the HTML files in the parent directory are exploratory context. RESEARCH.md records the evidence informing this direction.
 
 ## Outcome
