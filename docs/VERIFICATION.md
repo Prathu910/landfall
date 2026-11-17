@@ -1,3 +1,13 @@
+# Premium iteration checkpoint (v0.2)
+
+17 November 2026. `npm test`: 47 passing tests; `npm run typecheck`: passed; `npm run build`: passed; `npm audit --omit=dev`: zero reported vulnerabilities. Original SPEC and reference HTML copies compare byte-for-byte with the parent originals.
+
+Production browser checks cover searchable occupations, keyboard slider, landing-page feature tabs, validation, calendar selection, the four-step check, score/scenario changes, three visa pool controls, bounded chart input, checklist, glossary, editing, optional saving, restoration and clearing. Review identified and corrected SVG title hydration, unbounded chart work, collapsed print content and expired-evidence scenario gaps. See HANDOFF.md for the remaining visual QA and deployment work.
+
+The verification below records the earlier v0.1 baseline; its mobile checks should be repeated for the redesign.
+
+---
+
 # First release verification
 
 17 November 2026. Verified the static production output, not only the development server.

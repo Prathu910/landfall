@@ -17,11 +17,11 @@ Phases are outcome gates, not calendar promises. Do not take payments until paid
 
 ## First release design
 
-Use Landfall as a replaceable working name. Warm off-white, forest green, chartreuse accents, editorial serif headlines, clear sans-serif UI and restrained SVG charts. Desktop header with product navigation and a simple mobile menu. The page explains value through a working occupation/points explorer, pathway distinctions, a sample timeline and a readable sample report.
+Use Landfall as a replaceable working name. Warm off-white, forest ink, mint accents, sans-serif hierarchy with editorial serif accents, Mantine controls and Motion interactions. See DESIGN.md for the v0.2 design approach. Desktop header with product navigation and a simple mobile menu. The page explains value through a working occupation/points explorer, pathway distinctions, a sample timeline and a readable sample report.
 
 The check groups input into four steps: profile; English and education; experience and other points; review. Results update as input changes. Required inputs are validated before a full report is shown. Date-only calculations use UTC calendar components; the browser's local calendar date determines today. No personal profile in a URL. Persistence is optional and clearable.
 
-The generated report contains points by category, conditional nomination totals, an official-snapshot comparison for supported occupations, a useful personal timeline and sourced state summaries. It never invents wait times, exact same-score ranks, probabilities, testimonials, completed purchases or live subscriptions. A browser print view is available; a downloadable paid PDF is a later phase.
+The generated report contains points by category, conditional nomination totals, real credential scenarios, current three-visa pool comparisons, twelve monthly 189 totals, six official invitation rounds, a personal timeline, state summaries, occupation comparisons, a preparation checklist and glossary. REPORT-COVERAGE.md records the original reference comparison. It never invents wait times, exact same-score ranks, probabilities, testimonials, completed purchases or live subscriptions. A browser print view is available; a downloadable paid PDF is a later phase.
 
 ## Architecture
 

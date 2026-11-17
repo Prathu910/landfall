@@ -1,20 +1,256 @@
 import { ArrowUpRight } from "lucide-react";
+import { Faq } from "@/components/faq";
 import { snapshot } from "@/lib/pool";
-export const metadata={title:"Our methodology and sources"};
-const sources=[
- {name:"SkillSelect EOI dashboard",description:"Month-end pool snapshot · 31 October 2026 · 189, submitted EOIs",url:snapshot.sourceUrl},
- {name:"Federal points table",description:"Current category values and qualifying conditions",url:"https://immi.homeaffairs.gov.au/supporting/Pages/Work/190-points-table.aspx"},
- {name:"SkillSelect invitation rounds",description:"Published round results and invitation process",url:"https://immi.homeaffairs.gov.au/visas/working-in-australia/skillselect/invitation-rounds"},
- {name:"Skills assessment guidance",description:"Validity periods, the three-year cap and exceptions",url:"https://immi.homeaffairs.gov.au/visas/working-in-australia/skills-assessment"},
- {name:"English evidence",description:"Accepted tests, score thresholds and date-dependent rules",url:"https://immi.homeaffairs.gov.au/help-support/meeting-our-requirements/english-language"},
- {name:"EOI validity",description:"Two-year active period and keeping details up to date",url:"https://immi.homeaffairs.gov.au/visas/working-in-australia/skillselect/expression-of-interest/after-you-submit-your-expression-of-interest"},
- {name:"Home Affairs licensing",description:"Attribution and exclusions for government material",url:"https://www.homeaffairs.gov.au/access-and-accountability/using-our-website/copyright-and-disclaimer"},
+export const metadata = { title: "Our methodology and sources" };
+const sources = [
+  {
+    name: "SkillSelect EOI dashboard",
+    description:
+      "31 October 2026 · 189, 190 and state 491 submitted pools · twelve monthly 189 occupation totals",
+    url: snapshot.sourceUrl,
+  },
+  {
+    name: "Federal points table",
+    description: "Current category values and qualifying conditions",
+    url: "https://immi.homeaffairs.gov.au/supporting/Pages/Work/190-points-table.aspx",
+  },
+  {
+    name: "SkillSelect invitation rounds",
+    description: "Published round results and invitation process",
+    url: "https://immi.homeaffairs.gov.au/visas/working-in-australia/skillselect/invitation-rounds",
+  },
+  {
+    name: "Skills assessment guidance",
+    description: "Validity periods, the three-year cap and exceptions",
+    url: "https://immi.homeaffairs.gov.au/visas/working-in-australia/skills-assessment",
+  },
+  {
+    name: "English evidence",
+    description: "Accepted tests, score thresholds and date-dependent rules",
+    url: "https://immi.homeaffairs.gov.au/help-support/meeting-our-requirements/english-language",
+  },
+  {
+    name: "EOI validity",
+    description: "Two-year active period and keeping details up to date",
+    url: "https://immi.homeaffairs.gov.au/visas/working-in-australia/skillselect/expression-of-interest/after-you-submit-your-expression-of-interest",
+  },
+  {
+    name: "Home Affairs licensing",
+    description: "Attribution and exclusions for government material",
+    url: "https://www.homeaffairs.gov.au/access-and-accountability/using-our-website/copyright-and-disclaimer",
+  },
 ];
-export default function MethodologyPage(){return <main id="main" className="container"><div className="page-head"><span className="eyebrow">Know what’s behind the numbers</span><h1>Good information starts<br/>with <em>honest methods.</em></h1><p>What we use, what we calculate, and where the data stops. Sources checked on 17 November 2026.</p></div><div className="method-layout"><nav className="method-nav" aria-label="On this page"><a href="#sources">Our sources</a><a href="#pool">Reading the pool</a><a href="#points">Points & dates</a><a href="#limitations">Limitations</a><a href="#privacy">Your privacy</a><a href="#questions">Common questions</a></nav><div className="method-content"><section id="sources"><h2>Every number has <em>a starting point.</em></h2><p>We use public government information and keep the data date visible. The current occupation import covers 11 occupations; it is a checked-in snapshot, not a live connection to SkillSelect.</p>{sources.map(s=><div className="source-item" key={s.name}><div>{s.name}<small>{s.description}</small></div><a href={s.url} target="_blank" rel="noreferrer">Source<ArrowUpRight size={13}/></a></div>)}</section><section id="pool"><h2>A pool comparison, <em>with context.</em></h2><p>The explorer shows submitted 189 EOIs by occupation and score, as at 31 October 2026. The higher-score count adds published rows above the selected score. EOIs sharing that score are shown separately.</p><p>Counts below 20 are published as “&lt;20”. We preserve each as a 0–19 interval and add the intervals. A displayed range reflects source masking, not a statistical confidence interval. Chart bars use the upper bound where a value is masked.</p><p>The chart normally displays scores from 65 to 110. Its range expands to include a selected score outside those bounds. Each bar represents one score; scores outside the displayed chart remain included in the numerical comparisons. The numerical pool total includes all published scores, including those below 65. People can submit multiple EOIs, so EOI counts are not unique people.</p><p>Submission month is not sufficient to establish date-of-effect tie-break order. We do not describe these comparisons as an exact personal queue rank. Monthly changes also cannot, by themselves, separate invitations, withdrawals, expiries and score changes.</p></section><section id="points"><h2>Rules first.<br/><em>Your answers give them context.</em></h2><p>The calculator applies current federal category values to your self-reported answers. Employment points are capped at 20. Qualifications count once at the highest applicable level. Nomination or sponsorship points are conditional.</p><p>English is entered as a self-reported level. This release does not audit individual test-component scores, delivery modes or registration conditions. Qualifying work and study are confirmed by your answers; the tool does not assess documents.</p><p>The timeline shows relevant birthdays and the evidence dates you provide. Skills-assessment validity uses the earlier of a stated letter expiry and the three-year cap. The EOI window uses submission date plus two years. Calendar anniversaries for 29 February use 28 February in non-leap years; this convention needs individual verification for a threshold-sensitive case.</p><p>Dates beyond three years are omitted. Future employment gains, partner-age changes and unconfirmed policy dates are not projected in this release. There is no guaranteed invitation window.</p></section><section id="limitations"><h2>What we can’t <em>tell you.</em></h2><p>This overview does not establish full visa eligibility, advise which visa to apply for, or predict an invitation. Age, English and assessment checks cover only a subset of the requirements, and exceptions can apply.</p><p>State summaries describe published systems. They are not a complete personal state-eligibility engine. WA and NT current cohort requirements need further verification. Community samples and individual invitation probabilities are not used in this release.</p><p>Subclass 491 is provisional; a subsequent permanent-residence pathway has its own conditions. For personalised advice, use the <a className="source-link" href="https://www.mara.gov.au/" target="_blank" rel="noreferrer">OMARA register</a> to find a registered migration agent.</p></section><section id="privacy"><h2>Your answers <em>stay with you.</em></h2><p>This first release calculates in your browser. It does not send your profile to an application server, collect an email address, request documents, or include third-party analytics.</p><p>Answers are held in memory unless you enable “Save my progress on this device”. That option uses this browser’s local storage. Anyone with access to the same browser can potentially see them. The “Clear my answers” control deletes that saved profile.</p><p>Printing or saving your overview creates a personal copy under your control. Hosting providers may keep ordinary access logs; the private preview host also manages access to the website. External source links have their own privacy policies.</p></section><section className="faq" id="questions"><h2>A few useful <em>answers.</em></h2>{[
- ["Is the points check free?","Yes. This first release has no checkout or subscription. You can calculate your score, view your overview and use the browser print function without paying."],
- ["Is this migration advice?","It is general information and a self-reported calculation. Landfall is not a registered migration agent. A registered agent or Australian legal practitioner can assess your individual circumstances."],
- ["Why do some numbers show a range?","The official dashboard masks counts below 20. We preserve that uncertainty when adding point bands, rather than filling in invented numbers."],
- ["Does the data update after every round?","The imported pool is dated 31 October 2026. Invitation results and EOI pool snapshots have separate release schedules. Automatic imports and report refreshes are part of a later release."],
- ["Can I download the report?","Use Print / save PDF on your overview, then choose your browser’s PDF destination. Automated PDF generation and email delivery are not included in this release."],
- ["What if my occupation is not listed?","Choose Other occupation for the points check. The report will clearly show that no pool comparison is available. The current imported snapshot covers 11 occupations."],
- ].map(([q,a])=><details key={q}><summary>{q}</summary><p>{a}</p></details>)}</section></div></div></main>;}
+export default function MethodologyPage() {
+  return (
+    <main id="main" className="container">
+      <div className="page-head">
+        <span className="eyebrow">Know what’s behind the numbers</span>
+        <h1>
+          Good information starts
+          <br />
+          with <em>honest methods.</em>
+        </h1>
+        <p>
+          What we use, what we calculate, and where the data stops. Sources
+          checked on 17 November 2026.
+        </p>
+      </div>
+      <div className="method-layout">
+        <nav className="method-nav" aria-label="On this page">
+          <a href="#sources">Our sources</a>
+          <a href="#pool">Reading the pool</a>
+          <a href="#points">Points & dates</a>
+          <a href="#limitations">Limitations</a>
+          <a href="#privacy">Your privacy</a>
+          <a href="#questions">Common questions</a>
+        </nav>
+        <div className="method-content">
+          <section id="sources">
+            <h2>
+              Every number has <em>a starting point.</em>
+            </h2>
+            <p>
+              We use public government information and keep the data date
+              visible. The current occupation import covers 11 occupations; it
+              is a checked-in snapshot, not a live connection to SkillSelect.
+            </p>
+            {sources.map((s) => (
+              <div className="source-item" key={s.name}>
+                <div>
+                  {s.name}
+                  <small>{s.description}</small>
+                </div>
+                <a href={s.url} target="_blank" rel="noreferrer">
+                  Source
+                  <ArrowUpRight size={13} />
+                </a>
+              </div>
+            ))}
+          </section>
+          <section id="pool">
+            <h2>
+              A pool comparison, <em>with context.</em>
+            </h2>
+            <p>
+              The homepage explorer shows submitted 189 EOIs. Reports also
+              include 190 and state-nominated 491 pools by occupation and score,
+              as at 31 October 2026. State pools are national EOI totals, not
+              state selection queues. The higher-score count adds published rows
+              above the selected score. EOIs sharing that score are shown
+              separately.
+            </p>
+            <p>
+              Counts below 20 are published as “&lt;20”. We preserve each as a
+              0–19 interval and add the intervals. A displayed range reflects
+              source masking, not a statistical confidence interval. Chart bars
+              use the upper bound where a value is masked.
+            </p>
+            <p>
+              The chart normally displays scores from 65 to 110. Its range
+              expands to include a selected score outside those bounds. Each bar
+              represents one score; scores outside the displayed chart remain
+              included in the numerical comparisons. Report totals use directly
+              published occupation aggregates. Homepage totals sum score
+              intervals; they can be wider because suppressed bands remain
+              uncertain. Both include all published scores, including those
+              below 65. People can submit multiple EOIs, so EOI counts are not
+              unique people.
+            </p>
+            <p>
+              Submission month is not sufficient to establish date-of-effect
+              tie-break order. We do not describe these comparisons as an exact
+              personal queue rank. Twelve monthly 189 occupation totals are
+              imported from November 2025 to October 2026. Their net change
+              cannot separate invitations, new entries, withdrawals, expiries or
+              score changes. Six invitation rounds are matched by occupation;
+              missing published rows remain “Not listed”, and are not treated as
+              zero invitations.
+            </p>
+          </section>
+          <section id="points">
+            <h2>
+              Rules first.
+              <br />
+              <em>Your answers give them context.</em>
+            </h2>
+            <p>
+              The calculator applies current federal category values to your
+              self-reported answers. Employment points are capped at 20.
+              Qualifications count once at the highest applicable level.
+              Nomination or sponsorship points are conditional.
+            </p>
+            <p>
+              English is entered as a self-reported level. This release does not
+              audit individual test-component scores, delivery modes or
+              registration conditions. Qualifying work and study are confirmed
+              by your answers; the tool does not assess documents.
+            </p>
+            <p>
+              The timeline shows relevant birthdays and the evidence dates you
+              provide. Skills-assessment validity uses the earlier of a stated
+              letter expiry and the three-year cap. The EOI window uses
+              submission date plus two years. Calendar anniversaries for 29
+              February use 28 February in non-leap years; this convention needs
+              individual verification for a threshold-sensitive case.
+            </p>
+            <p>
+              Dates beyond three years are omitted. Future employment gains,
+              partner-age changes and unconfirmed policy dates are not projected
+              in this release. Scenario comparisons recalculate hypothetical
+              qualifying credentials or the next employment band, while
+              preserving the employment cap. These are not recommendations or
+              predictions of future eligibility. No completion dates or costs
+              are assumed. There is no guaranteed invitation window.
+            </p>
+          </section>
+          <section id="limitations">
+            <h2>
+              What we can’t <em>tell you.</em>
+            </h2>
+            <p>
+              This overview does not establish full visa eligibility, advise
+              which visa to apply for, or predict an invitation. Age, English
+              and assessment checks cover only a subset of the requirements, and
+              exceptions can apply.
+            </p>
+            <p>
+              State summaries describe published systems. They are not a
+              complete personal state-eligibility engine. WA and NT current
+              cohort requirements need further verification. Community samples
+              and individual invitation probabilities are not used in this
+              release.
+            </p>
+            <p>
+              Subclass 491 is provisional; a subsequent permanent-residence
+              pathway has its own conditions. For personalised advice, use the{" "}
+              <a
+                className="source-link"
+                href="https://www.mara.gov.au/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                OMARA register
+              </a>{" "}
+              to find a registered migration agent.
+            </p>
+          </section>
+          <section id="privacy">
+            <h2>
+              Your answers <em>stay with you.</em>
+            </h2>
+            <p>
+              This first release calculates in your browser. It does not send
+              your profile to an application server, collect an email address,
+              request documents, or include third-party analytics.
+            </p>
+            <p>
+              Answers are held in memory unless you enable “Save my progress on
+              this device”. That option uses this browser’s local storage.
+              Anyone with access to the same browser can potentially see them.
+              The “Clear my answers” control deletes that saved profile.
+            </p>
+            <p>
+              Printing or saving your overview creates a personal copy under
+              your control. Hosting providers may keep ordinary access logs; the
+              private preview host also manages access to the website. External
+              source links have their own privacy policies.
+            </p>
+          </section>
+          <section className="faq" id="questions">
+            <h2>
+              A few useful <em>answers.</em>
+            </h2>
+            <Faq
+              items={[
+                [
+                  "Is the points check free?",
+                  "Yes. This first release has no checkout or subscription. You can calculate your score, view your overview and use the browser print function without paying.",
+                ],
+                [
+                  "Is this migration advice?",
+                  "It is general information and a self-reported calculation. Landfall is not a registered migration agent. A registered agent or Australian legal practitioner can assess your individual circumstances.",
+                ],
+                [
+                  "Why do some numbers show a range?",
+                  "The official dashboard masks counts below 20. We preserve that uncertainty when adding point bands, rather than filling in invented numbers.",
+                ],
+                [
+                  "Does the data update after every round?",
+                  "The imported pool is dated 31 October 2026. Invitation results and EOI pool snapshots have separate release schedules. Automatic imports and report refreshes are part of a later release.",
+                ],
+                [
+                  "Can I download the report?",
+                  "Use Print / save PDF on your overview, then choose your browser’s PDF destination. Automated PDF generation and email delivery are not included in this release.",
+                ],
+                [
+                  "What if my occupation is not listed?",
+                  "Choose Other occupation for the points check. The report will clearly show that no pool comparison is available. The current imported snapshot covers 11 occupations.",
+                ],
+              ]}
+            />
+          </section>
+        </div>
+      </div>
+    </main>
+  );
+}

@@ -1,0 +1,3681 @@
+{
+  "sourceUrl": "https://api.dynamic.reports.employment.gov.au/anonap/extensions/hSKLS02_SkillSelect_EOI_Data/hSKLS02_SkillSelect_EOI_Data.html",
+  "sourceCheckedAt": "2026-11-17",
+  "snapshotDate": "2026-10-31",
+  "status": "SUBMITTED",
+  "roundsSourceUrl": "https://immi.homeaffairs.gov.au/visas/working-in-australia/skillselect/invitation-rounds",
+  "previousRoundsSourceUrl": "https://immi.homeaffairs.gov.au/visas/working-in-australia/skillselect/previous-rounds",
+  "roundsNote": "Null means this occupation is not listed in the published 189 results for that round. It does not mean a zero-point cut-off. Historical cut-offs are not forecasts.",
+  "trendNote": "Monthly submitted EOI occupation totals read directly from the published table with points hidden. A net change is not gross arrivals, departures, invitations or people.",
+  "pathwaysNote": "Pools overlap: one EOI may express interest in multiple visas or states. 491 here is state/territory nominated, excluding family sponsorship. Points are the dashboard score for the selected visa, which includes its applicable nomination/sponsorship points.",
+  "importMethod": "Existing public SkillSelect Qlik table eymDb, displayed qText only. One As At Month at a time; SUBMITTED, three visa types, occupation shown. Points hidden for monthly totals; shown for current score distributions. Suppression preserved.",
+  "occupations": [
+    {
+      "code": "261111",
+      "name": "ICT Business Analyst",
+      "rounds": [
+        {
+          "date": "2026-10-15",
+          "cutoff": null
+        },
+        {
+          "date": "2026-06-04",
+          "cutoff": null
+        },
+        {
+          "date": "2025-11-13",
+          "cutoff": null
+        },
+        {
+          "date": "2025-08-21",
+          "cutoff": null
+        },
+        {
+          "date": "2024-11-07",
+          "cutoff": 95
+        },
+        {
+          "date": "2024-09-05",
+          "cutoff": 95
+        }
+      ],
+      "trend": [
+        {
+          "date": "2025-11-30",
+          "total": {
+            "min": 6571,
+            "max": 6571
+          }
+        },
+        {
+          "date": "2025-12-31",
+          "total": {
+            "min": 6670,
+            "max": 6670
+          }
+        },
+        {
+          "date": "2026-01-31",
+          "total": {
+            "min": 6816,
+            "max": 6816
+          }
+        },
+        {
+          "date": "2026-02-28",
+          "total": {
+            "min": 6941,
+            "max": 6941
+          }
+        },
+        {
+          "date": "2026-03-31",
+          "total": {
+            "min": 7059,
+            "max": 7059
+          }
+        },
+        {
+          "date": "2026-04-30",
+          "total": {
+            "min": 7174,
+            "max": 7174
+          }
+        },
+        {
+          "date": "2026-05-31",
+          "total": {
+            "min": 7289,
+            "max": 7289
+          }
+        },
+        {
+          "date": "2026-06-30",
+          "total": {
+            "min": 7466,
+            "max": 7466
+          }
+        },
+        {
+          "date": "2026-07-31",
+          "total": {
+            "min": 7527,
+            "max": 7527
+          }
+        },
+        {
+          "date": "2026-08-31",
+          "total": {
+            "min": 7572,
+            "max": 7572
+          }
+        },
+        {
+          "date": "2026-09-30",
+          "total": {
+            "min": 7729,
+            "max": 7729
+          }
+        },
+        {
+          "date": "2026-10-31",
+          "total": {
+            "min": 7774,
+            "max": 7774
+          }
+        }
+      ],
+      "pathways": [
+        {
+          "visa": "189",
+          "total": {
+            "min": 7774,
+            "max": 7774
+          },
+          "points": [
+            {
+              "score": 40,
+              "count": "<20"
+            },
+            {
+              "score": 45,
+              "count": "23"
+            },
+            {
+              "score": 50,
+              "count": "36"
+            },
+            {
+              "score": 55,
+              "count": "133"
+            },
+            {
+              "score": 60,
+              "count": "259"
+            },
+            {
+              "score": 65,
+              "count": "854"
+            },
+            {
+              "score": 70,
+              "count": "995"
+            },
+            {
+              "score": 75,
+              "count": "1200"
+            },
+            {
+              "score": 80,
+              "count": "1198"
+            },
+            {
+              "score": 85,
+              "count": "1093"
+            },
+            {
+              "score": 90,
+              "count": "1093"
+            },
+            {
+              "score": 95,
+              "count": "623"
+            },
+            {
+              "score": 100,
+              "count": "242"
+            },
+            {
+              "score": 105,
+              "count": "<20"
+            },
+            {
+              "score": 110,
+              "count": "<20"
+            }
+          ]
+        },
+        {
+          "visa": "190",
+          "total": {
+            "min": 11607,
+            "max": 11607
+          },
+          "points": [
+            {
+              "score": 45,
+              "count": "<20"
+            },
+            {
+              "score": 50,
+              "count": "33"
+            },
+            {
+              "score": 55,
+              "count": "81"
+            },
+            {
+              "score": 60,
+              "count": "295"
+            },
+            {
+              "score": 65,
+              "count": "772"
+            },
+            {
+              "score": 70,
+              "count": "1613"
+            },
+            {
+              "score": 75,
+              "count": "1611"
+            },
+            {
+              "score": 80,
+              "count": "1875"
+            },
+            {
+              "score": 85,
+              "count": "1652"
+            },
+            {
+              "score": 90,
+              "count": "1473"
+            },
+            {
+              "score": 95,
+              "count": "1293"
+            },
+            {
+              "score": 100,
+              "count": "652"
+            },
+            {
+              "score": 105,
+              "count": "230"
+            },
+            {
+              "score": 110,
+              "count": "<20"
+            },
+            {
+              "score": 115,
+              "count": "<20"
+            }
+          ]
+        },
+        {
+          "visa": "491",
+          "total": {
+            "min": 11263,
+            "max": 11263
+          },
+          "points": [
+            {
+              "score": 55,
+              "count": "<20"
+            },
+            {
+              "score": 60,
+              "count": "83"
+            },
+            {
+              "score": 65,
+              "count": "293"
+            },
+            {
+              "score": 70,
+              "count": "839"
+            },
+            {
+              "score": 75,
+              "count": "958"
+            },
+            {
+              "score": 80,
+              "count": "1705"
+            },
+            {
+              "score": 85,
+              "count": "1616"
+            },
+            {
+              "score": 90,
+              "count": "1783"
+            },
+            {
+              "score": 95,
+              "count": "1387"
+            },
+            {
+              "score": 100,
+              "count": "1154"
+            },
+            {
+              "score": 105,
+              "count": "878"
+            },
+            {
+              "score": 110,
+              "count": "408"
+            },
+            {
+              "score": 115,
+              "count": "133"
+            },
+            {
+              "score": 120,
+              "count": "<20"
+            },
+            {
+              "score": 125,
+              "count": "<20"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "261312",
+      "name": "Developer Programmer",
+      "rounds": [
+        {
+          "date": "2026-10-15",
+          "cutoff": null
+        },
+        {
+          "date": "2026-06-04",
+          "cutoff": null
+        },
+        {
+          "date": "2025-11-13",
+          "cutoff": null
+        },
+        {
+          "date": "2025-08-21",
+          "cutoff": null
+        },
+        {
+          "date": "2024-11-07",
+          "cutoff": 95
+        },
+        {
+          "date": "2024-09-05",
+          "cutoff": 100
+        }
+      ],
+      "trend": [
+        {
+          "date": "2025-11-30",
+          "total": {
+            "min": 5286,
+            "max": 5286
+          }
+        },
+        {
+          "date": "2025-12-31",
+          "total": {
+            "min": 5460,
+            "max": 5460
+          }
+        },
+        {
+          "date": "2026-01-31",
+          "total": {
+            "min": 5660,
+            "max": 5660
+          }
+        },
+        {
+          "date": "2026-02-28",
+          "total": {
+            "min": 5782,
+            "max": 5782
+          }
+        },
+        {
+          "date": "2026-03-31",
+          "total": {
+            "min": 5937,
+            "max": 5937
+          }
+        },
+        {
+          "date": "2026-04-30",
+          "total": {
+            "min": 6077,
+            "max": 6077
+          }
+        },
+        {
+          "date": "2026-05-31",
+          "total": {
+            "min": 6166,
+            "max": 6166
+          }
+        },
+        {
+          "date": "2026-06-30",
+          "total": {
+            "min": 6337,
+            "max": 6337
+          }
+        },
+        {
+          "date": "2026-07-31",
+          "total": {
+            "min": 6458,
+            "max": 6458
+          }
+        },
+        {
+          "date": "2026-08-31",
+          "total": {
+            "min": 6573,
+            "max": 6573
+          }
+        },
+        {
+          "date": "2026-09-30",
+          "total": {
+            "min": 6731,
+            "max": 6731
+          }
+        },
+        {
+          "date": "2026-10-31",
+          "total": {
+            "min": 6788,
+            "max": 6788
+          }
+        }
+      ],
+      "pathways": [
+        {
+          "visa": "189",
+          "total": {
+            "min": 6788,
+            "max": 6788
+          },
+          "points": [
+            {
+              "score": 30,
+              "count": "<20"
+            },
+            {
+              "score": 35,
+              "count": "<20"
+            },
+            {
+              "score": 40,
+              "count": "<20"
+            },
+            {
+              "score": 45,
+              "count": "<20"
+            },
+            {
+              "score": 50,
+              "count": "40"
+            },
+            {
+              "score": 55,
+              "count": "120"
+            },
+            {
+              "score": 60,
+              "count": "213"
+            },
+            {
+              "score": 65,
+              "count": "784"
+            },
+            {
+              "score": 70,
+              "count": "966"
+            },
+            {
+              "score": 75,
+              "count": "1088"
+            },
+            {
+              "score": 80,
+              "count": "1001"
+            },
+            {
+              "score": 85,
+              "count": "966"
+            },
+            {
+              "score": 90,
+              "count": "857"
+            },
+            {
+              "score": 95,
+              "count": "497"
+            },
+            {
+              "score": 100,
+              "count": "205"
+            },
+            {
+              "score": 105,
+              "count": "24"
+            },
+            {
+              "score": 110,
+              "count": "<20"
+            },
+            {
+              "score": 115,
+              "count": "<20"
+            },
+            {
+              "score": 120,
+              "count": "<20"
+            },
+            {
+              "score": 125,
+              "count": "<20"
+            }
+          ]
+        },
+        {
+          "visa": "190",
+          "total": {
+            "min": 13879,
+            "max": 13879
+          },
+          "points": [
+            {
+              "score": 35,
+              "count": "<20"
+            },
+            {
+              "score": 40,
+              "count": "<20"
+            },
+            {
+              "score": 45,
+              "count": "<20"
+            },
+            {
+              "score": 50,
+              "count": "32"
+            },
+            {
+              "score": 55,
+              "count": "126"
+            },
+            {
+              "score": 60,
+              "count": "355"
+            },
+            {
+              "score": 65,
+              "count": "1267"
+            },
+            {
+              "score": 70,
+              "count": "2097"
+            },
+            {
+              "score": 75,
+              "count": "2157"
+            },
+            {
+              "score": 80,
+              "count": "2343"
+            },
+            {
+              "score": 85,
+              "count": "1802"
+            },
+            {
+              "score": 90,
+              "count": "1708"
+            },
+            {
+              "score": 95,
+              "count": "1227"
+            },
+            {
+              "score": 100,
+              "count": "533"
+            },
+            {
+              "score": 105,
+              "count": "190"
+            },
+            {
+              "score": 110,
+              "count": "20"
+            },
+            {
+              "score": 115,
+              "count": "<20"
+            },
+            {
+              "score": 125,
+              "count": "<20"
+            },
+            {
+              "score": 130,
+              "count": "<20"
+            }
+          ]
+        },
+        {
+          "visa": "491",
+          "total": {
+            "min": 14957,
+            "max": 14957
+          },
+          "points": [
+            {
+              "score": 45,
+              "count": "<20"
+            },
+            {
+              "score": 50,
+              "count": "<20"
+            },
+            {
+              "score": 55,
+              "count": "25"
+            },
+            {
+              "score": 60,
+              "count": "80"
+            },
+            {
+              "score": 65,
+              "count": "562"
+            },
+            {
+              "score": 70,
+              "count": "1458"
+            },
+            {
+              "score": 75,
+              "count": "1645"
+            },
+            {
+              "score": 80,
+              "count": "2344"
+            },
+            {
+              "score": 85,
+              "count": "2275"
+            },
+            {
+              "score": 90,
+              "count": "2389"
+            },
+            {
+              "score": 95,
+              "count": "1704"
+            },
+            {
+              "score": 100,
+              "count": "1291"
+            },
+            {
+              "score": 105,
+              "count": "809"
+            },
+            {
+              "score": 110,
+              "count": "274"
+            },
+            {
+              "score": 115,
+              "count": "79"
+            },
+            {
+              "score": 120,
+              "count": "<20"
+            },
+            {
+              "score": 125,
+              "count": "<20"
+            },
+            {
+              "score": 135,
+              "count": "<20"
+            },
+            {
+              "score": 140,
+              "count": "<20"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "261313",
+      "name": "Software Engineer",
+      "rounds": [
+        {
+          "date": "2026-10-15",
+          "cutoff": null
+        },
+        {
+          "date": "2026-06-04",
+          "cutoff": null
+        },
+        {
+          "date": "2025-11-13",
+          "cutoff": null
+        },
+        {
+          "date": "2025-08-21",
+          "cutoff": null
+        },
+        {
+          "date": "2024-11-07",
+          "cutoff": 95
+        },
+        {
+          "date": "2024-09-05",
+          "cutoff": 100
+        }
+      ],
+      "trend": [
+        {
+          "date": "2025-11-30",
+          "total": {
+            "min": 7851,
+            "max": 7851
+          }
+        },
+        {
+          "date": "2025-12-31",
+          "total": {
+            "min": 7999,
+            "max": 7999
+          }
+        },
+        {
+          "date": "2026-01-31",
+          "total": {
+            "min": 8251,
+            "max": 8251
+          }
+        },
+        {
+          "date": "2026-02-28",
+          "total": {
+            "min": 8381,
+            "max": 8381
+          }
+        },
+        {
+          "date": "2026-03-31",
+          "total": {
+            "min": 8521,
+            "max": 8521
+          }
+        },
+        {
+          "date": "2026-04-30",
+          "total": {
+            "min": 8649,
+            "max": 8649
+          }
+        },
+        {
+          "date": "2026-05-31",
+          "total": {
+            "min": 8736,
+            "max": 8736
+          }
+        },
+        {
+          "date": "2026-06-30",
+          "total": {
+            "min": 8939,
+            "max": 8939
+          }
+        },
+        {
+          "date": "2026-07-31",
+          "total": {
+            "min": 9094,
+            "max": 9094
+          }
+        },
+        {
+          "date": "2026-08-31",
+          "total": {
+            "min": 9197,
+            "max": 9197
+          }
+        },
+        {
+          "date": "2026-09-30",
+          "total": {
+            "min": 9399,
+            "max": 9399
+          }
+        },
+        {
+          "date": "2026-10-31",
+          "total": {
+            "min": 9464,
+            "max": 9464
+          }
+        }
+      ],
+      "pathways": [
+        {
+          "visa": "189",
+          "total": {
+            "min": 9464,
+            "max": 9464
+          },
+          "points": [
+            {
+              "score": 25,
+              "count": "<20"
+            },
+            {
+              "score": 30,
+              "count": "<20"
+            },
+            {
+              "score": 35,
+              "count": "<20"
+            },
+            {
+              "score": 40,
+              "count": "<20"
+            },
+            {
+              "score": 45,
+              "count": "30"
+            },
+            {
+              "score": 50,
+              "count": "83"
+            },
+            {
+              "score": 55,
+              "count": "206"
+            },
+            {
+              "score": 60,
+              "count": "406"
+            },
+            {
+              "score": 65,
+              "count": "1219"
+            },
+            {
+              "score": 70,
+              "count": "1393"
+            },
+            {
+              "score": 75,
+              "count": "1552"
+            },
+            {
+              "score": 80,
+              "count": "1338"
+            },
+            {
+              "score": 85,
+              "count": "1213"
+            },
+            {
+              "score": 90,
+              "count": "1132"
+            },
+            {
+              "score": 95,
+              "count": "608"
+            },
+            {
+              "score": 100,
+              "count": "229"
+            },
+            {
+              "score": 105,
+              "count": "35"
+            },
+            {
+              "score": 110,
+              "count": "<20"
+            }
+          ]
+        },
+        {
+          "visa": "190",
+          "total": {
+            "min": 20258,
+            "max": 20258
+          },
+          "points": [
+            {
+              "score": 30,
+              "count": "<20"
+            },
+            {
+              "score": 35,
+              "count": "<20"
+            },
+            {
+              "score": 40,
+              "count": "<20"
+            },
+            {
+              "score": 45,
+              "count": "<20"
+            },
+            {
+              "score": 50,
+              "count": "34"
+            },
+            {
+              "score": 55,
+              "count": "215"
+            },
+            {
+              "score": 60,
+              "count": "622"
+            },
+            {
+              "score": 65,
+              "count": "1894"
+            },
+            {
+              "score": 70,
+              "count": "3208"
+            },
+            {
+              "score": 75,
+              "count": "3268"
+            },
+            {
+              "score": 80,
+              "count": "3516"
+            },
+            {
+              "score": 85,
+              "count": "2594"
+            },
+            {
+              "score": 90,
+              "count": "2220"
+            },
+            {
+              "score": 95,
+              "count": "1731"
+            },
+            {
+              "score": 100,
+              "count": "671"
+            },
+            {
+              "score": 105,
+              "count": "208"
+            },
+            {
+              "score": 110,
+              "count": "40"
+            },
+            {
+              "score": 115,
+              "count": "<20"
+            }
+          ]
+        },
+        {
+          "visa": "491",
+          "total": {
+            "min": 21815,
+            "max": 21815
+          },
+          "points": [
+            {
+              "score": 40,
+              "count": "<20"
+            },
+            {
+              "score": 45,
+              "count": "<20"
+            },
+            {
+              "score": 50,
+              "count": "<20"
+            },
+            {
+              "score": 55,
+              "count": "36"
+            },
+            {
+              "score": 60,
+              "count": "136"
+            },
+            {
+              "score": 65,
+              "count": "847"
+            },
+            {
+              "score": 70,
+              "count": "2212"
+            },
+            {
+              "score": 75,
+              "count": "2447"
+            },
+            {
+              "score": 80,
+              "count": "3551"
+            },
+            {
+              "score": 85,
+              "count": "3381"
+            },
+            {
+              "score": 90,
+              "count": "3505"
+            },
+            {
+              "score": 95,
+              "count": "2323"
+            },
+            {
+              "score": 100,
+              "count": "1718"
+            },
+            {
+              "score": 105,
+              "count": "1208"
+            },
+            {
+              "score": 110,
+              "count": "331"
+            },
+            {
+              "score": 115,
+              "count": "89"
+            },
+            {
+              "score": 120,
+              "count": "<20"
+            },
+            {
+              "score": 125,
+              "count": "<20"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "221111",
+      "name": "Accountant (General)",
+      "rounds": [
+        {
+          "date": "2026-10-15",
+          "cutoff": null
+        },
+        {
+          "date": "2026-06-04",
+          "cutoff": null
+        },
+        {
+          "date": "2025-11-13",
+          "cutoff": null
+        },
+        {
+          "date": "2025-08-21",
+          "cutoff": null
+        },
+        {
+          "date": "2024-11-07",
+          "cutoff": 95
+        },
+        {
+          "date": "2024-09-05",
+          "cutoff": 95
+        }
+      ],
+      "trend": [
+        {
+          "date": "2025-11-30",
+          "total": {
+            "min": 6431,
+            "max": 6431
+          }
+        },
+        {
+          "date": "2025-12-31",
+          "total": {
+            "min": 6514,
+            "max": 6514
+          }
+        },
+        {
+          "date": "2026-01-31",
+          "total": {
+            "min": 6606,
+            "max": 6606
+          }
+        },
+        {
+          "date": "2026-02-28",
+          "total": {
+            "min": 6695,
+            "max": 6695
+          }
+        },
+        {
+          "date": "2026-03-31",
+          "total": {
+            "min": 6752,
+            "max": 6752
+          }
+        },
+        {
+          "date": "2026-04-30",
+          "total": {
+            "min": 6811,
+            "max": 6811
+          }
+        },
+        {
+          "date": "2026-05-31",
+          "total": {
+            "min": 6914,
+            "max": 6914
+          }
+        },
+        {
+          "date": "2026-06-30",
+          "total": {
+            "min": 6974,
+            "max": 6974
+          }
+        },
+        {
+          "date": "2026-07-31",
+          "total": {
+            "min": 6993,
+            "max": 6993
+          }
+        },
+        {
+          "date": "2026-08-31",
+          "total": {
+            "min": 6957,
+            "max": 6957
+          }
+        },
+        {
+          "date": "2026-09-30",
+          "total": {
+            "min": 6928,
+            "max": 6928
+          }
+        },
+        {
+          "date": "2026-10-31",
+          "total": {
+            "min": 6992,
+            "max": 6992
+          }
+        }
+      ],
+      "pathways": [
+        {
+          "visa": "189",
+          "total": {
+            "min": 6992,
+            "max": 6992
+          },
+          "points": [
+            {
+              "score": 35,
+              "count": "<20"
+            },
+            {
+              "score": 40,
+              "count": "<20"
+            },
+            {
+              "score": 45,
+              "count": "<20"
+            },
+            {
+              "score": 50,
+              "count": "33"
+            },
+            {
+              "score": 55,
+              "count": "121"
+            },
+            {
+              "score": 60,
+              "count": "286"
+            },
+            {
+              "score": 65,
+              "count": "920"
+            },
+            {
+              "score": 70,
+              "count": "1275"
+            },
+            {
+              "score": 75,
+              "count": "1316"
+            },
+            {
+              "score": 80,
+              "count": "1076"
+            },
+            {
+              "score": 85,
+              "count": "933"
+            },
+            {
+              "score": 90,
+              "count": "566"
+            },
+            {
+              "score": 95,
+              "count": "339"
+            },
+            {
+              "score": 100,
+              "count": "107"
+            },
+            {
+              "score": 105,
+              "count": "<20"
+            },
+            {
+              "score": 110,
+              "count": "<20"
+            }
+          ]
+        },
+        {
+          "visa": "190",
+          "total": {
+            "min": 9062,
+            "max": 9062
+          },
+          "points": [
+            {
+              "score": 40,
+              "count": "<20"
+            },
+            {
+              "score": 45,
+              "count": "<20"
+            },
+            {
+              "score": 50,
+              "count": "<20"
+            },
+            {
+              "score": 55,
+              "count": "63"
+            },
+            {
+              "score": 60,
+              "count": "191"
+            },
+            {
+              "score": 65,
+              "count": "706"
+            },
+            {
+              "score": 70,
+              "count": "1380"
+            },
+            {
+              "score": 75,
+              "count": "1627"
+            },
+            {
+              "score": 80,
+              "count": "1771"
+            },
+            {
+              "score": 85,
+              "count": "1345"
+            },
+            {
+              "score": 90,
+              "count": "1042"
+            },
+            {
+              "score": 95,
+              "count": "563"
+            },
+            {
+              "score": 100,
+              "count": "283"
+            },
+            {
+              "score": 105,
+              "count": "67"
+            },
+            {
+              "score": 110,
+              "count": "<20"
+            },
+            {
+              "score": 115,
+              "count": "<20"
+            }
+          ]
+        },
+        {
+          "visa": "491",
+          "total": {
+            "min": 9218,
+            "max": 9218
+          },
+          "points": [
+            {
+              "score": 50,
+              "count": "<20"
+            },
+            {
+              "score": 55,
+              "count": "<20"
+            },
+            {
+              "score": 60,
+              "count": "<20"
+            },
+            {
+              "score": 65,
+              "count": "151"
+            },
+            {
+              "score": 70,
+              "count": "401"
+            },
+            {
+              "score": 75,
+              "count": "855"
+            },
+            {
+              "score": 80,
+              "count": "1549"
+            },
+            {
+              "score": 85,
+              "count": "1660"
+            },
+            {
+              "score": 90,
+              "count": "1737"
+            },
+            {
+              "score": 95,
+              "count": "1233"
+            },
+            {
+              "score": 100,
+              "count": "942"
+            },
+            {
+              "score": 105,
+              "count": "428"
+            },
+            {
+              "score": 110,
+              "count": "194"
+            },
+            {
+              "score": 115,
+              "count": "31"
+            },
+            {
+              "score": 120,
+              "count": "<20"
+            },
+            {
+              "score": 125,
+              "count": "<20"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "233211",
+      "name": "Civil Engineer",
+      "rounds": [
+        {
+          "date": "2026-10-15",
+          "cutoff": null
+        },
+        {
+          "date": "2026-06-04",
+          "cutoff": null
+        },
+        {
+          "date": "2025-11-13",
+          "cutoff": null
+        },
+        {
+          "date": "2025-08-21",
+          "cutoff": null
+        },
+        {
+          "date": "2024-11-07",
+          "cutoff": 85
+        },
+        {
+          "date": "2024-09-05",
+          "cutoff": 90
+        }
+      ],
+      "trend": [
+        {
+          "date": "2025-11-30",
+          "total": {
+            "min": 7222,
+            "max": 7222
+          }
+        },
+        {
+          "date": "2025-12-31",
+          "total": {
+            "min": 7335,
+            "max": 7335
+          }
+        },
+        {
+          "date": "2026-01-31",
+          "total": {
+            "min": 7512,
+            "max": 7512
+          }
+        },
+        {
+          "date": "2026-02-28",
+          "total": {
+            "min": 7689,
+            "max": 7689
+          }
+        },
+        {
+          "date": "2026-03-31",
+          "total": {
+            "min": 7872,
+            "max": 7872
+          }
+        },
+        {
+          "date": "2026-04-30",
+          "total": {
+            "min": 8009,
+            "max": 8009
+          }
+        },
+        {
+          "date": "2026-05-31",
+          "total": {
+            "min": 8209,
+            "max": 8209
+          }
+        },
+        {
+          "date": "2026-06-30",
+          "total": {
+            "min": 8421,
+            "max": 8421
+          }
+        },
+        {
+          "date": "2026-07-31",
+          "total": {
+            "min": 8502,
+            "max": 8502
+          }
+        },
+        {
+          "date": "2026-08-31",
+          "total": {
+            "min": 8460,
+            "max": 8460
+          }
+        },
+        {
+          "date": "2026-09-30",
+          "total": {
+            "min": 8621,
+            "max": 8621
+          }
+        },
+        {
+          "date": "2026-10-31",
+          "total": {
+            "min": 8702,
+            "max": 8702
+          }
+        }
+      ],
+      "pathways": [
+        {
+          "visa": "189",
+          "total": {
+            "min": 8702,
+            "max": 8702
+          },
+          "points": [
+            {
+              "score": 25,
+              "count": "<20"
+            },
+            {
+              "score": 30,
+              "count": "<20"
+            },
+            {
+              "score": 35,
+              "count": "<20"
+            },
+            {
+              "score": 40,
+              "count": "<20"
+            },
+            {
+              "score": 45,
+              "count": "37"
+            },
+            {
+              "score": 50,
+              "count": "112"
+            },
+            {
+              "score": 55,
+              "count": "312"
+            },
+            {
+              "score": 60,
+              "count": "588"
+            },
+            {
+              "score": 65,
+              "count": "1541"
+            },
+            {
+              "score": 70,
+              "count": "1582"
+            },
+            {
+              "score": 75,
+              "count": "1542"
+            },
+            {
+              "score": 80,
+              "count": "1271"
+            },
+            {
+              "score": 85,
+              "count": "915"
+            },
+            {
+              "score": 90,
+              "count": "526"
+            },
+            {
+              "score": 95,
+              "count": "212"
+            },
+            {
+              "score": 100,
+              "count": "43"
+            },
+            {
+              "score": 105,
+              "count": "<20"
+            },
+            {
+              "score": 110,
+              "count": "<20"
+            },
+            {
+              "score": 120,
+              "count": "<20"
+            }
+          ]
+        },
+        {
+          "visa": "190",
+          "total": {
+            "min": 15592,
+            "max": 15592
+          },
+          "points": [
+            {
+              "score": 30,
+              "count": "<20"
+            },
+            {
+              "score": 40,
+              "count": "<20"
+            },
+            {
+              "score": 45,
+              "count": "<20"
+            },
+            {
+              "score": 50,
+              "count": "45"
+            },
+            {
+              "score": 55,
+              "count": "236"
+            },
+            {
+              "score": 60,
+              "count": "720"
+            },
+            {
+              "score": 65,
+              "count": "1635"
+            },
+            {
+              "score": 70,
+              "count": "3043"
+            },
+            {
+              "score": 75,
+              "count": "2767"
+            },
+            {
+              "score": 80,
+              "count": "2694"
+            },
+            {
+              "score": 85,
+              "count": "2086"
+            },
+            {
+              "score": 90,
+              "count": "1361"
+            },
+            {
+              "score": 95,
+              "count": "694"
+            },
+            {
+              "score": 100,
+              "count": "238"
+            },
+            {
+              "score": 105,
+              "count": "41"
+            },
+            {
+              "score": 110,
+              "count": "<20"
+            },
+            {
+              "score": 115,
+              "count": "<20"
+            }
+          ]
+        },
+        {
+          "visa": "491",
+          "total": {
+            "min": 15921,
+            "max": 15921
+          },
+          "points": [
+            {
+              "score": 40,
+              "count": "<20"
+            },
+            {
+              "score": 50,
+              "count": "<20"
+            },
+            {
+              "score": 55,
+              "count": "40"
+            },
+            {
+              "score": 60,
+              "count": "187"
+            },
+            {
+              "score": 65,
+              "count": "755"
+            },
+            {
+              "score": 70,
+              "count": "2115"
+            },
+            {
+              "score": 75,
+              "count": "1840"
+            },
+            {
+              "score": 80,
+              "count": "3161"
+            },
+            {
+              "score": 85,
+              "count": "2628"
+            },
+            {
+              "score": 90,
+              "count": "2400"
+            },
+            {
+              "score": 95,
+              "count": "1520"
+            },
+            {
+              "score": 100,
+              "count": "810"
+            },
+            {
+              "score": 105,
+              "count": "369"
+            },
+            {
+              "score": 110,
+              "count": "84"
+            },
+            {
+              "score": 115,
+              "count": "<20"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "233512",
+      "name": "Mechanical Engineer",
+      "rounds": [
+        {
+          "date": "2026-10-15",
+          "cutoff": null
+        },
+        {
+          "date": "2026-06-04",
+          "cutoff": null
+        },
+        {
+          "date": "2025-11-13",
+          "cutoff": null
+        },
+        {
+          "date": "2025-08-21",
+          "cutoff": null
+        },
+        {
+          "date": "2024-11-07",
+          "cutoff": 85
+        },
+        {
+          "date": "2024-09-05",
+          "cutoff": 90
+        }
+      ],
+      "trend": [
+        {
+          "date": "2025-11-30",
+          "total": {
+            "min": 6265,
+            "max": 6265
+          }
+        },
+        {
+          "date": "2025-12-31",
+          "total": {
+            "min": 6436,
+            "max": 6436
+          }
+        },
+        {
+          "date": "2026-01-31",
+          "total": {
+            "min": 6557,
+            "max": 6557
+          }
+        },
+        {
+          "date": "2026-02-28",
+          "total": {
+            "min": 6721,
+            "max": 6721
+          }
+        },
+        {
+          "date": "2026-03-31",
+          "total": {
+            "min": 6841,
+            "max": 6841
+          }
+        },
+        {
+          "date": "2026-04-30",
+          "total": {
+            "min": 6992,
+            "max": 6992
+          }
+        },
+        {
+          "date": "2026-05-31",
+          "total": {
+            "min": 7142,
+            "max": 7142
+          }
+        },
+        {
+          "date": "2026-06-30",
+          "total": {
+            "min": 7325,
+            "max": 7325
+          }
+        },
+        {
+          "date": "2026-07-31",
+          "total": {
+            "min": 7300,
+            "max": 7300
+          }
+        },
+        {
+          "date": "2026-08-31",
+          "total": {
+            "min": 7317,
+            "max": 7317
+          }
+        },
+        {
+          "date": "2026-09-30",
+          "total": {
+            "min": 7425,
+            "max": 7425
+          }
+        },
+        {
+          "date": "2026-10-31",
+          "total": {
+            "min": 7501,
+            "max": 7501
+          }
+        }
+      ],
+      "pathways": [
+        {
+          "visa": "189",
+          "total": {
+            "min": 7501,
+            "max": 7501
+          },
+          "points": [
+            {
+              "score": 25,
+              "count": "<20"
+            },
+            {
+              "score": 30,
+              "count": "<20"
+            },
+            {
+              "score": 35,
+              "count": "<20"
+            },
+            {
+              "score": 40,
+              "count": "<20"
+            },
+            {
+              "score": 45,
+              "count": "31"
+            },
+            {
+              "score": 50,
+              "count": "95"
+            },
+            {
+              "score": 55,
+              "count": "273"
+            },
+            {
+              "score": 60,
+              "count": "531"
+            },
+            {
+              "score": 65,
+              "count": "1135"
+            },
+            {
+              "score": 70,
+              "count": "1212"
+            },
+            {
+              "score": 75,
+              "count": "1309"
+            },
+            {
+              "score": 80,
+              "count": "1014"
+            },
+            {
+              "score": 85,
+              "count": "975"
+            },
+            {
+              "score": 90,
+              "count": "633"
+            },
+            {
+              "score": 95,
+              "count": "226"
+            },
+            {
+              "score": 100,
+              "count": "48"
+            },
+            {
+              "score": 105,
+              "count": "<20"
+            }
+          ]
+        },
+        {
+          "visa": "190",
+          "total": {
+            "min": 14752,
+            "max": 14752
+          },
+          "points": [
+            {
+              "score": 30,
+              "count": "<20"
+            },
+            {
+              "score": 35,
+              "count": "<20"
+            },
+            {
+              "score": 40,
+              "count": "<20"
+            },
+            {
+              "score": 45,
+              "count": "25"
+            },
+            {
+              "score": 50,
+              "count": "61"
+            },
+            {
+              "score": 55,
+              "count": "205"
+            },
+            {
+              "score": 60,
+              "count": "774"
+            },
+            {
+              "score": 65,
+              "count": "1759"
+            },
+            {
+              "score": 70,
+              "count": "2662"
+            },
+            {
+              "score": 75,
+              "count": "2310"
+            },
+            {
+              "score": 80,
+              "count": "2465"
+            },
+            {
+              "score": 85,
+              "count": "1643"
+            },
+            {
+              "score": 90,
+              "count": "1575"
+            },
+            {
+              "score": 95,
+              "count": "933"
+            },
+            {
+              "score": 100,
+              "count": "275"
+            },
+            {
+              "score": 105,
+              "count": "50"
+            },
+            {
+              "score": 110,
+              "count": "<20"
+            },
+            {
+              "score": 115,
+              "count": "<20"
+            }
+          ]
+        },
+        {
+          "visa": "491",
+          "total": {
+            "min": 16199,
+            "max": 16199
+          },
+          "points": [
+            {
+              "score": 40,
+              "count": "<20"
+            },
+            {
+              "score": 45,
+              "count": "<20"
+            },
+            {
+              "score": 50,
+              "count": "<20"
+            },
+            {
+              "score": 55,
+              "count": "49"
+            },
+            {
+              "score": 60,
+              "count": "148"
+            },
+            {
+              "score": 65,
+              "count": "673"
+            },
+            {
+              "score": 70,
+              "count": "2161"
+            },
+            {
+              "score": 75,
+              "count": "2072"
+            },
+            {
+              "score": 80,
+              "count": "2908"
+            },
+            {
+              "score": 85,
+              "count": "2391"
+            },
+            {
+              "score": 90,
+              "count": "2413"
+            },
+            {
+              "score": 95,
+              "count": "1427"
+            },
+            {
+              "score": 100,
+              "count": "1179"
+            },
+            {
+              "score": 105,
+              "count": "596"
+            },
+            {
+              "score": 110,
+              "count": "156"
+            },
+            {
+              "score": 115,
+              "count": "<20"
+            },
+            {
+              "score": 120,
+              "count": "<20"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "233311",
+      "name": "Electrical Engineer",
+      "rounds": [
+        {
+          "date": "2026-10-15",
+          "cutoff": null
+        },
+        {
+          "date": "2026-06-04",
+          "cutoff": null
+        },
+        {
+          "date": "2025-11-13",
+          "cutoff": null
+        },
+        {
+          "date": "2025-08-21",
+          "cutoff": null
+        },
+        {
+          "date": "2024-11-07",
+          "cutoff": 85
+        },
+        {
+          "date": "2024-09-05",
+          "cutoff": 90
+        }
+      ],
+      "trend": [
+        {
+          "date": "2025-11-30",
+          "total": {
+            "min": 3581,
+            "max": 3581
+          }
+        },
+        {
+          "date": "2025-12-31",
+          "total": {
+            "min": 3620,
+            "max": 3620
+          }
+        },
+        {
+          "date": "2026-01-31",
+          "total": {
+            "min": 3729,
+            "max": 3729
+          }
+        },
+        {
+          "date": "2026-02-28",
+          "total": {
+            "min": 3829,
+            "max": 3829
+          }
+        },
+        {
+          "date": "2026-03-31",
+          "total": {
+            "min": 3896,
+            "max": 3896
+          }
+        },
+        {
+          "date": "2026-04-30",
+          "total": {
+            "min": 4017,
+            "max": 4017
+          }
+        },
+        {
+          "date": "2026-05-31",
+          "total": {
+            "min": 4111,
+            "max": 4111
+          }
+        },
+        {
+          "date": "2026-06-30",
+          "total": {
+            "min": 4173,
+            "max": 4173
+          }
+        },
+        {
+          "date": "2026-07-31",
+          "total": {
+            "min": 4167,
+            "max": 4167
+          }
+        },
+        {
+          "date": "2026-08-31",
+          "total": {
+            "min": 4194,
+            "max": 4194
+          }
+        },
+        {
+          "date": "2026-09-30",
+          "total": {
+            "min": 4295,
+            "max": 4295
+          }
+        },
+        {
+          "date": "2026-10-31",
+          "total": {
+            "min": 4328,
+            "max": 4328
+          }
+        }
+      ],
+      "pathways": [
+        {
+          "visa": "189",
+          "total": {
+            "min": 4328,
+            "max": 4328
+          },
+          "points": [
+            {
+              "score": 35,
+              "count": "<20"
+            },
+            {
+              "score": 40,
+              "count": "<20"
+            },
+            {
+              "score": 45,
+              "count": "<20"
+            },
+            {
+              "score": 50,
+              "count": "73"
+            },
+            {
+              "score": 55,
+              "count": "209"
+            },
+            {
+              "score": 60,
+              "count": "308"
+            },
+            {
+              "score": 65,
+              "count": "726"
+            },
+            {
+              "score": 70,
+              "count": "743"
+            },
+            {
+              "score": 75,
+              "count": "718"
+            },
+            {
+              "score": 80,
+              "count": "634"
+            },
+            {
+              "score": 85,
+              "count": "456"
+            },
+            {
+              "score": 90,
+              "count": "291"
+            },
+            {
+              "score": 95,
+              "count": "117"
+            },
+            {
+              "score": 100,
+              "count": "26"
+            },
+            {
+              "score": 105,
+              "count": "<20"
+            }
+          ]
+        },
+        {
+          "visa": "190",
+          "total": {
+            "min": 8194,
+            "max": 8194
+          },
+          "points": [
+            {
+              "score": 40,
+              "count": "<20"
+            },
+            {
+              "score": 45,
+              "count": "<20"
+            },
+            {
+              "score": 50,
+              "count": "56"
+            },
+            {
+              "score": 55,
+              "count": "179"
+            },
+            {
+              "score": 60,
+              "count": "452"
+            },
+            {
+              "score": 65,
+              "count": "974"
+            },
+            {
+              "score": 70,
+              "count": "1482"
+            },
+            {
+              "score": 75,
+              "count": "1327"
+            },
+            {
+              "score": 80,
+              "count": "1372"
+            },
+            {
+              "score": 85,
+              "count": "964"
+            },
+            {
+              "score": 90,
+              "count": "761"
+            },
+            {
+              "score": 95,
+              "count": "460"
+            },
+            {
+              "score": 100,
+              "count": "132"
+            },
+            {
+              "score": 105,
+              "count": "23"
+            },
+            {
+              "score": 110,
+              "count": "<20"
+            }
+          ]
+        },
+        {
+          "visa": "491",
+          "total": {
+            "min": 9261,
+            "max": 9261
+          },
+          "points": [
+            {
+              "score": 50,
+              "count": "<20"
+            },
+            {
+              "score": 55,
+              "count": "48"
+            },
+            {
+              "score": 60,
+              "count": "105"
+            },
+            {
+              "score": 65,
+              "count": "510"
+            },
+            {
+              "score": 70,
+              "count": "1330"
+            },
+            {
+              "score": 75,
+              "count": "1206"
+            },
+            {
+              "score": 80,
+              "count": "1679"
+            },
+            {
+              "score": 85,
+              "count": "1313"
+            },
+            {
+              "score": 90,
+              "count": "1310"
+            },
+            {
+              "score": 95,
+              "count": "815"
+            },
+            {
+              "score": 100,
+              "count": "588"
+            },
+            {
+              "score": 105,
+              "count": "293"
+            },
+            {
+              "score": 110,
+              "count": "53"
+            },
+            {
+              "score": 115,
+              "count": "<20"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "254499",
+      "name": "Registered Nurses nec",
+      "rounds": [
+        {
+          "date": "2026-10-15",
+          "cutoff": 70
+        },
+        {
+          "date": "2026-06-04",
+          "cutoff": 75
+        },
+        {
+          "date": "2025-11-13",
+          "cutoff": 75
+        },
+        {
+          "date": "2025-08-21",
+          "cutoff": 80
+        },
+        {
+          "date": "2024-11-07",
+          "cutoff": 70
+        },
+        {
+          "date": "2024-09-05",
+          "cutoff": 75
+        }
+      ],
+      "trend": [
+        {
+          "date": "2025-11-30",
+          "total": {
+            "min": 4580,
+            "max": 4580
+          }
+        },
+        {
+          "date": "2025-12-31",
+          "total": {
+            "min": 4895,
+            "max": 4895
+          }
+        },
+        {
+          "date": "2026-01-31",
+          "total": {
+            "min": 6057,
+            "max": 6057
+          }
+        },
+        {
+          "date": "2026-02-28",
+          "total": {
+            "min": 6695,
+            "max": 6695
+          }
+        },
+        {
+          "date": "2026-03-31",
+          "total": {
+            "min": 6957,
+            "max": 6957
+          }
+        },
+        {
+          "date": "2026-04-30",
+          "total": {
+            "min": 7161,
+            "max": 7161
+          }
+        },
+        {
+          "date": "2026-05-31",
+          "total": {
+            "min": 7398,
+            "max": 7398
+          }
+        },
+        {
+          "date": "2026-06-30",
+          "total": {
+            "min": 6056,
+            "max": 6056
+          }
+        },
+        {
+          "date": "2026-07-31",
+          "total": {
+            "min": 6359,
+            "max": 6359
+          }
+        },
+        {
+          "date": "2026-08-31",
+          "total": {
+            "min": 7086,
+            "max": 7086
+          }
+        },
+        {
+          "date": "2026-09-30",
+          "total": {
+            "min": 7500,
+            "max": 7500
+          }
+        },
+        {
+          "date": "2026-10-31",
+          "total": {
+            "min": 4280,
+            "max": 4280
+          }
+        }
+      ],
+      "pathways": [
+        {
+          "visa": "189",
+          "total": {
+            "min": 4280,
+            "max": 4280
+          },
+          "points": [
+            {
+              "score": 30,
+              "count": "<20"
+            },
+            {
+              "score": 35,
+              "count": "<20"
+            },
+            {
+              "score": 40,
+              "count": "<20"
+            },
+            {
+              "score": 45,
+              "count": "24"
+            },
+            {
+              "score": 50,
+              "count": "68"
+            },
+            {
+              "score": 55,
+              "count": "197"
+            },
+            {
+              "score": 60,
+              "count": "496"
+            },
+            {
+              "score": 65,
+              "count": "1532"
+            },
+            {
+              "score": 70,
+              "count": "1841"
+            },
+            {
+              "score": 75,
+              "count": "80"
+            },
+            {
+              "score": 80,
+              "count": "27"
+            },
+            {
+              "score": 85,
+              "count": "<20"
+            }
+          ]
+        },
+        {
+          "visa": "190",
+          "total": {
+            "min": 7677,
+            "max": 7677
+          },
+          "points": [
+            {
+              "score": 35,
+              "count": "<20"
+            },
+            {
+              "score": 40,
+              "count": "<20"
+            },
+            {
+              "score": 45,
+              "count": "<20"
+            },
+            {
+              "score": 50,
+              "count": "31"
+            },
+            {
+              "score": 55,
+              "count": "136"
+            },
+            {
+              "score": 60,
+              "count": "373"
+            },
+            {
+              "score": 65,
+              "count": "1034"
+            },
+            {
+              "score": 70,
+              "count": "1820"
+            },
+            {
+              "score": 75,
+              "count": "2115"
+            },
+            {
+              "score": 80,
+              "count": "1016"
+            },
+            {
+              "score": 85,
+              "count": "744"
+            },
+            {
+              "score": 90,
+              "count": "304"
+            },
+            {
+              "score": 95,
+              "count": "78"
+            },
+            {
+              "score": 100,
+              "count": "<20"
+            },
+            {
+              "score": 105,
+              "count": "<20"
+            }
+          ]
+        },
+        {
+          "visa": "491",
+          "total": {
+            "min": 5072,
+            "max": 5072
+          },
+          "points": [
+            {
+              "score": 45,
+              "count": "<20"
+            },
+            {
+              "score": 50,
+              "count": "<20"
+            },
+            {
+              "score": 55,
+              "count": "44"
+            },
+            {
+              "score": 60,
+              "count": "66"
+            },
+            {
+              "score": 65,
+              "count": "281"
+            },
+            {
+              "score": 70,
+              "count": "664"
+            },
+            {
+              "score": 75,
+              "count": "820"
+            },
+            {
+              "score": 80,
+              "count": "1270"
+            },
+            {
+              "score": 85,
+              "count": "1035"
+            },
+            {
+              "score": 90,
+              "count": "518"
+            },
+            {
+              "score": 95,
+              "count": "285"
+            },
+            {
+              "score": 100,
+              "count": "66"
+            },
+            {
+              "score": 105,
+              "count": "<20"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "351311",
+      "name": "Chef",
+      "rounds": [
+        {
+          "date": "2026-10-15",
+          "cutoff": null
+        },
+        {
+          "date": "2026-06-04",
+          "cutoff": null
+        },
+        {
+          "date": "2025-11-13",
+          "cutoff": null
+        },
+        {
+          "date": "2025-08-21",
+          "cutoff": null
+        },
+        {
+          "date": "2024-11-07",
+          "cutoff": 85
+        },
+        {
+          "date": "2024-09-05",
+          "cutoff": 90
+        }
+      ],
+      "trend": [
+        {
+          "date": "2025-11-30",
+          "total": {
+            "min": 8776,
+            "max": 8776
+          }
+        },
+        {
+          "date": "2025-12-31",
+          "total": {
+            "min": 8985,
+            "max": 8985
+          }
+        },
+        {
+          "date": "2026-01-31",
+          "total": {
+            "min": 9182,
+            "max": 9182
+          }
+        },
+        {
+          "date": "2026-02-28",
+          "total": {
+            "min": 9395,
+            "max": 9395
+          }
+        },
+        {
+          "date": "2026-03-31",
+          "total": {
+            "min": 9614,
+            "max": 9614
+          }
+        },
+        {
+          "date": "2026-04-30",
+          "total": {
+            "min": 9877,
+            "max": 9877
+          }
+        },
+        {
+          "date": "2026-05-31",
+          "total": {
+            "min": 10145,
+            "max": 10145
+          }
+        },
+        {
+          "date": "2026-06-30",
+          "total": {
+            "min": 10375,
+            "max": 10375
+          }
+        },
+        {
+          "date": "2026-07-31",
+          "total": {
+            "min": 10390,
+            "max": 10390
+          }
+        },
+        {
+          "date": "2026-08-31",
+          "total": {
+            "min": 10334,
+            "max": 10334
+          }
+        },
+        {
+          "date": "2026-09-30",
+          "total": {
+            "min": 10625,
+            "max": 10625
+          }
+        },
+        {
+          "date": "2026-10-31",
+          "total": {
+            "min": 10773,
+            "max": 10773
+          }
+        }
+      ],
+      "pathways": [
+        {
+          "visa": "189",
+          "total": {
+            "min": 10773,
+            "max": 10773
+          },
+          "points": [
+            {
+              "score": 30,
+              "count": "<20"
+            },
+            {
+              "score": 35,
+              "count": "<20"
+            },
+            {
+              "score": 40,
+              "count": "<20"
+            },
+            {
+              "score": 45,
+              "count": "52"
+            },
+            {
+              "score": 50,
+              "count": "191"
+            },
+            {
+              "score": 55,
+              "count": "557"
+            },
+            {
+              "score": 60,
+              "count": "1172"
+            },
+            {
+              "score": 65,
+              "count": "2492"
+            },
+            {
+              "score": 70,
+              "count": "2392"
+            },
+            {
+              "score": 75,
+              "count": "1888"
+            },
+            {
+              "score": 80,
+              "count": "1136"
+            },
+            {
+              "score": 85,
+              "count": "546"
+            },
+            {
+              "score": 90,
+              "count": "246"
+            },
+            {
+              "score": 95,
+              "count": "81"
+            },
+            {
+              "score": 100,
+              "count": "<20"
+            },
+            {
+              "score": 105,
+              "count": "<20"
+            }
+          ]
+        },
+        {
+          "visa": "190",
+          "total": {
+            "min": 12048,
+            "max": 12048
+          },
+          "points": [
+            {
+              "score": 30,
+              "count": "<20"
+            },
+            {
+              "score": 35,
+              "count": "<20"
+            },
+            {
+              "score": 40,
+              "count": "<20"
+            },
+            {
+              "score": 45,
+              "count": "<20"
+            },
+            {
+              "score": 50,
+              "count": "62"
+            },
+            {
+              "score": 55,
+              "count": "255"
+            },
+            {
+              "score": 60,
+              "count": "716"
+            },
+            {
+              "score": 65,
+              "count": "2125"
+            },
+            {
+              "score": 70,
+              "count": "2786"
+            },
+            {
+              "score": 75,
+              "count": "2320"
+            },
+            {
+              "score": 80,
+              "count": "1868"
+            },
+            {
+              "score": 85,
+              "count": "1085"
+            },
+            {
+              "score": 90,
+              "count": "524"
+            },
+            {
+              "score": 95,
+              "count": "222"
+            },
+            {
+              "score": 100,
+              "count": "61"
+            },
+            {
+              "score": 105,
+              "count": "<20"
+            }
+          ]
+        },
+        {
+          "visa": "491",
+          "total": {
+            "min": 14233,
+            "max": 14233
+          },
+          "points": [
+            {
+              "score": 25,
+              "count": "<20"
+            },
+            {
+              "score": 45,
+              "count": "<20"
+            },
+            {
+              "score": 50,
+              "count": "21"
+            },
+            {
+              "score": 55,
+              "count": "30"
+            },
+            {
+              "score": 60,
+              "count": "143"
+            },
+            {
+              "score": 65,
+              "count": "804"
+            },
+            {
+              "score": 70,
+              "count": "1683"
+            },
+            {
+              "score": 75,
+              "count": "2582"
+            },
+            {
+              "score": 80,
+              "count": "3053"
+            },
+            {
+              "score": 85,
+              "count": "2457"
+            },
+            {
+              "score": 90,
+              "count": "1830"
+            },
+            {
+              "score": 95,
+              "count": "1007"
+            },
+            {
+              "score": 100,
+              "count": "399"
+            },
+            {
+              "score": 105,
+              "count": "168"
+            },
+            {
+              "score": 110,
+              "count": "48"
+            },
+            {
+              "score": 115,
+              "count": "<20"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "241111",
+      "name": "Early Childhood (Pre-primary School) Teacher",
+      "rounds": [
+        {
+          "date": "2026-10-15",
+          "cutoff": 90
+        },
+        {
+          "date": "2026-06-04",
+          "cutoff": null
+        },
+        {
+          "date": "2025-11-13",
+          "cutoff": 85
+        },
+        {
+          "date": "2025-08-21",
+          "cutoff": 85
+        },
+        {
+          "date": "2024-11-07",
+          "cutoff": 70
+        },
+        {
+          "date": "2024-09-05",
+          "cutoff": 75
+        }
+      ],
+      "trend": [
+        {
+          "date": "2025-11-30",
+          "total": {
+            "min": 7620,
+            "max": 7620
+          }
+        },
+        {
+          "date": "2025-12-31",
+          "total": {
+            "min": 8035,
+            "max": 8035
+          }
+        },
+        {
+          "date": "2026-01-31",
+          "total": {
+            "min": 8562,
+            "max": 8562
+          }
+        },
+        {
+          "date": "2026-02-28",
+          "total": {
+            "min": 9145,
+            "max": 9145
+          }
+        },
+        {
+          "date": "2026-03-31",
+          "total": {
+            "min": 10122,
+            "max": 10122
+          }
+        },
+        {
+          "date": "2026-04-30",
+          "total": {
+            "min": 10769,
+            "max": 10769
+          }
+        },
+        {
+          "date": "2026-05-31",
+          "total": {
+            "min": 11273,
+            "max": 11273
+          }
+        },
+        {
+          "date": "2026-06-30",
+          "total": {
+            "min": 11822,
+            "max": 11822
+          }
+        },
+        {
+          "date": "2026-07-31",
+          "total": {
+            "min": 12211,
+            "max": 12211
+          }
+        },
+        {
+          "date": "2026-08-31",
+          "total": {
+            "min": 12541,
+            "max": 12541
+          }
+        },
+        {
+          "date": "2026-09-30",
+          "total": {
+            "min": 13442,
+            "max": 13442
+          }
+        },
+        {
+          "date": "2026-10-31",
+          "total": {
+            "min": 13693,
+            "max": 13693
+          }
+        }
+      ],
+      "pathways": [
+        {
+          "visa": "189",
+          "total": {
+            "min": 13693,
+            "max": 13693
+          },
+          "points": [
+            {
+              "score": 35,
+              "count": "<20"
+            },
+            {
+              "score": 40,
+              "count": "<20"
+            },
+            {
+              "score": 45,
+              "count": "29"
+            },
+            {
+              "score": 50,
+              "count": "161"
+            },
+            {
+              "score": 55,
+              "count": "339"
+            },
+            {
+              "score": 60,
+              "count": "919"
+            },
+            {
+              "score": 65,
+              "count": "2115"
+            },
+            {
+              "score": 70,
+              "count": "2859"
+            },
+            {
+              "score": 75,
+              "count": "2682"
+            },
+            {
+              "score": 80,
+              "count": "2138"
+            },
+            {
+              "score": 85,
+              "count": "2222"
+            },
+            {
+              "score": 90,
+              "count": "222"
+            },
+            {
+              "score": 95,
+              "count": "<20"
+            }
+          ]
+        },
+        {
+          "visa": "190",
+          "total": {
+            "min": 15431,
+            "max": 15431
+          },
+          "points": [
+            {
+              "score": 40,
+              "count": "<20"
+            },
+            {
+              "score": 45,
+              "count": "<20"
+            },
+            {
+              "score": 50,
+              "count": "33"
+            },
+            {
+              "score": 55,
+              "count": "205"
+            },
+            {
+              "score": 60,
+              "count": "402"
+            },
+            {
+              "score": 65,
+              "count": "1675"
+            },
+            {
+              "score": 70,
+              "count": "2312"
+            },
+            {
+              "score": 75,
+              "count": "2925"
+            },
+            {
+              "score": 80,
+              "count": "2786"
+            },
+            {
+              "score": 85,
+              "count": "2363"
+            },
+            {
+              "score": 90,
+              "count": "2289"
+            },
+            {
+              "score": 95,
+              "count": "426"
+            },
+            {
+              "score": 100,
+              "count": "<20"
+            },
+            {
+              "score": 105,
+              "count": "<20"
+            },
+            {
+              "score": 110,
+              "count": "<20"
+            }
+          ]
+        },
+        {
+          "visa": "491",
+          "total": {
+            "min": 12000,
+            "max": 12000
+          },
+          "points": [
+            {
+              "score": 50,
+              "count": "<20"
+            },
+            {
+              "score": 55,
+              "count": "<20"
+            },
+            {
+              "score": 60,
+              "count": "82"
+            },
+            {
+              "score": 65,
+              "count": "501"
+            },
+            {
+              "score": 70,
+              "count": "805"
+            },
+            {
+              "score": 75,
+              "count": "1519"
+            },
+            {
+              "score": 80,
+              "count": "1942"
+            },
+            {
+              "score": 85,
+              "count": "2238"
+            },
+            {
+              "score": 90,
+              "count": "1990"
+            },
+            {
+              "score": 95,
+              "count": "1484"
+            },
+            {
+              "score": 100,
+              "count": "1224"
+            },
+            {
+              "score": 105,
+              "count": "198"
+            },
+            {
+              "score": 110,
+              "count": "<20"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "241411",
+      "name": "Secondary School Teacher",
+      "rounds": [
+        {
+          "date": "2026-10-15",
+          "cutoff": 80
+        },
+        {
+          "date": "2026-06-04",
+          "cutoff": 75
+        },
+        {
+          "date": "2025-11-13",
+          "cutoff": 75
+        },
+        {
+          "date": "2025-08-21",
+          "cutoff": 85
+        },
+        {
+          "date": "2024-11-07",
+          "cutoff": 70
+        },
+        {
+          "date": "2024-09-05",
+          "cutoff": 75
+        }
+      ],
+      "trend": [
+        {
+          "date": "2025-11-30",
+          "total": {
+            "min": 1346,
+            "max": 1346
+          }
+        },
+        {
+          "date": "2025-12-31",
+          "total": {
+            "min": 1450,
+            "max": 1450
+          }
+        },
+        {
+          "date": "2026-01-31",
+          "total": {
+            "min": 1720,
+            "max": 1720
+          }
+        },
+        {
+          "date": "2026-02-28",
+          "total": {
+            "min": 1908,
+            "max": 1908
+          }
+        },
+        {
+          "date": "2026-03-31",
+          "total": {
+            "min": 2055,
+            "max": 2055
+          }
+        },
+        {
+          "date": "2026-04-30",
+          "total": {
+            "min": 2260,
+            "max": 2260
+          }
+        },
+        {
+          "date": "2026-05-31",
+          "total": {
+            "min": 2413,
+            "max": 2413
+          }
+        },
+        {
+          "date": "2026-06-30",
+          "total": {
+            "min": 2012,
+            "max": 2012
+          }
+        },
+        {
+          "date": "2026-07-31",
+          "total": {
+            "min": 2202,
+            "max": 2202
+          }
+        },
+        {
+          "date": "2026-08-31",
+          "total": {
+            "min": 2614,
+            "max": 2614
+          }
+        },
+        {
+          "date": "2026-09-30",
+          "total": {
+            "min": 2890,
+            "max": 2890
+          }
+        },
+        {
+          "date": "2026-10-31",
+          "total": {
+            "min": 2703,
+            "max": 2703
+          }
+        }
+      ],
+      "pathways": [
+        {
+          "visa": "189",
+          "total": {
+            "min": 2703,
+            "max": 2703
+          },
+          "points": [
+            {
+              "score": 40,
+              "count": "<20"
+            },
+            {
+              "score": 45,
+              "count": "<20"
+            },
+            {
+              "score": 50,
+              "count": "35"
+            },
+            {
+              "score": 55,
+              "count": "103"
+            },
+            {
+              "score": 60,
+              "count": "225"
+            },
+            {
+              "score": 65,
+              "count": "679"
+            },
+            {
+              "score": 70,
+              "count": "729"
+            },
+            {
+              "score": 75,
+              "count": "724"
+            },
+            {
+              "score": 80,
+              "count": "174"
+            },
+            {
+              "score": 85,
+              "count": "<20"
+            },
+            {
+              "score": 90,
+              "count": "<20"
+            }
+          ]
+        },
+        {
+          "visa": "190",
+          "total": {
+            "min": 5877,
+            "max": 5877
+          },
+          "points": [
+            {
+              "score": 45,
+              "count": "<20"
+            },
+            {
+              "score": 50,
+              "count": "<20"
+            },
+            {
+              "score": 55,
+              "count": "85"
+            },
+            {
+              "score": 60,
+              "count": "231"
+            },
+            {
+              "score": 65,
+              "count": "549"
+            },
+            {
+              "score": 70,
+              "count": "1521"
+            },
+            {
+              "score": 75,
+              "count": "1384"
+            },
+            {
+              "score": 80,
+              "count": "1318"
+            },
+            {
+              "score": 85,
+              "count": "559"
+            },
+            {
+              "score": 90,
+              "count": "157"
+            },
+            {
+              "score": 95,
+              "count": "46"
+            },
+            {
+              "score": 100,
+              "count": "<20"
+            }
+          ]
+        },
+        {
+          "visa": "491",
+          "total": {
+            "min": 4619,
+            "max": 4619
+          },
+          "points": [
+            {
+              "score": 45,
+              "count": "<20"
+            },
+            {
+              "score": 50,
+              "count": "<20"
+            },
+            {
+              "score": 55,
+              "count": "<20"
+            },
+            {
+              "score": 60,
+              "count": "<20"
+            },
+            {
+              "score": 65,
+              "count": "171"
+            },
+            {
+              "score": 70,
+              "count": "352"
+            },
+            {
+              "score": 75,
+              "count": "467"
+            },
+            {
+              "score": 80,
+              "count": "1308"
+            },
+            {
+              "score": 85,
+              "count": "1066"
+            },
+            {
+              "score": 90,
+              "count": "872"
+            },
+            {
+              "score": 95,
+              "count": "281"
+            },
+            {
+              "score": 100,
+              "count": "54"
+            },
+            {
+              "score": 105,
+              "count": "<20"
+            },
+            {
+              "score": 110,
+              "count": "<20"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
