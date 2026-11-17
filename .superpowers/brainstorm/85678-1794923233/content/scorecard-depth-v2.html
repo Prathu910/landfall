@@ -1,0 +1,82 @@
+<style>
+  .rc { font-family: system-ui, sans-serif; color: #12352b; background: #fbfaf6; border-radius: 12px; padding: 18px; font-size: 14px; line-height: 1.45; }
+  .rc h4 { margin: 0 0 4px; font-size: 18px; line-height: 1.25; }
+  .rc .eyebrow { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #5b7a6f; margin-bottom: 6px; }
+  .rc .muted { color: #5b7a6f; font-size: 12.5px; }
+  .rc .cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
+  .rc .col { background: #fff; border: 1px solid #dfe8e3; border-radius: 10px; padding: 10px; display: flex; flex-direction: column; }
+  .rc .chip { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 99px; margin: 4px 0 6px; }
+  .rc .red { background: #fde8e4; color: #8a2b1a; } .rc .amber { background: #fff1d6; color: #7a4d00; }
+  .rc .row { display: flex; justify-content: space-between; font-size: 12.5px; padding: 3px 0; border-bottom: 1px dashed #e4ebe7; }
+  .rc .say { font-size: 13px; margin: 2px 0 8px; }
+  .rc .link { font-size: 12.5px; color: #0f5a43; margin-top: auto; padding-top: 8px; font-weight: 600; }
+  .rc .strip { background: #12352b; color: #fff; border-radius: 10px; padding: 12px 14px; }
+  .rc .strip .muted { color: #b9d3c8; }
+  .phone { width: 300px; margin: 0 auto; border: 8px solid #1d2b26; border-radius: 26px; overflow: hidden; }
+  .phone .rc { border-radius: 0; padding: 14px; }
+  .phone .cols { grid-template-columns: 1fr; }
+</style>
+
+<h2>How much should each pathway card say?</h2>
+<p class="subtitle">Same real data: a Software Engineer with 90 points, as at 31 Oct 2026. State counts are invitations recorded in that snapshot. A published “under 20” could be zero, so we say so.</p>
+
+<div class="cards">
+  <div class="card" data-choice="c-plain" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="rc">
+        <div class="eyebrow">Your three pathways</div>
+        <h4>Each visa is a different queue.</h4>
+        <div class="cols">
+          <div class="col"><b>189</b><span class="chip red">No recent invitations</span>
+            <div class="row"><span>Ahead</span><b>872–891</b></div><div class="row"><span>Same score</span><b>1,132</b></div><div class="row"><span>Your points</span><b>90</b></div></div>
+          <div class="col"><b>190</b><span class="chip amber">State decides</span>
+            <div class="row"><span>Ahead</span><b>919–938</b></div><div class="row"><span>Same score</span><b>1,731</b></div><div class="row"><span>With +5</span><b>95</b></div></div>
+          <div class="col"><b>491</b><span class="chip amber">State decides</span>
+            <div class="row"><span>Ahead</span><b>420–458</b></div><div class="row"><span>Same score</span><b>1,208</b></div><div class="row"><span>With +15</span><b>105</b></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body"><h3>C1 · Numbers only</h3><p>Clean and calm. The reader works out the meaning themselves.</p></div>
+  </div>
+
+  <div class="card" data-choice="c-explained" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="rc">
+        <div class="strip">
+          <div class="eyebrow" style="color:#9fd4bd">Your reality check</div>
+          <h4 style="color:#fff">189 hasn't listed Software Engineer in its last four rounds. Your 190 and 491 prospects depend on state nomination.</h4>
+          <div class="muted">Based on the last four 189 rounds and the Oct 2026 SkillSelect snapshot.</div>
+        </div>
+        <div class="cols">
+          <div class="col"><b>189 · Independent</b><span class="chip red">No recent invitations</span>
+            <div class="say">Not listed in the last 4 rounds. Last cut-off: 95 points, Nov 2024.</div>
+            <div class="row"><span>Ahead of you</span><b>872–891</b></div><div class="row"><span>At your score</span><b>1,132</b></div>
+            <div class="link">What happened to EOIs like yours →</div></div>
+          <div class="col"><b>190 · Nominated</b><span class="chip amber">State decides</span>
+            <div class="say">Invitations recorded in NSW, TAS, ACT and NT are each under 20, so they may be zero.</div>
+            <div class="row"><span>Ahead at 95</span><b>919–938</b></div><div class="row"><span>At your score</span><b>1,731</b></div>
+            <div class="link">See your state outlook →</div></div>
+          <div class="col"><b>491 · Regional</b><span class="chip amber">State decides</span>
+            <div class="say">Provisional visa. A smaller pool ahead of you at 105 points.</div>
+            <div class="row"><span>Ahead at 105</span><b>420–458</b></div><div class="row"><span>At your score</span><b>1,208</b></div>
+            <div class="link">See your state outlook →</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body"><h3>C2 · Headline + one-line verdicts</h3><p>A factual headline across the top, then one plain sentence per pathway and a link into the details. Keeps C's structure and adds the bluntness of A.</p></div>
+  </div>
+</div>
+
+<h3 style="margin-top:22px">C2 on a phone</h3>
+<p class="subtitle">Most of your audience will read this on mobile. The cards stack in order: 189, 190, 491.</p>
+<div class="phone"><div class="rc">
+  <div class="strip"><div class="eyebrow" style="color:#9fd4bd">Your reality check</div>
+    <h4 style="color:#fff;font-size:16px">189 hasn't listed Software Engineer in its last four rounds. Your 190 and 491 prospects depend on state nomination.</h4></div>
+  <div class="cols">
+    <div class="col"><b>189 · Independent</b><span class="chip red">No recent invitations</span>
+      <div class="say">Not listed in the last 4 rounds. Last cut-off: 95 points, Nov 2024.</div>
+      <div class="row"><span>Ahead of you</span><b>872–891</b></div><div class="row"><span>At your score</span><b>1,132</b></div></div>
+    <div class="col"><b>190 · Nominated</b><span class="chip amber">State decides</span>
+      <div class="say">Invitations recorded in NSW, TAS, ACT and NT are each under 20, so they may be zero.</div></div>
+  </div>
+</div></div>

@@ -1,0 +1,73 @@
+<style>
+  .rc { font-family: system-ui, sans-serif; color: #12352b; background: #fbfaf6; border-radius: 12px; padding: 18px; font-size: 14px; line-height: 1.45; }
+  .rc h4 { margin: 0 0 4px; font-size: 18px; line-height: 1.25; }
+  .rc .eyebrow { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #5b7a6f; margin-bottom: 6px; }
+  .rc .muted { color: #5b7a6f; font-size: 12.5px; }
+  .rc .bar { display: flex; height: 22px; border-radius: 5px; overflow: hidden; font-size: 10.5px; }
+  .rc .bar span { display: flex; align-items: center; justify-content: center; color: #fff; white-space: nowrap; overflow: hidden; }
+  .rc .inv { background: #0f5a43; } .rc .lod { background: #3f9a74; } .rc .wait { background: #e0a33a; color: #12352b !important; } .rc .clo { background: #b9c7c0; color: #12352b !important; }
+  .rc .mrow { display: grid; grid-template-columns: 62px 1fr; gap: 8px; align-items: center; margin: 5px 0; font-size: 12px; }
+  .rc .mrow.you .m { font-weight: 700; }
+  .rc .legend { display: flex; gap: 10px; flex-wrap: wrap; font-size: 11.5px; margin: 8px 0; }
+  .rc .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
+  .rc .stat { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 12px 0; }
+  .rc .stat div { background: #fff; border: 1px solid #dfe8e3; border-radius: 8px; padding: 8px; }
+  .rc .stat b { font-size: 22px; display: block; }
+  .rc table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
+  .rc th, .rc td { text-align: right; padding: 4px 6px; border-bottom: 1px solid #e4ebe7; }
+  .rc th:first-child, .rc td:first-child { text-align: left; }
+  .rc tr.you td { background: #fff4e0; font-weight: 600; }
+</style>
+
+<h2>“What happened to EOIs like yours?”: which view?</h2>
+<p class="subtitle">Real data: Registered Nurse 189 EOIs, grouped by the month they were submitted, as at 31 Oct 2026. The example user submitted in Feb 2025. (Software Engineer cohorts are mostly “still waiting” or “closed”, so this example shows the view's full range.)</p>
+
+<div class="cards">
+  <div class="card" data-choice="d1-your-month" onclick="toggleSelect(this)">
+    <div class="card-image"><div class="rc">
+      <div class="eyebrow">EOIs submitted the same month as you · Feb 2025</div>
+      <h4>Of the 887–906 nurse EOIs from Feb 2025, 235 have been invited or have lodged a visa.</h4>
+      <div class="stat">
+        <div><span class="muted">Invited</span><b>175</b></div>
+        <div><span class="muted">Lodged a visa</span><b>60</b></div>
+        <div><span class="muted">Still waiting</span><b>142</b></div>
+        <div><span class="muted">Closed</span><b>510</b></div>
+      </div>
+      <div class="bar"><span class="inv" style="width:19.7%">175</span><span class="lod" style="width:6.8%">60</span><span class="wait" style="width:16%">142</span><span class="clo" style="width:57.5%">510 closed</span></div>
+      <p class="muted">“Closed” mixes expired, withdrawn and finalised EOIs, so it is not the same as “never invited”. Fewer than 20 on hold.</p>
+    </div></div>
+    <div class="card-body"><h3>D1 · Your month, in plain words</h3><p>One sentence, four numbers and one bar. Fast and personal, but shows a single month only.</p></div>
+  </div>
+
+  <div class="card" data-choice="d2-cohort-bars" onclick="toggleSelect(this)">
+    <div class="card-image"><div class="rc">
+      <div class="eyebrow">Outcomes by submission month</div>
+      <h4>The older the EOI, the more likely it has closed. Newer ones are more often still waiting.</h4>
+      <div class="legend"><span><i class="inv"></i>Invited</span><span><i class="lod"></i>Lodged</span><span><i class="wait"></i>Waiting</span><span><i class="clo"></i>Closed</span></div>
+      <div class="mrow"><span class="m">Jan 2025</span><div class="bar"><span class="inv" style="width:16.4%"></span><span class="lod" style="width:4.2%"></span><span class="wait" style="width:15.9%"></span><span class="clo" style="width:63.5%"></span></div></div>
+      <div class="mrow you"><span class="m">Feb 2025 ◀</span><div class="bar"><span class="inv" style="width:19.7%"></span><span class="lod" style="width:6.8%"></span><span class="wait" style="width:16%"></span><span class="clo" style="width:57.5%"></span></div></div>
+      <div class="mrow"><span class="m">Mar 2025</span><div class="bar"><span class="inv" style="width:22.3%"></span><span class="lod" style="width:5.9%"></span><span class="wait" style="width:21.9%"></span><span class="clo" style="width:49.9%"></span></div></div>
+      <div class="mrow"><span class="m">Apr 2025</span><div class="bar"><span class="inv" style="width:25%"></span><span class="lod" style="width:6.8%"></span><span class="wait" style="width:27.5%"></span><span class="clo" style="width:40.7%"></span></div></div>
+      <div class="mrow"><span class="m">May 2025</span><div class="bar"><span class="inv" style="width:26.1%"></span><span class="lod" style="width:5.4%"></span><span class="wait" style="width:24%"></span><span class="clo" style="width:44.5%"></span></div></div>
+      <div class="mrow"><span class="m">Jun 2025</span><div class="bar"><span class="inv" style="width:31%"></span><span class="lod" style="width:4%"></span><span class="wait" style="width:29.8%"></span><span class="clo" style="width:35.2%"></span></div></div>
+      <p class="muted">Each bar is 100% of the EOIs submitted that month. Small slices under 20 are shown approximately.</p>
+    </div></div>
+    <div class="card-body"><h3>D2 · Month-by-month bars</h3><p>Shows the pattern across months, with your month highlighted. Richer, but asks more of the reader.</p></div>
+  </div>
+
+  <div class="card" data-choice="d3-combined" onclick="toggleSelect(this)">
+    <div class="card-image"><div class="rc">
+      <div class="eyebrow">EOIs like yours · Feb 2025</div>
+      <h4>Of the 887–906 nurse EOIs from Feb 2025, 235 have been invited or have lodged a visa.</h4>
+      <div class="bar" style="margin:10px 0"><span class="inv" style="width:19.7%">175</span><span class="lod" style="width:6.8%">60</span><span class="wait" style="width:16%">142</span><span class="clo" style="width:57.5%">510 closed</span></div>
+      <div class="legend"><span><i class="inv"></i>Invited</span><span><i class="lod"></i>Lodged</span><span><i class="wait"></i>Waiting</span><span><i class="clo"></i>Closed</span></div>
+      <details open><summary class="muted" style="cursor:pointer">Compare with nearby months ▾</summary>
+      <table><tr><th>Submitted</th><th>Invited</th><th>Lodged</th><th>Waiting</th><th>Closed</th></tr>
+        <tr><td>Jan 2025</td><td>94</td><td>24</td><td>91</td><td>365</td></tr>
+        <tr class="you"><td>Feb 2025 (you)</td><td>175</td><td>60</td><td>142</td><td>510</td></tr>
+        <tr><td>Mar 2025</td><td>102</td><td>27</td><td>100</td><td>228</td></tr>
+        <tr><td>Apr 2025</td><td>81</td><td>22</td><td>89</td><td>132</td></tr></table></details>
+    </div></div>
+    <div class="card-body"><h3>D3 · Your month first, others on demand</h3><p>D1's plain answer on top, with a table of nearby months one tap away (it stays visible when printed).</p></div>
+  </div>
+</div>

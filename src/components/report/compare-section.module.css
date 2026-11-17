@@ -1,0 +1,7 @@
+/* Placeholder while the occupation's data file loads (readable at 12px+). */
+.loading {
+  margin-top: 14px;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--muted);
+}

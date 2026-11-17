@@ -32,7 +32,7 @@ python3 -m http.server 3017 --bind 127.0.0.1 --directory out
 
 ## Data and boundaries
 
-`src/data/pool.json` is a real published SkillSelect snapshot dated 31 October 2026, imported on 17 November 2026. It covers 11 occupations, visa type 189PTS and SUBMITTED status. `src/data/report-evidence.json` extends this with the current 190 and state-nominated 491 distributions, twelve monthly 189 occupation aggregates and six official invitation rounds. See [scripts/README.md](scripts/README.md) for import provenance and the reproducible importer.
+The SkillSelect data is a real published snapshot dated 31 October 2026, imported on 17 November 2026. It covers 493 occupations: EOI counts by status, visa (189, 190 and state-nominated 491), score, nominated state and month submitted, 24 months of status history, and the official 189 invitation rounds. See [docs/DATA.md](docs/DATA.md) for the data dictionary and [scripts/README.md](scripts/README.md) for the importer.
 
 Masked values remain `<20` in source and 0–19 intervals in arithmetic. Pool comparisons do not establish exact tie-break ranking. No individual invitation probabilities, wait predictions or community samples are invented.
 

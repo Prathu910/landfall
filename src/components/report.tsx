@@ -1,16 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import {
-  Accordion,
-  Button,
-  Checkbox,
-  NumberInput,
-  Progress,
-  SegmentedControl,
-  Select,
-} from "@mantine/core";
-import { motion, useReducedMotion } from "motion/react";
+import { Accordion, Button, Checkbox, Progress } from "@mantine/core";
+import { motion } from "motion/react";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -29,22 +21,19 @@ import {
   formatDate,
   type Profile,
 } from "@/lib/migration";
-import {
-  snapshot,
-  comparePool,
-  formatInterval,
-  normalizePoolScore,
-} from "@/lib/pool";
-import {
-  evidence,
-  getOccupationEvidence,
-  netPoolChange,
-  type TrendEvidence,
-  type VisaPathway,
-} from "@/lib/report-evidence";
+import type { ReportSource } from "@/lib/data/report-source";
+import type { OccupationIndexEntry } from "@/lib/data/types";
+import type { OccupationEvidence, VisaPathway } from "@/lib/report-evidence";
 import { buildScenarios, applyScenarios } from "@/lib/scenarios";
 import { statePrograms } from "@/data/states";
-import { PoolChart } from "./pool-explorer";
+import {
+  poolUnavailableMessage,
+  unavailableReason,
+  type ReportOccupation,
+} from "./data/report-occupation";
+import { CompareSection } from "./report/compare-section";
+import { PoolSection } from "./report/pool-section";
+import { RoundsSection } from "./report/rounds-section";
 import { AnimatedNumber } from "./reveal";
 
 const sections = [
@@ -94,150 +83,34 @@ const definitions = [
     "Subclass 491 is a provisional regional visa. A later permanent residence pathway, such as subclass 191, has separate requirements.",
   ],
 ];
-function TrendChart({ rows }: { rows: TrendEvidence[] }) {
-  const [selected, setSelected] = useState<number | null>(null);
-  const reduced = useReducedMotion();
-  if (!rows.length) return null;
-  const min = Math.min(...rows.map((r) => r.total.min)) * 0.94,
-    max = Math.max(...rows.map((r) => r.total.max)) * 1.03,
-    span = Math.max(1, max - min);
-  const x = (i: number) => 20 + (i / (rows.length - 1 || 1)) * 560,
-    y = (n: number) => 145 - ((n - min) / span) * 115;
-  const path = rows
-      .map((r, i) => `${i ? "L" : "M"}${x(i)},${y(r.total.max)}`)
-      .join(" "),
-    active = rows[selected ?? rows.length - 1];
-  return (
-    <div className="trend-chart">
-      <svg
-        viewBox="0 0 600 178"
-        role="img"
-        aria-label="Twelve monthly published 189 submitted EOI totals. Relative vertical scale; masked totals use an upper-bound line."
-      >
-        <defs>
-          <linearGradient id="trend-fill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#6dba88" stopOpacity=".22" />
-            <stop offset="100%" stopColor="#6dba88" stopOpacity="0" />
-          </linearGradient>
-        </defs>
-        {[30, 85, 140].map((n) => (
-          <line
-            key={n}
-            x1="20"
-            x2="580"
-            y1={n}
-            y2={n}
-            stroke="#e3ecde"
-            strokeDasharray="3 5"
-          />
-        ))}
-        <path d={`${path} L580,145 L20,145 Z`} fill="url(#trend-fill)" />
-        <motion.path
-          d={path}
-          fill="none"
-          stroke="#438d5c"
-          strokeWidth="2.5"
-          initial={false}
-          animate={{ pathLength: 1 }}
-          transition={{ duration: reduced ? 0 : 0.8 }}
-        />
-        {rows.map((r, i) => (
-          <g
-            key={r.date}
-            onMouseEnter={() => setSelected(i)}
-            onMouseLeave={() => setSelected(null)}
-          >
-            <title>{`${formatDate(r.date)}: ${formatInterval(r.total)} EOIs`}</title>
-            <circle cx={x(i)} cy={y(r.total.max)} r="16" fill="transparent" />
-            <circle
-              cx={x(i)}
-              cy={y(r.total.max)}
-              r={selected === i ? 5 : 3}
-              fill={selected === i ? "#102e29" : "#fff"}
-              stroke="#438d5c"
-              strokeWidth="2"
-            />
-            {(i === 0 || i === rows.length - 1 || i % 3 === 0) && (
-              <text
-                x={x(i)}
-                y="170"
-                textAnchor={
-                  i === 0 ? "start" : i === rows.length - 1 ? "end" : "middle"
-                }
-                fill="#5d7e63"
-                fontSize="10"
-              >
-                {new Date(r.date + "T00:00:00Z").toLocaleDateString("en-GB", {
-                  month: "short",
-                  year: "2-digit",
-                  timeZone: "UTC",
-                })}
-              </text>
-            )}
-          </g>
-        ))}
-      </svg>
-      <div className="trend-detail" aria-live="polite">
-        <span>
-          {formatDate(active.date)} ·{" "}
-          <strong>{formatInterval(active.total)} EOIs</strong>
-        </span>
-        <span>189 submitted · relative scale</span>
-      </div>
-      <Accordion
-        keepMounted
-        keepMountedMode="display-none"
-        className="report-accordion"
-        variant="default"
-      >
-        <Accordion.Item value="table">
-          <Accordion.Control>View monthly figures</Accordion.Control>
-          <Accordion.Panel>
-            <table className="rounds-table">
-              <thead>
-                <tr>
-                  <th scope="col">Snapshot</th>
-                  <th scope="col">Submitted EOIs</th>
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((r) => (
-                  <tr key={r.date}>
-                    <td>{formatDate(r.date)}</td>
-                    <td>{formatInterval(r.total)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </Accordion.Panel>
-        </Accordion.Item>
-      </Accordion>
-    </div>
-  );
-}
-
 export function Report({
   profile,
   asOf,
   sample = false,
   onEdit,
+  occupation,
+  comparisonIndex,
+  initialComparison,
+  source,
 }: {
   profile: Profile;
   asOf: string;
   sample?: boolean;
   onEdit?: () => void;
+  occupation: ReportOccupation;
+  /** Must keep a stable identity: the comparison loader's effect depends on it. */
+  comparisonIndex: OccupationIndexEntry[];
+  /** Server-rendered evidence for the default comparison occupation. */
+  initialComparison?: OccupationEvidence;
+  source: ReportSource;
 }) {
   const result = calculatePoints(profile, asOf),
     events = buildTimeline(profile, asOf),
-    occupation = snapshot.occupations.find(
-      (o) => o.code === profile.occupation,
-    ),
-    data = getOccupationEvidence(profile.occupation);
+    nominated = comparisonIndex.find((o) => o.code === profile.occupation);
   const [visa, setVisa] = useState<VisaPathway>("189"),
     [scoreOverride, setScoreOverride] = useState<number | null>(null),
     [scenarios, setScenarios] = useState<string[]>([]),
     [checks, setChecks] = useState<string[]>([]),
-    [comparison, setComparison] = useState("261313"),
     [active, setActive] = useState("points");
   const assumed = calculatePoints(
       applyScenarios(profile, scenarios, asOf),
@@ -252,16 +125,6 @@ export function Report({
       : visa === "491"
         ? result.subclass491
         : result.base);
-  const pathway = data?.pathways.find((p) => p.visa === visa),
-    pool = pathway ? comparePool(pathway, score) : null;
-  const compared = getOccupationEvidence(comparison),
-    otherPool = compared?.pathways.find((p) => p.visa === "189");
-  const trendChange = data?.trend.length
-    ? netPoolChange(
-        data.trend[0].total,
-        data.trend[data.trend.length - 1].total,
-      )
-    : null;
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -338,14 +201,14 @@ export function Report({
               <em>your migration picture.</em>
             </h1>
             <p>
-              {occupation?.name ?? "Your nominated occupation"}
-              {occupation ? ` · ${occupation.code}` : ""}
+              {nominated?.name ?? "Your nominated occupation"}
+              {nominated ? ` · ${nominated.code}` : ""}
               <br />
               189 independent · 190 nominated · 491 regional
             </p>
             <div className="report-heading-meta">
               <CalendarDays size={12} /> Calculated {formatDate(asOf)}{" "}
-              <span>·</span> Pool snapshot {formatDate(evidence.snapshotDate)}
+              <span>·</span> Pool snapshot {formatDate(source.snapshotDate)}
             </div>
           </header>
           <div className="report-body">
@@ -524,196 +387,31 @@ export function Report({
                 score unless you change them.
               </p>
             </section>
-            <section className="report-section" id="pool">
-              <span className="section-label">
-                03 / THE PUBLISHED OCCUPATION POOL
-              </span>
-              <h2>
-                See the numbers.
-                <br />
-                <em>Keep the context.</em>
-              </h2>
-              {occupation && data && pathway && pool ? (
-                <>
-                  <p>
-                    Compare your score with the same dated snapshot. The 190 and
-                    491 views describe national nomination EOI pools; they are
-                    not state selection rankings.
-                  </p>
-                  <div className="pool-controls">
-                    <SegmentedControl
-                      aria-label="Visa pool"
-                      value={visa}
-                      onChange={(v) => {
-                        setVisa(v as VisaPathway);
-                        setScoreOverride(null);
-                      }}
-                      data={[
-                        { value: "189", label: "189 Independent" },
-                        { value: "190", label: "190 Nominated" },
-                        { value: "491", label: "491 State regional" },
-                      ]}
-                    />
-                    <NumberInput
-                      label="Comparison score"
-                      aria-label="Pool comparison score"
-                      min={0}
-                      max={150}
-                      step={5}
-                      allowDecimal={false}
-                      clampBehavior="strict"
-                      value={score}
-                      onChange={(v) =>
-                        setScoreOverride(normalizePoolScore(Number(v)))
-                      }
-                    />
-                  </div>
-                  <p className="report-notes">
-                    {visa} ·{" "}
-                    {visa === "491"
-                      ? "State/territory nominated regional"
-                      : visa === "190"
-                        ? "State/territory nominated"
-                        : "Skilled Independent"}{" "}
-                    · Submitted EOIs · {formatDate(evidence.snapshotDate)}
-                  </p>
-                  <div className="report-data-layout">
-                    <div aria-live="polite">
-                      <span className="pool-metric-label">
-                        EOIs WITH HIGHER POINTS
-                      </span>
-                      <span className="report-number">
-                        <AnimatedNumber value={formatInterval(pool.higher)} />
-                      </span>
-                      <p className="data-caption">
-                        At <strong>{score} points</strong>, another{" "}
-                        <strong>{formatInterval(pool.same)}</strong> share that
-                        score.
-                        <br />
-                        Published occupation total:{" "}
-                        <strong>{formatInterval(pathway.total)}</strong> EOIs.
-                      </p>
-                    </div>
-                    <PoolChart
-                      occupation={{
-                        name: occupation.name,
-                        points: pathway.points,
-                      }}
-                      score={score}
-                    />
-                  </div>
-                  <div className="notice">
-                    <Info size={15} />
-                    <p>
-                      This is a pool comparison, not your exact queue position.
-                      Date-of-effect ordering is unavailable. Counts below 20
-                      stay masked; EOIs are not unique people.{" "}
-                      {visa === "491"
-                        ? "This view includes state/territory nomination, excluding family sponsorship."
-                        : ""}{" "}
-                      <Link className="source-link" href="/methodology/#pool">
-                        How to read the pool
-                      </Link>
-                    </p>
-                  </div>
-                  <div className="trend-heading">
-                    <h3>Twelve months, in perspective.</h3>
-                    <span className="pill">189 occupation totals</span>
-                  </div>
-                  <TrendChart rows={data.trend} />
-                  {trendChange && (
-                    <p className="data-caption">
-                      Net change from {formatDate(data.trend[0].date)} to{" "}
-                      {formatDate(data.trend.at(-1)!.date)}:{" "}
-                      <strong>{formatInterval(trendChange)} EOIs</strong>. These
-                      are published monthly totals. A net change does not reveal
-                      new entries, invitations, withdrawals or score movement
-                      separately.
-                    </p>
-                  )}
-                </>
-              ) : (
-                <div className="report-empty">
-                  <Info size={18} />
-                  <p>
-                    This occupation is not in the imported snapshot. Your points
-                    are available; no pool comparison has been invented.
-                  </p>
-                </div>
+            <PoolSection
+              occupation={occupation}
+              unavailableMessage={poolUnavailableMessage(
+                profile.occupation,
+                comparisonIndex,
               )}
-            </section>
-            <section className="report-section" id="rounds">
-              <span className="section-label">04 / INVITATION HISTORY</span>
-              <h2>
-                What was published.
-                <br />
-                <em>Not a prediction.</em>
-              </h2>
-              <p>
-                Six actual 189 invitation rounds, matched to the nominated
-                occupation. A missing published row means “not listed”, rather
-                than a zero cutoff or proof of no invitations.
-              </p>
-              {data ? (
-                <table className="rounds-table">
-                  <thead>
-                    <tr>
-                      <th scope="col">189 round date</th>
-                      <th scope="col">Published minimum</th>
-                      <th scope="col">Your current score</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.rounds.map((r) => (
-                      <tr key={r.date}>
-                        <td>{formatDate(r.date)}</td>
-                        <td>
-                          {r.cutoff === null ? (
-                            <span className="subtle">Not listed</span>
-                          ) : (
-                            <strong>{r.cutoff} points</strong>
-                          )}
-                        </td>
-                        <td>
-                          {r.cutoff === null
-                            ? "No comparison"
-                            : result.base >= r.cutoff
-                              ? `${result.base - r.cutoff} points above / at`
-                              : `${r.cutoff - result.base} points below`}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              ) : (
-                <div className="report-empty">
-                  Occupation-matched invitation results are unavailable for this
-                  profile.
-                </div>
-              )}
-              <p className="data-caption">
-                Meeting a historical minimum does not mean your EOI would have
-                been invited. Tie-break dates, occupation eligibility and EOI
-                status also matter.{" "}
-                <a
-                  className="source-link"
-                  href={evidence.roundsSourceUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Current results
-                </a>{" "}
-                ·{" "}
-                <a
-                  className="source-link"
-                  href="https://immi.homeaffairs.gov.au/visas/working-in-australia/skillselect/previous-rounds"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Previous rounds
-                </a>
-              </p>
-            </section>
+              visa={visa}
+              score={score}
+              snapshotDate={source.snapshotDate}
+              onVisaChange={(next) => {
+                setVisa(next);
+                setScoreOverride(null);
+              }}
+              onScoreChange={setScoreOverride}
+            />
+            <RoundsSection
+              occupation={occupation}
+              loadFailed={
+                unavailableReason(profile.occupation, comparisonIndex) ===
+                "loadFailed"
+              }
+              score={result.base}
+              roundsUrl={source.roundsUrl}
+              previousRoundsUrl={source.previousRoundsUrl}
+            />
             <section className="report-section" id="timeline">
               <span className="section-label">05 / YOUR PERSONAL DATES</span>
               <h2>
@@ -833,62 +531,14 @@ export function Report({
                 Explore the detailed state summaries <ArrowRight size={14} />
               </Link>
             </section>
-            <section className="report-section" id="compare">
-              <span className="section-label">07 / OCCUPATION CONTEXT</span>
-              <h2>
-                A little more <em>perspective.</em>
-              </h2>
-              <p>
-                Compare another occupation in this import at your current
-                federal score. This is descriptive context; your assessment and
-                occupation eligibility are separate requirements.
-              </p>
-              <Select
-                label="Compare an occupation"
-                searchable
-                value={comparison}
-                onChange={(v) => v && setComparison(v)}
-                data={snapshot.occupations.map((o) => ({
-                  value: o.code,
-                  label: `${o.name} · ${o.code}`,
-                }))}
-              />
-              <div className="compare-grid">
-                {[
-                  {
-                    name: occupation?.name ?? "Your occupation",
-                    p: data?.pathways.find((p) => p.visa === "189"),
-                  },
-                  { name: compared?.name ?? "Comparison", p: otherPool },
-                ].map((item, i) => (
-                  <div className="compare-card" key={i}>
-                    <span>
-                      {i === 0
-                        ? "YOUR NOMINATED OCCUPATION"
-                        : "COMPARISON OCCUPATION"}
-                    </span>
-                    <h3>{item.name}</h3>
-                    {item.p ? (
-                      <>
-                        <strong>
-                          {formatInterval(
-                            comparePool(item.p, result.base).higher,
-                          )}
-                        </strong>
-                        <small>
-                          189 EOIs above {result.base} points ·{" "}
-                          {formatDate(evidence.snapshotDate)}
-                        </small>
-                      </>
-                    ) : (
-                      <p className="data-caption">
-                        No imported pool available.
-                      </p>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </section>
+            <CompareSection
+              occupation={occupation}
+              occupationCode={profile.occupation}
+              index={comparisonIndex}
+              initialComparison={initialComparison}
+              score={result.base}
+              snapshotDate={source.snapshotDate}
+            />
             <section className="report-section" id="prepare">
               <span className="section-label">08 / GET ORGANISED</span>
               <h2>
@@ -1020,18 +670,18 @@ export function Report({
                 Pool and monthly history:{" "}
                 <a
                   className="source-link"
-                  href={evidence.sourceUrl}
+                  href={source.dashboardUrl}
                   target="_blank"
                   rel="noreferrer"
                 >
                   Home Affairs SkillSelect dashboard
                 </a>
                 . Submitted EOIs; current snapshot{" "}
-                {formatDate(evidence.snapshotDate)}; sources checked{" "}
-                {formatDate(evidence.sourceCheckedAt)}. Monthly history uses
-                directly published occupation totals. Score comparisons sum
-                published score-band intervals. Counts below 20 remain masked.
-                State 491 excludes family sponsorship.
+                {formatDate(source.snapshotDate)}; sources checked{" "}
+                {formatDate(source.checkedAt)}. Monthly history uses directly
+                published occupation totals. Score comparisons sum published
+                score-band intervals. Counts below 20 remain masked. State 491
+                excludes family sponsorship.
               </p>
               <p>
                 Rule set federal-current-2026-11 · Report v0.2. General

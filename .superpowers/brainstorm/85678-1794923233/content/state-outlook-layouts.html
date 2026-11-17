@@ -1,0 +1,73 @@
+<style>
+  .rc { font-family: system-ui, sans-serif; color: #12352b; background: #fbfaf6; border-radius: 12px; padding: 16px; font-size: 13.5px; line-height: 1.45; }
+  .rc h4 { margin: 0 0 4px; font-size: 17px; line-height: 1.3; }
+  .rc .eyebrow { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #5b7a6f; margin: 12px 0 6px; }
+  .rc .muted { color: #5b7a6f; font-size: 12px; }
+  .rc .st { background: #fff; border: 1px solid #dfe8e3; border-radius: 10px; padding: 10px 12px; margin: 6px 0; display: grid; grid-template-columns: 44px 1fr auto; gap: 10px; align-items: start; }
+  .rc .code { font-weight: 700; font-size: 15px; }
+  .rc .pts { text-align: right; font-size: 12px; color: #5b7a6f; } .rc .pts b { font-size: 17px; color: #12352b; display: block; }
+  .rc .ok { color: #1d5e3a; } .rc .no { color: #8a2b1a; } .rc .q { color: #7a4d00; }
+  .rc .illus { display: inline-block; font-size: 10px; background: #eee; border-radius: 4px; padding: 0 5px; color: #555; margin-left: 4px; }
+  .rc .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 10px; }
+  .rc .tile { border-radius: 10px; padding: 10px; min-height: 70px; font-size: 12px; }
+  .rc .g1 { background: #dff3e8; } .rc .g2 { background: #fff1d6; } .rc .g3 { background: #f1efea; color: #8b877d; } .rc .g4 { background: #eef1f8; }
+  .rc table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
+  .rc th, .rc td { padding: 6px 5px; border-bottom: 1px solid #e4ebe7; text-align: left; }
+  .rc th { font-size: 11px; color: #5b7a6f; font-weight: 600; }
+</style>
+
+<h2>How should the state outlook look?</h2>
+<p class="subtitle">Example: a Registered Nurse with 80 points, living in Victoria. Invitation counts are <b>real</b>: 190 invitations recorded in the Oct 2026 snapshot. Eligibility rules are <b>illustrative</b> until the state research is back.</p>
+
+<div class="cards">
+  <div class="card" data-choice="e1-ranked-list" onclick="toggleSelect(this)">
+    <div class="card-image"><div class="rc">
+      <h4>Where published evidence is strongest for your profile</h4>
+      <div class="muted">190 · ranked by eligibility, then by invitations at or below your score. Not advice to apply.</div>
+      <div class="eyebrow">Strongest evidence</div>
+      <div class="st"><span class="code">VIC</span><div><span class="ok">✓ Occupation listed · ✓ You live here</span> <span class="illus">illustrative</span><br>337 nurse EOIs invited at 85 points or lower <span class="muted">(Oct 2026)</span></div><div class="pts">your points<b>85</b></div></div>
+      <div class="st"><span class="code">NSW</span><div><span class="ok">✓ Occupation listed</span> · <span class="q">? residence rule</span> <span class="illus">illustrative</span><br>330 nurse EOIs invited (all scores)</div><div class="pts">your points<b>85</b></div></div>
+      <div class="eyebrow">Worth watching</div>
+      <div class="st"><span class="code">QLD</span><div><span class="q">? Offshore list only</span> <span class="illus">illustrative</span><br>276 invited (all scores)</div><div class="pts">your points<b>85</b></div></div>
+      <div class="eyebrow">Not open to you now</div>
+      <div class="st"><span class="code">WA</span><div><span class="no">✗ Requires WA residence</span> <span class="illus">illustrative</span><br><span class="muted">276 invited, but not for your situation</span></div><div class="pts">—</div></div>
+      <div class="muted" style="margin-top:6px">+ 4 more states · 130 invitations recorded under “any state” are shown separately</div>
+    </div></div>
+    <div class="card-body"><h3>E1 · Ranked list in groups</h3><p>Matches what you approved: groups for “strongest”, “watching”, “not open” and “unknown”. Each row gives the reason and the evidence. Reads well on a phone.</p></div>
+  </div>
+
+  <div class="card" data-choice="e2-tiles" onclick="toggleSelect(this)">
+    <div class="card-image"><div class="rc">
+      <h4>Your state outlook at a glance</h4>
+      <div class="muted">Tap a state for its rules and evidence.</div>
+      <div class="grid">
+        <div class="tile g1"><b>VIC</b><br>Strongest<br><span class="muted">337 invited ≤85</span></div>
+        <div class="tile g1"><b>NSW</b><br>Strongest<br><span class="muted">330 invited</span></div>
+        <div class="tile g2"><b>QLD</b><br>Watch<br><span class="muted">276 invited</span></div>
+        <div class="tile g2"><b>SA</b><br>Watch<br><span class="muted">131 invited</span></div>
+        <div class="tile g3"><b>WA</b><br>Not open now</div>
+        <div class="tile g4"><b>TAS</b><br>Unknown<br><span class="muted">58 invited</span></div>
+        <div class="tile g4"><b>ACT</b><br>Unknown<br><span class="muted">48 invited</span></div>
+        <div class="tile g4"><b>NT</b><br>Unknown<br><span class="muted">31 invited</span></div>
+      </div>
+      <div class="muted" style="margin-top:8px">Groups are illustrative until the rules research is back.</div>
+    </div></div>
+    <div class="card-body"><h3>E2 · Colour-coded state tiles</h3><p>All eight visible at once, like a map. Quick to scan and good to screenshot, but the reasons sit one tap away.</p></div>
+  </div>
+
+  <div class="card" data-choice="e3-table" onclick="toggleSelect(this)">
+    <div class="card-image"><div class="rc">
+      <h4>Compare states</h4>
+      <table>
+        <tr><th>State</th><th>Eligible?</th><th>Invited (Oct 26)</th><th>At ≤ your score</th><th>Your pts</th></tr>
+        <tr><td><b>VIC</b></td><td class="ok">Yes*</td><td>354</td><td>337</td><td>85</td></tr>
+        <tr><td><b>NSW</b></td><td class="q">Check*</td><td>330</td><td>—</td><td>85</td></tr>
+        <tr><td><b>QLD</b></td><td class="q">Check*</td><td>276</td><td>—</td><td>85</td></tr>
+        <tr><td><b>WA</b></td><td class="no">No*</td><td>276</td><td>—</td><td>—</td></tr>
+        <tr><td><b>SA</b></td><td class="q">Check*</td><td>131</td><td>—</td><td>85</td></tr>
+        <tr><td colspan="5" class="muted">* illustrative · — = arrives with the full import</td></tr>
+      </table>
+    </div></div>
+    <div class="card-body"><h3>E3 · Comparison table</h3><p>Dense and precise, good for detail-oriented users and for print. Harder on a phone and less “guided”.</p></div>
+  </div>
+</div>

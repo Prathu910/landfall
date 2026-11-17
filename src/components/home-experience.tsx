@@ -11,8 +11,15 @@ import {
 } from "lucide-react";
 import { PoolExplorer } from "./pool-explorer";
 import { sampleProfile, calculatePoints } from "@/lib/migration";
+import type { PoolOccupation } from "@/lib/pool";
 
-export function HomeExperience() {
+export function HomeExperience({
+  initialPool,
+  snapshotDate,
+}: {
+  initialPool: PoolOccupation;
+  snapshotDate: string;
+}) {
   const [view, setView] = useState("pool");
   const reduced = useReducedMotion();
   const result = calculatePoints(sampleProfile, "2026-11-17");
@@ -45,7 +52,7 @@ export function HomeExperience() {
           transition={{ duration: reduced ? 0 : 0.2 }}
         >
           {view === "pool" ? (
-            <PoolExplorer />
+            <PoolExplorer initial={initialPool} snapshotDate={snapshotDate} />
           ) : view === "points" ? (
             <div className="explorer preview-pane">
               <div className="explorer-heading">

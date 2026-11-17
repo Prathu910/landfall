@@ -6,25 +6,37 @@
     "dev": "next dev --webpack --hostname 127.0.0.1",
     "build": "next build --webpack",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "npm run format:check && npm run lint && npm run typecheck && npm test",
+    "data:import": "tsx scripts/import/cli.ts",
+    "data:generate": "tsx scripts/import/cli.ts --generate-only",
+    "predev": "tsx scripts/copy-public-data.ts",
+    "prebuild": "tsx scripts/copy-public-data.ts"
   },
   "dependencies": {
     "@fontsource/dm-sans": "^5.2.0",
     "@fontsource/instrument-serif": "^5.2.0",
+    "@mantine/core": "9.8.1",
+    "@mantine/dates": "9.8.1",
+    "@mantine/hooks": "9.8.1",
+    "dayjs": "1.11.23",
     "lucide-react": "^0.577.0",
+    "motion": "14.14.0",
     "next": "16.4.6",
     "react": "19.3.1",
-    "react-dom": "19.3.1",
-    "@mantine/core": "9.8.1",
-    "@mantine/hooks": "9.8.1",
-    "@mantine/dates": "9.8.1",
-    "dayjs": "1.11.23",
-    "motion": "14.14.0"
+    "react-dom": "19.3.1"
   },
   "devDependencies": {
     "@types/node": "^25.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.4.6",
+    "prettier": "3.10.1",
+    "tsx": "4.23.15",
     "typescript": "^5.9.0",
     "vitest": "4.1.12"
   }
