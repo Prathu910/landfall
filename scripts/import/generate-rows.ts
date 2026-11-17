@@ -119,6 +119,9 @@ function checkHeader(header: string[], columns: Column[], fail: Fail): void {
 
 type Fail = (message: string) => never;
 
+/** The dashboard lists EOIs without an occupation under this text (seen in 04/2026). */
+const NO_OCCUPATION = "None Provided";
+
 type Partition = Pick<ParsedRow, "score" | "state" | "attribute">;
 
 function readPartition(
@@ -227,10 +230,12 @@ export function parseViewRows(
     const columns = expectedColumns(view, partition.attribute);
     const table = decodeRaw(part.table);
     checkHeader(table.header, columns, fail);
+    const occupationColumn = columns.indexOf("occupation");
     for (const cells of table.rows) {
       if (cells.length !== columns.length) {
         fail(`row has ${cells.length} cells: ${JSON.stringify(cells)}`);
       }
+      if (cells[occupationColumn] === NO_OCCUPATION) continue;
       const row: Partial<ParsedRow> = { asAt: file.asAt, ...partition };
       columns.forEach((column, index) =>
         parseCell(row, column, cells[index], view, file.asAt, fail),
