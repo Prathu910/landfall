@@ -13,3 +13,6 @@ package-lock.json
 
 # Local agent workflow notes (untracked).
 .superpowers/
+
+# Captured page fixtures: kept verbatim, not reformatted.
+scripts/import/__fixtures__/

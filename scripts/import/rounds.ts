@@ -1,0 +1,185 @@
+export type ParsedRound = {
+  date: string;
+  rows: { occupationName: string; cutoff: number }[];
+};
+
+const BASE =
+  "https://immi.homeaffairs.gov.au/visas/working-in-australia/skillselect/";
+const SCHEMA_INPUT_ID = "ctl00_PlaceHolderMain_PageSchemaHiddenField_Input";
+
+const MONTHS = [
+  "january",
+  "february",
+  "march",
+  "april",
+  "may",
+  "june",
+  "july",
+  "august",
+  "september",
+  "october",
+  "november",
+  "december",
+];
+
+const NAMED_ENTITIES: Record<string, string> = {
+  amp: "&",
+  lt: "<",
+  gt: ">",
+  quot: '"',
+  apos: "'",
+  nbsp: " ",
+};
+
+function decodeEntities(text: string): string {
+  return text.replace(
+    /&(#x[0-9a-f]+|#\d+|[a-z]+);/gi,
+    (whole, body: string) => {
+      if (body[0] === "#") {
+        const code =
+          body[1] === "x" || body[1] === "X"
+            ? parseInt(body.slice(2), 16)
+            : parseInt(body.slice(1), 10);
+        return String.fromCodePoint(code);
+      }
+      return NAMED_ENTITIES[body.toLowerCase()] ?? whole;
+    },
+  );
+}
+
+export function normalizeOccupationName(name: string): string {
+  return name.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+function readSchema(html: string): Record<string, unknown> {
+  const tag = new RegExp(`<input[^>]*id="${SCHEMA_INPUT_ID}"[^>]*>`, "i").exec(
+    html,
+  );
+  const value = tag && /\svalue="([^"]*)"/i.exec(tag[0]);
+  if (!value) {
+    throw new Error(
+      "Official page schema changed; review the source before importing",
+    );
+  }
+  return JSON.parse(decodeEntities(value[1])) as Record<string, unknown>;
+}
+
+function stringField(item: unknown, key: string): string {
+  const value = (item as Record<string, unknown> | null)?.[key];
+  if (typeof value !== "string") {
+    throw new Error(`Round page field "${key}" missing; review the source`);
+  }
+  return value;
+}
+
+function arrayField(schema: Record<string, unknown>, key: string): unknown[] {
+  const value = schema[key];
+  if (!Array.isArray(value)) {
+    throw new Error(`Round page schema has no "${key}" list`);
+  }
+  return value;
+}
+
+function parseLongDate(text: string): string {
+  const match = /^(\d{1,2}) ([A-Za-z]+) (\d{4})$/.exec(text.trim());
+  const month = match ? MONTHS.indexOf(match[2].toLowerCase()) : -1;
+  if (!match || month < 0) throw new Error(`Unrecognised round date "${text}"`);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${match[3]}-${pad(month + 1)}-${pad(Number(match[1]))}`;
+}
+
+function cellText(html: string): string {
+  return decodeEntities(html.replace(/<[^>]*>/g, " "))
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function extractTables(html: string): string[][][] {
+  const tables: string[][][] = [];
+  for (const table of html.match(/<table[\s>][\s\S]*?<\/table>/gi) ?? []) {
+    const rows = (table.match(/<tr[\s>][\s\S]*?<\/tr>/gi) ?? []).map((row) =>
+      (row.match(/<t[dh][\s>][\s\S]*?<\/t[dh]>/gi) ?? []).map(cellText),
+    );
+    tables.push(rows);
+  }
+  return tables;
+}
+
+// Returns null when the block has no table headed "Occupation". Rounds before
+// April 2022 publish other layouts (offshore/onshore columns, or occupation
+// ids with no such heading), which this importer does not read.
+function parseRoundBlock(date: string, block: string): ParsedRound | null {
+  const table = extractTables(block).find((t) =>
+    t[0]?.[0]?.toLowerCase().includes("occupation"),
+  );
+  if (!table) return null;
+  const headerCells = table[0].map((cell) => cell.toLowerCase());
+  const column = headerCells.findIndex(
+    (cell, index) =>
+      index > 0 && (cell.includes("189") || cell.includes("minimum points")),
+  );
+  if (column < 0) throw new Error("Occupation table columns changed");
+  const rows: ParsedRound["rows"] = [];
+  for (const cells of table.slice(1)) {
+    if (cells.length === 0) continue;
+    const occupationName = cells[0];
+    const cutoffText = cells[column] ?? "";
+    // "N/A*" / "Not invited" mark an occupation with no 189 invitations that
+    // round. It is "not listed", never zero, so the row is left out.
+    if (/^(n\/?a\b|not invited)/i.test(cutoffText)) continue;
+    if (!occupationName || !/^\d+$/.test(cutoffText)) {
+      throw new Error(
+        `Unexpected 189 cut-off for ${occupationName || "?"} on ${date}: ${cutoffText}`,
+      );
+    }
+    rows.push({ occupationName, cutoff: Number(cutoffText) });
+  }
+  return { date, rows };
+}
+
+export function parseRoundPages(
+  currentHtml: string,
+  previousHtml: string,
+): ParsedRound[] {
+  const current = readSchema(currentHtml);
+  const currentBlock = arrayField(current, "content").find(
+    (item) => stringField(item, "text") === "Current round",
+  );
+  if (!currentBlock) throw new Error("Current round block missing");
+  const block = stringField(currentBlock, "block");
+  const issued = /Invitations issued on (\d+ \w+ \d{4})/.exec(block);
+  if (!issued) throw new Error("Current round date missing");
+
+  const newest = parseRoundBlock(parseLongDate(issued[1]), block);
+  if (!newest) throw new Error("Current round occupation table missing");
+  const rounds = [newest];
+  for (const item of arrayField(readSchema(previousHtml), "criteria")) {
+    const round = parseRoundBlock(
+      parseLongDate(stringField(item, "title")),
+      stringField(item, "description"),
+    );
+    if (round) rounds.push(round);
+  }
+  return rounds.sort((a, b) => b.date.localeCompare(a.date));
+}
+
+export async function fetchRoundPages(): Promise<{
+  currentHtml: string;
+  previousHtml: string;
+}> {
+  const get = async (page: string) => {
+    const response = await fetch(BASE + page, {
+      headers: { "User-Agent": "Mozilla/5.0" },
+      signal: AbortSignal.timeout(40_000),
+    });
+    if (!response.ok) {
+      throw new Error(`${page} returned HTTP ${response.status}`);
+    }
+    return response.text();
+  };
+  const [currentHtml, previousHtml] = await Promise.all([
+    get("invitation-rounds"),
+    get("previous-rounds"),
+  ]);
+  return { currentHtml, previousHtml };
+}
