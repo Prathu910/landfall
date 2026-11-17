@@ -27,7 +27,7 @@ describe("poolPosition", () => {
     const p = pos(90);
     expect(p.higher).toEqual({ min: 50, max: 50 });
     expect(p.same).toEqual({ min: 0, max: 19 });
-    expect(p.total).toEqual({ min: 150, max: 169 });
+    expect(p.total).toEqual({ min: 150, max: 150 });
   });
 
   it("normalises to the 5-point band", () => {

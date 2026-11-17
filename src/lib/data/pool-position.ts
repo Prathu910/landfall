@@ -58,10 +58,8 @@ export function poolPosition(
   const normalised = normalizePoolScore(score);
   const key = String(normalised);
   const higher: Interval[] = [];
-  const all: Interval[] = [];
   for (const [rowScore, text] of Object.entries(pool.byScore)) {
     const count = parseCountText(text);
-    all.push(count);
     if (Number(rowScore) > normalised) higher.push(count);
   }
 
@@ -71,7 +69,7 @@ export function poolPosition(
     score: normalised,
     higher: sumIntervals(higher),
     same: countIn(pool.byScore, key) ?? { min: 0, max: 0 },
-    total: sumIntervals(all),
+    total: parseCountText(pool.total),
   };
 
   const byMonth = detail?.cohortsByScore[visa]?.[key];
