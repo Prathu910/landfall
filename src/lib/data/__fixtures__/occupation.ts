@@ -39,3 +39,51 @@ export const detailFixture: OccupationDetail = {
   invitedProfile: {},
   invitedProfileState: {},
 };
+
+export const activityCoreFixture: OccupationCore = {
+  ...coreFixture,
+  statusHistory: {
+    "189": {
+      "2026-07": { INVITED: "<20" },
+      "2026-05": { INVITED: "82" },
+      "2026-06": { INVITED: "905" },
+      "2026-08": { SUBMITTED: "10" },
+    },
+  },
+  invitedByScore: {
+    "189": {
+      "2026-06": { "90": "40", "95": "<20", "100": "865" },
+      "2026-07": { "85": "<20" },
+    },
+  },
+  statePool: {
+    "190": {
+      VIC: { "80": "30", "85": "<20", "90": "10" },
+      ANY: { "85": "7", "95": "3" },
+    },
+  },
+  stateInvited: {
+    "190": {
+      VIC: {
+        "2026-08": { "80": "50", "90": "20" },
+        "2026-09": { "85": "50", "95": "60" },
+        "2026-10": { "75": "<20" },
+      },
+      ANY: { "2026-10": { "85": "5", "100": "9" } },
+    },
+  },
+};
+
+export const profileDetailFixture: OccupationDetail = {
+  ...detailFixture,
+  invitedProfile: {
+    "189": {
+      english: {
+        superior: { "2026-08": "12", "2026-09": "<20", "2026-10": "30" },
+      },
+    },
+  },
+  invitedProfileState: {
+    "190": { VIC: { english: { superior: "25" } } },
+  },
+};
