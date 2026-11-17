@@ -105,42 +105,78 @@ function extractTables(html: string): string[][][] {
   return tables;
 }
 
-// Returns null when the block has no table headed "Occupation". Rounds before
-// April 2022 publish other layouts (offshore/onshore columns, or occupation
-// ids with no such heading), which this importer does not read.
-function parseRoundBlock(date: string, block: string): ParsedRound | null {
-  const table = extractTables(block).find((t) =>
-    t[0]?.[0]?.toLowerCase().includes("occupation"),
-  );
-  if (!table) return null;
-  const headerCells = table[0].map((cell) => cell.toLowerCase());
-  const column = headerCells.findIndex(
+const NOT_LISTED = /^(n\/?a\b|not invited|$)/i;
+
+type BlockResult = { round: ParsedRound } | { reason: string };
+
+// Finds the 189 data columns. Most layouts have one header row. The 2022-23
+// layouts put group labels (189 / 491) above an offshore/onshore row; each
+// group then spans an equal share of the data columns.
+function cutoffColumns(table: string[][], headerRow: number): number[] {
+  const header = table[headerRow].map((cell) => cell.toLowerCase());
+  const single = header.findIndex(
     (cell, index) =>
       index > 0 && (cell.includes("189") || cell.includes("minimum points")),
   );
-  if (column < 0) throw new Error("Occupation table columns changed");
-  const rows: ParsedRound["rows"] = [];
-  for (const cells of table.slice(1)) {
-    if (cells.length === 0) continue;
-    const occupationName = cells[0];
-    const cutoffText = cells[column] ?? "";
-    // "N/A*" / "Not invited" mark an occupation with no 189 invitations that
-    // round. It is "not listed", never zero, so the row is left out.
-    if (/^(n\/?a\b|not invited)/i.test(cutoffText)) continue;
-    if (!occupationName || !/^\d+$/.test(cutoffText)) {
-      throw new Error(
-        `Unexpected 189 cut-off for ${occupationName || "?"} on ${date}: ${cutoffText}`,
-      );
-    }
-    rows.push({ occupationName, cutoff: Number(cutoffText) });
-  }
-  return { date, rows };
+  if (single >= 0) return [single];
+  if (headerRow === 0) return [];
+  const groups = table[0].map((cell) => cell.toLowerCase()).slice(1);
+  const group = groups.findIndex(
+    (cell) => cell.includes("189") || cell.includes("minimum points"),
+  );
+  const width = Math.floor((header.length - 1) / groups.length);
+  if (group < 0 || width < 1) return [];
+  return Array.from({ length: width }, (_, i) => 1 + group * width + i);
 }
 
-export function parseRoundPages(
+function parseRoundBlock(date: string, block: string): BlockResult {
+  const tables = extractTables(block);
+  let table: string[][] | undefined;
+  let headerRow = 0;
+  for (const candidate of tables) {
+    const found = candidate
+      .slice(0, 2)
+      .findIndex((row) => row.some((c) => /occupation/i.test(c)));
+    if (found >= 0) {
+      table = candidate;
+      headerRow = found;
+      break;
+    }
+  }
+  if (!table) return { reason: "no table with an Occupation column" };
+  const nameColumn = table[headerRow].findIndex((c) => /occupation/i.test(c));
+  const columns = cutoffColumns(table, headerRow);
+  if (columns.length === 0) throw new Error("Occupation table columns changed");
+  const rows: ParsedRound["rows"] = [];
+  for (const cells of table.slice(headerRow + 1)) {
+    if (cells.length === 0) continue;
+    const occupationName = cells[nameColumn];
+    const values: number[] = [];
+    for (const column of columns) {
+      const text = cells[column] ?? "";
+      // "N/A*" / "Not invited" mean no 189 invitations: "not listed", never zero.
+      if (NOT_LISTED.test(text)) continue;
+      if (!occupationName || !/^\d+$/.test(text)) {
+        throw new Error(
+          `Unexpected 189 cut-off for ${occupationName || "?"} on ${date}: ${text}`,
+        );
+      }
+      values.push(Number(text));
+    }
+    // Offshore/onshore columns: the lowest score invited is the cut-off.
+    if (values.length > 0) {
+      rows.push({ occupationName, cutoff: Math.min(...values) });
+    }
+  }
+  return { round: { date, rows } };
+}
+
+export type SkippedRound = { date: string; reason: string };
+
+export function parseRoundPagesDetailed(
   currentHtml: string,
   previousHtml: string,
-): ParsedRound[] {
+): { rounds: ParsedRound[]; skipped: SkippedRound[] } {
   const current = readSchema(currentHtml);
   const currentBlock = arrayField(current, "content").find(
     (item) => stringField(item, "text") === "Current round",
@@ -151,16 +187,26 @@ export function parseRoundPages(
   if (!issued) throw new Error("Current round date missing");
 
   const newest = parseRoundBlock(parseLongDate(issued[1]), block);
-  if (!newest) throw new Error("Current round occupation table missing");
-  const rounds = [newest];
-  for (const item of arrayField(readSchema(previousHtml), "criteria")) {
-    const round = parseRoundBlock(
-      parseLongDate(stringField(item, "title")),
-      stringField(item, "description"),
-    );
-    if (round) rounds.push(round);
+  if (!("round" in newest)) {
+    throw new Error(`Current round unreadable: ${newest.reason}`);
   }
-  return rounds.sort((a, b) => b.date.localeCompare(a.date));
+  const rounds = [newest.round];
+  const skipped: SkippedRound[] = [];
+  for (const item of arrayField(readSchema(previousHtml), "criteria")) {
+    const date = parseLongDate(stringField(item, "title"));
+    const result = parseRoundBlock(date, stringField(item, "description"));
+    if ("round" in result) rounds.push(result.round);
+    else skipped.push({ date, reason: result.reason });
+  }
+  rounds.sort((a, b) => b.date.localeCompare(a.date));
+  return { rounds, skipped };
+}
+
+export function parseRoundPages(
+  currentHtml: string,
+  previousHtml: string,
+): ParsedRound[] {
+  return parseRoundPagesDetailed(currentHtml, previousHtml).rounds;
 }
 
 export async function fetchRoundPages(): Promise<{

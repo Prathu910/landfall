@@ -2,7 +2,11 @@
 // PageSchemaHiddenField input the parser reads.
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { normalizeOccupationName, parseRoundPages } from "./rounds";
+import {
+  normalizeOccupationName,
+  parseRoundPages,
+  parseRoundPagesDetailed,
+} from "./rounds";
 
 const fixture = (name: string) =>
   readFileSync(new URL(`./__fixtures__/${name}`, import.meta.url), "utf8");
@@ -41,6 +45,32 @@ describe("parseRoundPages", () => {
     const bad = current.replace(/(Actuary.*?\\u003cp\\u003e)85/s, "$195+");
     expect(bad).not.toBe(current);
     expect(() => parseRoundPages(bad, previous)).toThrow();
+  });
+});
+
+describe("parseRoundPagesDetailed", () => {
+  const { rounds, skipped } = parseRoundPagesDetailed(current, previous);
+
+  it("parses the blank-first-header 2022-23 layouts", () => {
+    for (const date of ["2023-05-25", "2022-12-08", "2022-08-22"]) {
+      const round = rounds.find((r) => r.date === date);
+      expect(round?.rows.length).toBeGreaterThan(0);
+      for (const row of round?.rows ?? []) {
+        expect(Number.isInteger(row.cutoff)).toBe(true);
+      }
+    }
+    const audiologist = rounds
+      .find((r) => r.date === "2023-05-25")
+      ?.rows.find((r) => r.occupationName === "Audiologist");
+    expect(audiologist?.cutoff).toBe(65);
+  });
+
+  it("reports unparseable rounds instead of dropping them", () => {
+    expect(skipped.length).toBeGreaterThan(0);
+    for (const s of skipped) expect(s.reason.length).toBeGreaterThan(0);
+    const parsed = new Set(rounds.map((r) => r.date));
+    for (const s of skipped) expect(parsed.has(s.date)).toBe(false);
+    expect(rounds.length + skipped.length).toBe(21);
   });
 });
 
