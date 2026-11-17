@@ -9,3 +9,4 @@ out/
 .sites-checkout*
 .playwright-cli/
 output/
+public/data/
