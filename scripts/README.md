@@ -1,13 +1,39 @@
-# Source import notes
+# Data scripts
 
-The checked-in `src/data/pool.json` is a public SkillSelect month-end snapshot imported on 17 November 2026. Snapshot: 31 October 2026. Filters: 189PTS Points-Tested Stream; SUBMITTED. The existing published results table displays Occupation and Points as its two optional dimensions. The import preserves displayed `<20` values and never queries underlying unmasked counts.
+All SkillSelect data is produced by the TypeScript importer in `scripts/import/`. It is the only writer of `data/raw/` and `src/data/` (apart from the hand-sourced `src/data/states.ts`). The data dictionary, status meanings, known limits and the full import procedure are in [`docs/DATA.md`](../docs/DATA.md).
 
-11 supported occupations are selected from the returned public table. Missing point rows contribute zero to the published distribution; suppressed published rows contribute a 0–19 interval. A displayed comparison is about EOIs in the published snapshot, never unique people or exact tie-break ranks.
+## Commands
 
-Before refreshing, inspect and export the existing official table, verify the snapshot/status/visa, validate each score and count, and replace the checked-in file through review. Do not silently label old data live. Production scheduled imports and publication validation are phase 2.
+```sh
+npm run data:import -- --as-at YYYY-MM              # monthly import: every view at that month, plus a revision check of the previous month
+npm run data:import -- --as-at YYYY-MM --backfill   # fetch every unstored month in each view's window (resumable)
+npm run data:generate -- --as-at YYYY-MM            # rebuild src/data from stored raw files; no network
+```
 
-## Expanded report evidence
+Add `--checked-at YYYY-MM-DD` to set the source check date (default: today). The first dataset is pinned to `--as-at 2026-10`; moving to a newer month is a separate, reviewed change.
 
-`import-report-evidence.py` reproduces `src/data/report-evidence.json` from the same public dashboard table and official current/previous invitation pages. It imports 11 occupations, twelve monthly 189 SUBMITTED occupation totals (November 2025–October 2026), current 189/190/state-491 score distributions, and six actual invitation rounds. Family-sponsored 491 is separate and excluded. Monthly totals are directly published occupation aggregates, not manufactured exact sums of suppressed bands.
+The importer:
 
-Run using Python with `requests` and `websocket-client` installed; the script header describes an isolated virtual environment. The target month and occupation list come from pool.json. Refresh both files together when advancing the snapshot month, and run the evidence tests to check consistency. No automatic refresh is deployed.
+- reads the public SkillSelect dashboard's displayed text only, inside the publisher's guardrail (at most 2 shown and 2 filtered detail fields, one As At Month per query);
+- keeps `<20` as text, which the app treats as the interval 0–19, and never narrows it;
+- throttles calls (at least 250 ms apart) and stops at its page-read budget: 250 for a monthly import, 600 for a backfill;
+- stores each finished view-month in `data/raw/<asAt>/` atomically, and writes a `.rev-<date>` file instead of overwriting a month the government revised;
+- writes `src/data/` only after every validation check passes, and exits 1 on any issue.
+
+After an import, run `npm run check` and `npm run build`, then commit `data/raw/` and `src/data/` together.
+
+## Modules
+
+- `cli.ts`: argument parsing and the run.
+- `qlik-client.ts`, `qlik-constants.ts`: the throttled, guardrail-aware dashboard session.
+- `views.ts`: the declared views and the guardrail check.
+- `import-plan.ts`, `import-fetch.ts`, `run-view.ts`: which view-months to fetch, and fetching them.
+- `raw-store.ts`, `atomic-write.ts`: the compact raw format, revisions and atomic writes.
+- `rounds.ts`: the official 189 round pages.
+- `generate*.ts`, `validate-generated.ts`: building and validating `src/data/`.
+
+`copy-public-data.ts` runs before `dev` and `build`. It copies `src/data/occupations/` to `public/data/occupations/`, so the static site can serve one occupation file at a time.
+
+## History
+
+The Python script `import-report-evidence.py` imported 11 occupations into `src/data/pool.json` and `src/data/report-evidence.json`. The TypeScript importer reproduces both exactly for as-at 2026-10, so the script was removed. The two files are kept as test fixtures in `src/lib/data/__fixtures__/legacy-2026-10/`.

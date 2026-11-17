@@ -1,5 +1,18 @@
 # Resume here
 
+## Latest: data foundation complete (17 November 2026)
+
+Roadmap step 1 is done on branch `roadmap/foundation`. The site is fed by one validated, versioned dataset covering every occupation: snapshot `skillselect-2026-10-31`, 493 occupations (479 with published EOIs), produced by the TypeScript importer in `scripts/import/`. The Python importer and the 11-occupation `pool.json` / `report-evidence.json` are gone; the two files are kept as test fixtures, and the new pipeline reproduces them with zero differences. `docs/DATA.md` is the data dictionary; read it before using the data.
+
+- The UI looks and behaves as before for the original 11 occupations; the sample report text is identical. All 493 occupations are now searchable in the homepage explorer, the check's occupation picker and the report's comparison picker.
+- Pages server-load the occupations they render statically (ICT Business Analyst on the homepage; ICT Business Analyst and Software Engineer on `/sample/`). Other occupations are fetched one file at a time from `/data/occupations/<code>.json`, showing "Loading published data…" meanwhile.
+- Occupations with no published 189 pool, or no published EOIs, keep the points check and say that no pool comparison is available.
+- Verified: `npm run check`, `npm run build`, and a headless-Chrome run against `out/` (explorer search and loading state, the four-step check from `?occupation=233211`, the sample report, print media, 390px width, reduced motion, no console errors).
+
+Next: roadmap step 2, the reality-check section (`docs/superpowers/specs/2026-11-17-reality-check-and-state-outlook-design.md`). Open data questions are listed under "Known limits" in `docs/DATA.md`, notably the SUBMITTED coverage window: re-check it after the 11/2026 import.
+
+## Earlier checkpoint
+
 17 November 2026. The user requested pushing the current work to GitHub and continuing later. This checkpoint contains the premium redesign and expanded evidence-backed report. No new preview deployment was requested at this stopping point; the existing private Sites preview still has the previous release.
 
 ## Implemented
@@ -7,7 +20,7 @@
 - Mantine 9 controls and mobile drawer; Motion feature tabs, step/score transitions and section entrances, with reduced-motion support.
 - Redesigned landing page, guided check, report workspace and state directory.
 - Report credential scenarios, explicit scenario-to-pool action, three visa pools, twelve monthly 189 occupation totals, six actual invitation rounds, personal dates, state summaries, occupation comparisons, general checklist and glossary.
-- Reproducible official-data importer and source/coverage documentation.
+- Reproducible official-data importer and source/coverage documentation (since replaced by the all-occupation importer; see `docs/DATA.md`).
 - Review fixes for bounded chart input, printing collapsed content, expired-credential scenarios and SVG title hydration.
 
 ## Verified
@@ -20,7 +33,7 @@ Production browser checks exercised homepage searchable occupation, keyboard sco
 
 As of 17 November 2026, follow the approved roadmap in `docs/STRATEGY.md`, in order:
 
-1. Data foundation: import all occupations, EOI statuses, Month Submitted cohorts, Nominated State and profile attributes. First resolve the open status-semantics questions listed there.
+1. Data foundation: done (see "Latest" above).
 2. A reality-check section in the report.
 3. A 190/491 state outlook, covering rules, evidence and points, ranked into groups.
 4. SEO foundation and occupation pages for every occupation.
