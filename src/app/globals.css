@@ -21,6 +21,8 @@
   --status-not-open-bg: #f5deda;
   --question-fg: #1b1a17;
   --question-bg: #f6ddb5;
+  --focus-ring: #2e4a7d;
+  --focus-ring-on-dark: #f3eee3;
   --serif: "Newsreader", Georgia, serif;
   --sans: "Inter", Arial, sans-serif;
 }
@@ -64,7 +66,7 @@ button:disabled {
 a:focus-visible,
 button:focus-visible,
 summary:focus-visible {
-  outline: 3px solid var(--slate);
+  outline: 3px solid var(--focus-ring);
   outline-offset: 4px;
 }
 h1,
@@ -210,7 +212,8 @@ svg {
 }
 .button:hover {
   transform: translateY(-2px);
-  background: #1b1a17;
+  background: #2e2c27;
+  border-color: #2e2c27;
   box-shadow: 0 8px 20px #1b1a171b;
 }
 .button svg {
@@ -241,6 +244,7 @@ svg {
 }
 .button-accent:hover {
   background: #ece7dc;
+  border-color: #ece7dc;
 }
 .quiet-link,
 .text-link {
@@ -250,15 +254,25 @@ svg {
   font-size: 14px;
   font-weight: 500;
 }
-.quiet-link {
-  color: #4a463e;
-}
+.quiet-link,
 .text-link {
-  color: var(--ink);
+  color: var(--slate);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 4px;
+  transition:
+    color 0.2s,
+    text-decoration-color 0.2s;
 }
 .quiet-link:hover,
 .text-link:hover {
-  color: #4a463e;
+  color: var(--ink);
+  text-decoration-color: currentcolor;
+}
+.timeline-feature,
+.final-cta,
+.report-heading {
+  --focus-ring: var(--focus-ring-on-dark);
 }
 .menu-button {
   display: none;
@@ -547,7 +561,7 @@ svg {
 .key-dot.dark {
   background: #1b1a17;
 }
-.key-dot.lime {
+.key-dot.accent {
   background: #b9af9a;
 }
 .key-dot.pale {
@@ -791,7 +805,7 @@ svg {
 .value-top > span:last-child {
   font-family: var(--serif);
   font-size: 25px;
-  color: #b9af9a;
+  color: var(--muted-soft);
 }
 .feature-icon {
   display: grid;

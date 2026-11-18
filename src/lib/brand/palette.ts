@@ -47,3 +47,6 @@ export const TEXT_PAIRS: {
   })),
   { name: "question line", fg: QUESTION_LINE.fg, bg: QUESTION_LINE.bg },
 ];
+
+/** Focus ring colours. Dark containers switch to the on-dark ring. */
+export const FOCUS_RING = { onLight: "#2E4A7D", onDark: "#F3EEE3" } as const;

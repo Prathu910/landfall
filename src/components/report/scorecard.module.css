@@ -2,6 +2,7 @@
   margin: 28px 0;
 }
 .strip {
+  --focus-ring: var(--focus-ring-on-dark);
   background: var(--ink);
   color: var(--card);
   border-radius: 14px;

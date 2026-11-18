@@ -137,7 +137,7 @@ export function Report({
           )}
           <Button
             size="sm"
-            color="forest.9"
+            color="ink.9"
             leftSection={<Printer size={14} />}
             onClick={() => window.print()}
           >

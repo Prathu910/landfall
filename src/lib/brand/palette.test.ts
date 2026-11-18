@@ -2,7 +2,13 @@ import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { contrastRatio } from "./contrast";
-import { PALETTE, QUESTION_LINE, STATUS, TEXT_PAIRS } from "./palette";
+import {
+  FOCUS_RING,
+  PALETTE,
+  QUESTION_LINE,
+  STATUS,
+  TEXT_PAIRS,
+} from "./palette";
 
 const kebab = (name: string) =>
   name.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
@@ -70,5 +76,30 @@ describe("globals.css", () => {
     for (const file of cssFiles("src")) {
       expect(readFileSync(file, "utf8"), file).not.toMatch(old);
     }
+  });
+});
+
+describe("focus rings", () => {
+  it("shows on newsprint and card, and on-dark shows on ink", () => {
+    expect(
+      contrastRatio(FOCUS_RING.onLight, PALETTE.newsprint),
+    ).toBeGreaterThanOrEqual(3);
+    expect(
+      contrastRatio(FOCUS_RING.onLight, PALETTE.card),
+    ).toBeGreaterThanOrEqual(3);
+    expect(
+      contrastRatio(FOCUS_RING.onDark, PALETTE.ink),
+    ).toBeGreaterThanOrEqual(3);
+  });
+  it("needs the override: the light ring is invisible on ink", () => {
+    expect(contrastRatio(FOCUS_RING.onLight, PALETTE.ink)).toBeLessThan(3);
+  });
+  it("mirrors the ring tokens in globals.css", () => {
+    expect(globals).toMatch(
+      new RegExp(`--focus-ring:\\s*${FOCUS_RING.onLight}`, "i"),
+    );
+    expect(globals).toMatch(
+      new RegExp(`--focus-ring-on-dark:\\s*${FOCUS_RING.onDark}`, "i"),
+    );
   });
 });

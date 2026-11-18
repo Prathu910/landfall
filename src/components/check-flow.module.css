@@ -272,6 +272,7 @@
   margin: 4px auto 0;
 }
 .aside {
+  --focus-ring: var(--focus-ring-on-dark);
   position: sticky;
   top: 100px;
   padding: 27px;

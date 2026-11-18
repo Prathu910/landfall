@@ -67,7 +67,7 @@ export function SiteHeader() {
           component={Link}
           href="/check/"
           className="header-cta"
-          color="forest.9"
+          color="ink.9"
           size="sm"
           rightSection={<ArrowUpRight size={14} />}
         >

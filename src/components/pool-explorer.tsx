@@ -129,7 +129,7 @@ export function PoolExplorer({
               <i className="key-dot dark" /> Higher points
             </span>
             <span>
-              <i className="key-dot lime" /> Your score
+              <i className="key-dot accent" /> Your score
             </span>
             <span>
               <i className="key-dot pale" /> Lower points

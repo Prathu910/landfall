@@ -275,7 +275,7 @@ export function CheckFlow({ source }: { source: ReportSource }) {
           }}
         >
           <div className={styles.stepMeta}>
-            <Badge variant="light" color="teal" radius="sm">
+            <Badge variant="light" color="ink" radius="sm">
               Your free check
             </Badge>
             <span>Step {step + 1} / 4</span>
@@ -284,7 +284,7 @@ export function CheckFlow({ source }: { source: ReportSource }) {
             value={(step + 1) * 25}
             size={4}
             radius="xl"
-            color="teal"
+            color="ink"
             aria-label={`Step ${step + 1} of 4`}
             className={styles.progress}
           />
@@ -553,7 +553,7 @@ export function CheckFlow({ source }: { source: ReportSource }) {
                   <>
                     <Alert
                       icon={<Info size={17} />}
-                      color="teal"
+                      color="ink"
                       variant="light"
                       radius="md"
                     >
@@ -703,7 +703,7 @@ export function CheckFlow({ source }: { source: ReportSource }) {
                     </div>
                     <Alert
                       icon={<ShieldCheck size={18} />}
-                      color="teal"
+                      color="ink"
                       radius="md"
                     >
                       Your answers are self-reported. This overview explains
@@ -742,7 +742,7 @@ export function CheckFlow({ source }: { source: ReportSource }) {
             <Button
               type="submit"
               size="md"
-              color="teal"
+              color="ink"
               radius="md"
               rightSection={<ArrowRight size={17} />}
             >
@@ -757,7 +757,7 @@ export function CheckFlow({ source }: { source: ReportSource }) {
           <Button
             variant="subtle"
             size="xs"
-            color="teal"
+            color="ink"
             onClick={() => {
               setProfile({ ...example });
               changeStep(0);
