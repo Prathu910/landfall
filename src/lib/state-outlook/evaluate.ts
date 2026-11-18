@@ -181,11 +181,13 @@ function listCheck(
       );
     }
     case "all-federally-eligible": {
+      // Ineligibility is the federal check's to decide, so a stale federal
+      // list can never fail the stream through this rule.
       const label = `Any occupation on the federal list for ${ctx.visa}`;
       return judge(rule, label, ctx.asOf, () =>
         federal.entries[ctx.code]?.[ctx.visa] === true
           ? pass(label)
-          : fail(`Not on the federal list for ${ctx.visa}`),
+          : unverified(`Federal eligibility for ${ctx.visa} not confirmed`),
       );
     }
     case "none-published":

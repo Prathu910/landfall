@@ -1,5 +1,3 @@
-import { readFileSync } from "node:fs";
-import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { stateRules } from "../../data/state-rules/2026-27/index";
 import { coreFixture } from "../data/__fixtures__/occupation";
@@ -7,9 +5,9 @@ import type { OccupationCore, StateCode } from "../data/types";
 import { emptyProfile } from "../migration";
 import type { Profile } from "../migration";
 import { BANNED_COPY } from "../report/copy";
+import { realFederal, realLists } from "./__fixtures__/real-data";
 import { stateOutlook } from "./outlook";
 import type { Outlook } from "./outlook";
-import { isFederalList, isImportedList } from "./rules-guards";
 import type {
   Cohort,
   FederalList,
@@ -463,28 +461,3 @@ describe("stateOutlook: copy", () => {
     }
   });
 });
-
-function readJson(file: string): unknown {
-  return JSON.parse(
-    readFileSync(
-      path.resolve(process.cwd(), "src/data/state-rules", file),
-      "utf8",
-    ),
-  );
-}
-
-function realLists(): Record<string, ImportedList> {
-  const lists: Record<string, ImportedList> = {};
-  for (const id of ["wa", "sa", "qld", "nsw"]) {
-    const json = readJson(`lists/${id}.json`);
-    if (!isImportedList(json)) throw new Error(`list ${id} is invalid`);
-    lists[id] = json;
-  }
-  return lists;
-}
-
-function realFederal(): FederalList {
-  const json = readJson("federal-occupations.json");
-  if (!isFederalList(json)) throw new Error("federal list is invalid");
-  return json;
-}

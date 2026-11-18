@@ -322,6 +322,20 @@ describe("evaluateStream: occupation list", () => {
       stale: true,
     });
   });
+
+  it("never fails a stream on a stale federal list through an all-federal rule", () => {
+    const old = { ...federal, checkedAt: "2026-09-01" };
+    const { result } = evaluateStream(
+      stream({ occupations: verified({ kind: "all-federally-eligible" }) }),
+      ctx({ code: "111111", federal: old }),
+    );
+    expect(result.checks[0]).toMatchObject({
+      outcome: "unverified",
+      stale: true,
+    });
+    expect(result.checks[3].outcome).not.toBe("fail");
+    expect(result.outcome).toBe("unverified");
+  });
 });
 
 function allEligible(code: string): FederalList {
@@ -558,6 +572,15 @@ describe("evaluateStream: other requirements", () => {
 });
 
 describe("evaluateStream: staleness", () => {
+  it("says the check date is unknown when it cannot be read", () => {
+    const check = lastCheck(
+      requirementStream(verified(LIVING_12, "not-a-date")),
+      ctx(),
+    );
+    expect(check).toMatchObject({ outcome: "unverified", stale: true });
+    expect(check.finding).toBe("Rules check date unknown; may have changed");
+  });
+
   it("treats a rule checked 61 days before asOf as unverified", () => {
     const check = lastCheck(
       requirementStream(verified(LIVING_12, "2026-09-18")),

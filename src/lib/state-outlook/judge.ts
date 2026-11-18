@@ -36,6 +36,13 @@ export function severity(outcome: Outcome): number {
   return SEVERITY[outcome];
 }
 
+function staleFinding(checkedAt: string): string {
+  const date = formatDate(checkedAt);
+  return date === "—"
+    ? "Rules check date unknown; may have changed"
+    : `Rules last checked ${date}; may have changed`;
+}
+
 /**
  * A stale or secondary rule never decides: it is unverified whatever the
  * user's answers. Only a verified, fresh rule reaches `decide`.
@@ -49,9 +56,7 @@ export function judge(
   const stale = isStale(provenance.checkedAt, asOf, MAX_AGE_DAYS);
   let verdict: Verdict;
   if (stale) {
-    verdict = unverified(
-      `Rules last checked ${formatDate(provenance.checkedAt)}; may have changed`,
-    );
+    verdict = unverified(staleFinding(provenance.checkedAt));
   } else if (provenance.verification === "secondary") {
     verdict = unverified("Rules not yet verified on the official page");
   } else {
