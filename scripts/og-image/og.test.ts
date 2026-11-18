@@ -15,8 +15,12 @@ describe("social share image", () => {
 
   it("layout metadata references /og.png for Open Graph and Twitter", () => {
     const layout = readFileSync(join(root, "src/app/layout.tsx"), "utf8");
-    expect(layout).toMatch(/openGraph:\s*{[^}]*images:\s*\["\/og\.png"\]/);
-    expect(layout).toMatch(/twitter:\s*{[^}]*images:\s*\["\/og\.png"\]/);
+    expect(layout).toMatch(
+      /openGraph:\s*{[^}]*images:\s*\[\s*{\s*url:\s*"\/og\.png"/,
+    );
+    expect(layout).toMatch(
+      /twitter:\s*{[^}]*images:\s*\[\s*{\s*url:\s*"\/og\.png"/,
+    );
     expect(layout).toContain("summary_large_image");
   });
 

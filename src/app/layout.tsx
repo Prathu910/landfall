@@ -21,11 +21,28 @@ export const metadata: Metadata = {
     "https://landfall-migration-report.cappedpike4.chatgpt.site",
   ),
   openGraph: {
-    images: ["/og.png"],
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "MigrateLens: Know your points. See where they'd put you.",
+      },
+    ],
     siteName: "MigrateLens",
     type: "website",
   },
-  twitter: { card: "summary_large_image", images: ["/og.png"] },
+  twitter: {
+    card: "summary_large_image",
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "MigrateLens: Know your points. See where they'd put you.",
+      },
+    ],
+  },
   robots: { index: false, follow: false },
 };
 

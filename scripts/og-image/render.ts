@@ -1,5 +1,11 @@
 import { spawnSync } from "node:child_process";
-import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import {
+  existsSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
@@ -39,27 +45,48 @@ function main(): void {
       fontUrl("inter/files/inter-latin-500-normal.woff2"),
     )
     .replace("{{MARK}}", markSvg());
-  const page = join(mkdtempSync(join(tmpdir(), "og-")), "og.html");
+  const dir = mkdtempSync(join(tmpdir(), "og-"));
+  const page = join(dir, "og.html");
   writeFileSync(page, html);
 
   const out = join(root, "public", "og.png");
-  const result = spawnSync(
-    process.env.CHROME_PATH ?? DEFAULT_CHROME,
-    [
-      "--headless=new",
-      "--disable-gpu",
-      "--hide-scrollbars",
-      "--window-size=1200,630",
-      "--virtual-time-budget=3000",
-      `--screenshot=${out}`,
-      pathToFileURL(page).href,
-    ],
-    { stdio: "inherit" },
-  );
-  if (result.status !== 0) {
-    throw new Error(`Chrome exited with ${result.status ?? result.error}`);
+  rmSync(out, { force: true });
+  const chrome = process.env.CHROME_PATH ?? DEFAULT_CHROME;
+  try {
+    const result = spawnSync(
+      chrome,
+      [
+        "--headless=new",
+        "--disable-gpu",
+        "--hide-scrollbars",
+        "--window-size=1200,630",
+        "--virtual-time-budget=3000",
+        `--screenshot=${out}`,
+        pathToFileURL(page).href,
+      ],
+      { stdio: "inherit" },
+    );
+    if (result.error) {
+      throw new Error(
+        `Could not run Chrome at ${chrome}. Set CHROME_PATH to a Chrome binary. (${result.error.message})`,
+      );
+    }
+    if (result.status !== 0) {
+      throw new Error(`Chrome exited with status ${result.status}`);
+    }
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
   }
+  verifyPng(out);
   console.log(`Wrote ${out}`);
+}
+
+function verifyPng(file: string): void {
+  if (!existsSync(file)) throw new Error(`Chrome did not write ${file}`);
+  const png = readFileSync(file);
+  if (png.readUInt32BE(16) !== 1200 || png.readUInt32BE(20) !== 630) {
+    throw new Error(`${file} is not 1200x630`);
+  }
 }
 
 if (require.main === module) main();
