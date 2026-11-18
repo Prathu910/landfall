@@ -401,6 +401,26 @@ describe("2026–27 state rules", () => {
     }
   });
 
+  it("shows QLD's onshore Notice of Assessment gate and Queensland employer rule as restrictions", () => {
+    // Research §QLD item 1 (home page) and item 4 (onshore pathway), both [D].
+    for (const visa of ["190", "491"]) {
+      for (const s of rule("QLD", visa).streams) {
+        const texts = (s.restrictions ?? []).map((r) => r.value);
+        const noa = (s.restrictions ?? []).find((r) =>
+          /2025–26 ATO Notice of Assessment/.test(r.value),
+        );
+        if (s.id === "qld-offshore") {
+          expect(noa, s.id).toBeUndefined();
+          continue;
+        }
+        expect(noa?.verification, `${visa} ${s.id}`).toBe("verified");
+        expect(noa?.source).toBe("https://www.migration.qld.gov.au/");
+        const employer = texts.some((t) => /Queensland employer/.test(t));
+        expect(employer, `${visa} ${s.id}`).toBe(s.id === "qld-onshore");
+      }
+    }
+  });
+
   it("names the state's own score system and published results where the research does", () => {
     for (const state of ["VIC", "ACT", "TAS"]) {
       for (const visa of ["190", "491"]) {

@@ -73,6 +73,26 @@ function working(visa: StateVisa, source: string): Sourced<Requirement> {
   );
 }
 
+// Research §QLD item 1: shown, not checked, on every onshore pathway.
+const NOTICE_OF_ASSESSMENT = verified(
+  "Those living in Australia need a 2025–26 ATO Notice of Assessment before they submit an ROI.",
+  HOME,
+);
+
+// Research §QLD item 4: QLD will not nominate for 190 anyone nominated for,
+// applying for or holding a 491 or 489.
+const NO_PRIOR_491 = verified(
+  "Not available to anyone nominated for, applying for or holding a 491 or 489 visa.",
+  ONSHORE,
+);
+
+// Research §QLD item 4: the onshore pathway only. Landfall's work question
+// does not ask who the employer is.
+const QLD_EMPLOYER = verified(
+  "Must currently live and work in Queensland for a Queensland employer.",
+  ONSHORE,
+);
+
 function stream(
   id: string,
   name: string,
@@ -81,18 +101,16 @@ function stream(
   requirements: Sourced<Requirement>[],
   visa: StateVisa,
   status: Stream["status"] = open,
+  extraRestrictions: Sourced<string>[] = [],
 ): Stream {
+  const onshore = !cohorts.value.includes("offshore");
+  const restrictions = [
+    ...(onshore ? [NOTICE_OF_ASSESSMENT] : []),
+    ...extraRestrictions,
+    ...(visa === "190" ? [NO_PRIOR_491] : []),
+  ];
   const s: Stream = { id, name, cohorts, status, occupations, requirements };
-  // Research §QLD item 4: QLD will not nominate for 190 anyone nominated for,
-  // applying for or holding a 491 or 489.
-  if (visa === "190") {
-    s.restrictions = [
-      verified(
-        "Not available to anyone nominated for, applying for or holding a 491 or 489 visa.",
-        ONSHORE,
-      ),
-    ];
-  }
+  if (restrictions.length > 0) s.restrictions = restrictions;
   return s;
 }
 
@@ -127,6 +145,8 @@ function streams(visa: StateVisa): Stream[] {
         ...regional(visa, ONSHORE),
       ],
       visa,
+      open,
+      [QLD_EMPLOYER],
     ),
     stream(
       "qld-offshore",
