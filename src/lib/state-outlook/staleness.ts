@@ -6,13 +6,14 @@ function utcDay(date: string): number {
   return Date.parse(`${date}T00:00:00Z`) / DAY_MS;
 }
 
-/** True when `checkedAt` is more than `maxDays` calendar days before `asOf`. */
+/** True when `checkedAt` is more than `maxDays` calendar days before `asOf`. Unparseable dates are stale: unknown never passes as fresh. */
 export function isStale(
   checkedAt: string,
   asOf: string,
   maxDays = 60,
 ): boolean {
-  return utcDay(asOf) - utcDay(checkedAt) > maxDays;
+  const age = utcDay(asOf) - utcDay(checkedAt);
+  return Number.isNaN(age) || age > maxDays;
 }
 
 /** Paths of rules checked more than `maxDays` before `buildDate` (a warning, not a failure). */

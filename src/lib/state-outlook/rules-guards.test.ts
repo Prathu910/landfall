@@ -77,9 +77,10 @@ describe("isStateRules", () => {
     const b = validRules();
     b.rules[0].streams[0].requirements = [s({ kind: "nope" })] as never;
     expect(isStateRules(b)).toBe(false);
+    const d = validRules();
+    d.rules[0].state = "XX" as never;
+    expect(isStateRules(d)).toBe(false);
     const c = validRules();
-    b.rules[0].state = "XX" as never;
-    expect(isStateRules(b)).toBe(false);
     (c.rules[0].streams[0] as Record<string, unknown>).extra = 1;
     expect(isStateRules(c)).toBe(false);
     expect(isStateRules({ programYear: "2025-26", rules: [] })).toBe(false);

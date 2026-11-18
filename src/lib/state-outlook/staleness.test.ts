@@ -13,6 +13,18 @@ describe("isStale", () => {
   });
 });
 
+describe("isStale edge cases", () => {
+  it("fails closed on unparseable dates", () => {
+    expect(isStale("not-a-date", "2026-11-17")).toBe(true);
+    expect(isStale("2026-10-01", "")).toBe(true);
+    expect(isStale("2026-13-01", "2026-11-17")).toBe(true);
+  });
+  it("counts days across a year boundary with a leap day", () => {
+    expect(isStale("2027-12-31", "2028-03-01")).toBe(true); // 61 days
+    expect(isStale("2028-01-01", "2028-03-01")).toBe(false); // 60 days
+  });
+});
+
 const sv = <T>(value: T, checkedAt: string) => ({
   value,
   source: "https://example.gov.au",
