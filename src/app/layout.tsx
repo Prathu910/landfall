@@ -20,6 +20,12 @@ export const metadata: Metadata = {
   metadataBase: new URL(
     "https://landfall-migration-report.cappedpike4.chatgpt.site",
   ),
+  openGraph: {
+    images: ["/og.png"],
+    siteName: "MigrateLens",
+    type: "website",
+  },
+  twitter: { card: "summary_large_image", images: ["/og.png"] },
   robots: { index: false, follow: false },
 };
 
