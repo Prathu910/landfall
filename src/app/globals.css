@@ -96,11 +96,17 @@ h3 {
   letter-spacing: -0.035em;
   line-height: 1.35;
 }
+/* Only upright faces are loaded: never let the browser synthesize italics. */
+em,
+i,
+cite,
+dfn,
+var,
+address {
+  font-style: normal;
+}
 em {
-  font-family: var(--serif);
-  font-weight: 400;
-  letter-spacing: -0.025em;
-  color: var(--ink);
+  font-weight: 600;
 }
 svg {
   flex-shrink: 0;
@@ -252,16 +258,6 @@ svg {
   color: var(--ink);
   padding: 8px;
 }
-.eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #4a463e;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.11em;
-  margin-bottom: 23px;
-}
 .pill {
   display: inline-flex;
   align-items: center;
@@ -289,17 +285,8 @@ svg {
   text-align: center;
   padding: 90px 0;
 }
-.final-cta .eyebrow {
-  justify-content: center;
-  color: #b9af9a;
-  font-size: 12px;
-}
 .final-cta h2 {
   font-size: 59px;
-}
-.final-cta em {
-  color: #ddd4c2;
-  font-size: 1.16em;
 }
 .final-cta p {
   font-size: 14px;
@@ -719,12 +706,6 @@ svg {
   align-items: center;
   margin-bottom: 27px;
 }
-.report-heading .eyebrow {
-  font-size: 12px;
-  color: #b9af9a;
-  letter-spacing: 0.13em;
-  margin: 0;
-}
 .report-heading .pill {
   background: #1b1a17;
   color: #ddd4c2;
@@ -736,10 +717,6 @@ svg {
   letter-spacing: -0.045em;
   line-height: 1.14;
   max-width: 600px;
-}
-.report-heading h1 em {
-  color: #ddd4c2;
-  font-size: 1.12em;
 }
 .report-heading p {
   font-size: 12px;
@@ -768,9 +745,6 @@ svg {
   font-size: 28px;
   letter-spacing: -0.04em;
   margin-bottom: 15px;
-}
-.report-section h2 em {
-  font-size: 1.14em;
 }
 .report-section > p {
   font-size: 12px;
@@ -1232,10 +1206,6 @@ svg {
   .header-inner {
     gap: 9px;
   }
-  .eyebrow {
-    font-size: 12px;
-    margin-bottom: 19px;
-  }
   h2 {
     font-size: 36px;
   }
@@ -1250,9 +1220,6 @@ svg {
     max-width: 300px;
     margin-inline: auto;
   }
-  .final-cta .eyebrow {
-    font-size: 12px;
-  }
   .footer-links {
     column-gap: 22px;
     font-size: 12px;
@@ -1266,9 +1233,6 @@ svg {
   .page-head > p {
     font-size: 13px;
   }
-  .page-head .eyebrow {
-    font-size: 12px;
-  }
   .report-body {
     padding: 22px 18px;
   }
@@ -1279,9 +1243,6 @@ svg {
     font-size: 31px;
   }
   .report-heading p {
-    font-size: 12px;
-  }
-  .report-heading .eyebrow {
     font-size: 12px;
   }
   .report-heading-meta {
@@ -1474,12 +1435,8 @@ svg {
   .report-heading h1 {
     font-size: 32px;
   }
-  .report-heading em {
-    color: #1b1a17;
-  }
   .report-heading p,
-  .report-heading-meta,
-  .report-heading .eyebrow {
+  .report-heading-meta {
     color: #4a463e;
   }
   .report-heading-top {

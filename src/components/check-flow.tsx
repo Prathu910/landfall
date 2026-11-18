@@ -325,10 +325,10 @@ export function CheckFlow({ source }: { source: ReportSource }) {
               <h2 className={styles.title} tabIndex={-1} ref={heading}>
                 {
                   [
-                    "Let’s start with you.",
-                    "English. Education. Possibility.",
-                    "Complete your picture.",
-                    "Looking good. One last check.",
+                    "You and your occupation",
+                    "Your English and qualifications",
+                    "Your work and other points",
+                    "Review your answers",
                   ][step]
                 }
               </h2>

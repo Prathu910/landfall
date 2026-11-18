@@ -24,11 +24,7 @@ export function ScenariosSection({
   return (
     <section className="report-section" id="scenarios">
       <span className="section-label">{label}</span>
-      <h2>
-        One change.
-        <br />
-        <em>A different picture.</em>
-      </h2>
+      <h2>What could change your score</h2>
       <p>
         Compare hypothetical qualifying changes together. We recalculate your
         score, including the employment cap. This does not assess whether a

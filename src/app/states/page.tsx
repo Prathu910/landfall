@@ -4,10 +4,7 @@ export default function StatesPage() {
   return (
     <main id="main" className="container">
       <div className="page-head">
-        <span className="eyebrow">Eight jurisdictions. Different rules.</span>
-        <h1>
-          Understand <em>the state picture.</em>
-        </h1>
+        <h1>State and territory nomination programs</h1>
         <p>
           Federal points are one part. Each state and territory has its own
           criteria, priorities and selection process for nomination.

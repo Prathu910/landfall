@@ -147,7 +147,7 @@ export function Report({
       </div>
       <div className="report-layout">
         <nav className="report-nav" aria-label="Report sections">
-          <span>YOUR PERSPECTIVE</span>
+          <span>IN THIS REPORT</span>
           {sections.map(([id, title], i) => (
             <a
               key={id}
@@ -165,15 +165,13 @@ export function Report({
         <article className="report-sheet">
           <header className="report-heading">
             <div className="report-heading-top">
-              <span className="eyebrow">THE MIGRATELENS PERSPECTIVE</span>
               <span className="pill">
                 {sample ? "Sample report" : "Your free overview"}
               </span>
             </div>
             <h1>
-              {profile.name ? `${profile.name}, here’s` : "Here’s"}
-              <br />
-              <em>your migration picture.</em>
+              {profile.name ? `${profile.name}, here’s` : "Here’s"} your
+              skilled-migration report
             </h1>
             <p>
               {nominated?.name ?? "Your nominated occupation"}
@@ -217,11 +215,7 @@ export function Report({
               <span className="section-label">
                 {sectionLabel(sections, "timeline", "YOUR PERSONAL DATES")}
               </span>
-              <h2>
-                The next chapter,
-                <br />
-                <em>on your timeline.</em>
-              </h2>
+              <h2>Your dates for the next three years</h2>
               <p>
                 Dated events supported by your answers in the next three years.
                 Future points assume today’s rules.
@@ -299,9 +293,7 @@ export function Report({
               <span className="section-label">
                 {sectionLabel(sections, "prepare", "GET ORGANISED")}
               </span>
-              <h2>
-                Bring the evidence <em>together.</em>
-              </h2>
+              <h2>Organise your evidence</h2>
               <p>
                 A general preparation list to help organise your records. Tick
                 items as you review them. It is not an exhaustive application
@@ -363,9 +355,7 @@ export function Report({
               <span className="section-label">
                 {sectionLabel(sections, "definitions", "USEFUL DEFINITIONS")}
               </span>
-              <h2>
-                The terms, <em>made clearer.</em>
-              </h2>
+              <h2>Terms used in this report</h2>
               <Accordion
                 keepMounted
                 keepMountedMode="display-none"
@@ -383,9 +373,7 @@ export function Report({
             {result.warnings.length > 0 && (
               <section className="report-section">
                 <span className="section-label">ASSUMPTIONS TO REVIEW</span>
-                <h2>
-                  What’s behind <em>your picture.</em>
-                </h2>
+                <h2>Assumptions behind your points</h2>
                 <ul className="warning-list">
                   {result.warnings.map((w) => (
                     <li key={w}>
@@ -482,10 +470,7 @@ export function Report({
       {sample && (
         <div className="final-cta no-print">
           <div className="container">
-            <span className="eyebrow">MAKE THE PICTURE YOUR OWN</span>
-            <h2>
-              Now, <em>your numbers.</em>
-            </h2>
+            <h2>Check your own points</h2>
             <p>The free check builds this overview from your own answers.</p>
             <Link className="button button-accent" href="/check/">
               Start my free check <ArrowRight size={17} />

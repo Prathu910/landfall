@@ -37,12 +37,7 @@ export default function SamplePage() {
   return (
     <main id="main" className="container">
       <div className="page-head">
-        <span className="eyebrow">See what clarity looks like</span>
-        <h1>
-          One person.
-          <br />
-          <em>Their whole picture.</em>
-        </h1>
+        <h1>A sample report for one fictional profile</h1>
         <p>
           Aarav is fictional. The points calculations and official occupation
           snapshot are real. Your own overview uses your answers.

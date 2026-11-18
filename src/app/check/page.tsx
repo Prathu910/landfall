@@ -15,10 +15,7 @@ export default function CheckPage() {
           <ChevronRight size={12} />
           <span>Your points check</span>
         </div>
-        <span className="eyebrow">A little context. A clearer picture.</span>
-        <h1>
-          Start with <em>your points.</em>
-        </h1>
+        <h1>Check your points</h1>
         <p>
           Understand what counts, see the dates that matter, and compare your
           score with published occupation data. Free, with no account needed.
