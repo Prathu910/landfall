@@ -112,6 +112,7 @@
 .row b {
   color: var(--ink);
   text-align: right;
+  white-space: nowrap;
 }
 .link {
   margin-top: auto;
