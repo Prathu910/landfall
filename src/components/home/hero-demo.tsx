@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo } from "react";
 import type { DemoContent } from "../../lib/home/demo-content";
-import { Count, Stage, type Act } from "../stageshow-kit";
+import { Stage, type Act } from "../stageshow-kit";
 import { COMPACT, WIDE } from "./demo-layout";
 import { DemoSheet } from "./demo-sheet";
 import {
@@ -13,34 +13,13 @@ import {
 } from "./demo-scene";
 import styles from "./hero-demo.module.css";
 
-/** `zeroed` sets the counters back to zero, only ever while they are hidden. */
-type State = DemoScene & { zeroed: boolean };
+type State = DemoScene;
 
-const START: State = { ...PAYOFF_SCENE, zeroed: false };
+const START: State = PAYOFF_SCENE;
 // Empty surface near the next press, in each design
 const REST = { wide: { x: 500, y: 104 }, compact: { x: 222, y: 84 } };
 // The cursor aims at a button's right end, clear of its words
 const press = (at: string) => ({ at, x: 0.88, y: 0.66 });
-
-const FIGURE = /^[\d,–]+$/;
-
-/**
- * A published count rolls in from zeros, every digit at once, last digit
- * first; masked or other text just fades. One counter per figure, so a range
- * keeps its dash inside it.
- */
-function Figure({ text, zeroed }: { text: string; zeroed: boolean }) {
-  if (!FIGURE.test(text)) return text;
-  const zeros = text.replace(/\d/g, "0");
-  return (
-    <Count
-      value={zeroed ? 0 : 1}
-      format={(n) => (n === 0 ? zeros : text)}
-      duration={900}
-      stagger={70}
-    />
-  );
-}
 
 function script(groupCount: number) {
   return async (a: Act<State>) => {
@@ -50,9 +29,7 @@ function script(groupCount: number) {
     await a.move(press("start-over"));
     await a.click();
     await a.set({ ...EMPTY_SCENE });
-    await a.wait(400);
-    await a.snap({ zeroed: true });
-    await a.wait(300);
+    await a.wait(700);
     a.mark("sample");
     await a.move(press("sample"));
     await a.click();
@@ -66,7 +43,9 @@ function script(groupCount: number) {
     await a.set({ view: "report" });
     await a.wait(500);
     a.mark("count");
-    await a.set({ counted: true, zeroed: false });
+    // The published figures settle into place as they are: never a count
+    // through numbers the data didn't publish (ruling B12).
+    await a.set({ counted: true });
     await a.wait(2300);
     a.mark("states");
     for (let lit = 1; lit <= groupCount; lit++) {
@@ -104,12 +83,7 @@ export function HeroDemo({
     >
       {(s, _rect, layout) => (
         <>
-          <DemoSheet
-            content={content}
-            scene={s}
-            layout={layout}
-            figure={(text) => <Figure text={text} zeroed={s.zeroed} />}
-          />
+          <DemoSheet content={content} scene={s} layout={layout} />
           <span
             data-target="rest"
             className={styles.rest}

@@ -9,22 +9,16 @@ import {
 } from "./demo-scene";
 import styles from "./demo-sheet.module.css";
 
-type Figure = (text: string) => ReactNode;
-
 type Props = {
   content: DemoContent;
   scene: DemoScene;
   layout: SheetLayout;
-  /** Draws a scorecard figure; the live demo counts it in. */
-  figure?: Figure;
 };
 
 type ViewProps = { content: DemoContent; scene: DemoScene };
 
 const order = (i: number, n: number) =>
   ({ "--i": i, "--n": n }) as CSSProperties;
-
-const plainFigure: Figure = (text) => text;
 
 /** A value that arrives into its place, over a placeholder of its size. */
 function Slot({
@@ -109,7 +103,7 @@ function CheckView({ content, scene }: ViewProps) {
   );
 }
 
-function Cards({ content, scene, figure }: ViewProps & { figure: Figure }) {
+function Cards({ content, scene }: ViewProps) {
   const { labels } = content;
   return (
     <div className={styles.cards}>
@@ -125,7 +119,7 @@ function Cards({ content, scene, figure }: ViewProps & { figure: Figure }) {
             className={styles.ahead}
             style={order(i, content.cards.length)}
           >
-            {figure(card.ahead)}
+            {card.ahead}
           </Slot>
           <span className={styles.aheadLabel}>{card.aheadLabel}</span>
           <span className={styles.atScore}>
@@ -136,7 +130,7 @@ function Cards({ content, scene, figure }: ViewProps & { figure: Figure }) {
               className={styles.atScoreValue}
               style={order(i, content.cards.length)}
             >
-              {figure(card.atScore)}
+              {card.atScore}
             </Slot>
           </span>
         </div>
@@ -187,11 +181,7 @@ function Outlook({ content, scene }: ViewProps) {
 }
 
 /** The report: who and what score, the scorecard, the 190 outlook. */
-function ReportView({
-  content,
-  scene,
-  figure,
-}: ViewProps & { figure: Figure }) {
+function ReportView({ content, scene }: ViewProps) {
   return (
     <section className={styles.report} data-on={scene.view === "report"}>
       <div className={styles.strip}>
@@ -209,7 +199,7 @@ function ReportView({
           {content.labels.startOver}
         </span>
       </div>
-      <Cards content={content} scene={scene} figure={figure} />
+      <Cards content={content} scene={scene} />
       <Outlook content={content} scene={scene} />
     </section>
   );
@@ -221,15 +211,10 @@ function ReportView({
  * Every word comes from `DemoContent`. Hook-free, so the server renders it as
  * the poster and the stage animates the same markup.
  */
-export function DemoSheet({
-  content,
-  scene,
-  layout,
-  figure = plainFigure,
-}: Props) {
+export function DemoSheet({ content, scene, layout }: Props) {
   const views = (
     <div className={styles.views}>
-      <ReportView content={content} scene={scene} figure={figure} />
+      <ReportView content={content} scene={scene} />
       <CheckView content={content} scene={scene} />
     </div>
   );

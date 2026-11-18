@@ -7,17 +7,19 @@ Gold: `hero-demo`, filmed first (a still and a 16 s loop).
   - a stage about 720 wide beside the copy;
   - a cursor story of a few beats with named targets;
   - a `compact` redesign for the phone column.
-- Changed: the content is MigrateLens's own check and report, in the Data Desk look, on the page's newsprint ground with no plate.
+- Changed: the content is the site's own check and report, in the Data Desk look, on the page's newsprint ground with no plate.
 - Borrowed from `payout-flow`: values arriving in a stagger, and a payoff that holds.
+- Ruling B12 (final review): the figures no longer count in. An odometer passes through numbers the data never published (such as "352–820"), so each published figure now settles into place as it is: a fade and a 4px rise, staggered across 189, 190 and 491.
 - Ruling B9 sets the smallest design text at 15px, with the wide design used only from a 576px column (12 / 15 = 0.8). At that size the report and the check no longer fit one frame, so the story became one window with two views: the report and the check that builds it. They crossfade as a page swap: the body only, a 200 ms fade with an 8px rise.
 - Compact uses the page itself instead of a desktop window, because a portrait desktop window fails the window-shape rule.
+- Final review: compact is 346 × 660 (was 358 × 660). On the real homepage a 320 phone leaves a 278px column (21px phone gutters), and 278 / 358 drew 15px text at 11.65px. At 346 it draws 12.05px. The page keeps its 16px gutter and is 314 wide, so "ICT Business Analyst" now takes its two-line clamp, which the 660 height was sized for.
 
 Beats:
 
 1. The loop opens on the finished report, which is the poster.
 2. The cursor presses "Start over", and the body swaps to the empty check.
 3. "Try sample answers" fills the occupation and the six points fields, then "90 points".
-4. "Open my overview" swaps back to the report, where the 189, 190 and 491 figures count in from zeros, side by side.
+4. "Open my overview" swaps back to the report, where the 189, 190 and 491 figures settle in as published, side by side (no counting).
 5. The 190 tiles light group by group, each group's status chip arriving with it.
 6. The payoff holds and the cursor rests.
 
@@ -47,7 +49,7 @@ Film:
 - `spills its slot:` the compact legend chips wrapped. They now stack. Cleared.
 - `tight control:` the two stacked compact buttons were 6.4px apart at 320. The gap is now 10px, which renders at 8px. Cleared.
 - `touching:`
-  - The en dash between two counters: there is now one `Count` per figure. Cleared.
+  - The en dash between two counters: there is now one `Count` per figure. Cleared (and since B12 there are no counters).
   - "At your score" against its value in compact: they now have a 6px gap, clear of the figure's 4px rise as it arrives. Cleared.
 - `lands on a transform` / `steps in its box`: arriving values, chips, buttons and the views now keep their compositing layers for good. Cleared.
 - Stands:
@@ -55,6 +57,14 @@ Film:
   - `appears with no entrance: span.ss-count`, with no timestamp. The count sheet at 80 ms shows each figure fading in with its roll; most likely this is the stage mounting over the identical poster.
   - `shrunk, not laid out for the phone: drawn at 0.80` at 320. Ruling B9 sizes the design so that 0.8 still renders 12px.
 - `vanishes with no exit` on the poster: the poster now fades out under the identical stage frame.
+
+Final review re-run (B12 and the 346 compact), against the built `out/` on the real homepage:
+
+- Gate: `rehearsal passed (necessary, not sufficient: references/verify.md and the fresh eye in review.md still stand)` on the loop at 1440, 390, 375, 360 and 320, and on `--states` at 1440 and 390.
+- A 10px compact inset was tried first (to keep the page 326 wide) and failed the gate (`framing: … ends 10px short of the left edge`), so the page kept its 16px gutter.
+- Lines that remain are not gate lines: `scale: 0.83` at 1440 and `shrunk … drawn at 0.80` at 320 (B9: 0.8 × 15 = 12px).
+- The scorecard figures' text, sampled every 30 ms for 15 s at 1440 and 390: only the six published strings ever appear. Before the change, the DOM held the odometer's digit strips.
+- Rendered text floor (computed size × stage scale): 12.05px at 320, 13.79 at 360, 14.44 at 375, 15 at 390, 14.75 at 768 and 12.4 at 1440.
 
 Review: no fresh-eye review was run. The implementer contract forbids dispatching reviewers; the controller schedules review.
 

@@ -8,7 +8,7 @@ import type { SheetLayout } from "./demo-scene";
  */
 export const MIN_DESIGN_TEXT = 15;
 export const WIDE = { width: 720, height: 436 };
-export const COMPACT = { below: 576, width: 358, height: 660 };
+export const COMPACT = { below: 576, width: 346, height: 660 };
 
 export function layoutFor(column: number): SheetLayout {
   return column < COMPACT.below ? "compact" : "wide";

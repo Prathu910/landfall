@@ -1,4 +1,4 @@
-/* The demo's frame at its design size (720 × 436 wide, 358 × 660 compact).
+/* The demo's frame at its design size (720 × 436 wide, 346 × 660 compact).
    The stage scales it; sizes here are design pixels. The smallest text is
    15px, so at the smallest scale a column allows (0.8) it renders at 12px
    (see demo-layout.ts). */
@@ -28,7 +28,7 @@
 .page {
   top: 16px;
   left: 16px;
-  width: 326px;
+  width: 314px;
   height: 684px;
   overflow: hidden;
   border-radius: 12px;
@@ -411,14 +411,14 @@
   transition-delay: calc(var(--i, 0) * 90ms);
 }
 
-/* A counted figure fades in over most of its roll, so its digits never
-   arrive whole and then move */
+/* A published figure settles into place as it is, side by side across the
+   visas; it never counts through numbers the data didn't publish (B12) */
 .slot > .ahead[data-on="true"],
 .slot > .atScoreValue[data-on="true"] {
   transition:
-    opacity 0.9s ease,
-    transform 0.9s var(--enter);
-  transition-delay: calc(var(--i, 0) * 90ms);
+    opacity 0.6s ease,
+    transform 0.8s var(--enter);
+  transition-delay: calc(var(--i, 0) * 120ms);
 }
 
 .placeholder {
