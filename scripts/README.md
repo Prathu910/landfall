@@ -22,6 +22,10 @@ The importer:
 
 After an import, run `npm run check` and `npm run build`, then commit `data/raw/` and `src/data/` together.
 
+## State nomination lists and rule staleness
+
+`npm run data:state-lists` (optionally `-- --only federal|wa|sa|qld|nsw --checked-at YYYY-MM-DD`) re-imports the state occupation lists and the federal occupation list into `src/data/state-rules/` (`scripts/state-lists/`). `scripts/check-rule-staleness.ts` runs before every build and prints a warning, never a failure, for state rules checked more than 45 days ago. Sources and the monthly re-verify routine are under "State rules" in [`docs/DATA.md`](../docs/DATA.md).
+
 ## Modules
 
 - `cli.ts`: argument parsing and the run.
