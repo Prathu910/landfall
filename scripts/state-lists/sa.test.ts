@@ -120,6 +120,29 @@ describe("parseSaPage", () => {
     ]);
   });
 
+  it("throws when a code appears only under Any Location", () => {
+    const html = occupation("261313", [
+      {
+        location: "Any Location",
+        stream: "Outer Regional Skilled Employment",
+        subclasses: ["190", "491"],
+      },
+    ]);
+    expect(() => parseSaPage(html)).toThrow(/261313.*only under Any Location/);
+  });
+
+  it("throws when the other blocks list neither visa", () => {
+    const html = occupation("261313", [
+      { ...GRAD, subclasses: [] },
+      {
+        location: "Any Location",
+        stream: "Outer Regional Skilled Employment",
+        subclasses: ["190"],
+      },
+    ]);
+    expect(() => parseSaPage(html)).toThrow(/only under Any Location/);
+  });
+
   it("reports the repeated codes", () => {
     expect(parseSaPage(page).repeated.sort()).toEqual(["234914", "242211"]);
   });

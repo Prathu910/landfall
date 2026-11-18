@@ -3,7 +3,7 @@ import type {
   ImportedList,
   ImportedListEntry,
 } from "../../src/lib/state-outlook/rules-types";
-import { fetchText, sortedEntries } from "./imported-list";
+import { fetchText, sortedEntries } from "./shared";
 
 export const SA_LIST_URL =
   "https://migration.sa.gov.au/before-applying/work-in-sa/occupation-lists/occupations-list";
@@ -89,6 +89,15 @@ function parseOccupation(chunk: string): { code: string; parsed: Parsed } {
     }
   }
   const others = new Set([...parsed.cohorts["190"], ...parsed.cohorts["491"]]);
+  if (anyLocation.length > 0 && others.size === 0) {
+    throw new Error(
+      `Review: ${code} appears only under Any Location; its cohorts cannot be read`,
+    );
+  }
+  // Deliberate heuristic, tied to the source wording on 232214: the block says
+  // "Any Location" but its text asks for work in Outer Regional South Australia.
+  // Where the occupation's other blocks give cohorts, an Any Location visa
+  // takes them. Where they give none, we throw rather than guess.
   for (const visa of anyLocation) {
     for (const cohort of others) parsed.cohorts[visa].add(cohort);
   }

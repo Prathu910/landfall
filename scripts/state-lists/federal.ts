@@ -1,6 +1,6 @@
 import type { FederalList } from "../../src/lib/state-outlook/rules-types";
 import { isFederalList } from "../../src/lib/state-outlook/rules-guards";
-import { writeFileAtomic } from "../import/atomic-write";
+import { fetchText, sortedEntries, writeJsonFile } from "./shared";
 import { decodeEntities, normalizeOccupationName } from "../import/rounds";
 
 type Eligibility = FederalList["entries"][string];
@@ -17,9 +17,6 @@ export type IndexOccupation = { code: string; name: string };
 export const FEDERAL_LIST_URL =
   "https://immi.homeaffairs.gov.au/visas/working-in-australia/skill-occupation-list";
 const DATA_INPUT_ID = "ctl00_PlaceHolderMain_PageJSONDataHiddenField_Input";
-const USER_AGENT =
-  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36";
-const FETCH_TIMEOUT_MS = 60_000;
 
 // The page's visa labels, with runs of spaces collapsed.
 const LABEL_190 = "190 - Skilled Nominated (subclass 190)";
@@ -178,14 +175,6 @@ function indexMatch(
   return matches.length === 1 ? matches[0].code : null;
 }
 
-function sortedEntries(
-  entries: Record<string, Eligibility>,
-): Record<string, Eligibility> {
-  return Object.fromEntries(
-    Object.entries(entries).sort(([a], [b]) => a.localeCompare(b)),
-  );
-}
-
 /**
  * Builds the federal list. A row labelled only with 2022 codes is kept when
  * the dashboard has one of those codes under the same occupation name, which
@@ -234,18 +223,9 @@ export function writeFederalList(path: string, list: FederalList): void {
   if (!isFederalList(list)) {
     throw new Error("Federal list failed validation; not written");
   }
-  writeFileAtomic(path, `${JSON.stringify(list, null, 2)}\n`);
+  writeJsonFile(path, list);
 }
 
-export async function fetchFederalPage(
-  url = FEDERAL_LIST_URL,
-): Promise<string> {
-  const response = await fetch(url, {
-    headers: { "User-Agent": USER_AGENT, Accept: "text/html" },
-    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
-  });
-  if (!response.ok) {
-    throw new Error(`${url} returned HTTP ${response.status}; not imported`);
-  }
-  return response.text();
+export function fetchFederalPage(url = FEDERAL_LIST_URL): Promise<string> {
+  return fetchText(url, "text/html");
 }

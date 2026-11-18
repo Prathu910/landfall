@@ -23,8 +23,8 @@ const OUT_DIR = "src/data/state-rules";
 // The 2026-11-18 list had 427 codes for 190 and 504 for 491.
 const MIN_ELIGIBLE_PER_VISA = 300;
 
-// The 2026-11-18 lists had 384 WA codes and 353 SA occupation blocks.
-const MIN_LIST_CODES = 250;
+// The 2026-11-18 lists had 384 WA codes and 351 SA codes.
+const MIN_LIST_CODES = { wa: 250, sa: 300 };
 
 function isImporterName(name: string): name is ImporterName {
   return (IMPORTERS as readonly string[]).includes(name);
@@ -91,8 +91,8 @@ async function importFederal(checkedAt: string): Promise<void> {
   console.log(`Wrote ${path}`);
 }
 
-function writeList(list: ImportedList): void {
-  assertListSize(list, MIN_LIST_CODES);
+function writeList(list: ImportedList, minCodes: number): void {
+  assertListSize(list, minCodes);
   const entries = Object.values(list.entries);
   const count = (visa: "190" | "491") => entries.filter((e) => e[visa]).length;
   console.log(
@@ -106,7 +106,10 @@ function writeList(list: ImportedList): void {
 
 async function importWa(checkedAt: string): Promise<void> {
   const csv = await fetchWaCsv();
-  writeList(buildWaList(csv, { source: WA_LIST_URL, checkedAt }));
+  writeList(
+    buildWaList(csv, { source: WA_LIST_URL, checkedAt }),
+    MIN_LIST_CODES.wa,
+  );
 }
 
 async function importSa(checkedAt: string): Promise<void> {
@@ -116,7 +119,7 @@ async function importSa(checkedAt: string): Promise<void> {
     checkedAt,
   });
   console.log(`SA codes listed twice (cohorts unioned): ${repeated}`);
-  writeList(list);
+  writeList(list, MIN_LIST_CODES.sa);
 }
 
 async function main(): Promise<void> {

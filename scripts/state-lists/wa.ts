@@ -3,7 +3,7 @@ import type {
   ImportedList,
   ImportedListEntry,
 } from "../../src/lib/state-outlook/rules-types";
-import { fetchText, sortedEntries } from "./imported-list";
+import { fetchText, sortedEntries } from "./shared";
 
 // The page's own CSV link returns an empty file; this form returns the data.
 export const WA_LIST_URL =
@@ -30,6 +30,8 @@ const STREAMS = [
   ["Graduate", "graduate"],
 ] as const;
 
+// The "Regional WA only" column is deliberately ignored: it limits where an
+// applicant may settle, not whether the code is on the list.
 // WA has no onshore/offshore split: residence affects ranking, not listing.
 const ALL_COHORTS: Cohort[] = [
   "living-in-state",
@@ -105,8 +107,10 @@ export function parseWaCsv(text: string): Record<string, ImportedListEntry> {
       throw new Error(`${code}: status "${status}" is not Available; review`);
     }
     const seen = (offered[code] ??= { "190": false, "491": false });
-    seen["190"] ||= yesNo(v190, code);
-    seen["491"] ||= yesNo(v491, code);
+    const offers190 = yesNo(v190, code);
+    const offers491 = yesNo(v491, code);
+    seen["190"] = seen["190"] || offers190;
+    seen["491"] = seen["491"] || offers491;
     (lists[code] ??= new Set()).add(id);
   }
   const entries: Record<string, ImportedListEntry> = {};

@@ -97,6 +97,25 @@ describe("parseWaCsv", () => {
     ).toThrow(/Maybe/);
   });
 
+  it("validates the visa cells of every row, not only the first", () => {
+    expect(() =>
+      parseWaCsv(
+        csvWith(
+          line("261313", "Graduate", "Yes", "Yes"),
+          line("261313", "General - WASMOL Schedule 2", "Maybe", "Yes"),
+        ),
+      ),
+    ).toThrow(/Maybe/);
+  });
+
+  it("ignores the Regional WA only column when listing", () => {
+    const regional = line("261313", "Graduate").replace(
+      "65,No,No,Available",
+      "65,No,Yes,Available",
+    );
+    expect(parseWaCsv(csvWith(regional))["261313"]["190"]).toEqual(ALL);
+  });
+
   it("throws on a code that is not six digits", () => {
     expect(() => parseWaCsv(csvWith(line("2613", "Graduate")))).toThrow(/2613/);
   });
