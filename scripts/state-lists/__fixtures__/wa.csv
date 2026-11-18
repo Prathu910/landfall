@@ -1,0 +1,27 @@
+Occupation,"Industry Sector",ANZSCO,Stream,"Minimum Points","Priority Occupation","Regional WA only",Status,v190,v491
+Barrister,"Administrative and Support Services",271111,Graduate,65,No,No,Available,Yes,Yes
+"Human Resource Adviser","Administrative and Support Services",223111,Graduate,65,No,No,Available,No,Yes
+"Civil Engineer","Building and Construction",233211,"General - WASMOL Schedule 2",65,Yes,No,Available,Yes,Yes
+"Civil Engineer","Building and Construction",233211,Graduate,65,Yes,No,Available,Yes,Yes
+"Electrical Engineer",Defence,233311,"Defence Industry - WASMOL Schedule 3",65,No,No,Available,Yes,No
+"Mechanical Engineer",Defence,233512,"Defence Industry - WASMOL Schedule 3",65,No,No,Available,Yes,No
+"Early Childhood (Pre-primary School) Teacher","Education and Training",241111,"General - WASMOL Schedule 2",65,Yes,No,Available,Yes,Yes
+"Early Childhood (Pre-primary School) Teacher","Education and Training",241111,Graduate,65,Yes,No,Available,Yes,Yes
+"Secondary School Teacher","Education and Training",241411,"General - WASMOL Schedule 2",65,Yes,No,Available,Yes,Yes
+"Secondary School Teacher","Education and Training",241411,Graduate,65,Yes,No,Available,Yes,Yes
+"Accountant (General)","Financial and Insurance Services",221111,"General - WASMOL Schedule 2",65,No,No,Available,Yes,Yes
+"Accountant (General)","Financial and Insurance Services",221111,Graduate,65,No,No,Available,Yes,Yes
+"Registered Nurses nec","Healthcare and Social Assistance",254499,Graduate,65,Yes,No,Available,Yes,Yes
+"Registered Nurses nec","Healthcare and Social Assistance: Hospitals, Medical and Other Health Care Services",254499,"General - WASMOL Schedule 1",65,Yes,No,Available,Yes,Yes
+Chef,"Hospitality and Tourism",351311,"General - WASMOL Schedule 2",65,Yes,No,Available,Yes,Yes
+Chef,"Hospitality and Tourism",351311,Graduate,65,Yes,No,Available,Yes,Yes
+"Developer Programmer","Information Media and Telecommunications",261312,"General - WASMOL Schedule 2",65,No,No,Available,Yes,Yes
+"Developer Programmer","Information Media and Telecommunications",261312,Graduate,65,No,No,Available,Yes,Yes
+"ICT Business Analyst","Information Media and Telecommunications",261111,"General - WASMOL Schedule 2",65,No,No,Available,Yes,Yes
+"ICT Business Analyst","Information Media and Telecommunications",261111,Graduate,65,No,No,Available,Yes,Yes
+"Software Engineer","Information Media and Telecommunications",261313,"General - WASMOL Schedule 2",65,No,No,Available,Yes,Yes
+"Software Engineer","Information Media and Telecommunications",261313,Graduate,65,No,No,Available,Yes,Yes
+"Electrical Engineer","Professional, Scientific and Technical Services",233311,"General - WASMOL Schedule 2",65,No,No,Available,Yes,Yes
+"Electrical Engineer","Professional, Scientific and Technical Services",233311,Graduate,65,No,No,Available,Yes,Yes
+"Mechanical Engineer","Professional, Scientific and Technical Services",233512,"General - WASMOL Schedule 2",65,No,No,Available,Yes,Yes
+"Mechanical Engineer","Professional, Scientific and Technical Services",233512,Graduate,65,No,No,Available,Yes,Yes

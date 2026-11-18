@@ -15,6 +15,11 @@ describe("parseArgs", () => {
     expect(args).toEqual({ only: "federal", checkedAt: "2026-11-17" });
   });
 
+  it("accepts --only wa and --only sa", () => {
+    expect(parseArgs(["--only", "wa"], "2026-11-18").only).toBe("wa");
+    expect(parseArgs(["--only", "sa"], "2026-11-18").only).toBe("sa");
+  });
+
   it("rejects an unknown importer", () => {
     expect(() => parseArgs(["--only", "mars"], "2026-11-18")).toThrow(/mars/);
   });
