@@ -3,7 +3,7 @@ import {
   loadOccupationDetail,
 } from "../../lib/data/load-server";
 import { toOccupationEvidence } from "../../lib/data/legacy";
-import { calculatePoints } from "../../lib/migration";
+import { calculatePoints, type PointCategory } from "../../lib/migration";
 import type { ReportView } from "../../lib/report/report-view";
 import { SAMPLE_AS_OF, sampleReportProfile as profile } from "../../lib/sample";
 import { occupationIndex } from "../data/occupation-index";
@@ -17,6 +17,7 @@ export function buildSampleView(): {
   view: ReportView;
   occupationName: string;
   points: number;
+  categories: PointCategory[];
 } {
   const core = loadOccupationCore(profile.occupation);
   const detail = loadOccupationDetail(profile.occupation);
@@ -34,9 +35,11 @@ export function buildSampleView(): {
     },
     index: occupationIndex,
   });
+  const result = calculatePoints(profile, SAMPLE_AS_OF);
   return {
     view,
     occupationName: core.name,
-    points: calculatePoints(profile, SAMPLE_AS_OF).base,
+    points: result.base,
+    categories: result.categories,
   };
 }

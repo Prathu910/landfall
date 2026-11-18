@@ -4,13 +4,14 @@ import { detailFixture } from "../data/__fixtures__/occupation";
 import { BANNED_COPY } from "../report/copy";
 import { noneRoundsCore } from "../report/__fixtures__/scorecard";
 import { buildReportView } from "../report/report-view";
-import { sampleProfile } from "../migration";
+import { calculatePoints, sampleProfile } from "../migration";
 import {
   realFederal,
   realLists,
 } from "../state-outlook/__fixtures__/real-data";
 import { buildDemoContent } from "./demo-content";
 
+const categories = calculatePoints(sampleProfile, "2026-11-17").categories;
 const view = buildReportView({
   occupationName: "Software Engineer",
   data: { kind: "ready", core: noneRoundsCore, detail: detailFixture },
@@ -26,12 +27,18 @@ const view = buildReportView({
 });
 
 describe("buildDemoContent", () => {
-  const demo = buildDemoContent(view, "Software Engineer", 90);
+  const demo = buildDemoContent(view, "Software Engineer", 90, categories);
 
   it("carries the occupation and points as strings", () => {
     expect(demo.occupation).toBe("Software Engineer");
     expect(demo.points).toBe("90");
-    expect(demo.profileLines.length).toBeGreaterThan(0);
+    expect(demo.profileLines).toEqual([
+      ...categories
+        .filter((c) => c.points > 0)
+        .map((c) => `${c.label} · ${c.points} pts`),
+      "90 points",
+    ]);
+    expect(demo.profileLines.length).toBeGreaterThan(1);
   });
 
   it("maps cards and 190 tiles from the view, in order", () => {
@@ -51,7 +58,9 @@ describe("buildDemoContent", () => {
     expect(demo.posterAlt).toContain("Software Engineer");
     expect(demo.posterAlt).toContain("90 points");
     expect(demo.posterAlt).toContain(demo.cards[0].ahead);
-    expect(demo.posterAlt.match(/\. /g)).toBeNull();
+    expect(demo.posterAlt.endsWith(".")).toBe(true);
+    expect(demo.posterAlt.indexOf(".")).toBe(demo.posterAlt.length - 1);
+    expect(demo.posterAlt).not.toMatch(/\. [A-Z]/);
   });
 
   it("uses only allowed copy", () => {
@@ -62,7 +71,7 @@ describe("buildDemoContent", () => {
 
   it("refuses a view without data rather than inventing counts", () => {
     expect(() =>
-      buildDemoContent({ ...view, stateOutlook: null }, "X", 90),
+      buildDemoContent({ ...view, stateOutlook: null }, "X", 90, categories),
     ).toThrow();
   });
 });

@@ -1,6 +1,5 @@
-import { toPoolOccupation } from "../data/legacy";
+import { poolPosition } from "../data/pool-position";
 import type { OccupationCore } from "../data/types";
-import { comparePool } from "../pool";
 import { countInSentence, formatMonth } from "../report/copy";
 import { buildRounds } from "../report/panel-189";
 import { CHIP_LABEL, summarise189Rounds } from "../report/round-status";
@@ -34,9 +33,10 @@ export function buildTryIt(
   core: OccupationCore | null,
   total: number,
 ): TryItView {
-  const pool = core && toPoolOccupation(core);
-  if (!core || !pool) return { kind: "none", message: NO_DATA };
-  const { higher, same, total: poolTotal } = comparePool(pool, total);
+  // The report's own pool position, so the published total is used, not a row sum.
+  const position = core && poolPosition(core, null, "189", total, null);
+  if (!core || !position?.available) return { kind: "none", message: NO_DATA };
+  const { higher, same, total: poolTotal } = position;
   const newest = buildRounds(core, []).tiles[0];
   return {
     kind: "data",

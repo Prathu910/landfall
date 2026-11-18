@@ -1,4 +1,5 @@
-import { countInSentence, formatCount } from "../report/copy";
+import type { PointCategory } from "../migration";
+import { countInSentence } from "../report/copy";
 import type { ReportView } from "../report/report-view";
 
 export type DemoContent = {
@@ -10,13 +11,6 @@ export type DemoContent = {
   /** One plain sentence for the payoff, built from the same strings. */
   posterAlt: string;
 };
-
-const MASKED = { min: 0, max: 19 };
-
-/** A masked count keeps its "may be zero" wording wherever it is quoted. */
-function inSentence(count: string): string {
-  return count === formatCount(MASKED) ? countInSentence(MASKED) : count;
-}
 
 function required<T>(value: T | null, what: string): T {
   if (value === null) throw new Error(`The demo needs ${what}`);
@@ -32,6 +26,7 @@ export function buildDemoContent(
   view: ReportView,
   occupationName: string,
   points: number,
+  categories: PointCategory[],
 ): DemoContent {
   const outlook = required(view.stateOutlook, "the state outlook");
   const cards = view.scorecard.cards.map((card) => ({
@@ -48,18 +43,24 @@ export function buildDemoContent(
     ),
     label: tile.label,
   }));
-  const profileLines = view.scorecard.cards.map((card) =>
-    card.pointsNote
-      ? `${card.title}: ${card.points} points, ${card.pointsNote}`
-      : `${card.title}: ${card.points} points`,
-  );
-  const [first, second] = cards;
+  const profileLines = [
+    ...categories
+      .filter((c) => c.points > 0)
+      .map((c) => `${c.label} · ${c.points} pts`),
+    `${points} points`,
+  ];
+  // Typed intervals, so a masked count keeps its "may be zero" wording.
+  const stand = view.panels?.whereYouStand;
+  if (!stand || !("segments" in stand)) {
+    throw new Error("The demo needs the 189 where-you-stand counts");
+  }
+  const { ahead, same } = stand.segments;
   return {
     occupation: occupationName,
     points: String(points),
-    profileLines: [occupationName, ...profileLines],
+    profileLines,
     cards,
     tiles,
-    posterAlt: `${occupationName} at ${points} points: ${inSentence(first.ahead)} EOIs with a higher score for 189 and ${inSentence(first.atScore)} at the same score, with ${inSentence(second.ahead)} EOIs with a higher score nationally for 190.`,
+    posterAlt: `${occupationName} at ${points} points: ${countInSentence(ahead)} EOIs with a higher score for 189 and ${countInSentence(same)} at the same score.`,
   };
 }

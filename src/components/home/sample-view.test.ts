@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { SAMPLE_AS_OF, sampleReportProfile } from "../../lib/sample";
-import { sampleProfile } from "../../lib/migration";
+import { calculatePoints, sampleProfile } from "../../lib/migration";
 import { buildDemoContent } from "../../lib/home/demo-content";
 import { buildSampleView } from "./sample-view";
 
@@ -14,8 +14,14 @@ describe("sample profile", () => {
 });
 
 describe("demo content matches the sample report view", () => {
-  const { view, occupationName, points } = buildSampleView();
-  const demo = buildDemoContent(view, occupationName, points);
+  const { view, occupationName, points, categories } = buildSampleView();
+  const demo = buildDemoContent(view, occupationName, points, categories);
+
+  it("builds profile lines from the sample profile's points", () => {
+    const result = calculatePoints(sampleReportProfile, SAMPLE_AS_OF);
+    expect(categories).toEqual(result.categories);
+    expect(demo.profileLines.at(-1)).toBe(`${result.base} points`);
+  });
 
   it("uses the report's scorecard counts for each visa", () => {
     expect(demo.cards).toHaveLength(3);

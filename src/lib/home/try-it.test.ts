@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { coreFixture } from "../data/__fixtures__/occupation";
+import { poolPosition } from "../data/pool-position";
 import { loadOccupationCore } from "../data/load-server";
 import { toPoolOccupation } from "../data/legacy";
 import type { OccupationCore } from "../data/types";
@@ -76,13 +77,33 @@ describe("buildTryIt", () => {
     const cmp = comparePool(pool, 85);
     expect(view.higher).toBe(countInSentence(cmp.higher));
     expect(view.same).toBe(countInSentence(cmp.same));
-    expect(view.poolTotal).toBe(countInSentence(cmp.total));
     if (cmp.higher.min === cmp.higher.max) {
       expect(view.higher).toBe(formatInterval(cmp.higher));
     }
     expect(Object.values(CHIP_LABEL)).toContain(view.roundStatus);
     expect(view.latestRound).not.toBe("");
     expect(view.asAt).toMatch(/^[A-Z][a-z]{2} \d{4}$/);
+  });
+
+  it("reads the published pool total exactly as the report does", () => {
+    const core = loadOccupationCore("261313");
+    if (!core) throw new Error("fixture occupation missing");
+    const view = buildTryIt(core, 85);
+    const position = poolPosition(core, null, "189", 85, null);
+    if (view.kind !== "data" || !position.available) throw new Error("no data");
+    expect(view.poolTotal).toBe(countInSentence(position.total));
+    expect(view.higher).toBe(countInSentence(position.higher));
+    expect(view.same).toBe(countInSentence(position.same));
+  });
+
+  it("uses the published total, not the sum of masked score rows", () => {
+    const core: OccupationCore = {
+      ...coreFixture,
+      pool: { "189": { total: "40", byScore: { "85": "<20", "90": "<20" } } },
+    };
+    const view = buildTryIt(core, 85);
+    if (view.kind !== "data") throw new Error("expected data");
+    expect(view.poolTotal).toBe("40");
   });
 
   it("uses only allowed copy", () => {
