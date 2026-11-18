@@ -5,15 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { Burger, Drawer, Button } from "@mantine/core";
-import { Logo } from "@/components/brand/logo";
-
-export function Brand({ reversed = false }: { reversed?: boolean }) {
-  return (
-    <Link className="brand" href="/" aria-label="MigrateLens home">
-      <Logo reversed={reversed} />
-    </Link>
-  );
-}
+import { Brand } from "@/components/brand/brand";
 
 export function SiteHeader() {
   const path = usePathname();

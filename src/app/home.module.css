@@ -1,0 +1,252 @@
+/* The homepage: hero, try-it, the three questions, story, rules, FAQ, CTA. */
+
+.hero {
+  display: grid;
+  gap: 36px;
+  padding-top: 56px;
+  padding-bottom: 40px;
+}
+
+.heroCopy {
+  display: grid;
+  gap: 20px;
+  align-content: start;
+  min-width: 0;
+}
+
+/* One sentence per line; each wraps evenly when the column is narrow. */
+.headline {
+  font-size: clamp(38px, 8.5vw, 60px);
+  line-height: 1.04;
+  letter-spacing: -0.015em;
+}
+
+.headline > span {
+  display: block;
+  text-wrap: balance;
+}
+
+.lede {
+  max-width: 36em;
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+.trust {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.875rem;
+  color: var(--muted-soft);
+}
+
+.trust li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: inherit;
+}
+
+.trust svg {
+  color: var(--saffron-text);
+}
+
+.heroDemo {
+  min-width: 0;
+}
+
+/* The demo needs 576px or more beside the copy for its wide design. */
+@media (min-width: 1100px) {
+  .hero {
+    grid-template-columns: minmax(0, 1fr) minmax(576px, 1.1fr);
+    gap: 48px;
+    align-items: center;
+    padding-top: 64px;
+    padding-bottom: 56px;
+  }
+
+  .headline {
+    font-size: clamp(40px, 3.3vw, 50px);
+  }
+}
+
+.band {
+  padding-top: 56px;
+  padding-bottom: 56px;
+}
+
+.tryIt {
+  max-width: 760px;
+  margin-inline: auto;
+}
+
+.heading {
+  margin-bottom: 20px;
+  font-size: clamp(30px, 3.2vw, 44px);
+}
+
+.label {
+  margin-bottom: 12px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--saffron-on-dark);
+}
+
+.story {
+  --focus-ring: var(--focus-ring-on-dark);
+  margin: 32px 0;
+  padding: 72px 0;
+  background: var(--ink);
+}
+
+.storyInner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: 48px;
+  align-items: start;
+}
+
+.storyTitle {
+  font-size: clamp(32px, 3.6vw, 50px);
+  color: var(--newsprint);
+}
+
+.storyBody {
+  font-size: 1.1875rem;
+  line-height: 1.65;
+  color: var(--muted-on-dark);
+}
+
+.rules {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: 48px;
+  align-items: start;
+}
+
+.ruleList {
+  display: grid;
+  gap: 14px;
+  margin: 0 0 22px;
+  padding: 0;
+  list-style: none;
+  font-size: 1.0625rem;
+}
+
+.ruleList li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ruleList svg {
+  flex: none;
+  color: var(--saffron-text);
+}
+
+.textLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--slate);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.textLink:hover {
+  color: var(--ink);
+}
+
+.cta {
+  display: grid;
+  gap: 16px;
+  justify-items: start;
+  padding: 40px;
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  background: var(--card);
+}
+
+.ctaBody {
+  font-size: 1.0625rem;
+  color: var(--muted);
+}
+
+.ctaActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 24px;
+}
+
+@media (max-width: 800px) {
+  .storyInner,
+  .rules {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+
+  .story {
+    padding: 52px 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .hero {
+    padding-top: 36px;
+  }
+
+  .band {
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+
+  .trust,
+  .textLink {
+    font-size: 1rem;
+  }
+
+  .storyBody {
+    font-size: 1.0625rem;
+  }
+
+  .cta {
+    padding: 24px 20px;
+  }
+}
+
+@media print {
+  .story {
+    margin: 0;
+    padding: 24px 0;
+    background: none;
+  }
+
+  .storyTitle,
+  .storyBody,
+  .label {
+    color: var(--ink);
+  }
+
+  .hero,
+  .band {
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
+
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .cta {
+    break-inside: avoid;
+  }
+}

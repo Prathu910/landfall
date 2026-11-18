@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { loadManifest } from "@/lib/data/load-server";
-import { Brand } from "./site-header";
+import { Brand } from "./brand/brand";
 
 const MONTHS = [
   "January",
