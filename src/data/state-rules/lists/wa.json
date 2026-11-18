@@ -1,0 +1,5734 @@
+{
+  "listId": "wa",
+  "source": "https://migration.wa.gov.au/v2_occupation_search/occupation-search?combine=&_format=csv",
+  "checkedAt": "2026-11-18",
+  "entries": {
+    "121111": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "121211": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "121212": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "121213": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "121214": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "121215": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "121216": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "121217": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "121221": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "121299": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "121311": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "121312": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "121313": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "121314": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "121315": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "121316": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "121317": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "121318": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "121321": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "121322": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "121399": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "121411": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "131112": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "132211": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "132311": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "132411": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "132511": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "133111": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "133112": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "133211": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3",
+        "graduate"
+      ]
+    },
+    "133511": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "133512": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3",
+        "graduate"
+      ]
+    },
+    "133513": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "133611": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "133612": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "134111": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "134211": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "134212": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "134213": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "134214": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "134299": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "134311": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "135112": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "135199": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "139911": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "139912": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "139913": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "139914": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "139915": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "139999": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "141111": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "141211": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "141311": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "141999": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2"
+      ]
+    },
+    "142115": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "149212": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "149311": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "149413": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "149912": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "149913": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "149914": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "211112": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "212312": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "212314": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "212315": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "221111": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "221112": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "221113": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "221211": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "221213": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "221214": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "222111": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "222112": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "222113": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "222199": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "222211": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "222213": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "222299": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "222311": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "222312": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "223111": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "223112": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "223113": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "224711": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "224712": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2"
+      ]
+    },
+    "231111": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "231113": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "231114": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "231213": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "232111": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "232112": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "232212": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "232213": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "232214": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "232611": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "233111": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3",
+        "graduate"
+      ]
+    },
+    "233112": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3",
+        "graduate"
+      ]
+    },
+    "233211": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "233212": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "233213": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "233214": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "233215": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "233311": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3",
+        "graduate"
+      ]
+    },
+    "233411": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3",
+        "graduate"
+      ]
+    },
+    "233511": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3",
+        "graduate"
+      ]
+    },
+    "233512": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3",
+        "graduate"
+      ]
+    },
+    "233513": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3",
+        "graduate"
+      ]
+    },
+    "233611": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "233612": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "233911": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "233912": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "233913": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "233914": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-3",
+        "graduate"
+      ]
+    },
+    "233915": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "233916": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-3",
+        "graduate"
+      ]
+    },
+    "233999": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-3",
+        "graduate"
+      ]
+    },
+    "234111": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "234112": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "234113": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "234211": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3",
+        "graduate"
+      ]
+    },
+    "234212": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "234213": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "234313": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "234411": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "234412": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "234413": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "234511": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "234513": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "234514": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "234515": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "234516": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "234517": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "234518": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "234599": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "234611": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "234711": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "234911": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "234912": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "234913": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "234914": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "234915": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "234999": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-3",
+        "graduate"
+      ]
+    },
+    "241111": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "241213": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "241311": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "241411": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "241511": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "241512": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "241513": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "241599": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "242111": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "242211": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "249311": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "251111": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "251112": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "251211": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "251212": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "251213": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "251214": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "251311": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "251312": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "251411": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "251412": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "251511": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "251512": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "251513": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "251911": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "251912": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "251999": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "252111": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "252112": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "252211": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "252213": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "252214": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "252299": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "252311": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "252312": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "252411": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "252511": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "252611": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "252711": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "252712": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "253111": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "253112": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "253211": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "253311": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "253312": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "253313": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "253314": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "253315": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "253316": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "253317": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "253318": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "253321": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "253322": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "253323": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "253324": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "253399": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "253411": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "253511": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "253512": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "253513": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "253514": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "253515": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "253516": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "253517": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "253518": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "253521": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "253911": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "253912": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "253913": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "253914": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "253915": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "253917": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "253918": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "253999": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "254111": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "254211": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1"
+      ]
+    },
+    "254212": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "254311": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1"
+      ]
+    },
+    "254411": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1"
+      ]
+    },
+    "254412": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "254413": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "254414": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "254415": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "254416": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "254417": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "254418": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "254421": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "254422": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "254423": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "254424": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "254425": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "254499": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "261111": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "261112": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "261212": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2"
+      ]
+    },
+    "261311": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "261312": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "261313": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "261314": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "261399": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "262111": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "262112": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "262113": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "263111": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "263112": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "263113": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "263212": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "263213": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "263311": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "263312": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "271111": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "271311": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "272111": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "272112": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "272113": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "272114": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "272115": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "272199": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "272311": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "272312": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "272313": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "272314": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "272399": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "272412": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "272413": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "272499": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "272511": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "272611": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "272612": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "272613": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "311111": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "311211": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "311212": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "311213": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "311214": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "311215": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "311216": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "311299": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "311312": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "311399": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "311413": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2"
+      ]
+    },
+    "311499": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-3"
+      ]
+    },
+    "312111": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "312113": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "312114": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "312116": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "312199": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "312211": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "312212": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "312311": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3",
+        "graduate"
+      ]
+    },
+    "312312": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3",
+        "graduate"
+      ]
+    },
+    "312511": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "312512": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3",
+        "graduate"
+      ]
+    },
+    "312611": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2"
+      ]
+    },
+    "312911": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "312912": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "312913": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "312999": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "313111": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "313113": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "313199": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2"
+      ]
+    },
+    "321111": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2"
+      ]
+    },
+    "321211": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "321212": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2"
+      ]
+    },
+    "321213": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2"
+      ]
+    },
+    "321214": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2"
+      ]
+    },
+    "322113": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "322211": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3"
+      ]
+    },
+    "322311": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3"
+      ]
+    },
+    "322312": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3"
+      ]
+    },
+    "322313": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3"
+      ]
+    },
+    "323111": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2"
+      ]
+    },
+    "323112": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2"
+      ]
+    },
+    "323113": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2"
+      ]
+    },
+    "323211": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3"
+      ]
+    },
+    "323212": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3"
+      ]
+    },
+    "323213": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3"
+      ]
+    },
+    "323214": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3"
+      ]
+    },
+    "323299": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3"
+      ]
+    },
+    "324111": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2"
+      ]
+    },
+    "324311": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2"
+      ]
+    },
+    "331111": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3",
+        "graduate"
+      ]
+    },
+    "331112": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3"
+      ]
+    },
+    "331211": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3"
+      ]
+    },
+    "331212": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3",
+        "graduate"
+      ]
+    },
+    "331213": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3"
+      ]
+    },
+    "332111": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2"
+      ]
+    },
+    "332211": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3"
+      ]
+    },
+    "333111": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3"
+      ]
+    },
+    "333211": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3",
+        "graduate"
+      ]
+    },
+    "333212": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3",
+        "graduate"
+      ]
+    },
+    "333311": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3"
+      ]
+    },
+    "333411": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3",
+        "graduate"
+      ]
+    },
+    "334111": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3"
+      ]
+    },
+    "334112": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3"
+      ]
+    },
+    "334113": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3",
+        "graduate"
+      ]
+    },
+    "334114": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3"
+      ]
+    },
+    "334115": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3"
+      ]
+    },
+    "341111": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3"
+      ]
+    },
+    "341112": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3"
+      ]
+    },
+    "341113": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3",
+        "graduate"
+      ]
+    },
+    "342111": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3"
+      ]
+    },
+    "342211": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "342212": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3"
+      ]
+    },
+    "342313": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3"
+      ]
+    },
+    "342314": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3"
+      ]
+    },
+    "342315": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3",
+        "graduate"
+      ]
+    },
+    "342411": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "342413": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "351111": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "351112": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2"
+      ]
+    },
+    "351211": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2"
+      ]
+    },
+    "351311": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "351411": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "361112": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "361311": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "362211": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "362212": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "362213": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "362311": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "362411": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "391111": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "393311": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2"
+      ]
+    },
+    "394111": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "schedule-3"
+      ]
+    },
+    "394213": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2"
+      ]
+    },
+    "399212": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2"
+      ]
+    },
+    "411111": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "411112": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "411211": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "411213": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "411214": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "411411": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "graduate"
+      ]
+    },
+    "411711": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "411712": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "411713": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "411715": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1",
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "411716": {
+      "190": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "441211": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "451211": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2",
+        "graduate"
+      ]
+    },
+    "451399": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "graduate"
+      ]
+    },
+    "599915": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-1"
+      ]
+    },
+    "612112": {
+      "491": [
+        "living-in-state",
+        "living-in-other-state",
+        "offshore"
+      ],
+      "streams": [
+        "schedule-2"
+      ]
+    }
+  }
+}
