@@ -53,3 +53,10 @@
   text-underline-offset: 3px;
   cursor: pointer;
 }
+
+@media (max-width: 720px) {
+  .note,
+  .affects {
+    font-size: 1rem;
+  }
+}

@@ -53,10 +53,10 @@
   place-items: center;
   border-radius: 50%;
   background: #f3eee3;
-  font-size: 11px;
+  font-size: 12px;
 }
 .steps button small {
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.3;
 }
 .steps .activeStep {
@@ -292,7 +292,7 @@
   display: flex;
   align-items: center;
   gap: 7px;
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.01em;
   color: #b9af9a;
 }
@@ -301,7 +301,7 @@
   align-items: center;
   gap: 6px;
   color: #b9af9a;
-  font-size: 10px;
+  font-size: 12px;
 }
 .liveDot:before {
   content: "";
@@ -332,7 +332,7 @@
   font-variant-numeric: tabular-nums;
 }
 .total > span {
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.8;
   color: #b9af9a;
 }
@@ -358,7 +358,7 @@
   color: #ece7dc;
 }
 .nomination span {
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.5;
   color: #b9af9a;
 }
@@ -369,7 +369,7 @@
 .breakdown > div {
   display: flex;
   justify-content: space-between;
-  font-size: 11px;
+  font-size: 12px;
   padding: 7px 0;
   gap: 12px;
 }
@@ -395,7 +395,7 @@
   margin-top: 2px;
 }
 .privacy p {
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.7;
   margin: 0;
 }
@@ -497,7 +497,7 @@
     padding-right: 0;
   }
   .below > span {
-    font-size: 11px;
+    font-size: 12px;
   }
 }
 @media (max-width: 480px) {
@@ -561,5 +561,20 @@
   }
   .englishChoice:hover {
     transform: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .intro,
+  .help,
+  .privacy p,
+  .fieldLabel,
+  .fields :global(.mantine-RadioGroup-label),
+  .fields :global(.mantine-InputWrapper-description),
+  .fields :global(.mantine-Input-input),
+  .fields :global(.mantine-Checkbox-label),
+  .fields :global(.mantine-Checkbox-description),
+  .fields :global(.mantine-Alert-message) {
+    font-size: 1rem;
   }
 }

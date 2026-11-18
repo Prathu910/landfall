@@ -86,7 +86,7 @@ export function PoolChart({
                 x={center}
                 y="152"
                 textAnchor="middle"
-                fontSize="11"
+                fontSize="12"
                 fill={band === score ? "#1B1A17" : "#6B6558"}
                 fontWeight={band === score ? 700 : 400}
               >

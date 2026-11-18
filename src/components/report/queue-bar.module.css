@@ -51,3 +51,9 @@
     -webkit-print-color-adjust: exact;
   }
 }
+
+@media (max-width: 720px) {
+  .legend {
+    font-size: 1rem;
+  }
+}

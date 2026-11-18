@@ -77,7 +77,7 @@ export function TrendChart({ rows }: { rows: TrendEvidence[] }) {
                   i === 0 ? "start" : i === rows.length - 1 ? "end" : "middle"
                 }
                 fill="#6B6558"
-                fontSize="10"
+                fontSize="12"
               >
                 {new Date(r.date + "T00:00:00Z").toLocaleDateString("en-GB", {
                   month: "short",

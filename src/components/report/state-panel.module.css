@@ -170,3 +170,11 @@
   color: var(--ink);
   text-decoration: underline;
 }
+
+@media (max-width: 720px) {
+  .results,
+  .footer,
+  .checked {
+    font-size: 1rem;
+  }
+}
