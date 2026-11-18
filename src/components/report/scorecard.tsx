@@ -38,9 +38,11 @@ function Card({ card, loading }: { card: ScorecardCard; loading: boolean }) {
               <b>{card.atScore}</b>
             </p>
           ) : null}
-          <a className={styles.link} href={card.href}>
-            {card.visa} details
-          </a>
+          {card.href ? (
+            <a className={styles.link} href={card.href}>
+              {card.visa} details
+            </a>
+          ) : null}
         </>
       )}
     </article>

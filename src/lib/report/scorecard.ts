@@ -31,7 +31,7 @@ export type ScorecardCard = {
   pointsNote: string | null;
   ahead: string | null;
   atScore: string | null;
-  href: string;
+  href: string | null; // null: no visa panel renders without data
 };
 export type Scorecard = {
   headline: string;
@@ -76,6 +76,9 @@ function stateSentence(core: OccupationCore, visa: Visa): string {
   }
   if (activity.lastPossibleMonth) {
     return "Invitations recorded in the last 12 months are each under 20, so may be zero.";
+  }
+  if (activity.months.length === 0) {
+    return "Invitations for the last 12 months are not published for this occupation.";
   }
   return `No ${visa} invitations recorded for this occupation in the last 12 months.`;
 }
@@ -149,11 +152,11 @@ function buildCard(
     title: TITLES[visa],
     points,
     pointsNote: POINTS_NOTES[visa],
-    href: `#visa-${visa}`,
   };
   if (data.kind === "none") {
     return {
       ...base,
+      href: null,
       chip:
         visa === "189"
           ? { label: "No data", tone: "neutral" }
@@ -183,7 +186,7 @@ function buildCard(
           chip: { label: "State decides", tone: "amber" } as Chip,
           sentence: stateSentence(data.core, visa),
         };
-  return { ...base, chip, sentence, ...counts };
+  return { ...base, chip, sentence, ...counts, href: `#visa-${visa}` };
 }
 
 export function buildScorecard(input: {

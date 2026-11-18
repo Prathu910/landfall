@@ -1575,47 +1575,6 @@ svg {
 .report-body {
   padding: 30px 36px;
 }
-.score-cards {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 11px;
-  margin-bottom: 23px;
-}
-.score-card {
-  background: #f3f7ef;
-  border: 1px solid #e0e9da;
-  border-radius: 10px;
-  padding: 18px 17px;
-  min-width: 0;
-}
-.score-card:first-child {
-  background: #e9f4e6;
-  border-color: #d2e6cd;
-}
-.score-card > span {
-  display: block;
-  font-size: 10px;
-  font-weight: 500;
-  color: #55795b;
-}
-.score-card > strong {
-  font-size: 46px;
-  font-weight: 500;
-  letter-spacing: -2px;
-  line-height: 1.5;
-  display: block;
-}
-.score-card > p {
-  font-size: 9px;
-  line-height: 1.75;
-  color: #607d64;
-}
-.report-intro {
-  font-size: 12px;
-  color: #5a7561;
-  margin-bottom: 22px;
-  line-height: 1.9;
-}
 .report-section {
   border-top: 1px solid var(--line);
   padding-top: 32px;
@@ -1717,59 +1676,6 @@ svg {
 }
 .scenario-result .pill {
   font-size: 10px;
-}
-.pool-controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 15px;
-  margin: 20px 0;
-}
-.pool-controls .mantine-NumberInput-root {
-  max-width: 135px;
-}
-.report-data-layout {
-  display: grid;
-  grid-template-columns: 0.8fr 1.2fr;
-  gap: 25px;
-  align-items: center;
-  margin: 25px 0 15px;
-}
-.report-number {
-  font-size: 39px;
-  letter-spacing: -1.9px;
-  line-height: 1.3;
-  color: #214e35;
-}
-.report-data-layout .data-caption {
-  font-size: 10px;
-}
-.pool-metric-label {
-  font-size: 10px;
-  color: #608268;
-  margin-bottom: 8px;
-  display: block;
-}
-.report-data-layout .chart-hover {
-  font-size: 8px;
-}
-.report-notes {
-  font-size: 10px;
-  color: #617d66;
-  margin-top: 14px;
-}
-.trend-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 27px 0 12px;
-  gap: 15px;
-}
-.trend-heading h3 {
-  font-size: 15px;
-}
-.trend-heading > .pill {
-  font-size: 9px;
 }
 .trend-chart {
   border: 1px solid #e1e9dc;
@@ -2091,18 +1997,9 @@ svg {
   .report-heading h1 {
     font-size: 35px;
   }
-  .report-number {
-    font-size: 33px;
-  }
   .audit-row {
     grid-template-columns: 1fr 100px 45px;
     gap: 14px;
-  }
-  .pool-controls {
-    align-items: flex-end;
-  }
-  .pool-controls .mantine-SegmentedControl-label {
-    font-size: 10px;
   }
   .hero-proof {
     gap: 13px;
@@ -2366,12 +2263,6 @@ svg {
   }
   .report-body {
     padding: 28px;
-  }
-  .report-data-layout {
-    gap: 20px;
-  }
-  .report-number {
-    font-size: 36px;
   }
   .audit-row {
     grid-template-columns: 1fr 140px 50px;
@@ -2671,25 +2562,6 @@ svg {
   .report-heading-top .pill {
     font-size: 8px;
   }
-  .score-cards {
-    gap: 7px;
-  }
-  .score-card {
-    padding: 12px 10px;
-  }
-  .score-card > span {
-    font-size: 8px;
-    line-height: 1.8;
-  }
-  .score-card > strong {
-    font-size: 38px;
-  }
-  .score-card > p {
-    font-size: 8px;
-  }
-  .report-intro {
-    font-size: 11px;
-  }
   .notice {
     font-size: 10px;
     padding: 13px;
@@ -2724,32 +2596,6 @@ svg {
   }
   .scenario-result > div:last-child {
     font-size: 10px;
-  }
-  .pool-controls {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .pool-controls .mantine-NumberInput-root {
-    max-width: 100%;
-  }
-  .report-data-layout {
-    grid-template-columns: 1fr;
-    gap: 15px;
-  }
-  .report-number {
-    font-size: 40px;
-  }
-  .report-data-layout .data-caption {
-    font-size: 10px;
-  }
-  .trend-heading {
-    align-items: flex-start;
-  }
-  .trend-heading h3 {
-    font-size: 13px;
-  }
-  .trend-heading .pill {
-    font-size: 8px;
   }
   .trend-chart {
     padding: 10px;
@@ -2858,6 +2704,11 @@ svg {
   }
 }
 @media print {
+  /* Chrome hides closed <details> content in its ::details-content slot, not on the children. */
+  details:not([open])::details-content {
+    content-visibility: visible !important;
+    display: block !important;
+  }
   details:not([open]) > :not(summary) {
     display: block !important;
     content-visibility: visible !important;
@@ -2929,7 +2780,6 @@ svg {
     font-size: 25px;
     break-after: avoid;
   }
-  .score-card,
   .audit-row,
   .report-event,
   .notice,
@@ -2940,15 +2790,9 @@ svg {
   tr {
     break-inside: avoid;
   }
-  .report-section .mantine-Accordion-panel {
+  .report-sheet .mantine-Accordion-panel {
     display: block !important;
     height: auto !important;
-  }
-  .pool-controls {
-    display: none;
-  }
-  .report-data-layout {
-    grid-template-columns: 0.8fr 1.2fr;
   }
   .report-sheet * {
     -webkit-print-color-adjust: exact;

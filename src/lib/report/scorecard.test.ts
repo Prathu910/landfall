@@ -85,6 +85,18 @@ describe("buildScorecard", () => {
     );
   });
 
+  it("says invitations are not published when no month in the window was fetched", () => {
+    const core = {
+      ...noneRoundsCore,
+      statusHistory: { "190": noneRoundsCore.statusHistory["190"] },
+    };
+    const [, c190, c491] = build(ready(core)).cards;
+    expect(c491.sentence).toBe(
+      "Invitations for the last 12 months are not published for this occupation.",
+    );
+    expect(c190.sentence).toContain("At least 35 invited");
+  });
+
   it("says masked invitations may be zero", () => {
     const [, c190] = build(ready(allMaskedCore)).cards;
     expect(c190.sentence).toBe(
@@ -142,6 +154,8 @@ describe("buildScorecard", () => {
       tone: "neutral",
     });
     expect(card.cards.map((c) => c.points)).toEqual([90, 95, 105]);
+    // No visa panels render without data, so there is nothing to link to.
+    expect(card.cards.map((c) => c.href)).toEqual([null, null, null]);
     expect(card.sourceLine).toBe(
       "Source: SkillSelect, Department of Home Affairs.",
     );

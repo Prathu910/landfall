@@ -2,15 +2,12 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Accordion, Button, Checkbox, Progress } from "@mantine/core";
-import { motion } from "motion/react";
 import {
   ArrowRight,
   ArrowUpRight,
   AlertCircle,
   CalendarDays,
-  CheckCircle2,
   FileCheck2,
-  Info,
   LockKeyhole,
   Pencil,
   Printer,
@@ -23,30 +20,16 @@ import {
 } from "@/lib/migration";
 import type { ReportSource } from "@/lib/data/report-source";
 import type { OccupationIndexEntry } from "@/lib/data/types";
-import type { OccupationEvidence, VisaPathway } from "@/lib/report-evidence";
-import { buildScenarios, applyScenarios } from "@/lib/scenarios";
+import type { OccupationEvidence } from "@/lib/report-evidence";
 import { statePrograms } from "@/data/states";
-import {
-  poolUnavailableMessage,
-  unavailableReason,
-  type ReportOccupation,
-} from "./data/report-occupation";
+import type { ReportOccupation } from "./data/report-occupation";
 import { CompareSection } from "./report/compare-section";
-import { PoolSection } from "./report/pool-section";
-import { RoundsSection } from "./report/rounds-section";
-import { AnimatedNumber } from "./reveal";
-
-const sections = [
-  ["points", "Your points"],
-  ["scenarios", "What could change"],
-  ["pool", "The published pool"],
-  ["rounds", "Invitation history"],
-  ["timeline", "Your personal dates"],
-  ["states", "State pathways"],
-  ["compare", "Occupation context"],
-  ["prepare", "Get organised"],
-  ["definitions", "Useful definitions"],
-];
+import { PointsAudit } from "./report/points-audit";
+import { reportSections, sectionLabel } from "./report/report-sections";
+import { reportView } from "./report/report-view";
+import { ScenariosSection } from "./report/scenarios-section";
+import { RealityScorecard } from "./report/scorecard";
+import { VisaPanels } from "./report/visa-panels";
 const preparations = [
   "Identity and passport details",
   "Skills assessment and validity dates",
@@ -104,27 +87,18 @@ export function Report({
   initialComparison?: OccupationEvidence;
   source: ReportSource;
 }) {
-  const result = calculatePoints(profile, asOf),
-    events = buildTimeline(profile, asOf),
-    nominated = comparisonIndex.find((o) => o.code === profile.occupation);
-  const [visa, setVisa] = useState<VisaPathway>("189"),
-    [scoreOverride, setScoreOverride] = useState<number | null>(null),
-    [scenarios, setScenarios] = useState<string[]>([]),
-    [checks, setChecks] = useState<string[]>([]),
-    [active, setActive] = useState("points");
-  const assumed = calculatePoints(
-      applyScenarios(profile, scenarios, asOf),
-      asOf,
-    ),
-    options = buildScenarios(profile, asOf),
-    change = assumed.base - result.base;
-  const score =
-    scoreOverride ??
-    (visa === "190"
-      ? result.subclass190
-      : visa === "491"
-        ? result.subclass491
-        : result.base);
+  const result = calculatePoints(profile, asOf);
+  const events = buildTimeline(profile, asOf);
+  const nominated = comparisonIndex.find((o) => o.code === profile.occupation);
+  const view = reportView({
+    profile,
+    asOf,
+    occupation,
+    index: comparisonIndex,
+  });
+  const sections = reportSections(view.panels !== null);
+  const [checks, setChecks] = useState<string[]>([]);
+  const [active, setActive] = useState("reality-check");
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -138,7 +112,7 @@ export function Report({
       if (e) observer.observe(e);
     });
     return () => observer.disconnect();
-  }, []);
+  }, [sections]);
   return (
     <>
       <div className="report-toolbar">
@@ -212,208 +186,29 @@ export function Report({
             </div>
           </header>
           <div className="report-body">
-            <div className="score-cards">
-              {[
-                {
-                  title: "189 · Independent",
-                  score: result.base,
-                  detail: result.missing.length
-                    ? "Partial score · answers incomplete"
-                    : "Self-reported federal points",
-                },
-                {
-                  title: "190 · Nominated",
-                  score: result.subclass190,
-                  detail: "Includes 5 points only if nominated",
-                },
-                {
-                  title: "491 · Regional",
-                  score: result.subclass491,
-                  detail: "Includes 15 only if nominated or sponsored",
-                },
-              ].map((c) => (
-                <div className="score-card" key={c.title}>
-                  <span>{c.title}</span>
-                  <strong>
-                    <AnimatedNumber value={c.score} />
-                  </strong>
-                  <p>{c.detail}</p>
-                </div>
-              ))}
-            </div>
-            <p className="report-intro">
-              A connected view of your points, published occupation data and
-              personal dates. Your answers set the context; official sources
-              provide the evidence.
-            </p>
-            <div
-              className={`notice ${result.eligible === false ? "warning" : ""}`}
-            >
-              {result.eligible === true ? (
-                <CheckCircle2 size={17} />
-              ) : (
-                <Info size={17} />
-              )}
-              <p>
-                <strong>
-                  {result.eligible === false
-                    ? "Some basic checks need attention."
-                    : result.eligible === null
-                      ? "Some evidence still needs checking."
-                      : "Age, English and assessment checks show no issue."}
-                </strong>{" "}
-                These checks cover only part of the visa requirements.{" "}
-                {result.base < 65
-                  ? "The 189 estimate is below the current 65-point threshold."
-                  : "Meeting 65 points does not guarantee an invitation."}{" "}
-                <a
-                  className="source-link"
-                  href="https://immi.homeaffairs.gov.au/visas/working-in-australia/skillselect/expression-of-interest"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Official requirements
-                </a>
-              </p>
-            </div>
-            <section className="report-section" id="points">
-              <span className="section-label">01 / YOUR POINTS AUDIT</span>
-              <h2>
-                Every point, <em>accounted for.</em>
-              </h2>
-              <p>
-                Your current self-reported score, separated into the categories
-                behind it.
-              </p>
-              {result.categories.map((c) => (
-                <div className="audit-row" key={c.key}>
-                  <span>{c.label}</span>
-                  <div className="audit-bar" aria-hidden="true">
-                    <motion.span
-                      initial={false}
-                      animate={{ width: `${(c.points / c.max) * 100}%` }}
-                    />
-                  </div>
-                  <span>
-                    {c.points}
-                    <span className="subtle"> / {c.max}</span>
-                  </span>
-                </div>
-              ))}
-              <p className="data-caption">
-                Employment points are combined and capped at 20. Highest
-                qualification points count once.{" "}
-                <a
-                  className="source-link"
-                  href="https://immi.homeaffairs.gov.au/supporting/Pages/Work/190-points-table.aspx"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Official points table <ArrowUpRight size={11} />
-                </a>
-              </p>
-            </section>
-            <section className="report-section" id="scenarios">
-              <span className="section-label">02 / EXPLORE THE WHAT-IFS</span>
-              <h2>
-                One change.
-                <br />
-                <em>A different picture.</em>
-              </h2>
-              <p>
-                Compare hypothetical qualifying changes together. We recalculate
-                your score, including the employment cap. This does not assess
-                whether a credential or work period qualifies.
-              </p>
-              <div className="scenario-grid">
-                {options.map((s) => (
-                  <div
-                    className="scenario-card"
-                    key={s.id}
-                    data-selected={scenarios.includes(s.id)}
-                  >
-                    <Checkbox
-                      label={s.title}
-                      checked={scenarios.includes(s.id)}
-                      onChange={(e) => {
-                        const checked = e.currentTarget.checked;
-                        setScenarios((ids) =>
-                          checked
-                            ? [...ids, s.id]
-                            : ids.filter((id) => id !== s.id),
-                        );
-                      }}
-                    />
-                    <p>{s.description}</p>
-                  </div>
-                ))}
-              </div>
-              <div className="scenario-result" aria-live="polite">
-                <div>
-                  <span>Hypothetical federal points</span>
-                  <strong>
-                    <AnimatedNumber value={assumed.base} />
-                  </strong>{" "}
-                  <span className="pill">
-                    {change > 0 ? "+" : ""}
-                    {change} points
-                  </span>
-                </div>
-                <div>
-                  Current {result.base} → Scenario {assumed.base}
-                  <br />
-                  {assumed.subclass190} if 190 nominated
-                  <br />
-                  {assumed.subclass491} if 491 nominated / sponsored
-                </div>
-              </div>
-              <Button
-                component="a"
-                href="#pool"
-                variant="light"
-                size="xs"
-                mt="md"
-                rightSection={<ArrowRight size={13} />}
-                onClick={() => {
-                  setVisa("189");
-                  setScoreOverride(assumed.base);
-                }}
-              >
-                Compare this scenario in the pool
-              </Button>
-              <p className="data-caption">
-                No future completion date, cost, invitation or evidence approval
-                is assumed. Pool comparisons below remain based on your current
-                score unless you change them.
-              </p>
-            </section>
-            <PoolSection
+            <RealityScorecard scorecard={view.scorecard} />
+            <VisaPanels
               occupation={occupation}
-              unavailableMessage={poolUnavailableMessage(
-                profile.occupation,
-                comparisonIndex,
-              )}
-              visa={visa}
-              score={score}
-              snapshotDate={source.snapshotDate}
-              onVisaChange={(next) => {
-                setVisa(next);
-                setScoreOverride(null);
-              }}
-              onScoreChange={setScoreOverride}
+              panels={view.panels}
+              source={view.scorecard.sourceLine}
             />
-            <RoundsSection
-              occupation={occupation}
-              loadFailed={
-                unavailableReason(profile.occupation, comparisonIndex) ===
-                "loadFailed"
-              }
-              score={result.base}
-              roundsUrl={source.roundsUrl}
-              previousRoundsUrl={source.previousRoundsUrl}
+            <PointsAudit
+              result={result}
+              label={sectionLabel(sections, "points", "YOUR POINTS AUDIT")}
+            />
+            <ScenariosSection
+              profile={profile}
+              asOf={asOf}
+              label={sectionLabel(
+                sections,
+                "scenarios",
+                "EXPLORE THE WHAT-IFS",
+              )}
             />
             <section className="report-section" id="timeline">
-              <span className="section-label">05 / YOUR PERSONAL DATES</span>
+              <span className="section-label">
+                {sectionLabel(sections, "timeline", "YOUR PERSONAL DATES")}
+              </span>
               <h2>
                 The next chapter,
                 <br />
@@ -484,7 +279,9 @@ export function Report({
               </Accordion>
             </section>
             <section className="report-section" id="states">
-              <span className="section-label">06 / STATE PATHWAYS</span>
+              <span className="section-label">
+                {sectionLabel(sections, "states", "STATE PATHWAYS")}
+              </span>
               <h2>
                 Federal points.
                 <br />
@@ -538,9 +335,12 @@ export function Report({
               initialComparison={initialComparison}
               score={result.base}
               snapshotDate={source.snapshotDate}
+              label={sectionLabel(sections, "compare", "OCCUPATION CONTEXT")}
             />
             <section className="report-section" id="prepare">
-              <span className="section-label">08 / GET ORGANISED</span>
+              <span className="section-label">
+                {sectionLabel(sections, "prepare", "GET ORGANISED")}
+              </span>
               <h2>
                 Bring the evidence <em>together.</em>
               </h2>
@@ -602,7 +402,9 @@ export function Report({
               </p>
             </section>
             <section className="report-section" id="definitions">
-              <span className="section-label">09 / USEFUL DEFINITIONS</span>
+              <span className="section-label">
+                {sectionLabel(sections, "definitions", "USEFUL DEFINITIONS")}
+              </span>
               <h2>
                 The terms, <em>made clearer.</em>
               </h2>
@@ -651,16 +453,17 @@ export function Report({
                     </span>
                   </Accordion.Control>
                   <Accordion.Panel>
-                    Included: a self-reported points audit, hypothetical
-                    credential scenarios, three dated occupation pools, twelve
-                    monthly 189 totals, published invitation rounds, personal
-                    dates, state summaries and preparation tools. Exact queue
-                    rank, invitation dates, personal probabilities, a full state
-                    eligibility engine, current ceiling utilisation and gross
-                    EOI movements are unavailable here. These need additional
-                    verified data or a defensible model. Payment, automated
-                    report delivery and ongoing monitoring are future product
-                    work.
+                    Included: a reality check across 189, 190 and 491, a
+                    self-reported points audit, hypothetical credential
+                    scenarios, three dated occupation pools, twelve monthly 189
+                    totals, published invitation rounds, published outcomes of
+                    EOIs by submission month, personal dates, state summaries
+                    and preparation tools. Exact queue rank, invitation dates,
+                    personal probabilities, a full state eligibility engine,
+                    current ceiling utilisation and gross EOI movements are
+                    unavailable here. These need additional verified data or a
+                    defensible model. Payment, automated report delivery and
+                    ongoing monitoring are future product work.
                   </Accordion.Panel>
                 </Accordion.Item>
               </Accordion>
@@ -681,7 +484,25 @@ export function Report({
                 {formatDate(source.checkedAt)}. Monthly history uses directly
                 published occupation totals. Score comparisons sum published
                 score-band intervals. Counts below 20 remain masked. State 491
-                excludes family sponsorship.
+                excludes family sponsorship. 189 invitation rounds:{" "}
+                <a
+                  className="source-link"
+                  href={source.roundsUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  current results
+                </a>{" "}
+                and{" "}
+                <a
+                  className="source-link"
+                  href={source.previousRoundsUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  previous rounds
+                </a>
+                .
               </p>
               <p>
                 Rule set federal-current-2026-11 · Report v0.2. General

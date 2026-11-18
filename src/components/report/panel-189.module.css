@@ -37,9 +37,10 @@
   margin-top: 18px;
   padding-top: 18px;
   border-top: 1px solid var(--line);
-  break-inside: avoid;
 }
 .h3 {
+  /* Blocks can outgrow a page (the trend, the nearby-months table), so only the heading stays with its content. */
+  break-after: avoid;
   margin: 0 0 8px;
   font-size: 1.0625rem;
   font-weight: 700;
