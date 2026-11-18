@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { stateRules } from "../../data/state-rules/2026-27/index";
 import { loadOccupationCore } from "../data/load-server";
 import type { StateCode, StateVisa } from "../data/types";
+import { sampleProfile } from "../migration";
 import { BANNED_COPY } from "../report/copy";
 import { cases, realFederal, realLists } from "./__fixtures__/real-data";
 import { stateOutlook } from "./outlook";
@@ -66,12 +67,15 @@ const living = (): RuleCheck =>
   check({ field: "monthsLivingInState", question: "x" });
 const working = (related: RelatedWork): RuleCheck =>
   check({ field: "monthsWorkingInState", question: "x", related });
+function ask(outlooks: Outlook[], state = ""): Question[] {
+  return questionsNeeded(outlooks, { ...sampleProfile, state });
+}
 const byField = (qs: Question[], field: string) =>
   qs.find((q) => q.field === field);
 
 describe("questionsNeeded", () => {
   it("de-duplicates by field and lists the states each affects", () => {
-    const qs = questionsNeeded([
+    const qs = ask([
       outlook("190", [
         ["WA", [check({ field: "visaExpiry" })]],
         ["SA", [check({ field: "visaExpiry" })]],
@@ -86,7 +90,7 @@ describe("questionsNeeded", () => {
   });
 
   it("asks only for needs-answer checks", () => {
-    const qs = questionsNeeded([
+    const qs = ask([
       outlook("190", [
         [
           "WA",
@@ -103,25 +107,28 @@ describe("questionsNeeded", () => {
   });
 
   it("never asks incomeBand", () => {
-    const qs = questionsNeeded([
+    const qs = ask([
       outlook("190", [["WA", [check({ field: "incomeBand" })]]]),
     ]);
     expect(qs).toEqual([]);
   });
 
   it("words the months questions as months in a row up to now", () => {
-    const qs = questionsNeeded([
-      outlook("190", [
-        [
-          "SA",
+    const qs = ask(
+      [
+        outlook("190", [
           [
-            living(),
-            check({ field: "monthsLivingOffshore" }),
-            working("same-occupation"),
+            "SA",
+            [
+              living(),
+              check({ field: "monthsLivingOffshore" }),
+              working("same-occupation"),
+            ],
           ],
-        ],
-      ]),
-    ]);
+        ]),
+      ],
+      "SA",
+    );
     expect(byField(qs, "monthsLivingInState")?.text).toBe(
       "How many months in a row, up to now, have you lived in South Australia?",
     );
@@ -137,14 +144,43 @@ describe("questionsNeeded", () => {
     ["anzsco-2-digit", "same first 2 ANZSCO digits"],
     ["anzsco-3-digit", "same first 3 ANZSCO digits"],
   ] as const)("names the %s relatedness", (related, definition) => {
-    const qs = questionsNeeded([outlook("190", [["WA", [working(related)]]])]);
+    const qs = ask([outlook("190", [["WA", [working(related)]]])], "WA");
     expect(qs[0].text).toBe(
       `How many months in a row, up to now, have you worked in Western Australia in your nominated occupation or one Western Australia treats as related (${definition})?`,
     );
   });
 
+  it("words a shared question for the state the user lives in", () => {
+    const outlooks = [
+      outlook("190", [
+        ["WA", [working("anzsco-3-digit")]],
+        ["SA", [working("anzsco-2-digit")]],
+      ]),
+    ];
+    expect(ask(outlooks, "SA")[0].text).toBe(
+      "How many months in a row, up to now, have you worked in South Australia in your nominated occupation or one South Australia treats as related (same first 2 ANZSCO digits)?",
+    );
+    expect(ask(outlooks, "WA")[0].text).toContain("same first 3 ANZSCO digits");
+  });
+
+  it("uses neutral wording when the user's state is not among those affected", () => {
+    const outlooks = [
+      outlook("190", [
+        ["WA", [working("anzsco-3-digit"), living()]],
+        ["SA", [working("anzsco-2-digit")]],
+      ]),
+    ];
+    const qs = ask(outlooks, "VIC");
+    expect(byField(qs, "monthsWorkingInState")?.text).toBe(
+      "How many months in a row, up to now, have you worked in the state you live in, in your nominated occupation or a related one?",
+    );
+    expect(byField(qs, "monthsLivingInState")?.text).toBe(
+      "How many months in a row, up to now, have you lived in the state you live in?",
+    );
+  });
+
   it("asks one experience question per window", () => {
-    const qs = questionsNeeded([
+    const qs = ask([
       outlook("491", [
         [
           "NSW",
@@ -167,7 +203,7 @@ describe("questionsNeeded", () => {
   });
 
   it("gives the short questions for the remaining fields", () => {
-    const qs = questionsNeeded([
+    const qs = ask([
       outlook("190", [
         [
           "WA",
@@ -191,7 +227,7 @@ describe("questionsNeeded", () => {
   });
 
   it("asks the real ICT Business Analyst profile for both visas", () => {
-    const qs = questionsNeeded([run("190"), run("491")]);
+    const qs = ask([run("190"), run("491")]);
     expect(qs.length).toBeGreaterThan(0);
     expect(new Set(qs.map((q) => q.field)).size).toBe(qs.length);
     for (const q of qs) {
@@ -201,10 +237,10 @@ describe("questionsNeeded", () => {
   });
 
   it("uses no banned copy", () => {
-    const qs = questionsNeeded([run("190"), run("491")]);
+    const qs = ask([run("190"), run("491")]);
     const all = [
       ...qs.flatMap((q) => [q.text, q.help, q.affectsText]),
-      ...questionsNeeded([
+      ...ask([
         outlook("190", [["WA", [working("anzsco-3-digit"), living()]]]),
       ]).flatMap((q) => [q.text, q.help, q.affectsText]),
     ];

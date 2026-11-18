@@ -1,6 +1,7 @@
 "use client";
 
 import { NumberInput, Select } from "@mantine/core";
+import { useState } from "react";
 import { DateInput } from "@mantine/dates";
 import { normaliseStateAnswers } from "../../lib/state-answers";
 import { STATE_NAMES } from "../../lib/state-outlook/context";
@@ -41,21 +42,83 @@ function patchFor(field: keyof Profile, value: unknown): Partial<Profile> {
   return normaliseStateAnswers({ [field]: value });
 }
 
+/** The error for typed text that is not a valid answer; "" means no error. */
+function numberError(text: string | number, question: Question): string {
+  if (text === "") return "";
+  const unit = question.kind === "years" ? "years" : "months";
+  const message = `Enter 0 to ${question.max} ${unit}`;
+  const n = Number(text);
+  if (!Number.isFinite(n)) return message;
+  return Object.keys(normaliseStateAnswers({ [question.field]: n })).length > 0
+    ? ""
+    : message;
+}
+
+/**
+ * Keeps what the user is typing ("1." on the way to "1.5") apart from the
+ * profile, and commits only valid values. An invalid entry shows an error and
+ * clears the stored answer, so the outlook never uses a value the field
+ * doesn't show.
+ */
+function NumberAnswer({
+  question,
+  value,
+  readOnly,
+  set,
+}: {
+  question: Question;
+  value: number | null;
+  readOnly: boolean;
+  set: (value: unknown) => void;
+}) {
+  const [text, setText] = useState<string | number>(value ?? "");
+  const [seen, setSeen] = useState(value);
+  if (value !== seen) {
+    // The profile changed from outside (for example "Clear this answer").
+    setSeen(value);
+    setText(value ?? "");
+  }
+  const error = numberError(text, question);
+  return (
+    <NumberInput
+      label={question.text}
+      description={question.help}
+      readOnly={readOnly}
+      size="md"
+      radius="md"
+      min={0}
+      max={question.max}
+      allowDecimal={question.kind === "years"}
+      decimalScale={1}
+      step={question.kind === "years" ? 0.5 : 1}
+      clampBehavior="none"
+      error={error || undefined}
+      value={text}
+      onChange={(v) => {
+        setText(v);
+        const next = v === "" || numberError(v, question) ? null : Number(v);
+        setSeen(next);
+        set(next);
+      }}
+    />
+  );
+}
+
 function Input({
   question,
   profile,
-  disabled,
+  readOnly,
   set,
 }: {
   question: Question;
   profile: Profile;
-  disabled: boolean;
+  readOnly: boolean;
   set: (value: unknown) => void;
 }) {
   const common = {
     label: question.text,
     description: question.help,
-    disabled,
+    readOnly,
     size: "md",
     radius: "md",
   } as const;
@@ -64,15 +127,11 @@ function Input({
     case "months":
     case "years":
       return (
-        <NumberInput
-          {...common}
-          min={0}
-          max={question.max}
-          allowDecimal={question.kind === "years"}
-          decimalScale={1}
-          step={question.kind === "years" ? 0.5 : 1}
-          value={typeof value === "number" ? value : ""}
-          onChange={(v) => set(v === "" ? null : Number(v))}
+        <NumberAnswer
+          question={question}
+          value={typeof value === "number" ? value : null}
+          readOnly={readOnly}
+          set={set}
         />
       );
     case "visa-expiry":
@@ -92,7 +151,7 @@ function Input({
         <Select
           {...common}
           data={YES_NO}
-          clearable
+          clearable={!readOnly}
           value={typeof value === "boolean" ? (value ? "yes" : "no") : null}
           onChange={(v) => set(v === null ? null : v === "yes")}
         />
@@ -107,7 +166,7 @@ function Input({
               ? "I didn't study in Australia"
               : "No job offer",
           )}
-          clearable
+          clearable={!readOnly}
           value={typeof value === "string" ? value : null}
           onChange={set}
         />
@@ -117,7 +176,7 @@ function Input({
         <Select
           {...common}
           data={STATE_OPTIONS}
-          clearable
+          clearable={!readOnly}
           value={profile.state || null}
           onChange={(v) => set(v ?? "")}
         />
@@ -154,7 +213,7 @@ export function SharpenForm({
               <Input
                 question={q}
                 profile={profile}
-                disabled={readOnly}
+                readOnly={readOnly}
                 set={set}
               />
               <p className={styles.affects}>{q.affectsText}</p>
