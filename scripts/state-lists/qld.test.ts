@@ -41,7 +41,7 @@ function page(...rows: string[][]): string {
 
 describe("parseQldTable", () => {
   it("reads the real onshore fixture: 233211 is on both visas", () => {
-    const entries = parseQldTable(onshoreHtml);
+    const entries = parseQldTable(onshoreHtml, "onshore");
     expect(entries["233211"]).toEqual({
       "190": true,
       "491": true,
@@ -50,7 +50,10 @@ describe("parseQldTable", () => {
   });
 
   it("reads a 491-only row", () => {
-    const entries = parseQldTable(page(["351311", "Chef", TICK, "", ""]));
+    const entries = parseQldTable(
+      page(["351311", "Chef", TICK, "", ""]),
+      "onshore",
+    );
     expect(entries["351311"]).toEqual({
       "190": false,
       "491": true,
@@ -61,6 +64,7 @@ describe("parseQldTable", () => {
   it("copes with a tick that has a trailing zero-width space or nbsp", () => {
     const entries = parseQldTable(
       page(["121111", "Aquaculture Farmer", `${TICK}​`, "&nbsp;", "&nbsp;"]),
+      "onshore",
     );
     expect(entries["121111"]).toEqual({
       "190": false,
@@ -72,6 +76,7 @@ describe("parseQldTable", () => {
   it("notes the building and construction pathway", () => {
     const entries = parseQldTable(
       page(["331211", "Carpenter", TICK, TICK, `&nbsp;${TICK}`]),
+      "onshore",
     );
     expect(entries["331211"].pathways).toEqual({
       "190": ["building-and-construction"],
@@ -85,6 +90,7 @@ describe("parseQldTable", () => {
         [...HEADINGS.slice(0, 4), "Additional information"],
         ["241512", "Teacher", TICK, TICK],
       ),
+      "offshore",
     );
     expect(entries["241512"]).toEqual({
       "190": true,
@@ -98,34 +104,60 @@ describe("parseQldTable", () => {
       ["Code", "Name", "A", "B"],
       ["233211", "x", TICK, TICK],
     );
-    expect(() => parseQldTable(changed)).toThrow(/headings/);
+    expect(() => parseQldTable(changed, "onshore")).toThrow(/headings/);
   });
 
   it("throws on a visa cell that is neither a tick nor empty", () => {
     expect(() =>
-      parseQldTable(page(["233211", "x", "Maybe", TICK, ""])),
+      parseQldTable(page(["233211", "x", "Maybe", TICK, ""]), "onshore"),
     ).toThrow(/233211/);
   });
 
   it("throws on a code that is not six digits", () => {
-    expect(() => parseQldTable(page(["2332", "x", TICK, TICK, ""]))).toThrow(
-      /2332/,
-    );
+    expect(() =>
+      parseQldTable(page(["2332", "x", TICK, TICK, ""]), "onshore"),
+    ).toThrow(/2332/);
   });
 
   it("throws rather than drop a row with no visa ticked", () => {
-    expect(() => parseQldTable(page(["233211", "x", "", "", ""]))).toThrow(
-      /review/,
+    expect(() =>
+      parseQldTable(page(["233211", "x", "", "", ""]), "onshore"),
+    ).toThrow(/review/);
+  });
+
+  it("throws when the onshore list loses its Building and Construction column, rather than drop the pathway", () => {
+    const withoutPathway = table(HEADINGS.slice(0, 4), [
+      "331211",
+      "Carpenter",
+      TICK,
+      TICK,
+    ]);
+    expect(() => parseQldTable(withoutPathway, "onshore")).toThrow(
+      /Building and Construction/,
     );
+    const renamed = table(
+      [...HEADINGS.slice(0, 4), "Additional information"],
+      ["331211", "Carpenter", TICK, TICK, ""],
+    );
+    expect(() => parseQldTable(renamed, "onshore")).toThrow(
+      /Building and Construction/,
+    );
+    expect(() =>
+      buildQldList(withoutPathway, offshoreHtml, {
+        source: "https://example.gov.au/",
+        checkedAt: "2026-11-18",
+      }),
+    ).toThrow(/Building and Construction/);
   });
 
   it("throws when there is no table", () => {
-    expect(() => parseQldTable("<p>moved</p>")).toThrow(/table/);
+    expect(() => parseQldTable("<p>moved</p>", "onshore")).toThrow(/table/);
   });
 
   it("unions a code the table lists twice", () => {
     const entries = parseQldTable(
       page(["233211", "x", TICK, "", ""], ["233211", "x", "", TICK, ""]),
+      "onshore",
     );
     expect(entries["233211"]).toEqual({
       "190": true,

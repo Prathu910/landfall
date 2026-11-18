@@ -41,17 +41,32 @@ function checkHeadings(headings: string[]): void {
   }
 }
 
+/** Which Queensland list a table is: only the onshore one names a pathway. */
+export type QldList = "onshore" | "offshore";
+
+const PATHWAY_HEADING = /Building and Construction/i;
+
 /**
  * Reads one Queensland list table into rows by ANZSCO code. A code the table
  * lists twice gets the union of its rows. A row with no visa ticked throws,
- * because the page lists only occupations it offers.
+ * because the page lists only occupations it offers. The onshore list must
+ * keep its Building and Construction column: without it the pathway would
+ * silently lose every occupation.
  */
-export function parseQldTable(html: string): Record<string, Row> {
+export function parseQldTable(
+  html: string,
+  list: QldList,
+): Record<string, Row> {
   const [table] = tablesOf(html);
   if (!table) throw new Error("QLD list table not found; review the source");
   const [headings, ...rows] = table;
   checkHeadings(headings);
-  const hasPathway = /Building and Construction/i.test(headings[4] ?? "");
+  const hasPathway = PATHWAY_HEADING.test(headings[4] ?? "");
+  if (list === "onshore" && !hasPathway) {
+    throw new Error(
+      `QLD onshore list has no Building and Construction pathway column (got "${headings.join(" | ")}"); review the source`,
+    );
+  }
   const found: Record<string, Row> = {};
   for (const cells of rows) {
     const code = cells[0] ?? "";
@@ -111,7 +126,10 @@ export function buildQldList(
   offshoreHtml: string,
   meta: { source: string; checkedAt: string },
 ): { list: ImportedList; counts: { onshore: number; offshore: number } } {
-  const parsed = [parseQldTable(onshoreHtml), parseQldTable(offshoreHtml)];
+  const parsed = [
+    parseQldTable(onshoreHtml, "onshore"),
+    parseQldTable(offshoreHtml, "offshore"),
+  ];
   const cohorts: Record<string, Record<"190" | "491", Set<Cohort>>> = {};
   const pages: Record<string, Record<"190" | "491", Set<string>>> = {};
   const pathways: Record<string, Record<"190" | "491", Set<string>>> = {};
