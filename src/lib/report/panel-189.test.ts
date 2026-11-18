@@ -151,6 +151,20 @@ describe("buildSameScore", () => {
     ).toBe("prompt");
   });
 
+  it("says an EOI month after the snapshot isn't in the published data yet", () => {
+    const expected = {
+      kind: "after-snapshot",
+      text: "Your EOI month (Nov 2026) is after this snapshot (as at Oct 2026), so it isn't in the published data yet.",
+    };
+    expect(
+      buildSameScore(core, detailFixture, 90, "2026-11", "2026-11-18"),
+    ).toEqual(expected);
+    // It needs no detail file, so it never waits on one.
+    expect(buildSameScore(core, null, 90, "2026-11", "2026-11-18")).toEqual(
+      expected,
+    );
+  });
+
   it("is loading while detail is missing", () => {
     expect(buildSameScore(core, null, 90, "2025-03", "2026-11-18")).toEqual({
       kind: "loading",

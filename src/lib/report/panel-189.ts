@@ -8,6 +8,7 @@ import type {
 } from "../data/types";
 import { formatDate } from "../migration";
 import {
+  afterSnapshotText,
   countClause,
   countInSentence,
   formatMonth,
@@ -28,6 +29,7 @@ export type SameScore =
   | { kind: "split"; sentence: string; note: string }
   | { kind: "prompt"; text: string }
   | { kind: "unavailable"; text: string }
+  | { kind: "after-snapshot"; text: string }
   | { kind: "loading" };
 
 export type RoundTile = {
@@ -97,6 +99,12 @@ export function buildSameScore(
   const asOfMonth = submissionMonth(asOf);
   if (!submittedMonth || (asOfMonth && submittedMonth > asOfMonth)) {
     return prompt;
+  }
+  if (submittedMonth > core.asAt) {
+    return {
+      kind: "after-snapshot",
+      text: afterSnapshotText(submittedMonth, core.asAt),
+    };
   }
   if (!detail) return { kind: "loading" };
   const position = poolPosition(core, detail, "189", score, submittedMonth);

@@ -7,7 +7,12 @@ import type {
   OccupationDetail,
 } from "../data/types";
 import { formatInterval } from "../pool";
-import { countInSentence, formatCount, formatMonth } from "./copy";
+import {
+  afterSnapshotText,
+  countInSentence,
+  formatCount,
+  formatMonth,
+} from "./copy";
 
 export type CohortRow = {
   month: MonthKey;
@@ -46,6 +51,8 @@ export type EoisLikeYours =
     }
   | { kind: "too-old"; text: string }
   | { kind: "unavailable"; text: string }
+  | { kind: "after-snapshot"; text: string }
+  | { kind: "no-eois"; text: string }
   | { kind: "loading" };
 
 const CLOSED_NOTE =
@@ -72,12 +79,25 @@ export function buildEoisLikeYours(input: {
   const { occupationName, core, detail, submittedMonth } = input;
   const basis = submittedMonth ? "your-month" : "latest-complete";
   const month = submittedMonth ?? calendarMonths(core.asAt, 2)[0];
+  if (month > core.asAt) {
+    return {
+      kind: "after-snapshot",
+      text: afterSnapshotText(month, core.asAt),
+    };
+  }
   if (month < cohortWindowStart(core.asAt)) {
     return { kind: "too-old", text: TOO_OLD };
   }
   if (!detail) return { kind: "loading" };
+  if (!detail.cohorts["189"]) return { kind: "unavailable", text: UNAVAILABLE };
   const outcome = cohortOutcomes(detail, "189", month);
-  if (!outcome) return { kind: "unavailable", text: UNAVAILABLE };
+  // In a fetched cohort table, a month with no row has no EOIs (DATA.md).
+  if (!outcome) {
+    return {
+      kind: "no-eois",
+      text: `No ${occupationName} 189 EOIs from ${formatMonth(month)} appear in this snapshot.`,
+    };
+  }
 
   const { SUBMITTED, INVITED, LODGED, HOLD, CLOSED } = outcome.counts;
   const range = sum([SUBMITTED, INVITED, LODGED, HOLD, CLOSED]);

@@ -132,18 +132,55 @@ describe("buildEoisLikeYours", () => {
     });
   });
 
-  it("is loading without detail, unavailable without that month", () => {
+  it("is loading without detail", () => {
     expect(
       buildEoisLikeYours({ ...base, detail: null, submittedMonth: "2025-02" }),
     ).toEqual({ kind: "loading" });
+  });
+
+  it("says an EOI month after the snapshot isn't in the published data yet", () => {
+    const expected = {
+      kind: "after-snapshot",
+      text: "Your EOI month (Nov 2026) is after this snapshot (as at Oct 2026), so it isn't in the published data yet.",
+    };
+    expect(buildEoisLikeYours({ ...base, submittedMonth: "2026-11" })).toEqual(
+      expected,
+    );
+    expect(
+      buildEoisLikeYours({ ...base, detail: null, submittedMonth: "2026-11" }),
+    ).toEqual(expected);
+  });
+
+  it("says no EOIs from an in-window month appear when its row is absent", () => {
+    // A fetched cohort table with no row for a month means zero, not unknown.
     expect(buildEoisLikeYours({ ...base, submittedMonth: "2025-08" })).toEqual({
+      kind: "no-eois",
+      text: "No Registered Nurses nec 189 EOIs from Aug 2025 appear in this snapshot.",
+    });
+  });
+
+  it("is unavailable when the occupation has no 189 cohort table", () => {
+    expect(
+      buildEoisLikeYours({
+        ...base,
+        detail: { ...detail, cohorts: {} },
+        submittedMonth: "2025-08",
+      }),
+    ).toEqual({
       kind: "unavailable",
       text: "Published outcomes by submission month are not available for this occupation.",
     });
   });
 
   it("never uses banned copy", () => {
-    for (const month of ["2025-02", "2026-09", null, "2023-10", "2025-08"]) {
+    for (const month of [
+      "2025-02",
+      "2026-09",
+      null,
+      "2023-10",
+      "2025-08",
+      "2026-11",
+    ]) {
       const r = buildEoisLikeYours({ ...base, submittedMonth: month });
       expect(JSON.stringify(r)).not.toMatch(BANNED_COPY);
     }

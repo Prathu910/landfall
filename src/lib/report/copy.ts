@@ -44,6 +44,11 @@ export function formatMonth(month: MonthKey): string {
   return `${MONTH_NAMES[Number(m) - 1]} ${year}`;
 }
 
+/** For an EOI month later than the snapshot's as-at month. */
+export function afterSnapshotText(month: MonthKey, asAt: MonthKey): string {
+  return `Your EOI month (${formatMonth(month)}) is after this snapshot (as at ${formatMonth(asAt)}), so it isn't in the published data yet.`;
+}
+
 /** The YYYY-MM of a valid YYYY-MM-DD calendar date, otherwise null. */
 export function submissionMonth(eoiDate: string): MonthKey | null {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(eoiDate);
