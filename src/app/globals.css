@@ -212,21 +212,6 @@ svg {
 .button:hover svg {
   transform: translate(2px, -2px);
 }
-.button-small {
-  font-size: 12px;
-  padding: 11px 16px;
-  min-height: 42px;
-  gap: 13px;
-}
-.button-outline {
-  background: transparent;
-  border-color: #ddd4c2;
-  color: var(--ink);
-  box-shadow: none;
-}
-.button-outline:hover {
-  background: #f3eee3;
-}
 .button-accent {
   background: var(--saffron);
   border-color: var(--saffron);
@@ -393,12 +378,6 @@ svg {
   color: #6b6558;
   margin-bottom: 24px;
 }
-.page-panel {
-  background: white;
-  border: 1px solid var(--rule);
-  border-radius: 14px;
-  padding: 30px;
-}
 .subtle {
   font-size: 12px;
   color: var(--muted);
@@ -502,11 +481,6 @@ svg {
   letter-spacing: 0.12em;
   color: #6b6558;
   margin-bottom: 10px;
-}
-.two-columns {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
 }
 .states-controls {
   display: flex;
@@ -1135,19 +1109,6 @@ svg {
   .main-nav {
     display: none;
   }
-  .main-nav.is-open {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    position: absolute;
-    top: 73px;
-    left: 0;
-    right: 0;
-    padding: 20px 30px;
-    background: #fbf8f2;
-    border-bottom: 1px solid var(--rule);
-    gap: 5px;
-  }
   .menu-button {
     display: block;
   }
@@ -1257,9 +1218,6 @@ svg {
   }
   .report-section h2 {
     font-size: 29px;
-  }
-  .two-columns {
-    gap: 15px;
   }
 }
 @media (max-width: 480px) {

@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { sampleCaption, HOME_COPY } from "../../lib/home/home-copy";
 import type { ReportView } from "../../lib/report/report-view";
@@ -31,10 +32,10 @@ function Question(props: {
           {props.title}
         </h3>
         <p className={styles.body}>{props.body}</p>
-        <a className={styles.link} href={props.href}>
+        <Link className={styles.link} href={props.href}>
           {props.link}
           <ArrowRight size={16} aria-hidden />
-        </a>
+        </Link>
       </div>
       <figure className={styles.visual}>
         {props.children}

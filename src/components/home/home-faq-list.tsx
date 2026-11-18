@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { HOME_FAQ } from "./home-faq";
 import styles from "./home-faq-list.module.css";
@@ -15,10 +16,10 @@ export function HomeFaqList() {
           <div className={styles.answer}>
             <p>{item.answer}</p>
             {item.link ? (
-              <a className={styles.link} href={item.link.href}>
+              <Link className={styles.link} href={item.link.href}>
                 {item.link.text}
                 <ArrowRight size={15} aria-hidden />
-              </a>
+              </Link>
             ) : null}
           </div>
         </details>
