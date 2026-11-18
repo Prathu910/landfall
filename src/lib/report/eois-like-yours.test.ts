@@ -62,6 +62,9 @@ describe("buildEoisLikeYours", () => {
       hold: "under 20",
     });
     expect(r.bar.waiting).toEqual({ min: 142, max: 142 });
+    expect(r.statusNote).toBe(
+      "Each EOI is counted once, in its status as at Oct 2026; EOIs that lodged or closed may have been invited earlier.",
+    );
     expect(r.closedNote).toBe(
       "Closed means expired, withdrawn or finalised (finalised includes granted visas).",
     );

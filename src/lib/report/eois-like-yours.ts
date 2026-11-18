@@ -46,6 +46,7 @@ export type EoisLikeYours =
         hold: string | null;
       };
       bar: Bar;
+      statusNote: string;
       closedNote: string;
       nearby: CohortRow[];
     }
@@ -143,6 +144,7 @@ export function buildEoisLikeYours(input: {
       waiting: SUBMITTED,
       closed: CLOSED,
     },
+    statusNote: `Each EOI is counted once, in its status as at ${asAtLabel}; EOIs that lodged or closed may have been invited earlier.`,
     closedNote: CLOSED_NOTE,
     nearby,
   };

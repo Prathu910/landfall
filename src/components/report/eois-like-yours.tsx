@@ -7,7 +7,7 @@ import styles from "./panel-189.module.css";
 type Ready = Extract<View, { kind: "ready" }>;
 
 const OUTCOMES = [
-  { key: "invited", label: "Invited" },
+  { key: "invited", label: "Invited, not yet lodged" },
   { key: "lodged", label: "Lodged a visa" },
   { key: "waiting", label: "Still waiting" },
   { key: "closed", label: "Closed" },
@@ -31,6 +31,7 @@ function Ready({ view }: { view: Ready }) {
     <>
       <p className={styles.lead}>{view.sentence}</p>
       {view.basisNote ? <p className={styles.note}>{view.basisNote}</p> : null}
+      <p className={styles.note}>{view.statusNote}</p>
       <dl className={styles.stats}>
         {OUTCOMES.map((o) => (
           <div key={o.key}>
@@ -73,7 +74,7 @@ function Ready({ view }: { view: Ready }) {
             <thead>
               <tr>
                 <th scope="col">Submitted</th>
-                <th scope="col">Invited</th>
+                <th scope="col">Invited, not yet lodged</th>
                 <th scope="col">Lodged</th>
                 <th scope="col">Waiting</th>
                 <th scope="col">Closed</th>
