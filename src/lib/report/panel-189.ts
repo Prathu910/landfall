@@ -6,7 +6,7 @@ import type {
   OccupationDetail,
 } from "../data/types";
 import { formatDate } from "../migration";
-import { countPhrase, formatCount, formatMonth, submissionMonth } from "./copy";
+import { formatCount, formatMonth, isMasked, submissionMonth } from "./copy";
 
 export type QueueSegments = {
   ahead: Interval;
@@ -21,6 +21,7 @@ export type WhereYouStand =
 export type SameScore =
   | { kind: "split"; sentence: string; note: string }
   | { kind: "prompt"; text: string }
+  | { kind: "unavailable"; text: string }
   | { kind: "loading" };
 
 export type RoundTile = {
@@ -43,8 +44,19 @@ const SAME_SCORE_NOTE =
   "Approximate: ties are broken by date of effect, which isn't published and can differ from the submission month.";
 const SAME_SCORE_PROMPT =
   "Add your EOI date to see how many same-score EOIs were submitted before yours.";
+const SAME_SCORE_UNAVAILABLE =
+  "Published counts by submission month aren't available at your score.";
 const ROUNDS_NOTE =
   "“Not listed” means the official results didn't include this occupation. It is not a cut-off of zero.";
+
+/** One sentence; a masked count is capitalised if first and may be zero. */
+function clause(count: Interval, tail: string, lead = "", after = ""): string {
+  const text = formatCount(count);
+  const body = lead
+    ? `${lead}${text}${tail}${after}`
+    : `${text[0].toUpperCase()}${text.slice(1)}${tail}${after}`;
+  return `${body}${isMasked(count) ? ", so this may be zero" : ""}.`;
+}
 
 export function buildWhereYouStand(
   core: OccupationCore,
@@ -64,7 +76,16 @@ export function buildWhereYouStand(
   };
   return {
     segments: { ahead, same, lower, total },
-    sentence: `${countPhrase(ahead)} EOIs have a higher score. ${countPhrase(same)} share your ${position.score} points. The pool holds ${countPhrase(total)} EOIs as at ${formatMonth(core.asAt)}.`,
+    sentence: [
+      clause(ahead, " EOIs have a higher score"),
+      clause(same, ` share your ${position.score} points`),
+      clause(
+        total,
+        " EOIs",
+        "The pool holds ",
+        ` as at ${formatMonth(core.asAt)}`,
+      ),
+    ].join(" "),
   };
 }
 
@@ -82,7 +103,9 @@ export function buildSameScore(
   }
   if (!detail) return { kind: "loading" };
   const position = poolPosition(core, detail, "189", score, submittedMonth);
-  if (!position.available || !position.sameSubmitted) return prompt;
+  if (!position.available || !position.sameSubmitted) {
+    return { kind: "unavailable", text: SAME_SCORE_UNAVAILABLE };
+  }
   const { before, sameMonth, after } = position.sameSubmitted;
   return {
     kind: "split",

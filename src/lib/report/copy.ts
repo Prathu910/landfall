@@ -20,7 +20,7 @@ const MONTHS = [
 export const BANNED_COPY =
   /\b(should|apply to|best|likely to be invited|people|applicants|some invitations|a few)\b/i;
 
-function isMasked(i: Interval): boolean {
+export function isMasked(i: Interval): boolean {
   return i.min === 0 && i.max === 19;
 }
 

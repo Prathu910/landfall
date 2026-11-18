@@ -33,6 +33,59 @@ describe("buildWhereYouStand", () => {
   });
 });
 
+function withPool(total: string, byScore: Record<string, string>) {
+  return { ...noneRoundsCore, pool: { "189": { total, byScore } } };
+}
+
+describe("buildWhereYouStand masked counts", () => {
+  it("reads naturally when ahead is masked", () => {
+    const result = buildWhereYouStand(
+      withPool("9464", { "95": "<20", "90": "1132" }),
+      90,
+    );
+    if ("unavailable" in result) throw new Error("expected segments");
+    expect(result.sentence).toBe(
+      "Under 20 EOIs have a higher score, so this may be zero. 1,132 share your 90 points. The pool holds 9,464 EOIs as at Oct 2026.",
+    );
+    expect(result.sentence).not.toMatch(BANNED_COPY);
+  });
+
+  it("reads naturally when same is masked", () => {
+    const result = buildWhereYouStand(
+      withPool("9464", { "95": "608", "90": "<20" }),
+      90,
+    );
+    if ("unavailable" in result) throw new Error("expected segments");
+    expect(result.sentence).toContain(
+      "Under 20 share your 90 points, so this may be zero.",
+    );
+  });
+
+  it("reads naturally when total is masked", () => {
+    const result = buildWhereYouStand(
+      withPool("<20", { "95": "<20", "90": "<20" }),
+      90,
+    );
+    if ("unavailable" in result) throw new Error("expected segments");
+    expect(result.sentence).toContain(
+      "The pool holds under 20 EOIs as at Oct 2026, so this may be zero.",
+    );
+    expect(result.segments.lower).toEqual({ min: 0, max: 19 });
+  });
+
+  it("clamps lower when the subtraction would go negative", () => {
+    const result = buildWhereYouStand(
+      withPool("500", { "95": "300", "90": "400" }),
+      90,
+    );
+    if ("unavailable" in result) throw new Error("expected segments");
+    expect(result.segments.lower.min).toBe(0);
+    expect(result.segments.lower.max).toBeGreaterThanOrEqual(
+      result.segments.lower.min,
+    );
+  });
+});
+
 describe("buildSameScore", () => {
   const core = { ...coreFixture, pool: noneRoundsCore.pool };
 
@@ -72,10 +125,13 @@ describe("buildSameScore", () => {
     });
   });
 
-  it("prompts when no cohort data exists for the score", () => {
+  it("says counts are unavailable when the score has no cohort split", () => {
     expect(
-      buildSameScore(core, detailFixture, 120, "2025-03", "2026-11-18").kind,
-    ).toBe("prompt");
+      buildSameScore(core, detailFixture, 120, "2025-03", "2026-11-18"),
+    ).toEqual({
+      kind: "unavailable",
+      text: "Published counts by submission month aren't available at your score.",
+    });
   });
 });
 
