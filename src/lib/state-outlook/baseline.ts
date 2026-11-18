@@ -1,5 +1,6 @@
+import type { Profile, UncheckedDate } from "../migration";
 import { fail, joinWords, pass } from "./context";
-import type { StreamContext, Verdict } from "./context";
+import type { PointsEligibility, StreamContext, Verdict } from "./context";
 import { toCheck } from "./judge";
 import type { RuleCheck } from "./judge";
 
@@ -19,27 +20,83 @@ function fromPointsCheck(label: string, verdict: Verdict): RuleCheck {
   };
 }
 
+const ELIGIBILITY =
+  "Age, English test and skills assessment within the federal limits";
+
+/** A missing points-check answer: what it is and the profile field it fills. */
+type MissingAnswer = { topic: string; question: string; field?: keyof Profile };
+
+// Ruling P32: these dates can be answered in "Sharpen my state outlook".
+const DATE_ANSWERS: Record<UncheckedDate, MissingAnswer> = {
+  englishDate: {
+    topic: "your English test date",
+    question: "Add your English test date",
+    field: "englishDate",
+  },
+  assessmentDate: {
+    topic: "your skills assessment issue date",
+    question: "Add your skills assessment issue date",
+    field: "assessmentDate",
+  },
+  assessmentExpiry: {
+    topic: "your skills assessment expiry date",
+    question: "Correct your skills assessment expiry date",
+    field: "assessmentExpiry",
+  },
+};
+
+// The labels `calculatePoints` puts in `missing`; only the main check asks them.
+const MAIN_CHECK_ANSWERS: Record<string, Omit<MissingAnswer, "question">> = {
+  "Date of birth": { topic: "your date of birth", field: "dob" },
+  "English proficiency": { topic: "your English level", field: "english" },
+  "Highest qualification": {
+    topic: "your highest qualification",
+    field: "qualification",
+  },
+  "Partner status": { topic: "your partner status", field: "partner" },
+};
+
+function mainCheckAnswer(label: string): MissingAnswer {
+  const known = MAIN_CHECK_ANSWERS[label] ?? { topic: label.toLowerCase() };
+  return { ...known, question: `Edit your answers to add ${known.topic}` };
+}
+
+function missingAnswers(eligibility: PointsEligibility): MissingAnswer[] {
+  const answers = [
+    ...eligibility.uncheckedDates.map((date) => DATE_ANSWERS[date]),
+    ...eligibility.missing.map(mainCheckAnswer),
+  ];
+  return answers.length > 0
+    ? answers
+    : [{ topic: "your points check", question: "Complete your points check" }];
+}
+
+function askFor(answer: MissingAnswer): Verdict {
+  const verdict: Verdict = {
+    outcome: "needs-answer",
+    finding: answer.topic,
+    question: answer.question,
+  };
+  if (answer.field !== undefined) verdict.field = answer.field;
+  return verdict;
+}
+
 // `eligible` covers only age, English and the skills assessment, never full
-// visa eligibility; unknown never passes.
-function eligibilityCheck(ctx: StreamContext): RuleCheck {
-  const label =
-    "Age, English test and skills assessment within the federal limits";
+// visa eligibility. Unknown never passes: each missing answer is asked for.
+function eligibilityChecks(ctx: StreamContext): RuleCheck[] {
   const { eligible, ineligibleReasons } = ctx.eligibility;
   if (eligible === false) {
-    return fromPointsCheck(
-      label,
-      fail(`Your points check shows ${joinWords(ineligibleReasons, "and")}`),
-    );
+    const reasons = joinWords(ineligibleReasons, "and");
+    return [
+      fromPointsCheck(ELIGIBILITY, fail(`Your points check shows ${reasons}`)),
+    ];
   }
   if (eligible === null) {
-    // No profile field to ask for: the missing answers are in the main check.
-    return fromPointsCheck(label, {
-      outcome: "needs-answer",
-      finding: "your points check",
-      question: "Complete your points check",
-    });
+    return missingAnswers(ctx.eligibility).map((answer) =>
+      fromPointsCheck(ELIGIBILITY, askFor(answer)),
+    );
   }
-  return fromPointsCheck(label, pass(label));
+  return [fromPointsCheck(ELIGIBILITY, pass(ELIGIBILITY))];
 }
 
 function passMarkCheck(ctx: StreamContext): RuleCheck {
@@ -57,5 +114,5 @@ function passMarkCheck(ctx: StreamContext): RuleCheck {
  * any state rule, so no state reads as open to someone who misses them.
  */
 export function baselineChecks(ctx: StreamContext): RuleCheck[] {
-  return [eligibilityCheck(ctx), passMarkCheck(ctx)];
+  return [...eligibilityChecks(ctx), passMarkCheck(ctx)];
 }

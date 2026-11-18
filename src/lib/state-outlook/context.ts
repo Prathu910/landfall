@@ -29,7 +29,7 @@ export function closedLabel(programYear: string): string {
 /** What the points check says about the federal minimums (ruling P27). */
 export type PointsEligibility = Pick<
   PointsResult,
-  "eligible" | "ineligibleReasons"
+  "eligible" | "ineligibleReasons" | "missing" | "uncheckedDates"
 >;
 
 /** Everything one stream's rules are judged against. */

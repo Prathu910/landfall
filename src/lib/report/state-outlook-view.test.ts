@@ -10,6 +10,7 @@ import {
 } from "../migration";
 import { resetStateRelativeAnswers } from "../state-answers";
 import {
+  cases,
   realFederal,
   realLists,
 } from "../state-outlook/__fixtures__/real-data";
@@ -147,6 +148,33 @@ describe("buildStateOutlookView", () => {
       group: "not-open",
       fragment: "Your points check shows age 45 or over",
     });
+  });
+
+  it("asks for a missing English test date in place, and restores the outlook once it is given (ruling P32)", () => {
+    const nurse: Profile = {
+      ...cases[1].profile,
+      assessmentDate: "2026-02-20",
+      englishDate: "",
+    };
+    const unknown = calculatePoints(nurse, AS_OF);
+    expect(unknown.eligible).toBeNull();
+    const before = build(nurse, data, unknown);
+    expect(groupOf(before, "190", "QLD")).toBe("needs-answers");
+    const question = before.questions.find((q) => q.field === "englishDate");
+    expect(question).toMatchObject({
+      kind: "date",
+      affectsText: "Affects: every state and territory",
+    });
+    const line = before.panelsByVisa["190"]
+      .find((p) => p.id === "state-190-QLD")
+      ?.canApply.find((l) => l.text === "Add your English test date");
+    expect(line).toMatchObject({
+      mark: "?",
+      checkedNote: "From your points check",
+    });
+    const answered = { ...nurse, englishDate: "2025-02-02" };
+    const after = build(answered, data, calculatePoints(answered, AS_OF));
+    expect(groupOf(after, "190", "QLD")).toBe("strongest");
   });
 
   it("makes every tile Not yet verified when the federal list is unavailable", () => {

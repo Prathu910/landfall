@@ -5,13 +5,7 @@ import type { Outlook, RuleCheck } from "./outlook";
 import type { RelatedWork } from "./rules-types";
 
 export type QuestionKind =
-  | "state"
-  | "months"
-  | "years"
-  | "visa-expiry"
-  | "job-offer"
-  | "study"
-  | "regional";
+  "state" | "months" | "years" | "date" | "job-offer" | "study" | "regional";
 
 /** One optional question, shared by every state (and visa) that needs it. */
 export type Question = {
@@ -110,6 +104,24 @@ const TEMPLATES: Partial<Record<keyof Profile, Template>> = {
     kind: "state",
     text: () => "Which state or territory do you live in now?",
   },
+  // Ruling P32: the points check can't confirm eligibility without these.
+  englishDate: {
+    kind: "date",
+    text: () => "When did you take your English test?",
+    help: () =>
+      "The test date on your results. Your points check uses it to confirm the test is under 3 years old.",
+  },
+  assessmentDate: {
+    kind: "date",
+    text: () => "When was your skills assessment issued?",
+    help: () =>
+      "The date on your assessment letter. Your points check uses it to confirm the assessment is still valid.",
+  },
+  assessmentExpiry: {
+    kind: "date",
+    text: () => "When does your skills assessment expire?",
+    help: () => "Only if your assessment letter gives an expiry date.",
+  },
   monthsLivingInState: {
     kind: "months",
     text: (state) =>
@@ -135,7 +147,7 @@ const TEMPLATES: Partial<Record<keyof Profile, Template>> = {
   yearsExperienceLast5: yearsTemplate(5),
   yearsExperienceLast10: yearsTemplate(10),
   visaExpiry: {
-    kind: "visa-expiry",
+    kind: "date",
     text: () => "When does your current visa expire?",
   },
   jobOfferState: {
@@ -179,10 +191,14 @@ function neededChecks(outlooks: Outlook[]): Map<keyof Profile, Asked> {
         }
       }
       // A given answer stays editable whichever stream used it, so it never
-      // vanishes when it moves the deciding stream (or after a reload).
+      // vanishes when it moves the deciding stream (or after a reload). A
+      // missing points-check answer holds every state back (ruling P32).
       for (const stream of outcome.streams) {
         for (const check of stream.checks) {
-          if (check.outcome !== "needs-answer") {
+          if (
+            check.outcome !== "needs-answer" ||
+            check.basis === "points-check"
+          ) {
             addCheck(asked, outcome.state, check);
           }
         }
@@ -219,7 +235,10 @@ export function questionsNeeded(
       text: template.text(own, check, entry),
       ...(template.help === undefined ? {} : { help: template.help(entry) }),
       affects,
-      affectsText: `Affects: ${affects.join(", ")}`,
+      affectsText:
+        affected.length === STATE_CODES.length
+          ? "Affects: every state and territory"
+          : `Affects: ${affects.join(", ")}`,
       ...(template.max === undefined ? {} : { max: template.max }),
     });
   }

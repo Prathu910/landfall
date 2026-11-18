@@ -95,7 +95,11 @@ export type PointsResult = {
   eligible: boolean | null;
   /** Why `eligible` is false, shortest first: "age 45 or over". Empty otherwise. */
   ineligibleReasons: string[];
+  /** Date answers that are empty or invalid, so eligibility can't be confirmed. */
+  uncheckedDates: UncheckedDate[];
 };
+export type UncheckedDate =
+  "englishDate" | "assessmentDate" | "assessmentExpiry";
 export type TimelineEvent = {
   date: string;
   title: string;
@@ -172,13 +176,14 @@ export function calculatePoints(profile: Profile, asOf: string): PointsResult {
       warnings: ["Enter a valid calendar date to calculate an estimate."],
       eligible: null,
       ineligibleReasons: [],
+      uncheckedDates: [],
     };
   const missing: string[] = [];
   const warnings: string[] = [];
   const categories: PointCategory[] = [];
   // Each reason the modeled eligibility fails; any reason means `false`.
   const ineligibleReasons: string[] = [];
-  let unknown = false;
+  const uncheckedDates: UncheckedDate[] = [];
   const add = (key: string, label: string, points: number, max: number) =>
     categories.push({ key, label, points, max });
   const dob = parseDate(profile.dob);
@@ -194,13 +199,13 @@ export function calculatePoints(profile: Profile, asOf: string): PointsResult {
   let englishValid = true;
   if (profile.english === "unknown") missing.push("English proficiency");
   else if (!profile.englishDate) {
-    unknown = true;
+    uncheckedDates.push("englishDate");
     warnings.push(
       "English points are self-reported; test validity is unknown without a test date.",
     );
   } else if (!englishDate || englishDate > today) {
     englishValid = false;
-    unknown = true;
+    uncheckedDates.push("englishDate");
     warnings.push("English test date is invalid or in the future.");
   } else if (today >= addYears(englishDate, 3)) {
     englishValid = false;
@@ -339,13 +344,13 @@ export function calculatePoints(profile: Profile, asOf: string): PointsResult {
   const assessmentDate = parseDate(profile.assessmentDate);
   const assessmentExpiry = assessmentEnd(profile);
   if (!assessmentDate || assessmentDate > today) {
-    unknown = true;
+    uncheckedDates.push("assessmentDate");
     warnings.push(
       "Add a valid skills assessment issue date to check the modeled assessment requirement.",
     );
   }
   if (profile.assessmentExpiry && !parseDate(profile.assessmentExpiry)) {
-    unknown = true;
+    uncheckedDates.push("assessmentExpiry");
     warnings.push("Skills assessment letter expiry date is invalid.");
   }
   if (assessmentExpiry && today >= assessmentExpiry) {
@@ -375,10 +380,11 @@ export function calculatePoints(profile: Profile, asOf: string): PointsResult {
     eligible:
       ineligibleReasons.length > 0
         ? false
-        : unknown || missing.length > 0
+        : uncheckedDates.length > 0 || missing.length > 0
           ? null
           : true,
     ineligibleReasons,
+    uncheckedDates,
   };
 }
 

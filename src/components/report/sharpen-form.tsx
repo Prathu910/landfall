@@ -33,9 +33,18 @@ function isAnswered(value: unknown): boolean {
   return value !== null && value !== undefined && value !== "";
 }
 
+// Main-check answers stored as strings: "" means unanswered.
+const TEXT_FIELDS: (keyof Profile)[] = [
+  "state",
+  "visaExpiry",
+  "englishDate",
+  "assessmentDate",
+  "assessmentExpiry",
+];
+
 /** Passes a state-outlook answer through validation; null or "" clears it. */
 function patchFor(field: keyof Profile, value: unknown): Partial<Profile> {
-  if (field === "state" || field === "visaExpiry") {
+  if (TEXT_FIELDS.includes(field)) {
     return { [field]: typeof value === "string" ? value : "" };
   }
   if (!isAnswered(value)) return { [field]: null };
@@ -134,14 +143,14 @@ function Input({
           set={set}
         />
       );
-    case "visa-expiry":
+    case "date":
       return (
         <DateInput
           {...common}
           placeholder="DD MMM YYYY"
           valueFormat="DD MMM YYYY"
           minDate="1900-01-01"
-          value={profile.visaExpiry || null}
+          value={typeof value === "string" && value !== "" ? value : null}
           onChange={(v) => set(v ?? "")}
           popoverProps={{ shadow: "md", withinPortal: true }}
         />

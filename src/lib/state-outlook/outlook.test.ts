@@ -133,7 +133,12 @@ function outlook(
     federal,
     profile: livingInSa,
     points: 90,
-    eligibility: { eligible: true, ineligibleReasons: [] },
+    eligibility: {
+      eligible: true,
+      ineligibleReasons: [],
+      missing: [],
+      uncheckedDates: [],
+    },
     visa: "190",
     asOf: AS_OF,
     ...overrides,
@@ -348,7 +353,12 @@ describe("stateOutlook: groups", () => {
 
   it("gives not-open everywhere for an ineligible points check, naming the reason (ruling P27)", () => {
     const result = outlook([visaRules("WA", [stream("wa-a")])], {
-      eligibility: { eligible: false, ineligibleReasons: ["age 45 or over"] },
+      eligibility: {
+        eligible: false,
+        ineligibleReasons: ["age 45 or over"],
+        missing: [],
+        uncheckedDates: [],
+      },
     });
     for (const s of result.states.filter((x) => x.deciding !== null)) {
       expect(s.group).toBe("not-open");
@@ -368,7 +378,12 @@ describe("stateOutlook: groups", () => {
 
   it("never passes a state while the points check is incomplete (ruling P27)", () => {
     const result = outlook([visaRules("WA", [stream("wa-a")])], {
-      eligibility: { eligible: null, ineligibleReasons: [] },
+      eligibility: {
+        eligible: null,
+        ineligibleReasons: [],
+        missing: [],
+        uncheckedDates: ["englishDate"],
+      },
     });
     expect(outcomeFor(result, "WA").group).toBe("needs-answers");
   });

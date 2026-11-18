@@ -63,6 +63,24 @@ describe("federal points estimate", () => {
     });
   });
 
+  it("names the date fields that leave eligibility unknown (ruling P32)", () => {
+    const unchecked = (overrides: Partial<Profile>) =>
+      calculatePoints(complete(overrides), "2026-11-18").uncheckedDates;
+    expect(unchecked({})).toEqual([]);
+    expect(unchecked({ englishDate: "" })).toEqual(["englishDate"]);
+    expect(unchecked({ englishDate: "2027-01-01" })).toEqual(["englishDate"]);
+    expect(unchecked({ assessmentDate: "" })).toEqual(["assessmentDate"]);
+    expect(unchecked({ assessmentExpiry: "2029-02-31" })).toEqual([
+      "assessmentExpiry",
+    ]);
+    expect(unchecked({ englishDate: "", assessmentDate: "" })).toEqual([
+      "englishDate",
+      "assessmentDate",
+    ]);
+    // Without an English level there is no test date to ask for yet.
+    expect(unchecked({ english: "unknown", englishDate: "" })).toEqual([]);
+  });
+
   it("caps combined employment at 20 and uses threshold years", () => {
     expect(
       points(complete({ overseasYears: 8, australianYears: 8 }), "employment"),

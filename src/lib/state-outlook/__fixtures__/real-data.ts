@@ -41,6 +41,8 @@ export function realFederal(): FederalList {
 export const ELIGIBLE: PointsEligibility = {
   eligible: true,
   ineligibleReasons: [],
+  missing: [],
+  uncheckedDates: [],
 };
 
 /** Three real occupations and profiles used to sweep the real rules and data. */

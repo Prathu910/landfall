@@ -93,7 +93,12 @@ function ctx(overrides: Partial<StreamContext> = {}): StreamContext {
     asOf: AS_OF,
     programYear: "2026–27",
     points: 90,
-    eligibility: { eligible: true, ineligibleReasons: [] },
+    eligibility: {
+      eligible: true,
+      ineligibleReasons: [],
+      missing: [],
+      uncheckedDates: [],
+    },
     ...overrides,
   };
 }
@@ -144,6 +149,8 @@ describe("evaluateStream: federal baseline from the points check (ruling P27)", 
         eligibility: {
           eligible: false,
           ineligibleReasons: ["age 45 or over", "English test expired"],
+          missing: [],
+          uncheckedDates: [],
         },
       }),
     );
@@ -168,18 +175,85 @@ describe("evaluateStream: federal baseline from the points check (ruling P27)", 
     );
   });
 
-  it("asks to complete the points check when eligibility is unknown, never passing", () => {
+  it("names each missing points-check answer and its field when eligibility is unknown, never passing (ruling P32)", () => {
     const result = evaluateStream(
       stream(),
-      ctx({ eligibility: { eligible: null, ineligibleReasons: [] } }),
+      ctx({
+        eligibility: {
+          eligible: null,
+          ineligibleReasons: [],
+          missing: ["Date of birth", "English proficiency"],
+          uncheckedDates: ["assessmentDate"],
+        },
+      }),
     );
     expect(result.outcome).toBe("needs-answer");
+    const asked = result.checks.filter((c) => c.outcome === "needs-answer");
+    expect(asked.map((c) => [c.question, c.field, c.finding, c.basis])).toEqual(
+      [
+        [
+          "Add your skills assessment issue date",
+          "assessmentDate",
+          "your skills assessment issue date",
+          "points-check",
+        ],
+        [
+          "Edit your answers to add your date of birth",
+          "dob",
+          "your date of birth",
+          "points-check",
+        ],
+        [
+          "Edit your answers to add your English level",
+          "english",
+          "your English level",
+          "points-check",
+        ],
+      ],
+    );
+    // The pass mark still follows.
+    expect(result.checks[3].label).toBe(
+      "At least 65 points for 190 with nomination",
+    );
+  });
+
+  it("asks for the English test date when that is all that is missing", () => {
+    const result = evaluateStream(
+      stream(),
+      ctx({
+        eligibility: {
+          eligible: null,
+          ineligibleReasons: [],
+          missing: [],
+          uncheckedDates: ["englishDate"],
+        },
+      }),
+    );
+    expect(result.checks[0]).toMatchObject({
+      outcome: "needs-answer",
+      question: "Add your English test date",
+      field: "englishDate",
+    });
+  });
+
+  it("still asks to complete the points check when it can't say what is missing", () => {
+    const result = evaluateStream(
+      stream(),
+      ctx({
+        eligibility: {
+          eligible: null,
+          ineligibleReasons: [],
+          missing: [],
+          uncheckedDates: [],
+        },
+      }),
+    );
     expect(result.checks[0]).toMatchObject({
       outcome: "needs-answer",
       question: "Complete your points check",
+      finding: "your points check",
     });
     expect(result.checks[0].field).toBeUndefined();
-    expect(result.checks[0].finding).toBe("your points check");
   });
 });
 

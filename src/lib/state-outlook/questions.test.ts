@@ -248,6 +248,28 @@ describe("questionsNeeded", () => {
     expect(qs[0].help).toMatch(/some states also count related work/);
   });
 
+  it("offers the missing points-check dates to every state (ruling P32)", () => {
+    const englishDate = check({
+      field: "englishDate",
+      basis: "points-check",
+      question: "Add your English test date",
+    });
+    const all = ["ACT", "NSW", "NT", "QLD", "SA", "TAS", "VIC", "WA"] as const;
+    const qs = ask([
+      outlook(
+        "190",
+        all.map((state): [StateCode, RuleCheck[]] => [state, [englishDate]]),
+      ),
+    ]);
+    expect(qs[0]).toMatchObject({
+      field: "englishDate",
+      kind: "date",
+      text: "When did you take your English test?",
+      affectsText: "Affects: every state and territory",
+    });
+    expect(qs[0].affects).toHaveLength(8);
+  });
+
   it("gives the short questions for the remaining fields", () => {
     const qs = ask([
       outlook("190", [
@@ -265,7 +287,7 @@ describe("questionsNeeded", () => {
     ]);
     expect(qs.map((q) => q.kind)).toEqual([
       "state",
-      "visa-expiry",
+      "date",
       "job-offer",
       "study",
       "regional",
