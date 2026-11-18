@@ -33,7 +33,7 @@ const NAMED_ENTITIES: Record<string, string> = {
   nbsp: " ",
 };
 
-function decodeEntities(text: string): string {
+export function decodeEntities(text: string): string {
   return text.replace(
     /&(#x[0-9a-f]+|#\d+|[a-z]+);/gi,
     (whole, body: string) => {
