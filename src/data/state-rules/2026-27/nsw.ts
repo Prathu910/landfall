@@ -27,7 +27,7 @@ const FAQ = `${BASE}/common-questions-about-skilled-visas`;
 const skillsList = verified(
   list("nsw"),
   LISTS,
-  "The NSW Skills List (190) names 80 ANZSCO unit groups: an occupation qualifies when its unit group is listed and it is eligible for the visa. Onshore and offshore candidates use the same list.",
+  "The NSW Skills List (190) names ANZSCO unit groups (80 counted in the research; the imported list has 78): an occupation qualifies when its unit group is listed and it is eligible for the visa. Onshore and offshore candidates use the same list.",
 );
 
 const open190 = verified(
@@ -68,17 +68,18 @@ const nsw190: StateVisaRules = {
   streams: [
     // Ruling P13: NSW sets no minimum duration for this option, only current
     // work of 20+ hours a week (research §NSW item 4). "At least 1 month" is
-    // Landfall's approximation, so it is secondary and never decides.
+    // Landfall's approximation, so it is secondary and never decides. No
+    // residence condition is stated, so interstate residents count (P17).
     option190(
       "nsw-190-working",
       "Working in NSW",
-      IN_STATE,
+      ["living-in-state", "living-in-other-state"],
       secondary(
         workingInState(1, "same-occupation"),
         NSW_190,
         "NSW's rule (read directly): currently working in NSW (20+ hours a week) in the nominated occupation, with no minimum duration. 'At least 1 month' is Landfall's approximation for its months-working question, so this check is not applied as verified.",
       ),
-      "Landfall's work question covers the state you live in, so living in another state while working in NSW is not matched here.",
+      "No residence condition is stated for this option; the work must be in NSW.",
     ),
     option190(
       "nsw-190-living",

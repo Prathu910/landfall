@@ -251,6 +251,76 @@ describe("2026–27 state rules", () => {
     }
   });
 
+  it("accepts those living in another state where no residence condition is stated", () => {
+    // Research §NSW item 4 and §QLD item 4.
+    for (const [state, id] of [
+      ["NSW", "nsw-190-working"],
+      ["QLD", "qld-building"],
+    ]) {
+      for (const s of streamsOf(state).filter((x) => x.id === id)) {
+        expect(s.cohorts.value).toContain("living-in-other-state");
+        expect(s.cohorts.value).toContain("living-in-state");
+        expect(s.cohorts.verification).toBe("verified");
+      }
+    }
+  });
+
+  it("windows QLD's 'N of the last M months' rules, and only those", () => {
+    const want: Record<string, [number, number]> = {
+      "190": [9, 12],
+      "491": [6, 9],
+    };
+    for (const visa of ["190", "491"]) {
+      for (const id of ["qld-onshore", "qld-graduate"]) {
+        const s = rule("QLD", visa).streams.find((x) => x.id === id);
+        const months = (s?.requirements ?? [])
+          .map((q) => q.value)
+          .filter(
+            (v) =>
+              v.kind === "min-months-living-in-state" ||
+              v.kind === "min-months-working-in-state",
+          );
+        expect(months, `${visa} ${id}`).toHaveLength(2);
+        for (const v of months) {
+          expect([v.months, v.ofLastMonths]).toEqual(want[visa]);
+        }
+      }
+    }
+    const windowed = stateRules.rules
+      .flatMap((r) => r.streams)
+      .flatMap((s) => s.requirements)
+      .filter((q) => "ofLastMonths" in q.value);
+    expect(windowed).toHaveLength(8);
+  });
+
+  it("keeps QLD 491's regional months unverified, since living regionally now can't prove them", () => {
+    for (const id of ["qld-onshore", "qld-graduate"]) {
+      const s = rule("QLD", "491").streams.find((x) => x.id === id);
+      const regional = s?.requirements.filter(
+        (q) => q.value.kind === "lives-regional",
+      );
+      expect(regional, id).toHaveLength(1);
+      expect(regional?.[0].verification).toBe("secondary");
+      expect(regional?.[0].note).toMatch(/regional Queensland/);
+    }
+  });
+
+  it("lists every cohort for Victoria, unverified", () => {
+    for (const s of streamsOf("VIC")) {
+      expect([...s.cohorts.value].sort()).toEqual([
+        "living-in-other-state",
+        "living-in-state",
+        "offshore",
+      ]);
+    }
+  });
+
+  it("records that the imported NSW list has 78 unit groups where the research counted 80", () => {
+    const note = rule("NSW", "190").streams[0].occupations.note ?? "";
+    expect(note).toMatch(/78/);
+    expect(note).toMatch(/80/);
+  });
+
   it("gates every SA onshore stream on visa expiry by 31 January 2027", () => {
     const onshore = ["190", "491"].flatMap((v) =>
       rule("SA", v).streams.filter((s) =>

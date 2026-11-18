@@ -37,10 +37,10 @@ const vic190: StateVisaRules = {
     {
       id: "vic-190-roi",
       name: "Skilled Nominated (190) Registration of Interest",
-      // Research §VIC item 4: residence rules for onshore candidates living
-      // outside Victoria are not confirmed, so that cohort is left out.
+      // Research §VIC item 4: residence rules for those living outside
+      // Victoria are not confirmed; every cohort is listed, unverified.
       cohorts: secondary(
-        ["living-in-state", "offshore"],
+        ALL_COHORTS,
         PROGRAM,
         "Offshore candidates are accepted for 190 and must be committed to living in Victoria. Rules for those living in another state are not confirmed.",
       ),

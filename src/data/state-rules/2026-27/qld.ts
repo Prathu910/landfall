@@ -48,22 +48,28 @@ const onshoreList = verified(
 );
 
 const months = (visa: StateVisa) => (visa === "190" ? 9 : 6);
-const window = (visa: StateVisa) =>
+const ofLast = (visa: StateVisa) => (visa === "190" ? 12 : 9);
+const windowText = (visa: StateVisa) =>
   visa === "190"
     ? "9 of the last 12 months living and working in Queensland"
     : "6 of the last 9 months living and working in regional Queensland";
 
-// Research §QLD item 4: the rule is "N of the last M months"; Landfall's
-// months questions count continuous months, which is stricter.
+// Research §QLD item 4: the rule is "N of the last M months", so it carries
+// `ofLastMonths` (ruling P16). A continuous-months answer of N or more passes;
+// less than N is unverified, never a fail, because gaps are allowed.
 function living(visa: StateVisa, source: string): Sourced<Requirement> {
-  return verified(livingInState(months(visa)), source, `${window(visa)}.`);
+  return verified(
+    livingInState(months(visa), ofLast(visa)),
+    source,
+    `${windowText(visa)}.`,
+  );
 }
 
 function working(visa: StateVisa, source: string): Sourced<Requirement> {
   return verified(
-    workingInState(months(visa), "anzsco-3-digit"),
+    workingInState(months(visa), "anzsco-3-digit", ofLast(visa)),
     source,
-    `${window(visa)}, for a Queensland employer. ${WORK_NOTE}`,
+    `${windowText(visa)}, for a Queensland employer. ${WORK_NOTE}`,
   );
 }
 
@@ -88,8 +94,21 @@ function stream(
   return s;
 }
 
+// Ruling P16: for 491 the months must be in regional Queensland. Living
+// regionally now cannot prove (or disprove) where those months were spent, so
+// the regional part is secondary.
+function regional(visa: StateVisa, source: string): Sourced<Requirement>[] {
+  if (visa === "190") return [];
+  return [
+    secondary(
+      LIVES_REGIONAL,
+      source,
+      "Read directly: 6 of the last 9 months living and working in regional Queensland. Living in a regional area now cannot show where those months were spent, so this check is not applied as verified.",
+    ),
+  ];
+}
+
 function streams(visa: StateVisa): Stream[] {
-  const regional = visa === "491" ? [verified(LIVES_REGIONAL, ONSHORE)] : [];
   return [
     stream(
       "qld-onshore",
@@ -100,7 +119,11 @@ function streams(visa: StateVisa): Stream[] {
         "Must currently live and work in Queensland.",
       ),
       onshoreList,
-      [living(visa, ONSHORE), working(visa, ONSHORE), ...regional],
+      [
+        living(visa, ONSHORE),
+        working(visa, ONSHORE),
+        ...regional(visa, ONSHORE),
+      ],
       visa,
     ),
     stream(
@@ -137,21 +160,25 @@ function streams(visa: StateVisa): Stream[] {
           "A Bachelor's, Master's or PhD completed 100% in Queensland, graduating after 1 July 2022. Graduates may be prioritised.",
         ),
         living(visa, GRADUATES),
-        ...regional,
+        ...regional(visa, GRADUATES),
         secondary(
-          workingInState(months(visa), "anzsco-3-digit"),
+          workingInState(months(visa), "anzsco-3-digit", ofLast(visa)),
           GRADUATES,
-          `${window(visa)}. Any ANZSCO Skill Level 1 job counts, not only the nominated occupation, so this check is not applied as verified.`,
+          `${windowText(visa)}. Any ANZSCO Skill Level 1 job counts, not only the nominated occupation, so this check is not applied as verified.`,
         ),
       ],
       visa,
     ),
-    // Research §QLD item 4: no regional-residence rule is recorded for this
-    // pathway, so none is encoded for 491.
+    // Research §QLD item 4: no residence condition (and no regional rule for
+    // 491) is recorded for this pathway, only Queensland work (ruling P17).
     stream(
       "qld-building",
       "Building and construction workers",
-      verified(IN_STATE, BUILDING),
+      verified(
+        ["living-in-state", "living-in-other-state"],
+        BUILDING,
+        "No residence condition is recorded for this pathway; the work must be in Queensland.",
+      ),
       verified(list("qld", ["building-and-construction"]), ONSHORE_LIST),
       [
         verified(
