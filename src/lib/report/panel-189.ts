@@ -4,6 +4,7 @@ import type {
   MonthKey,
   OccupationCore,
   OccupationDetail,
+  Visa,
 } from "../data/types";
 import { formatDate } from "../migration";
 import { formatCount, formatMonth, isMasked, submissionMonth } from "./copy";
@@ -61,12 +62,12 @@ function clause(count: Interval, tail: string, lead = "", after = ""): string {
 export function buildWhereYouStand(
   core: OccupationCore,
   score: number,
+  visa: Visa = "189",
 ): WhereYouStand {
-  const position = poolPosition(core, null, "189", score, null);
+  const position = poolPosition(core, null, visa, score, null);
   if (!position.available) {
     return {
-      unavailable:
-        "No 189 EOIs are published for this occupation in this snapshot.",
+      unavailable: `No ${visa} EOIs are published for this occupation in this snapshot.`,
     };
   }
   const { higher: ahead, same, total } = position;
