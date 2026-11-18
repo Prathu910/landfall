@@ -1,5 +1,7 @@
 # Landfall
 
+> The product is now called **MigrateLens**. "Landfall" remains the repository's name. The brand and homepage are set by [docs/superpowers/specs/2026-11-18-migratelens-brand-and-homepage-design.md](docs/superpowers/specs/2026-11-18-migratelens-brand-and-homepage-design.md).
+
 A first useful release of a personalised Australian skilled migration information tool. The original `SPEC.md` and HTML references are preserved in [docs/original-references](docs/original-references/); independent `RESEARCH.md` also lives in the parent folder; the current product direction is in [docs/PRODUCT.md](docs/PRODUCT.md).
 
 ## Run locally
