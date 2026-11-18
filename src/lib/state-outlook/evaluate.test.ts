@@ -241,7 +241,9 @@ describe("evaluateStream: occupation list", () => {
       ctx({ code: "254499", federal: allEligible("254499") }),
     );
     expect(result.checks[3].outcome).toBe("fail");
-    expect(findings[3]).toBe("Not on Western Australia's 2026–27 list for 190");
+    expect(findings[3]).toBe(
+      "Not on the Western Australia 2026–27 list for 190",
+    );
   });
 
   it("matches an interstate user against an in-state list entry (ruling P18)", () => {
@@ -259,7 +261,7 @@ describe("evaluateStream: occupation list", () => {
     );
     expect(result.checks[3].outcome).toBe("fail");
     expect(findings[3]).toBe(
-      "On Western Australia's 2026–27 list for 190 only for those living in Australia",
+      "On the Western Australia 2026–27 list for 190 only for those living in Australia",
     );
   });
 
@@ -277,7 +279,7 @@ describe("evaluateStream: occupation list", () => {
     const for491 = evaluateStream(schedule2, ctx({ visa: "491" }));
     expect(for491.result.checks[3].outcome).toBe("fail");
     expect(for491.findings[3]).toBe(
-      "Not on Western Australia's 2026–27 list for 491 under Test stream",
+      "Not on the Western Australia 2026–27 list for 491 under Test stream",
     );
   });
 

@@ -2,10 +2,9 @@ import { describe, expect, it } from "vitest";
 import { stateRules } from "../../data/state-rules/2026-27/index";
 import { loadOccupationCore } from "../data/load-server";
 import type { StateVisa } from "../data/types";
-import { sampleProfile } from "../migration";
-import type { Profile } from "../migration";
 import { BANNED_COPY } from "../report/copy";
-import { realFederal, realLists } from "./__fixtures__/real-data";
+import { cases, realFederal, realLists } from "./__fixtures__/real-data";
+import type { Case } from "./__fixtures__/real-data";
 import { stateOutlook } from "./outlook";
 import type { Outlook, StateOutcome } from "./outlook";
 import type { Verification } from "./rules-types";
@@ -24,62 +23,6 @@ const UNREAD_STATES = ["ACT", "VIC", "TAS", "NT"];
 
 const lists = realLists();
 const federal = realFederal();
-
-type Case = {
-  label: string;
-  profile: Profile;
-  points: Record<StateVisa, number>[];
-};
-
-const cases: Case[] = [
-  {
-    label: "ICT Business Analyst living in VIC, no answers",
-    profile: {
-      ...sampleProfile,
-      occupation: "261111",
-      onshore: true,
-      state: "VIC",
-    },
-    points: [
-      { "190": 90, "491": 90 },
-      { "190": 95, "491": 95 },
-      { "190": 105, "491": 105 },
-    ],
-  },
-  {
-    label: "Registered Nurse (Medical) living in QLD, with answers",
-    profile: {
-      ...sampleProfile,
-      occupation: "254418",
-      onshore: true,
-      state: "QLD",
-      visaExpiry: "2027-06-30",
-      monthsLivingInState: 14,
-      monthsWorkingInState: 14,
-      yearsExperienceLast3: 3,
-      yearsExperienceLast5: 5,
-      yearsExperienceLast10: 8,
-      jobOfferState: "none",
-      livesRegional: false,
-      studyState: "none",
-    },
-    points: [{ "190": 95, "491": 105 }],
-  },
-  {
-    label: "Software Engineer living offshore, with answers",
-    profile: {
-      ...sampleProfile,
-      occupation: "261313",
-      onshore: false,
-      state: "",
-      monthsLivingOffshore: 24,
-      yearsExperienceLast3: 3,
-      yearsExperienceLast5: 5,
-      yearsExperienceLast10: 7,
-    },
-    points: [{ "190": 90, "491": 100 }],
-  },
-];
 
 function run(c: Case, visa: StateVisa, points: number): Outlook {
   const core = loadOccupationCore(c.profile.occupation);

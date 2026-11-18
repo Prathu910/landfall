@@ -299,7 +299,7 @@ describe("stateOutlook: groups", () => {
     const wa = outcomeFor(result, "WA");
     expect(wa.group).toBe("not-open");
     expect(wa.reasonText).toBe(
-      "Not on Western Australia's 2026–27 list for 491",
+      "Not on the Western Australia 2026–27 list for 491",
     );
   });
 

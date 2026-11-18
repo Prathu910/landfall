@@ -75,11 +75,6 @@ export function cohortIn(profile: Profile, state: StateCode): Cohort | null {
   return isStateCode(profile.state) ? "living-in-other-state" : null;
 }
 
-/** "Western Australia's" */
-export function possessive(state: StateCode): string {
-  return `${STATE_NAMES[state]}'s`;
-}
-
 /** "a", "a and b", "a, b and c" (or "or"). */
 export function joinWords(items: string[], conjunction: "and" | "or"): string {
   if (items.length <= 1) return items.join("");

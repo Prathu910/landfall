@@ -1,5 +1,8 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
+import type { StateVisa } from "../../data/types";
+import { sampleProfile } from "../../migration";
+import type { Profile } from "../../migration";
 import { isFederalList, isImportedList } from "../rules-guards";
 import type { FederalList, ImportedList } from "../rules-types";
 
@@ -32,3 +35,60 @@ export function realFederal(): FederalList {
   if (!isFederalList(json)) throw new Error("federal list is invalid");
   return json;
 }
+
+/** Three real occupations and profiles used to sweep the real rules and data. */
+export type Case = {
+  label: string;
+  profile: Profile;
+  points: Record<StateVisa, number>[];
+};
+
+export const cases: Case[] = [
+  {
+    label: "ICT Business Analyst living in VIC, no answers",
+    profile: {
+      ...sampleProfile,
+      occupation: "261111",
+      onshore: true,
+      state: "VIC",
+    },
+    points: [
+      { "190": 90, "491": 90 },
+      { "190": 95, "491": 95 },
+      { "190": 105, "491": 105 },
+    ],
+  },
+  {
+    label: "Registered Nurse (Medical) living in QLD, with answers",
+    profile: {
+      ...sampleProfile,
+      occupation: "254418",
+      onshore: true,
+      state: "QLD",
+      visaExpiry: "2027-06-30",
+      monthsLivingInState: 14,
+      monthsWorkingInState: 14,
+      yearsExperienceLast3: 3,
+      yearsExperienceLast5: 5,
+      yearsExperienceLast10: 8,
+      jobOfferState: "none",
+      livesRegional: false,
+      studyState: "none",
+    },
+    points: [{ "190": 95, "491": 105 }],
+  },
+  {
+    label: "Software Engineer living offshore, with answers",
+    profile: {
+      ...sampleProfile,
+      occupation: "261313",
+      onshore: false,
+      state: "",
+      monthsLivingOffshore: 24,
+      yearsExperienceLast3: 3,
+      yearsExperienceLast5: 5,
+      yearsExperienceLast10: 7,
+    },
+    points: [{ "190": 90, "491": 100 }],
+  },
+];

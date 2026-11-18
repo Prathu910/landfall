@@ -3,7 +3,6 @@ import {
   fail,
   joinWords,
   pass,
-  possessive,
   STATE_NAMES,
   STATE_QUESTION,
   unverified,
@@ -131,7 +130,7 @@ function listVerdict(
   stream: Stream,
   ctx: StreamContext,
 ): Verdict {
-  const list = `${possessive(ctx.state)} ${ctx.programYear} list for ${ctx.visa}`;
+  const list = `the ${STATE_NAMES[ctx.state]} ${ctx.programYear} list for ${ctx.visa}`;
   const cohorts = entry?.[ctx.visa] ?? [];
   if (cohorts.length === 0) return fail(`Not on ${list}`);
   const onshore = ctx.profile.onshore;
@@ -160,15 +159,15 @@ function listCheck(
 ): Judged {
   const rule = stream.occupations;
   const ref: OccupationListRef = rule.value;
-  const owner = possessive(ctx.state);
+  const name = STATE_NAMES[ctx.state];
   const year = ctx.programYear;
   switch (ref.kind) {
     case "list": {
-      const label = `On ${owner} ${year} list for ${ctx.visa}`;
+      const label = `On the ${name} ${year} list for ${ctx.visa}`;
       const list = ctx.lists[ref.listId];
       if (list === undefined) {
         return judge(rule, label, ctx.asOf, () =>
-          unverified(`${owner} occupation list is not available`),
+          unverified(`Occupation list for ${name} is not available`),
         );
       }
       // An old import is as stale as an old rule.
@@ -195,8 +194,8 @@ function listCheck(
         unverified(`No ${year} occupation list published to check against`),
       );
     case "not-imported":
-      return judge(rule, `On ${owner} occupation list`, ctx.asOf, () =>
-        unverified(`${owner} occupation list is not checked here yet`),
+      return judge(rule, `On the ${name} occupation list`, ctx.asOf, () =>
+        unverified(`Occupation list for ${name} is not checked here yet`),
       );
   }
 }
