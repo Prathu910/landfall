@@ -66,17 +66,17 @@ const nsw190: StateVisaRules = {
     "Factors from the 190 page and the FAQ. The 190 page and Skills List (modified 15 Oct 2026) describe 2026–27, but the FAQ (modified 16 Nov 2026) still says 'For the 2025-26 program year' when describing which occupations are considered. FAQ points not re-confirmed elsewhere: the usual country of residence in the EOI decides onshore or offshore, and moving between NSW and offshore resets the residence clock.",
   ),
   streams: [
-    // Judgement: NSW sets no minimum duration for this option, only current
-    // work of 20+ hours a week. Landfall's months-working question reads
-    // "currently working" as at least 1 month (research §NSW item 4).
+    // Ruling P13: NSW sets no minimum duration for this option, only current
+    // work of 20+ hours a week (research §NSW item 4). "At least 1 month" is
+    // Landfall's approximation, so it is secondary and never decides.
     option190(
       "nsw-190-working",
       "Working in NSW",
       IN_STATE,
-      verified(
+      secondary(
         workingInState(1),
         NSW_190,
-        "Currently working in NSW in the nominated occupation for at least 20 hours a week. NSW sets no minimum duration; Landfall reads current work as at least 1 month.",
+        "NSW's rule (read directly): currently working in NSW (20+ hours a week) in the nominated occupation, with no minimum duration. 'At least 1 month' is Landfall's approximation for its months-working question, so this check is not applied as verified.",
       ),
       "Landfall's work question covers the state you live in, so living in another state while working in NSW is not matched here.",
     ),

@@ -208,6 +208,27 @@ describe("2026–27 state rules", () => {
     for (const q of actMonths) expect(q.note).toMatch(/3 months.*6 months/);
   });
 
+  it("keeps the NSW 1-month working approximation secondary, and the residence options verified", () => {
+    const byId = (id: string) => {
+      const s = rule("NSW", "190").streams.find((x) => x.id === id);
+      if (!s) throw new Error(`no stream ${id}`);
+      return s.requirements;
+    };
+    const [working] = byId("nsw-190-working");
+    expect(working.value).toEqual({
+      kind: "min-months-working-in-state",
+      months: 1,
+    });
+    expect(working.verification).toBe("secondary");
+    expect(working.note).toMatch(
+      /currently working in NSW \(20\+ hours a week\)/,
+    );
+    expect(working.note).toMatch(/approximation/);
+    for (const id of ["nsw-190-living", "nsw-190-offshore"]) {
+      for (const q of byId(id)) expect(q.verification).toBe("verified");
+    }
+  });
+
   it("gates every SA onshore stream on visa expiry by 31 January 2027", () => {
     const onshore = ["190", "491"].flatMap((v) =>
       rule("SA", v).streams.filter((s) =>
