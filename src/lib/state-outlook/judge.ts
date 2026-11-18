@@ -1,0 +1,70 @@
+import { formatDate } from "../migration";
+import type { Profile } from "../migration";
+import { unverified } from "./context";
+import type { Outcome, Verdict } from "./context";
+import type { Sourced } from "./rules-types";
+import { isStale } from "./staleness";
+
+export type RuleCheck = {
+  label: string;
+  outcome: "pass" | "fail" | "needs-answer" | "unverified";
+  source: string;
+  checkedAt: string;
+  stale: boolean;
+  question?: string;
+  field?: keyof Profile; // the profile answer the question fills in
+};
+
+export type Judged = { check: RuleCheck; finding: string };
+export type Provenance = Pick<
+  Sourced<unknown>,
+  "source" | "checkedAt" | "verification"
+>;
+
+// A rule checked longer ago than this before `asOf` is treated as unverified.
+const MAX_AGE_DAYS = 60;
+
+const SEVERITY: Record<Outcome, number> = {
+  pass: 0,
+  "needs-answer": 1,
+  unverified: 2,
+  fail: 3,
+};
+
+/** Higher is worse: fail > unverified > needs-answer > pass. */
+export function severity(outcome: Outcome): number {
+  return SEVERITY[outcome];
+}
+
+/**
+ * A stale or secondary rule never decides: it is unverified whatever the
+ * user's answers. Only a verified, fresh rule reaches `decide`.
+ */
+export function judge(
+  provenance: Provenance,
+  label: string,
+  asOf: string,
+  decide: () => Verdict,
+): Judged {
+  const stale = isStale(provenance.checkedAt, asOf, MAX_AGE_DAYS);
+  let verdict: Verdict;
+  if (stale) {
+    verdict = unverified(
+      `Rules last checked ${formatDate(provenance.checkedAt)}; may have changed`,
+    );
+  } else if (provenance.verification === "secondary") {
+    verdict = unverified("Rules not yet verified on the official page");
+  } else {
+    verdict = decide();
+  }
+  const check: RuleCheck = {
+    label,
+    outcome: verdict.outcome,
+    source: provenance.source,
+    checkedAt: provenance.checkedAt,
+    stale,
+  };
+  if (verdict.question !== undefined) check.question = verdict.question;
+  if (verdict.field !== undefined) check.field = verdict.field;
+  return { check, finding: verdict.finding };
+}
