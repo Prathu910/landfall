@@ -266,9 +266,9 @@ describe("buildStatePanel", () => {
     });
   });
 
-  it("flags a restriction as required but not checked, even when strongest", () => {
+  it("flags each restriction as required but not checked, even when strongest", () => {
     const restricted = stateRules.rules.filter((r) =>
-      r.streams.some((s) => s.restriction !== undefined),
+      r.streams.some((s) => (s.restrictions ?? []).length > 0),
     );
     expect(restricted.length).toBeGreaterThan(0);
     let found = false;
@@ -282,7 +282,8 @@ describe("buildStatePanel", () => {
             (s) => s.id === outcome.deciding?.streamId,
           );
           // A closed state lists why each stream failed instead (P29).
-          if (stream?.restriction === undefined) continue;
+          const restrictions = stream?.restrictions ?? [];
+          if (restrictions.length === 0) continue;
           if (outcome.group === "not-open") continue;
           const panel = buildStatePanel(
             outcome,
@@ -290,14 +291,19 @@ describe("buildStatePanel", () => {
             points[rules.visa],
             AS_OF,
           );
-          const line = panel.canApply.find((l) =>
+          const lines = panel.canApply.filter((l) =>
             l.text.startsWith("Restriction, not checked here:"),
           );
-          expect(line?.text).toBe(
-            `Restriction, not checked here: ${stream.restriction.value.replace(/\.$/, "")}`,
+          expect(lines.map((l) => l.text)).toEqual(
+            restrictions.map(
+              (r) =>
+                `Restriction, not checked here: ${r.value.replace(/\.$/, "")}`,
+            ),
           );
-          expect(line?.mark).toBe("?");
-          expect(line?.source).toBe(stream.restriction.source);
+          for (const [i, line] of lines.entries()) {
+            expect(line.mark).toBe("?");
+            expect(line.source).toBe(restrictions[i].source);
+          }
           found = true;
         }
       }

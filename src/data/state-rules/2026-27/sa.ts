@@ -71,7 +71,7 @@ function onshore(
     name,
     cohorts: onshoreCohorts,
     status: onshoreStatus,
-    restriction: onshoreRestriction,
+    restrictions: [onshoreRestriction],
     occupations: verified(list("sa", [tag]), LIST),
     requirements: [expiryGate, ...requirements],
   };

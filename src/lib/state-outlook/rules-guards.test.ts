@@ -32,7 +32,7 @@ function validRules() {
             name: "General stream",
             cohorts: s(["offshore", "living-in-state"]),
             status: s("open"),
-            restriction: s("Visa must expire by 31 Jan 2027"),
+            restrictions: [s("Visa must expire by 31 Jan 2027")],
             occupations: s({ kind: "list", listId: "wa-190" }),
             requirements: [
               s({ kind: "min-months-living-in-state", months: 6 }),
@@ -53,6 +53,23 @@ function validRules() {
 }
 
 describe("isStateRules", () => {
+  it("takes a stream's restrictions as a list of sourced texts", () => {
+    const withRestrictions = (restrictions: unknown) => {
+      const v = validRules();
+      v.rules[0].streams[0].restrictions = restrictions as never;
+      return isStateRules(v);
+    };
+    expect(withRestrictions([])).toBe(true);
+    expect(withRestrictions("Visa must expire by 31 Jan 2027")).toBe(false);
+    expect(withRestrictions([{ value: "x" }])).toBe(false);
+    const old = validRules() as unknown as Record<string, never>;
+    const stream = (old.rules as never as { streams: object[] }[])[0]
+      .streams[0] as Record<string, unknown>;
+    delete stream.restrictions;
+    stream.restriction = stream.cohorts;
+    expect(isStateRules(old)).toBe(false);
+  });
+
   it("accepts a minimal valid structure", () => {
     expect(isStateRules(validRules())).toBe(true);
     expect(isStateRules({ programYear: "2026-27", rules: [] })).toBe(true);

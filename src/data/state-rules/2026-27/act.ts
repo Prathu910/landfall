@@ -85,10 +85,12 @@ const overseas190: Stream = {
   name: "Overseas candidates",
   cohorts: secondary(OFFSHORE, PATHWAYS),
   status: status("190"),
-  restriction: secondary(
-    "Proficient English or above (except Chef 351311 and ANZSCO skill levels 3–5), an employment statement showing research into Canberra jobs, a commitment to live in Canberra for 2 years, and settlement funds.",
-    OVERSEAS_190,
-  ),
+  restrictions: [
+    secondary(
+      "Proficient English or above (except Chef 351311 and ANZSCO skill levels 3–5), an employment statement showing research into Canberra jobs, a commitment to live in Canberra for 2 years, and settlement funds.",
+      OVERSEAS_190,
+    ),
+  ],
   occupations,
   requirements: [
     secondary(

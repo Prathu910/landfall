@@ -66,7 +66,7 @@ function sourcedOf(r: StateVisaRules): Sourced<unknown>[] {
   if (r.ownScoreSystem) out.push(r.ownScoreSystem);
   for (const s of r.streams) {
     out.push(s.cohorts, s.status, s.occupations, ...s.requirements);
-    if (s.restriction) out.push(s.restriction);
+    out.push(...(s.restrictions ?? []));
   }
   return out;
 }
@@ -87,7 +87,7 @@ function textsOf(r: StateVisaRules): string[] {
   if (r.ownScoreSystem) out.push(r.ownScoreSystem.value.name);
   for (const s of r.streams) {
     out.push(s.name);
-    if (s.restriction) out.push(s.restriction.value);
+    out.push(...(s.restrictions ?? []).map((x) => x.value));
   }
   for (const s of sourcedOf(r)) if (s.note) out.push(s.note);
   return out;
@@ -391,7 +391,9 @@ describe("2026–27 state rules", () => {
     expect(onshore).toHaveLength(6);
     for (const s of onshore) {
       expect(s.status.value).toBe("restricted");
-      expect(s.restriction?.value).toMatch(/31 January 2027/);
+      expect(s.restrictions?.map((x) => x.value).join(" ")).toMatch(
+        /31 January 2027/,
+      );
       expect(s.requirements.map((q) => q.value)).toContainEqual({
         kind: "visa-expiry-before",
         date: "2027-01-31",

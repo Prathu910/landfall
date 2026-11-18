@@ -49,10 +49,12 @@ const vic190: StateVisaRules = {
         PROGRAM,
         "Open for ROIs with 900 places. The opening date is not confirmed from an official extract. 900 is far below the 2025–26 federal allocation of 2,700 (Home Affairs), plausible as an interim figure but not confirmed. New 2026–27 fees: $60 per ROI and $180 per nomination application (excluding GST). Everyone must lodge a new ROI.",
       ),
-      restriction: secondary(
-        "65+ points including nomination points and a valid skills assessment. Earnings claimed in the ROI must come from skilled employment (ANZSCO skill levels 1–3) in Victoria. No minimum work experience or hours.",
-        PROGRAM,
-      ),
+      restrictions: [
+        secondary(
+          "65+ points including nomination points and a valid skills assessment. Earnings claimed in the ROI must come from skilled employment (ANZSCO skill levels 1–3) in Victoria. No minimum work experience or hours.",
+          PROGRAM,
+        ),
+      ],
       occupations,
       requirements: [],
     },

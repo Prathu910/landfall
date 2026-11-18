@@ -113,7 +113,7 @@ const nt491: StateVisaRules = {
       name: "NT resident (by exception)",
       cohorts: secondary(IN_STATE, ONSHORE_EXTRA),
       status: secondary("restricted", NOMINATION, CLOSURE),
-      restriction: exception491,
+      restrictions: [exception491],
       occupations: onshoreOccupations,
       requirements: [
         secondary(
@@ -134,7 +134,7 @@ const nt491: StateVisaRules = {
       name: "NT graduate (by exception)",
       cohorts: secondary(IN_STATE, NOMINATION),
       status: secondary("restricted", NOMINATION, CLOSURE),
-      restriction: exception491,
+      restrictions: [exception491],
       occupations: secondary(
         NONE_PUBLISHED,
         NOMINATION,

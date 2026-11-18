@@ -68,7 +68,8 @@ export type Stream = {
   name: string; // "General stream"
   cohorts: Sourced<Cohort[]>;
   status: Sourced<ProgramStatus>;
-  restriction?: Sourced<string>; // human text, e.g. "Visa must expire by 31 Jan 2027"
+  // Rules shown but not checked here, e.g. "Visa must expire by 31 Jan 2027".
+  restrictions?: Sourced<string>[];
   occupations: Sourced<OccupationListRef>;
   requirements: Sourced<Requirement>[];
 };

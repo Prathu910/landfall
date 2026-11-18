@@ -142,9 +142,9 @@ function decidingLines(
     );
   }
   lines.push(...checks.map(({ check, i }) => checkLine(check, `${id}:${i}`)));
-  if (stream?.restriction !== undefined) {
-    lines.push(restrictionLine(stream.restriction, `${id}:restriction`, asOf));
-  }
+  (stream?.restrictions ?? []).forEach((r, i) =>
+    lines.push(restrictionLine(r, `${id}:restriction:${i}`, asOf)),
+  );
   return lines;
 }
 

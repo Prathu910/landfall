@@ -152,7 +152,7 @@ function isStream(v: unknown): v is Stream {
       "name",
       "cohorts",
       "status",
-      "restriction",
+      "restrictions",
       "occupations",
       "requirements",
     ]) &&
@@ -160,7 +160,9 @@ function isStream(v: unknown): v is Stream {
     isNonEmpty(v.name) &&
     isSourced(v.cohorts, isCohorts) &&
     isSourced(v.status, (x) => isStr(x) && STATUSES.includes(x)) &&
-    (v.restriction === undefined || isSourced(v.restriction, isStr)) &&
+    (v.restrictions === undefined ||
+      (Array.isArray(v.restrictions) &&
+        v.restrictions.every((r) => isSourced(r, isStr)))) &&
     isSourced(v.occupations, isListRef) &&
     Array.isArray(v.requirements) &&
     v.requirements.every((r) => isSourced(r, isRequirement))

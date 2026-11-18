@@ -86,10 +86,12 @@ function stream(
   // Research §QLD item 4: QLD will not nominate for 190 anyone nominated for,
   // applying for or holding a 491 or 489.
   if (visa === "190") {
-    s.restriction = verified(
-      "Not available to anyone nominated for, applying for or holding a 491 or 489 visa.",
-      ONSHORE,
-    );
+    s.restrictions = [
+      verified(
+        "Not available to anyone nominated for, applying for or holding a 491 or 489 visa.",
+        ONSHORE,
+      ),
+    ];
   }
   return s;
 }

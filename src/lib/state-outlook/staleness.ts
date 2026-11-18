@@ -36,7 +36,7 @@ export function staleRules(
       const sp = `${base}/${s.id}`;
       check(`${sp}/cohorts`, s.cohorts);
       check(`${sp}/status`, s.status);
-      check(`${sp}/restriction`, s.restriction);
+      s.restrictions?.forEach((r, i) => check(`${sp}/restrictions/${i}`, r));
       check(`${sp}/occupations`, s.occupations);
       s.requirements.forEach((q, i) => check(`${sp}/requirements/${i}`, q));
     }
