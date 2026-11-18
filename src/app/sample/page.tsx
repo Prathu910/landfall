@@ -9,10 +9,12 @@ import {
 import { reportSource } from "@/lib/data/report-source";
 import type { OccupationCore, OccupationDetail } from "@/lib/data/types";
 import { sampleProfile } from "@/lib/migration";
+import {
+  SAMPLE_AS_OF,
+  SAMPLE_COMPARISON,
+  sampleReportProfile,
+} from "@/lib/sample";
 export const metadata = { title: "Explore the sample report" };
-
-/** Aarav's comparison occupation, rendered into the static HTML. */
-const SAMPLE_COMPARISON = "261313";
 
 function requireCore(code: string): OccupationCore {
   const core = loadOccupationCore(code);
@@ -32,15 +34,6 @@ export default function SamplePage() {
   const nominated = requireCore(sampleProfile.occupation);
   const nominatedDetail = requireDetail(sampleProfile.occupation);
   const comparison = requireCore(SAMPLE_COMPARISON);
-  const profile = {
-    ...sampleProfile,
-    onshore: true,
-    state: "VIC",
-    visaExpiry: "2027-09-30",
-    assessmentDate: "2026-02-20",
-    assessmentExpiry: "2029-02-20",
-    eoiDate: "2026-03-14",
-  };
   return (
     <main id="main" className="container">
       <div className="page-head">
@@ -56,8 +49,8 @@ export default function SamplePage() {
         </p>
       </div>
       <Report
-        profile={profile}
-        asOf="2026-11-17"
+        profile={sampleReportProfile}
+        asOf={SAMPLE_AS_OF}
         sample
         occupation={{
           status: "ready",
