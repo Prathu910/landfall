@@ -165,9 +165,7 @@ export function Report({
         <article className="report-sheet">
           <header className="report-heading">
             <div className="report-heading-top">
-              <span className="eyebrow">
-                THE LANDFALL MIGRATION PERSPECTIVE
-              </span>
+              <span className="eyebrow">THE MIGRATELENS PERSPECTIVE</span>
               <span className="pill">
                 {sample ? "Sample report" : "Your free overview"}
               </span>
@@ -469,8 +467,8 @@ export function Report({
               </p>
               <p>
                 Rule set federal-current-2026-11 · Report v0.2. General
-                information, not migration advice. Landfall is independent and
-                is not a registered migration agent. Government material
+                information, not migration advice. MigrateLens is independent
+                and is not a registered migration agent. Government material
                 attributed under its published licensing terms.{" "}
                 <Link className="source-link" href="/methodology/">
                   Methodology & limitations

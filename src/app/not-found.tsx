@@ -13,7 +13,7 @@ export default function NotFound() {
         That page isn’t here. Your next chapter starts with a little clarity.
       </p>
       <Link className="button" href="/">
-        Back to Landfall <ArrowRight size={16} />
+        Back to MigrateLens <ArrowRight size={16} />
       </Link>
     </main>
   );

@@ -46,7 +46,7 @@ import {
 import { Report } from "./report";
 import styles from "./check-flow.module.css";
 
-const STORAGE_KEY = "landfall-profile-v1";
+const STORAGE_KEY = "migratelens-profile-v1";
 const STEPS = [
   "Your profile",
   "English & study",

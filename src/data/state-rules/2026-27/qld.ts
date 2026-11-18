@@ -86,7 +86,7 @@ const NO_PRIOR_491 = verified(
   ONSHORE,
 );
 
-// Research §QLD item 4: the onshore pathway only. Landfall's work question
+// Research §QLD item 4: the onshore pathway only. MigrateLens's work question
 // does not ask who the employer is.
 const QLD_EMPLOYER = verified(
   "Must currently live and work in Queensland for a Queensland employer.",
@@ -166,7 +166,7 @@ function streams(visa: StateVisa): Stream[] {
     ),
     // Judgement (research §QLD items 2 and 4): the lists do not name the
     // graduate pathway, so the onshore list is an inference; and any ANZSCO
-    // Skill Level 1 job counts, which Landfall's nominated-occupation work
+    // Skill Level 1 job counts, which MigrateLens's nominated-occupation work
     // question cannot test. Both held as secondary.
     stream(
       "qld-graduate",

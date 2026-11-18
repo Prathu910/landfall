@@ -229,7 +229,7 @@ export default function MethodologyPage() {
                 ],
                 [
                   "Is this migration advice?",
-                  "It is general information and a self-reported calculation. Landfall is not a registered migration agent. A registered agent or Australian legal practitioner can assess your individual circumstances.",
+                  "It is general information and a self-reported calculation. MigrateLens is not a registered migration agent. A registered agent or Australian legal practitioner can assess your individual circumstances.",
                 ],
                 [
                   "Why do some numbers show a range?",

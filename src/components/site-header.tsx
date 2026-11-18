@@ -5,30 +5,12 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { Burger, Drawer, Button } from "@mantine/core";
+import { Logo } from "@/components/brand/logo";
 
 export function Brand() {
   return (
-    <Link className="brand" href="/" aria-label="Landfall home">
-      <svg viewBox="0 0 32 32" width="32" height="32" aria-hidden="true">
-        <path
-          d="M5 24V14a10 10 0 0 1 20 0v10M11 24V14a4 4 0 0 1 8 0v10M5 19h20"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.4"
-          strokeLinecap="round"
-        />
-        <path
-          d="m11 25 5-5 5 5"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.4"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-      <span>
-        landfall<span className="brand-dot">.</span>
-      </span>
+    <Link className="brand" href="/" aria-label="MigrateLens home">
+      <Logo />
     </Link>
   );
 }
@@ -37,10 +19,9 @@ export function SiteHeader() {
   const path = usePathname();
   const [open, setOpen] = useState(false);
   const links = [
-    ["/", "Overview"],
-    ["/sample/", "The report"],
-    ["/states/", "State pathways"],
-    ["/methodology/", "Our data"],
+    ["/sample/", "Sample report"],
+    ["/states/", "States"],
+    ["/methodology/", "Method"],
   ];
   const navLinks = links.map(([href, label]) => (
     <Link
@@ -71,7 +52,7 @@ export function SiteHeader() {
           size="sm"
           rightSection={<ArrowUpRight size={14} />}
         >
-          Free points check
+          Check my points
         </Button>
         <Burger
           className="menu-button"
@@ -99,7 +80,7 @@ export function SiteHeader() {
           fullWidth
           mt="xl"
         >
-          Start my free check
+          Check my points
         </Button>
       </Drawer>
     </header>

@@ -12,11 +12,11 @@ import { SiteFooter } from "@/components/site-footer";
 
 export const metadata: Metadata = {
   title: {
-    default: "Landfall — A clearer picture of Australian skilled migration",
-    template: "%s · Landfall",
+    default: "MigrateLens: your points and where they'd put you",
+    template: "%s · MigrateLens",
   },
   description:
-    "Understand your skilled migration points, personal dates and published occupation data. A free, source-backed check for Australian 189, 190 and 491 pathways.",
+    "Check your points-test basics and see where they sit in published SkillSelect data. A free, source-backed report for Australian 189, 190 and 491 pathways.",
   metadataBase: new URL(
     "https://landfall-migration-report.cappedpike4.chatgpt.site",
   ),

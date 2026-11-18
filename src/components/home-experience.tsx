@@ -28,7 +28,7 @@ export function HomeExperience({
       <div className="product-halo" />
       <div className="product-topline">
         <span className="product-mark">
-          <Sparkles size={14} /> THE LANDFALL PERSPECTIVE
+          <Sparkles size={14} /> THE MIGRATELENS PERSPECTIVE
         </span>
         <span className="product-version">Made for your next chapter</span>
       </div>
