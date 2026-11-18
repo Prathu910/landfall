@@ -34,3 +34,10 @@ describe("parseArgs", () => {
     expect(() => parseArgs(["--all"], "2026-11-18")).toThrow(/--all/);
   });
 });
+
+describe("parseArgs for the QLD and NSW importers", () => {
+  it("accepts --only qld and --only nsw", () => {
+    expect(parseArgs(["--only", "qld"], "2026-11-18").only).toBe("qld");
+    expect(parseArgs(["--only", "nsw"], "2026-11-18").only).toBe("nsw");
+  });
+});

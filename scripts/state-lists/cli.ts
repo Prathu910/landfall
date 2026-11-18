@@ -1,4 +1,4 @@
-// Usage: npm run data:state-lists -- [--only federal|wa|sa] [--checked-at YYYY-MM-DD]
+// Usage: npm run data:state-lists -- [--only federal|wa|sa|qld|nsw] [--checked-at YYYY-MM-DD]
 import { mkdirSync } from "node:fs";
 import type { ImportedList } from "../../src/lib/state-outlook/rules-types";
 import index from "../../src/data/occupation-index.json";
@@ -11,10 +11,17 @@ import {
   writeFederalList,
 } from "./federal";
 import { assertListSize, writeImportedList } from "./imported-list";
+import { NSW_LIST_URL, buildNswList, fetchNswPage } from "./nsw";
+import {
+  QLD_OFFSHORE_URL,
+  QLD_ONSHORE_URL,
+  buildQldList,
+  fetchQldPage,
+} from "./qld";
 import { SA_LIST_URL, buildSaList, fetchSaPage } from "./sa";
 import { WA_LIST_URL, buildWaList, fetchWaCsv } from "./wa";
 
-const IMPORTERS = ["federal", "wa", "sa"] as const;
+const IMPORTERS = ["federal", "wa", "sa", "qld", "nsw"] as const;
 type ImporterName = (typeof IMPORTERS)[number];
 
 export type CliArgs = { only: ImporterName | null; checkedAt: string };
@@ -25,6 +32,12 @@ const MIN_ELIGIBLE_PER_VISA = 300;
 
 // The 2026-11-18 lists had 384 WA codes and 351 SA codes.
 const MIN_LIST_CODES = { wa: 250, sa: 300 };
+
+// The 2026-11-18 pages had 209 QLD onshore codes, 97 offshore, and 78 NSW unit
+// groups (the research read ~207, ~97 and 80); floors leave about 15% headroom.
+const MIN_QLD_ONSHORE = 176;
+const MIN_QLD_OFFSHORE = 82;
+const MIN_NSW_UNIT_GROUPS = 66;
 
 function isImporterName(name: string): name is ImporterName {
   return (IMPORTERS as readonly string[]).includes(name);
@@ -122,6 +135,44 @@ async function importSa(checkedAt: string): Promise<void> {
   writeList(list, MIN_LIST_CODES.sa);
 }
 
+async function importQld(checkedAt: string): Promise<void> {
+  const [onshore, offshore] = await Promise.all([
+    fetchQldPage(QLD_ONSHORE_URL),
+    fetchQldPage(QLD_OFFSHORE_URL),
+  ]);
+  const { list, counts } = buildQldList(onshore, offshore, {
+    source: `${QLD_ONSHORE_URL} ; ${QLD_OFFSHORE_URL}`,
+    checkedAt,
+  });
+  console.log(
+    `QLD onshore codes: ${counts.onshore}, offshore codes: ${counts.offshore}`,
+  );
+  if (counts.onshore < MIN_QLD_ONSHORE || counts.offshore < MIN_QLD_OFFSHORE) {
+    throw new Error(
+      `QLD lists are smaller than expected (at least ${MIN_QLD_ONSHORE} onshore and ${MIN_QLD_OFFSHORE} offshore); review the source`,
+    );
+  }
+  writeList(list, MIN_QLD_ONSHORE);
+}
+
+async function importNsw(checkedAt: string): Promise<void> {
+  const html = await fetchNswPage();
+  const { list, unitGroups, unmatched } = buildNswList(html, index, {
+    source: NSW_LIST_URL,
+    checkedAt,
+  });
+  console.log(`NSW unit groups: ${unitGroups}`);
+  console.log(
+    `Unit groups matching no dashboard code: ${unmatched.join(", ")}`,
+  );
+  if (unitGroups < MIN_NSW_UNIT_GROUPS) {
+    throw new Error(
+      `Only ${unitGroups} NSW unit groups (expected at least ${MIN_NSW_UNIT_GROUPS}); review the source`,
+    );
+  }
+  writeList(list, 1);
+}
+
 async function main(): Promise<void> {
   try {
     const args = parseArgs(process.argv.slice(2), localToday());
@@ -132,6 +183,10 @@ async function main(): Promise<void> {
       await importWa(args.checkedAt);
     if (args.only === null || args.only === "sa")
       await importSa(args.checkedAt);
+    if (args.only === null || args.only === "qld")
+      await importQld(args.checkedAt);
+    if (args.only === null || args.only === "nsw")
+      await importNsw(args.checkedAt);
   } catch (error) {
     console.error(error instanceof Error ? error.message : error);
     process.exitCode = 1;
