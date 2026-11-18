@@ -1,0 +1,485 @@
+/* The demo's one frame, at its design size (720 × 340 wide, 358 compact).
+   The stage scales it; sizes here are design pixels. */
+
+.window {
+  --enter: cubic-bezier(0.25, 0.8, 0.25, 1);
+  --ss-canvas: var(--newsprint);
+  --ss-chrome: var(--card);
+  --ss-line: var(--rule);
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  width: 736px;
+  height: 380px;
+  box-shadow: var(--ss-shadow-hero);
+  font-family: var(--sans);
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.body {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  height: 100%;
+  background: var(--newsprint);
+}
+
+/* ---- The check: points by category, the total, the button ---- */
+
+.profile {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 16px;
+  background: var(--card);
+  border-right: 1px solid var(--rule);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 20px;
+}
+
+.occupation {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 20px;
+  white-space: nowrap;
+}
+
+.lines {
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: 20px;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.lineLabel {
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.lineValue {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.total {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 2px solid var(--saffron);
+}
+
+.totalValue {
+  font-size: 13px;
+  line-height: 30px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.totalNumber {
+  font-family: var(--serif);
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.button {
+  display: inline-grid;
+  align-self: flex-start;
+  flex: none;
+  align-items: center;
+  height: 28px;
+  margin-top: 14px;
+  padding: 0 12px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  color: var(--ink);
+  white-space: nowrap;
+  will-change: transform;
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease;
+}
+
+.button[data-hover] {
+  background: var(--card);
+}
+
+.button[data-pressed] {
+  transform: scale(0.97);
+}
+
+/* The poster's labels: both in one cell, only the current one shown */
+.labels {
+  display: inline-grid;
+  justify-items: center;
+}
+
+.labels > span {
+  grid-area: 1 / 1;
+  visibility: hidden;
+}
+
+.labels > [data-on] {
+  visibility: visible;
+}
+
+/* ---- The report: scorecard, then the 190 outlook ---- */
+
+.results {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px 64px 16px 16px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.card {
+  display: grid;
+  grid-template-rows: auto auto auto 2lh auto;
+  align-content: start;
+  padding: 12px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--card);
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.visa {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.cardPoints {
+  color: var(--muted);
+}
+
+.ahead {
+  margin-top: 8px;
+  font-family: var(--serif);
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 30px;
+  white-space: nowrap;
+}
+
+.aheadLabel {
+  color: var(--muted);
+  text-wrap: balance;
+}
+
+.atScore {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--rule);
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.atScoreValue {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.outlook {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.outlookHead {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.outlookVisa {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.legend {
+  display: flex;
+  gap: 6px;
+}
+
+.chip {
+  will-change: transform;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(3px);
+  transition:
+    opacity 0.3s ease,
+    transform 0.4s var(--enter);
+}
+
+.chip[data-on="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.tile {
+  display: grid;
+  place-items: center;
+  height: 34px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--card);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted-soft);
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+  transition-delay: calc((var(--n) - 1 - var(--i)) * 40ms);
+}
+
+.tile[data-on="true"] {
+  transition-delay: calc(var(--i) * 100ms);
+}
+
+/* The report's status colours, each with its group's label in the legend */
+.chip[data-tone="strongest"],
+.tile[data-on="true"][data-tone="strongest"] {
+  border-color: var(--status-strongest-fg);
+  background: var(--status-strongest-bg);
+  color: var(--status-strongest-fg);
+}
+
+.chip[data-tone="watching"],
+.tile[data-on="true"][data-tone="watching"] {
+  border-color: var(--status-watching-fg);
+  background: var(--status-watching-bg);
+  color: var(--status-watching-fg);
+}
+
+.chip[data-tone="needs-answers"],
+.tile[data-on="true"][data-tone="needs-answers"] {
+  border-color: var(--muted-soft);
+  background: var(--status-needs-answers-bg);
+  color: var(--status-needs-answers-fg);
+}
+
+.tile[data-on="true"][data-tone="needs-answers"] {
+  border-style: dashed;
+}
+
+.chip[data-tone="unverified"],
+.tile[data-on="true"][data-tone="unverified"] {
+  border-color: var(--muted);
+  background: var(--status-unverified-bg);
+  color: var(--status-unverified-fg);
+}
+
+.chip[data-tone="not-open"],
+.tile[data-on="true"][data-tone="not-open"] {
+  border-color: var(--status-not-open-fg);
+  background: var(--status-not-open-bg);
+  color: var(--status-not-open-fg);
+}
+
+/* ---- Values that arrive: each holds its slot, with a placeholder under it ---- */
+
+.slot {
+  display: inline-grid;
+  align-items: center;
+  justify-items: start;
+}
+
+.slot > * {
+  grid-area: 1 / 1;
+}
+
+.atScore .slot {
+  justify-items: end;
+}
+
+.slot > [data-on] {
+  will-change: transform;
+  opacity: 0;
+  transform: translateY(4px);
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+  transition-delay: calc((var(--n, 1) - 1 - var(--i, 0)) * 50ms);
+}
+
+.slot > [data-on="true"] {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.5s ease,
+    transform 0.7s var(--enter);
+  transition-delay: calc(var(--i, 0) * 90ms);
+}
+
+.placeholder {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.slot:has(> [data-on="true"]) > .placeholder {
+  opacity: 0;
+}
+
+/* ---- Compact: the page itself, one column for a phone ---- */
+
+.page {
+  --enter: cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  width: 326px;
+  height: 576px;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: var(--ss-shadow-hero);
+  font-family: var(--sans);
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.page.body {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+}
+
+.page .profile {
+  padding: 14px;
+  border-right: 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+/* The points by category need the wide design's column; on a phone the
+   total stands for them */
+.page .lines {
+  display: none;
+}
+
+.page .total {
+  margin-top: 8px;
+  padding-top: 6px;
+}
+
+.page .button {
+  margin-top: 0;
+}
+
+.page .results {
+  padding: 14px 0;
+}
+
+.page .outlook {
+  padding: 0 14px;
+}
+
+.page .cards {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+}
+
+/* A list on the page, the visas ruled apart edge to edge */
+.page .card {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-rows: auto;
+  align-items: baseline;
+  column-gap: 8px;
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 0;
+  background: none;
+}
+
+.page .card + .card {
+  border-top: 1px solid var(--rule);
+}
+
+.page .card:first-child {
+  padding-top: 0;
+}
+
+.page .visa {
+  grid-column: 1 / 3;
+}
+
+.page .cardPoints {
+  grid-column: 3;
+  grid-row: 1;
+  text-align: right;
+}
+
+.page .ahead {
+  margin-top: 2px;
+  font-size: 22px;
+  line-height: 26px;
+}
+
+.page .aheadLabel {
+  grid-column: 2 / -1;
+}
+
+.page .atScore {
+  grid-column: 1 / -1;
+  margin-top: 4px;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.page .outlookHead {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.page .tiles {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+/* A counted figure fades in over most of its roll, so its digits never
+   arrive whole and then move */
+.slot > .ahead[data-on="true"],
+.slot > .atScoreValue[data-on="true"] {
+  transition:
+    opacity 0.9s ease,
+    transform 0.9s var(--enter);
+  transition-delay: calc(var(--i, 0) * 90ms);
+}

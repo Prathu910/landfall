@@ -1,4 +1,5 @@
 import {
+  AT_SCORE_LABEL,
   LOADING_HEADLINE,
   type Scorecard,
   type ScorecardCard,
@@ -35,7 +36,7 @@ function Card({ card, loading }: { card: ScorecardCard; loading: boolean }) {
           ) : null}
           {card.atScore ? (
             <p className={styles.row}>
-              <span>At your score</span>
+              <span>{AT_SCORE_LABEL}</span>
               <b>{card.atScore}</b>
             </p>
           ) : null}

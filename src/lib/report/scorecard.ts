@@ -49,6 +49,7 @@ type StateSummaries = Record<StateVisa, string> | null;
 type Chip = ScorecardCard["chip"];
 type NoneReason = Extract<ScorecardData, { kind: "none" }>["reason"];
 
+export const AT_SCORE_LABEL = "At your score";
 export const LOADING_HEADLINE = "Loading published data…";
 const NO_DATA_SENTENCE = "No published data to compare for this occupation.";
 const LOAD_FAILED_SENTENCE = "Published data could not be loaded.";

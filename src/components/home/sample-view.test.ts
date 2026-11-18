@@ -42,6 +42,7 @@ describe("demo content matches the sample report view", () => {
       );
       expect(demo.tiles[i]).toEqual({
         state: tile.state,
+        tone: tile.group,
         group: panel!.groupLabel,
         label: tile.label,
       });

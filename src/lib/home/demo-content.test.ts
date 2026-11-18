@@ -45,6 +45,8 @@ describe("buildDemoContent", () => {
     expect(demo.cards).toEqual(
       view.scorecard.cards.map((c) => ({
         visa: c.title,
+        points: String(c.points),
+        aheadLabel: c.aheadLabel,
         ahead: c.ahead,
         atScore: c.atScore,
       })),
@@ -52,6 +54,25 @@ describe("buildDemoContent", () => {
     const tiles = view.stateOutlook!.tilesByVisa["190"];
     expect(demo.tiles.map((t) => t.state)).toEqual(tiles.map((t) => t.state));
     expect(demo.tiles.map((t) => t.label)).toEqual(tiles.map((t) => t.label));
+    expect(demo.tiles.map((t) => t.tone)).toEqual(tiles.map((t) => t.group));
+  });
+
+  it("keeps each visa's own points and count label, as the report does", () => {
+    const [v189, v190, v491] = demo.cards;
+    expect(v189.points).toBe("90");
+    expect(Number(v190.points)).toBeGreaterThan(90);
+    expect(Number(v491.points)).toBeGreaterThan(Number(v190.points));
+    expect(v189.aheadLabel).toBe("Ahead of you");
+    expect(v190.aheadLabel).toBe("Higher score (national pool)");
+  });
+
+  it("carries the stage's few labels in the product's own words", () => {
+    expect(demo.labels).toEqual({
+      atScore: "At your score",
+      pointsUnit: "points",
+      startOver: "Start over",
+      trySample: "Try sample answers",
+    });
   });
 
   it("describes the payoff in one plain sentence from the same strings", () => {
