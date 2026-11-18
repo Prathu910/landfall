@@ -70,6 +70,8 @@ scripts/         Reproducible importers. The only writers of generated data.
   - No readable text below 12px, including labels, captions and legal notes.
   - Contrast meets WCAG 2.2 AA (4.5:1 for normal text).
 - **CSS Modules for new components**, kept next to the component (`pool-section.module.css`). `globals.css` holds only tokens, resets, typography primitives and layout primitives. Move feature styles out of it when you touch them.
+- **Brand tokens.** Colours come from the tokens in `globals.css`, which `src/lib/brand/palette.ts` mirrors; its test checks contrast (AA) and the mirror, so change both together. Saffron is never text. A new dark container must use `--focus-ring-on-dark`, because the default slate ring fails on ink.
+- **12px floor.** `src/app/css-floor.test.ts` (with `font-floor.ts`) fails on any font size under 12px in CSS, CSS modules, TSX and TS. The vendored `src/components/stageshow-kit/` is excluded (ruling B1); our own demo CSS is not.
 - **Mantine** provides form controls and overlays. Don't add another component library.
 
 ## UI quality bar
@@ -101,6 +103,7 @@ The site must feel modern, premium, trustworthy and engaging.
 - **TDD for `src/lib` and importers.** Write the failing test first.
   - Cover boundaries: birthdays, expiry dates, caps, masked intervals, and missing versus zero.
 - Tests sit next to their source as `*.test.ts`. Test names describe behaviour ("treats a missing round row as not listed, not zero").
+- Changes to the homepage hero demo must pass the rehearsal gate in `src/components/home/REHEARSAL.md` (1440, 390, reduced motion, and rendered text at least 12px down to 320px).
 - Test fixtures are small and explicit. Don't snapshot whole datasets.
 
 ## Git
