@@ -1,0 +1,82 @@
+{
+  "190-ACT": {
+    "name": "Australian Capital Territory",
+    "group": "Not yet verified",
+    "fragment": "under 20 invited, so may be zero"
+  },
+  "190-NSW": {
+    "name": "New South Wales",
+    "group": "Not open to you now",
+    "fragment": "Not on the New South Wales 2026–27 list for 190"
+  },
+  "190-NT": {
+    "name": "Northern Territory",
+    "group": "Not yet verified",
+    "fragment": "under 20 invited, so may be zero"
+  },
+  "190-QLD": {
+    "name": "Queensland",
+    "group": "Not open to you now",
+    "fragment": "Not on the Queensland 2026–27 list for 190"
+  },
+  "190-SA": {
+    "name": "South Australia",
+    "group": "Not open to you now",
+    "fragment": "Not open to those living elsewhere in Australia"
+  },
+  "190-TAS": {
+    "name": "Tasmania",
+    "group": "Not yet verified",
+    "fragment": "under 20 invited, so may be zero"
+  },
+  "190-VIC": {
+    "name": "Victoria",
+    "group": "Not yet verified",
+    "fragment": "under 20 invited, so may be zero"
+  },
+  "190-WA": {
+    "name": "Western Australia",
+    "group": "Needs your answers",
+    "fragment": "under 20 invited, so may be zero"
+  },
+  "491-ACT": {
+    "name": "Australian Capital Territory",
+    "group": "Not yet verified",
+    "fragment": "under 20 invited, so may be zero"
+  },
+  "491-NSW": {
+    "name": "New South Wales",
+    "group": "Not open to you now",
+    "fragment": "Closed for 491 in 2026–27"
+  },
+  "491-NT": {
+    "name": "Northern Territory",
+    "group": "Not yet verified",
+    "fragment": "under 20 invited, so may be zero"
+  },
+  "491-QLD": {
+    "name": "Queensland",
+    "group": "Not open to you now",
+    "fragment": "Not on the Queensland 2026–27 list for 491"
+  },
+  "491-SA": {
+    "name": "South Australia",
+    "group": "Not open to you now",
+    "fragment": "Not open to those living elsewhere in Australia"
+  },
+  "491-TAS": {
+    "name": "Tasmania",
+    "group": "Not yet verified",
+    "fragment": "under 20 invited, so may be zero"
+  },
+  "491-VIC": {
+    "name": "Victoria",
+    "group": "Not yet verified",
+    "fragment": "under 20 invited, so may be zero"
+  },
+  "491-WA": {
+    "name": "Western Australia",
+    "group": "Worth watching",
+    "fragment": "under 20 invited, so may be zero"
+  }
+}
