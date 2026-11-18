@@ -34,7 +34,7 @@ import {
   formatDate,
   type Profile,
 } from "@/lib/migration";
-import { restoreProfile } from "@/lib/state-answers";
+import { resetStateRelativeAnswers, restoreProfile } from "@/lib/state-answers";
 import type { ReportSource } from "@/lib/data/report-source";
 import { publishedOccupationCode } from "@/lib/data/occupation-url";
 import { occupationIndex } from "./data/occupation-index";
@@ -137,9 +137,10 @@ export function CheckFlow({ source }: { source: ReportSource }) {
     useOccupationCore(publishedCode, occupationIndex),
     useOccupationDetail(publishedCode, occupationIndex),
   );
-  // Every answer goes through here, so the opt-in saving effect applies to all.
+  // Every answer goes through here, so the opt-in saving effect applies to all
+  // and answers about the state you live in reset when that state changes.
   const updateMany = (patch: Partial<Profile>) => {
-    setProfile((p) => ({ ...p, ...patch }));
+    setProfile((p) => resetStateRelativeAnswers(p, { ...p, ...patch }));
     setError("");
   };
   const update = <K extends keyof Profile>(key: K, value: Profile[K]) =>

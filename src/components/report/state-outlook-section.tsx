@@ -1,8 +1,5 @@
-"use client";
-import { useState } from "react";
 import type { Profile } from "../../lib/migration";
 import type { StateOutlookView } from "../../lib/report/state-outlook-view";
-import { keepAskedQuestions } from "../../lib/state-outlook/questions";
 import { SharpenForm } from "./sharpen-form";
 import { StateOutlook } from "./state-outlook";
 
@@ -19,11 +16,6 @@ export function StateOutlookSection({
   profile: Profile;
   onAnswer?: (patch: Partial<Profile>) => void;
 }) {
-  // A question stays in the form once shown, even after its answer settles
-  // the rule, so the field never disappears while it is being typed in.
-  const [shown, setShown] = useState(view.questions);
-  const questions = keepAskedQuestions(shown, view.questions);
-  if (questions.length !== shown.length) setShown(questions);
   return (
     <>
       <StateOutlook
@@ -35,7 +27,7 @@ export function StateOutlookSection({
         defaultVisa={view.defaultVisa}
       />
       <SharpenForm
-        questions={questions}
+        questions={view.questions}
         profile={profile}
         onChange={onAnswer ?? (() => {})}
         readOnly={onAnswer === undefined}

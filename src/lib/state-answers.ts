@@ -93,3 +93,23 @@ export function restoreProfile(record: Record<string, unknown>): Profile {
     if (!(STATE_ANSWER_KEYS as string[]).includes(key)) base[key] = value;
   return { ...(base as Profile), ...normaliseStateAnswers(record) };
 }
+
+/**
+ * Answers about where the user lives now stop being true when that changes:
+ * months lived or worked in Queensland are not months in New South Wales.
+ * Cleared answers are null (unanswered), so the outlook asks again.
+ */
+export function resetStateRelativeAnswers(
+  previous: Profile,
+  next: Profile,
+): Profile {
+  const onshoreChanged = previous.onshore !== next.onshore;
+  if (!onshoreChanged && previous.state === next.state) return next;
+  return {
+    ...next,
+    monthsLivingInState: null,
+    monthsWorkingInState: null,
+    livesRegional: null,
+    ...(onshoreChanged ? { monthsLivingOffshore: null } : {}),
+  };
+}

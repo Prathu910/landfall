@@ -11,7 +11,8 @@ import {
 } from "../../lib/state-outlook/rules-guards";
 import type { ImportedList } from "../../lib/state-outlook/rules-types";
 
-// Small enough (about 12 KB gzipped together) for the client to import whole.
+// The lists and the federal list total about 11 KB gzipped (see docs/DATA.md,
+// "State rules"), small enough for the client to import whole.
 const LISTS: Record<string, unknown> = {
   nsw: nswJson,
   qld: qldJson,

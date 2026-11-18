@@ -244,7 +244,7 @@ Federal eligibility comes only from the imported federal list, never from the da
 2. Open each rule's `source` page in a browser and compare it with the curated rule. Update the rule and its `checkedAt`. Mark anything you could not read yourself as `secondary`, with the reason in `note`.
 3. Run `npm run check` and `npm run build` (the build prints no staleness warning once every rule is fresh), then commit the list JSON and the rule files together in a `data:` commit.
 
-**Client import.** The rules (TypeScript), the four lists and the federal list are imported whole by `src/components/data/state-rule-data.ts`, the only client module that may import them. Two lists are above the plan's 100 KB guide (SA 174 KB and WA 138 KB raw), but all five files total about 10 KB gzipped, so they are not split per state (ruling P24). Adding state-outlook code and data grew the first-load JS by about 29 KB gzipped on `/check/` and 53 KB on `/sample/`. Split the lists per state if that budget (about 60 KB) is ever exceeded.
+**Client import.** The rules (TypeScript), the four lists and the federal list are imported whole by `src/components/data/state-rule-data.ts`, the only client module that may import them. Two lists are above the plan's 100 KB guide (SA 174 KB and WA 138 KB raw), but the four lists and the federal list total about 11 KB gzipped (10.8 KB measured with gzip at its default level, 18 Nov 2026), so they are not split per state (ruling P24). Adding state-outlook code and data grew the first-load JS by about 29 KB gzipped on `/check/` and 53 KB on `/sample/`. Split the lists per state if that budget (about 60 KB) is ever exceeded.
 
 ## Reproducibility against the legacy data (Task 10)
 

@@ -454,6 +454,20 @@ describe("evaluateStream: months in the state", () => {
     expect(below.finding).toBe("Under 12 months living in Western Australia");
   });
 
+  it("names the answer that decided a pass or fail, so it stays editable", () => {
+    const s = requirementStream(verified(LIVING_12));
+    expect(lastCheck(s, living(12)).field).toBe("monthsLivingInState");
+    expect(lastCheck(s, living(11)).field).toBe("monthsLivingInState");
+  });
+
+  it("names no answer when residence, not the answer, decided", () => {
+    const s = requirementStream(verified(LIVING_12), ["living-in-state"]);
+    const elsewhere = ctx({
+      profile: { ...livingInVic, monthsLivingInState: 30 },
+    });
+    expect(lastCheck(s, elsewhere).field).toBeUndefined();
+  });
+
   it("never fails a short streak on an N-of-the-last-M rule (ruling P16)", () => {
     const s = requirementStream(
       verified({
@@ -511,6 +525,25 @@ describe("evaluateStream: other requirements", () => {
     expect(lastCheck(s, at(6)).outcome).toBe("pass");
     expect(lastCheck(s, at(5)).outcome).toBe("fail");
     expect(lastCheck(s, ctx()).outcome).toBe("fail");
+  });
+
+  it("keeps the related-work definition on an answered work check", () => {
+    const s = requirementStream(
+      verified({
+        kind: "min-months-working-in-state",
+        months: 6,
+        related: "anzsco-3-digit",
+      }),
+    );
+    const check = lastCheck(
+      s,
+      ctx({ profile: { ...livingInWa, monthsWorkingInState: 8 } }),
+    );
+    expect(check).toMatchObject({
+      outcome: "pass",
+      field: "monthsWorkingInState",
+      related: "anzsco-3-digit",
+    });
   });
 
   it("passes a job offer only in the rule's state", () => {

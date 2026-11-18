@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { emptyProfile } from "./migration";
-import { restoreProfile } from "./state-answers";
+import { emptyProfile, type Profile } from "./migration";
+import { resetStateRelativeAnswers, restoreProfile } from "./state-answers";
 
 describe("restoreProfile", () => {
   it("restores a profile saved before the state answers existed as unanswered", () => {
@@ -86,5 +86,50 @@ describe("restoreProfile", () => {
     });
     expect(restored.monthsLivingInState).toBe(600);
     expect(restored.monthsLivingOffshore).toBe(0);
+  });
+});
+
+describe("resetStateRelativeAnswers", () => {
+  const answered: Profile = {
+    ...emptyProfile,
+    onshore: true,
+    state: "QLD",
+    monthsLivingInState: 14,
+    monthsWorkingInState: 14,
+    monthsLivingOffshore: 3,
+    livesRegional: true,
+    yearsExperienceLast10: 8,
+    jobOfferState: "QLD",
+  };
+
+  it("clears the answers about the state you live in when the state changes", () => {
+    const next = resetStateRelativeAnswers(answered, {
+      ...answered,
+      state: "NSW",
+    });
+    expect(next.state).toBe("NSW");
+    expect(next.monthsLivingInState).toBeNull();
+    expect(next.monthsWorkingInState).toBeNull();
+    expect(next.livesRegional).toBeNull();
+    // Not tied to where you live now.
+    expect(next.monthsLivingOffshore).toBe(3);
+    expect(next.yearsExperienceLast10).toBe(8);
+    expect(next.jobOfferState).toBe("QLD");
+  });
+
+  it("also clears months offshore when onshore changes", () => {
+    const next = resetStateRelativeAnswers(answered, {
+      ...answered,
+      onshore: false,
+    });
+    expect(next.monthsLivingInState).toBeNull();
+    expect(next.monthsWorkingInState).toBeNull();
+    expect(next.livesRegional).toBeNull();
+    expect(next.monthsLivingOffshore).toBeNull();
+  });
+
+  it("keeps every answer when neither the state nor onshore changes", () => {
+    const next = { ...answered, name: "Priya", monthsLivingInState: 20 };
+    expect(resetStateRelativeAnswers(answered, next)).toEqual(next);
   });
 });

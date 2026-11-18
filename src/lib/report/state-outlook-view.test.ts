@@ -3,6 +3,7 @@ import { stateRules } from "../../data/state-rules/2026-27/index";
 import { loadOccupationCore } from "../data/load-server";
 import type { StateCode, StateVisa } from "../data/types";
 import { sampleProfile, type Profile } from "../migration";
+import { resetStateRelativeAnswers } from "../state-answers";
 import {
   realFederal,
   realLists,
@@ -92,12 +93,14 @@ describe("buildStateOutlookView", () => {
     }
   });
 
-  it("asks only the questions that would change a tile, worded for the user's state", () => {
+  it("asks the questions that would change a tile, plus answered ones, worded for the user's state", () => {
     const fields = build(nurse).questions.map((q) => q.field);
     expect(fields).toEqual([
       "monthsLivingInState",
       "monthsWorkingInState",
       "yearsExperienceLast10",
+      // Answered in the main check, and used by a state's rules.
+      "visaExpiry",
       "studyState",
     ]);
     expect(build(nurse).questions[0].text).toContain("Queensland");
@@ -108,9 +111,6 @@ describe("buildStateOutlookView", () => {
     const after = build({ ...nurse, yearsExperienceLast10: 8 });
     expect(groupOf(before, "491", "WA")).toBe("needs-answers");
     expect(groupOf(after, "491", "WA")).not.toBe("needs-answers");
-    expect(after.questions.map((q) => q.field)).not.toContain(
-      "yearsExperienceLast10",
-    );
   });
 
   it("makes every tile Not yet verified when the federal list is unavailable", () => {
@@ -152,5 +152,52 @@ describe("buildStateOutlookView", () => {
       const text = JSON.stringify(build(profile), withoutUrls);
       expect(text).not.toMatch(BANNED_COPY);
     }
+  });
+
+  it("never reads months lived in one state as months in another after a state change", () => {
+    const inQld: Profile = {
+      ...nurse,
+      monthsLivingInState: 14,
+      monthsWorkingInState: 14,
+    };
+    expect(groupOf(build(inQld), "190", "QLD")).toBe("strongest");
+    const moved = resetStateRelativeAnswers(inQld, { ...inQld, state: "NSW" });
+    const view = build(moved);
+    expect(groupOf(view, "190", "NSW")).not.toBe("strongest");
+    expect(groupOf(view, "190", "NSW")).not.toBe("watching");
+  });
+
+  it("keeps a saved answer that settles its rule among the questions, so it can be changed", () => {
+    const fields = (profile: Profile) =>
+      build(profile).questions.map((q) => q.field);
+    const answered = fields({ ...nurse, yearsExperienceLast10: 8 });
+    expect(answered).toContain("yearsExperienceLast10");
+    const settled = fields({
+      ...nurse,
+      monthsLivingInState: 14,
+      monthsWorkingInState: 14,
+    });
+    expect(settled).toContain("monthsLivingInState");
+    expect(settled).toContain("monthsWorkingInState");
+  });
+
+  it("words an answered work question with the state's definition of related work", () => {
+    const question = build({
+      ...nurse,
+      monthsLivingInState: 14,
+      monthsWorkingInState: 14,
+    }).questions.find((q) => q.field === "monthsWorkingInState");
+    expect(question?.text).toContain(
+      "one Queensland treats as related (same first 3 ANZSCO digits)",
+    );
+  });
+
+  it("does not ask an unanswered question whose answer could not change a tile", () => {
+    // The sample's only open question is where they studied (for WA); the
+    // visa expiry is an answer already given.
+    expect(build(aarav).questions.map((q) => q.field)).toEqual([
+      "visaExpiry",
+      "studyState",
+    ]);
   });
 });

@@ -74,6 +74,11 @@ export function requirementLabel(
   }
 }
 
+/** Records which answer decided a verdict, so the question stays editable. */
+function answered(field: keyof Profile, verdict: Verdict): Verdict {
+  return { ...verdict, field };
+}
+
 // Ruling P16: answers are continuous months up to now, so a short streak can
 // still meet an "N of the last M months" rule.
 function compareMonths(
@@ -84,13 +89,18 @@ function compareMonths(
   if (value === null || value === undefined) {
     return ask(test.field, `months ${test.place}`, test.question);
   }
-  if (value >= test.months) return pass(`${monthsText(value)} ${test.place}`);
+  if (value >= test.months) {
+    return answered(test.field, pass(`${monthsText(value)} ${test.place}`));
+  }
   if (test.ofLastMonths !== undefined) {
-    return unverified(
-      `Under ${required} in a row ${test.place}; ${monthsText(test.months, test.ofLastMonths)} may still be met`,
+    return answered(
+      test.field,
+      unverified(
+        `Under ${required} in a row ${test.place}; ${monthsText(test.months, test.ofLastMonths)} may still be met`,
+      ),
     );
   }
-  return fail(`Under ${required} ${test.place}`);
+  return answered(test.field, fail(`Under ${required} ${test.place}`));
 }
 
 // Rulings P2 and P19: the months answers are about the state the user lives in.
@@ -141,13 +151,16 @@ function experience(
       `How many years of skilled work have you done in the last ${window.years} years?`,
     );
   }
-  return value >= years
-    ? pass(
-        `${yearsText(value)} of skilled work in the last ${window.years} years`,
-      )
-    : fail(
-        `Under ${yearsText(years)} of skilled work in the last ${window.years} years`,
-      );
+  return answered(
+    window.field,
+    value >= years
+      ? pass(
+          `${yearsText(value)} of skilled work in the last ${window.years} years`,
+        )
+      : fail(
+          `Under ${yearsText(years)} of skilled work in the last ${window.years} years`,
+        ),
+  );
 }
 
 function visaExpiry(date: string, profile: Profile): Verdict {
@@ -160,9 +173,12 @@ function visaExpiry(date: string, profile: Profile): Verdict {
     );
   }
   // Valid YYYY-MM-DD strings compare in calendar order.
-  return expiry <= date
-    ? pass(`Your visa expires by ${formatDate(date)}`)
-    : fail(`Your visa expires after ${formatDate(date)}`);
+  return answered(
+    "visaExpiry",
+    expiry <= date
+      ? pass(`Your visa expires by ${formatDate(date)}`)
+      : fail(`Your visa expires after ${formatDate(date)}`),
+  );
 }
 
 function jobOffer(ctx: StreamContext): Verdict {
@@ -175,9 +191,12 @@ function jobOffer(ctx: StreamContext): Verdict {
       "Which state or territory, if any, has a job offer for you?",
     );
   }
-  return offer === ctx.state
-    ? pass(`Job offer in ${name}`)
-    : fail(`No job offer in ${name}`);
+  return answered(
+    "jobOfferState",
+    offer === ctx.state
+      ? pass(`Job offer in ${name}`)
+      : fail(`No job offer in ${name}`),
+  );
 }
 
 function livesRegional(profile: Profile): Verdict {
@@ -189,9 +208,12 @@ function livesRegional(profile: Profile): Verdict {
       "Do you live in a regional area?",
     );
   }
-  return regional
-    ? pass("You live in a regional area")
-    : fail("You don't live in a regional area");
+  return answered(
+    "livesRegional",
+    regional
+      ? pass("You live in a regional area")
+      : fail("You don't live in a regional area"),
+  );
 }
 
 function studiedInState(ctx: StreamContext): Verdict {
@@ -204,9 +226,12 @@ function studiedInState(ctx: StreamContext): Verdict {
       "Which state or territory did you study in?",
     );
   }
-  return studied === ctx.state
-    ? pass(`Studied in ${name}`)
-    : fail(`You didn't study in ${name}`);
+  return answered(
+    "studyState",
+    studied === ctx.state
+      ? pass(`Studied in ${name}`)
+      : fail(`You didn't study in ${name}`),
+  );
 }
 
 /** Judges a verified, fresh requirement against the user's answers. */
@@ -239,9 +264,10 @@ export function judgeRequirement(
         cohorts,
         ctx,
       );
-      return verdict.outcome === "needs-answer"
-        ? { ...verdict, related: requirement.related }
-        : verdict;
+      // The question names the state's definition of related work, answered or not.
+      return verdict.field === undefined
+        ? verdict
+        : { ...verdict, related: requirement.related };
     }
     case "min-months-living-offshore":
       if (ctx.profile.onshore) return fail("You live in Australia now");

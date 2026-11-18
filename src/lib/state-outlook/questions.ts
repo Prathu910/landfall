@@ -117,18 +117,38 @@ const FIELD_ORDER = Object.keys(TEMPLATES) as (keyof Profile)[];
 
 type Asked = Map<StateCode, RuleCheck>; // the check each affected state asks
 
+function addCheck(
+  asked: Map<keyof Profile, Asked>,
+  state: StateCode,
+  check: RuleCheck,
+): void {
+  const { field } = check;
+  if (field === undefined || TEMPLATES[field] === undefined) return;
+  const entry = asked.get(field) ?? new Map();
+  if (!entry.has(state)) entry.set(state, check);
+  asked.set(field, entry);
+}
+
 function neededChecks(outlooks: Outlook[]): Map<keyof Profile, Asked> {
   const asked = new Map<keyof Profile, Asked>();
   for (const outlook of outlooks) {
     for (const outcome of outlook.states) {
-      if (outcome.deciding?.outcome !== "needs-answer") continue;
-      for (const check of outcome.deciding.checks) {
-        const { field } = check;
-        if (check.outcome !== "needs-answer" || field === undefined) continue;
-        if (TEMPLATES[field] === undefined) continue;
-        const entry = asked.get(field) ?? new Map();
-        if (!entry.has(outcome.state)) entry.set(outcome.state, check);
-        asked.set(field, entry);
+      // An open question only where answering it would change the tile.
+      if (outcome.deciding?.outcome === "needs-answer") {
+        for (const check of outcome.deciding.checks) {
+          if (check.outcome === "needs-answer") {
+            addCheck(asked, outcome.state, check);
+          }
+        }
+      }
+      // A given answer stays editable whichever stream used it, so it never
+      // vanishes when it moves the deciding stream (or after a reload).
+      for (const stream of outcome.streams) {
+        for (const check of stream.checks) {
+          if (check.outcome !== "needs-answer") {
+            addCheck(asked, outcome.state, check);
+          }
+        }
       }
     }
   }
@@ -137,7 +157,8 @@ function neededChecks(outlooks: Outlook[]): Map<keyof Profile, Asked> {
 
 /**
  * The optional questions whose answers would change at least one state's
- * tile, de-duplicated by field across states and visas.
+ * tile, plus those already answered, de-duplicated by field across states
+ * and visas. Computed from the profile alone, so it survives a reload.
  */
 export function questionsNeeded(
   outlooks: Outlook[],
@@ -166,20 +187,4 @@ export function questionsNeeded(
     });
   }
   return questions;
-}
-
-/**
- * The questions still needed plus any already shown, in the form's order. An
- * answer can settle its rule (so `questionsNeeded` drops it) while the user is
- * still typing; keeping it lets them see, change or clear that answer.
- */
-export function keepAskedQuestions(
-  shown: Question[],
-  needed: Question[],
-): Question[] {
-  const byField = new Map<keyof Profile, Question>();
-  for (const question of [...shown, ...needed]) {
-    byField.set(question.field, question);
-  }
-  return FIELD_ORDER.flatMap((field) => byField.get(field) ?? []);
 }
