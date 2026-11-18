@@ -12,7 +12,9 @@ import {
   countClause,
   countInSentence,
   formatMonth,
+  QUEUE_NOTE,
   submissionMonth,
+  type LinkedNote,
 } from "./copy";
 
 export type QueueSegments = {
@@ -23,7 +25,8 @@ export type QueueSegments = {
 };
 
 export type WhereYouStand =
-  { segments: QueueSegments; sentence: string } | { unavailable: string };
+  | { segments: QueueSegments; sentence: string; queueNote: LinkedNote }
+  | { unavailable: string };
 
 export type SameScore =
   | { kind: "split"; sentence: string; note: string }
@@ -85,6 +88,7 @@ export function buildWhereYouStand(
         ` as at ${formatMonth(core.asAt)}`,
       ),
     ].join(" "),
+    queueNote: QUEUE_NOTE,
   };
 }
 

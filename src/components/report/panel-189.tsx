@@ -8,6 +8,7 @@ import type {
 } from "../../lib/report/panel-189";
 import { EoisLikeYours } from "./eois-like-yours";
 import { LoadingData } from "./loading-data";
+import { NoteWithLink } from "./note-with-link";
 import styles from "./panel-189.module.css";
 import { QueueBar } from "./queue-bar";
 import { RoundsTiles } from "./rounds-tiles";
@@ -29,6 +30,7 @@ function Stand({ view }: { view: WhereYouStand }) {
     <>
       <QueueBar segments={view.segments} />
       <p className={styles.lead}>{view.sentence}</p>
+      <NoteWithLink note={view.queueNote} className={styles.note} />
     </>
   );
 }

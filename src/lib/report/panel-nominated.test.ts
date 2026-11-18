@@ -58,9 +58,23 @@ describe("buildNominatedPanel", () => {
   it("works for 491 using the 491 pool", () => {
     const panel = buildNominatedPanel(noneRoundsCore, "491", 90);
     expect(panel.heading).toBe("Where you stand in the national 491 pool");
+    expect(panel.nationalNote).toBe(
+      "This is the national pool for state/territory nominated 491, excluding family sponsorship. States select by their own rules.",
+    );
     expect(panel.whereYouStand).toEqual(
       buildWhereYouStand(noneRoundsCore, 90, "491"),
     );
+  });
+
+  it("puts the queue note under each national queue bar", () => {
+    for (const visa of ["190", "491"] as const) {
+      const stand = buildNominatedPanel(noneRoundsCore, visa, 90).whereYouStand;
+      if ("unavailable" in stand) throw new Error("expected segments");
+      expect(stand.queueNote.link).toEqual({
+        href: "/methodology/#pool",
+        text: "How to read the pool",
+      });
+    }
   });
 
   it("names the visa when no pool is published", () => {

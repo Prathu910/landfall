@@ -8,7 +8,7 @@ import type {
   Visa,
 } from "../data/types";
 import { formatDate } from "../migration";
-import { formatCount, formatMonth } from "./copy";
+import { formatCount, formatMonth, QUEUE_NOTE, type LinkedNote } from "./copy";
 import {
   CHIP_LABEL,
   summarise189Rounds,
@@ -29,6 +29,7 @@ export type ScorecardCard = {
   sentence: string;
   points: number;
   pointsNote: string | null;
+  aheadLabel: string;
   ahead: string | null;
   atScore: string | null;
   href: string | null; // null: no visa panel renders without data
@@ -37,6 +38,8 @@ export type Scorecard = {
   headline: string;
   sourceLine: string;
   cards: [ScorecardCard, ScorecardCard, ScorecardCard];
+  /** Null when no card shows a higher-score count. */
+  queueNote: LinkedNote | null;
   overlapNote: string;
 };
 
@@ -56,6 +59,12 @@ const TITLES: Record<Visa, string> = {
   "189": "189 · Independent",
   "190": "190 · Nominated",
   "491": "491 · Regional",
+};
+// 190/491 counts are national: a state's selection is not a queue.
+const AHEAD_LABELS: Record<Visa, string> = {
+  "189": "Ahead of you",
+  "190": "Higher score (national pool)",
+  "491": "Higher score (national pool)",
 };
 const POINTS_NOTES: Record<Visa, string | null> = {
   "189": null,
@@ -157,6 +166,7 @@ function buildCard(
     title: TITLES[visa],
     points,
     pointsNote: POINTS_NOTES[visa],
+    aheadLabel: AHEAD_LABELS[visa],
   };
   if (data.kind === "none") {
     return {
@@ -214,6 +224,7 @@ export function buildScorecard(input: {
         ? `Source: SkillSelect, Department of Home Affairs · snapshot ${formatDate(monthEnd(data.core.asAt))} · counts are EOIs (one person can hold several).`
         : "Source: SkillSelect, Department of Home Affairs.",
     cards,
+    queueNote: cards.some((card) => card.ahead) ? QUEUE_NOTE : null,
     overlapNote: "One EOI can select several visas, so pools overlap.",
   };
 }

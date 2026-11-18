@@ -20,6 +20,11 @@ export type NominatedPanel = {
 };
 
 const MONTHS_SHOWN = 12;
+const NATIONAL_NOTES: Record<StateVisa, string> = {
+  "190": "This is the national pool. States select by their own rules.",
+  "491":
+    "This is the national pool for state/territory nominated 491, excluding family sponsorship. States select by their own rules.",
+};
 
 function invitedText(invited: Interval, label: string): string {
   if (invited.max === 0) return `none recorded (as at ${label})`;
@@ -62,8 +67,7 @@ export function buildNominatedPanel(
     visa,
     heading: `Where you stand in the national ${visa} pool`,
     whereYouStand: buildWhereYouStand(core, score, visa),
-    nationalNote:
-      "This is the national pool. States select by their own rules.",
+    nationalNote: NATIONAL_NOTES[visa],
     invitations: invitationRows(core, visa),
     statesLink: { href: "#states", text: "See how each state selects" },
   };

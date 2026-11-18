@@ -4,6 +4,7 @@ import type {
 } from "../../lib/report/panel-nominated";
 import base from "./panel-189.module.css";
 import styles from "./panel-nominated.module.css";
+import { NoteWithLink } from "./note-with-link";
 import { QueueBar } from "./queue-bar";
 
 const TITLES = {
@@ -46,6 +47,10 @@ export function PanelNominated({
           <>
             <QueueBar segments={whereYouStand.segments} />
             <p className={base.lead}>{whereYouStand.sentence}</p>
+            <NoteWithLink
+              note={whereYouStand.queueNote}
+              className={base.note}
+            />
           </>
         )}
         <p className={base.note}>{panel.nationalNote}</p>

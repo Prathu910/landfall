@@ -19,6 +19,11 @@ describe("buildWhereYouStand", () => {
     expect(result.sentence).toContain("1,132 share your 90 points");
     expect(result.sentence).toContain("9,464 EOIs as at");
     expect(result.sentence).not.toMatch(BANNED_COPY);
+    expect(result.queueNote).toEqual({
+      text: "Counts of EOIs with a higher score, not your place in a queue: ties use an unpublished date of effect, and one person can hold several EOIs.",
+      link: { href: "/methodology/#pool", text: "How to read the pool" },
+    });
+    expect(result.queueNote.text).not.toMatch(BANNED_COPY);
   });
 
   it("reports an unavailable pool", () => {

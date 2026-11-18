@@ -6,6 +6,15 @@ import { formatInterval } from "../pool";
 export const BANNED_COPY =
   /\b(should|apply to|best|likely to be invited|people|applicants|some invitations|a few)\b/i;
 
+/** A caveat with a link to the methodology section that explains it. */
+export type LinkedNote = { text: string; link: { href: string; text: string } };
+
+/** Shown wherever a higher-score count could read as a place in a queue. */
+export const QUEUE_NOTE: LinkedNote = {
+  text: "Counts of EOIs with a higher score, not your place in a queue: ties use an unpublished date of effect, and one person can hold several EOIs.",
+  link: { href: "/methodology/#pool", text: "How to read the pool" },
+};
+
 export function isMasked(i: Interval): boolean {
   return i.min === 0 && i.max === 19;
 }

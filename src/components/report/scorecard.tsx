@@ -4,6 +4,7 @@ import {
   type ScorecardCard,
 } from "../../lib/report/scorecard";
 import { Reveal } from "../reveal";
+import { NoteWithLink } from "./note-with-link";
 import styles from "./scorecard.module.css";
 
 function Card({ card, loading }: { card: ScorecardCard; loading: boolean }) {
@@ -28,7 +29,7 @@ function Card({ card, loading }: { card: ScorecardCard; loading: boolean }) {
         <>
           {card.ahead ? (
             <p className={styles.row}>
-              <span>Ahead of you</span>
+              <span>{card.aheadLabel}</span>
               <b>{card.ahead}</b>
             </p>
           ) : null}
@@ -72,6 +73,9 @@ export function RealityScorecard({ scorecard }: { scorecard: Scorecard }) {
             <Card key={card.visa} card={card} loading={loading} />
           ))}
         </div>
+        {loading || !scorecard.queueNote ? null : (
+          <NoteWithLink note={scorecard.queueNote} className={styles.overlap} />
+        )}
         {loading ? null : (
           <p className={styles.overlap}>{scorecard.overlapNote}</p>
         )}

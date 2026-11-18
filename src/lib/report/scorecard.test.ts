@@ -13,6 +13,10 @@ import {
 import { buildScorecard, type ScorecardData } from "./scorecard";
 
 const POINTS = { base: 90, subclass190: 95, subclass491: 105 };
+const QUEUE_NOTE = {
+  text: "Counts of EOIs with a higher score, not your place in a queue: ties use an unpublished date of effect, and one person can hold several EOIs.",
+  link: { href: "/methodology/#pool", text: "How to read the pool" },
+};
 
 function build(data: ScorecardData, name = "Software Engineer") {
   return buildScorecard({
@@ -70,6 +74,27 @@ describe("buildScorecard", () => {
     expect(card.sourceLine).toBe(
       "Source: SkillSelect, Department of Home Affairs · snapshot 31 Oct 2026 · counts are EOIs (one person can hold several).",
     );
+  });
+
+  it("labels 189 counts ahead and 190/491 counts as the national pool", () => {
+    const card = build(ready(noneRoundsCore));
+    expect(card.cards.map((c) => c.aheadLabel)).toEqual([
+      "Ahead of you",
+      "Higher score (national pool)",
+      "Higher score (national pool)",
+    ]);
+  });
+
+  it("explains once that the counts are not a queue place", () => {
+    expect(build(ready(noneRoundsCore)).queueNote).toEqual(QUEUE_NOTE);
+    expect(build(ready(no189PoolCore)).queueNote).toEqual(QUEUE_NOTE);
+  });
+
+  it("has no queue note when no card shows a count", () => {
+    expect(build(ready(noPoolsCore)).queueNote).toBeNull();
+    for (const reason of ["notIndexed", "noData", "loadFailed"] as const) {
+      expect(build({ kind: "none", reason }).queueNote).toBeNull();
+    }
   });
 
   it("describes 190 and 491 invitations without summing months", () => {
@@ -212,6 +237,7 @@ describe("buildScorecard", () => {
       const texts = [
         card.headline,
         card.overlapNote,
+        card.queueNote?.text ?? "",
         ...card.cards.map((c) => c.sentence),
       ];
       for (const text of texts) expect(text).not.toMatch(BANNED_COPY);
