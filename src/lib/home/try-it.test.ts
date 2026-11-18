@@ -58,10 +58,8 @@ describe("try-it wording", () => {
     expect(view.note).toBe(
       `Counts are EOIs (one person can hold several). ${view.poolTotal} EOIs in the 189 pool.`,
     );
-    expect(view.source).toBe(`SkillSelect, as at ${view.asAt}`);
-    expect(`${view.note} ${view.source}`.replace("not people", "")).not.toMatch(
-      BANNED_COPY,
-    );
+    expect(view.source).toBe(`SkillSelect, as at ${view.asAt}.`);
+    expect(`${view.note} ${view.source}`).not.toMatch(BANNED_COPY);
   });
 });
 

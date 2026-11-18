@@ -88,7 +88,7 @@ export function TryIt({ defaultOccupation }: { defaultOccupation: string }) {
               </div>
             </dl>
             <p className={styles.note}>
-              {view.note} {view.source}.
+              {view.note} {view.source}
             </p>
           </>
         ) : (

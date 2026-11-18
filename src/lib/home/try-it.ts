@@ -37,7 +37,7 @@ export type TryItView =
       asAt: string;
       /** The EOI caveat plus the published pool total. */
       note: string;
-      /** "SkillSelect, as at {Mon YYYY}". */
+      /** "SkillSelect, as at {Mon YYYY}.". */
       source: string;
     }
   | { kind: "none"; message: string };
@@ -64,6 +64,6 @@ export function buildTryIt(
     latestRound: newest ? `${newest.value}, ${newest.label}` : NO_ROUNDS,
     asAt,
     note: `${EOI_CAVEAT} ${poolText} EOIs in the 189 pool.`,
-    source: `SkillSelect, as at ${asAt}`,
+    source: `SkillSelect, as at ${asAt}.`,
   };
 }
