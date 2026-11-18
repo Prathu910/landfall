@@ -1,6 +1,6 @@
 "use client";
 import { SegmentedControl } from "@mantine/core";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { StateVisa } from "../../lib/data/types";
 import type { Group } from "../../lib/state-outlook/outlook";
 import type { StatePanel, Tile } from "../../lib/state-outlook/view";
@@ -48,11 +48,14 @@ export function StateOutlook({
 }: Props) {
   const [visa, setVisa] = useState<StateVisa>(defaultVisa);
 
+  const frame = useRef(0);
+
   const goTo = useCallback((hash: string) => {
     const wanted = visaFromHash(hash);
     if (wanted) setVisa(wanted);
     // Wait a frame so a newly selected visa is displayed before scrolling.
-    requestAnimationFrame(() => reveal(hash));
+    cancelAnimationFrame(frame.current);
+    frame.current = requestAnimationFrame(() => reveal(hash));
   }, []);
 
   useEffect(() => {
@@ -61,7 +64,10 @@ export function StateOutlook({
     };
     onHash();
     window.addEventListener("hashchange", onHash);
-    return () => window.removeEventListener("hashchange", onHash);
+    return () => {
+      window.removeEventListener("hashchange", onHash);
+      cancelAnimationFrame(frame.current);
+    };
   }, [goTo]);
 
   return (

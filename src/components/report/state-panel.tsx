@@ -45,7 +45,7 @@ function Line({ line }: { line: CanApplyLine }) {
 function List({ title, items }: { title: string; items: string[] }) {
   return (
     <div className={styles.block}>
-      <h4 className={styles.h4}>{title}</h4>
+      <h5 className={styles.h5}>{title}</h5>
       <ul className={styles.plain}>
         {items.map((item) => (
           <li key={item}>{item}</li>
@@ -66,7 +66,7 @@ export function StatePanelView({
   return (
     <details className={styles.panel} id={panel.id}>
       <summary className={styles.summary}>
-        <span className={styles.header}>
+        <h4 className={`${styles.header} ${styles.title}`}>
           <span className={styles.heading}>{panel.heading}</span>
           <span className={`${styles.chip} ${styles[group]}`}>
             {panel.groupLabel}
@@ -74,11 +74,11 @@ export function StatePanelView({
           {panel.streamName ? (
             <span className={styles.stream}>{panel.streamName}</span>
           ) : null}
-        </span>
+        </h4>
       </summary>
       <div className={styles.body}>
         <div className={styles.block}>
-          <h4 className={styles.h4}>Can you apply?</h4>
+          <h5 className={styles.h5}>Can you apply?</h5>
           <ul className={styles.plain}>
             {panel.canApply.map((line) => (
               <Line key={`${line.mark}${line.text}`} line={line} />
