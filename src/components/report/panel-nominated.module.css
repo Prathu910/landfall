@@ -1,0 +1,37 @@
+.rows {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.row {
+  display: grid;
+  grid-template-columns: 9rem minmax(0, 1fr);
+  gap: 12px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--ink);
+}
+.month {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.quiet .text {
+  color: var(--muted);
+}
+.link {
+  margin: 14px 0 0;
+  font-size: 1rem;
+}
+.link a {
+  color: var(--forest);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+@media (max-width: 720px) {
+  .row {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+}
