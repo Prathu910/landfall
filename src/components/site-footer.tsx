@@ -1,30 +1,12 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { loadManifest } from "@/lib/data/load-server";
+import { formatMonth } from "@/lib/report/copy";
 import { Brand } from "./brand/brand";
 
-const MONTHS = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
-
-function formatAsAt(asAt: string): string {
-  const [year, month] = asAt.split("-");
-  return `${MONTHS[Number(month) - 1]} ${year}`;
-}
-
 export function SiteFooter() {
-  const asAt = formatAsAt(loadManifest().asAt);
+  // One month style site-wide: "Oct 2026", as the report and homepage show it.
+  const asAt = formatMonth(loadManifest().asAt);
   return (
     <footer className="site-footer">
       <div className="container">
