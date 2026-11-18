@@ -1,3 +1,5 @@
+import type { StateCode } from "./data/types";
+
 export type Profile = {
   name: string;
   dob: string;
@@ -21,6 +23,24 @@ export type Profile = {
   assessmentDate: string;
   assessmentExpiry: string;
   eoiDate: string;
+  // Optional "Sharpen my state outlook" answers. Absent or null = unanswered.
+  /** Continuous months up to now living in the state the user currently lives in. */
+  monthsLivingInState?: number | null;
+  /** Continuous months up to now working in the nominated occupation, or a state-defined related occupation, in the state they live in. */
+  monthsWorkingInState?: number | null;
+  /** Continuous months up to now living offshore. */
+  monthsLivingOffshore?: number | null;
+  /** Years of skilled experience in the last 3 years (0-3). */
+  yearsExperienceLast3?: number | null;
+  /** Years of skilled experience in the last 5 years (0-5). */
+  yearsExperienceLast5?: number | null;
+  /** Years of skilled experience in the last 10 years (0-10). */
+  yearsExperienceLast10?: number | null;
+  jobOfferState?: StateCode | "none" | null;
+  livesRegional?: boolean | null;
+  studyState?: StateCode | "none" | null;
+  /** Stored only; unused until a future visa-points tool needs it. */
+  incomeBand?: "under-60k" | "60-90k" | "90-130k" | "over-130k" | null;
 };
 export const emptyProfile: Profile = {
   name: "",
@@ -73,7 +93,13 @@ export type PointsResult = {
   missing: string[];
   warnings: string[];
   eligible: boolean | null;
+  /** Why `eligible` is false, shortest first: "age 45 or over". Empty otherwise. */
+  ineligibleReasons: string[];
+  /** Date answers that are empty or invalid, so eligibility can't be confirmed. */
+  uncheckedDates: UncheckedDate[];
 };
+export type UncheckedDate =
+  "englishDate" | "assessmentDate" | "assessmentExpiry";
 export type TimelineEvent = {
   date: string;
   title: string;
@@ -149,19 +175,22 @@ export function calculatePoints(profile: Profile, asOf: string): PointsResult {
       missing: ["Valid calculation date"],
       warnings: ["Enter a valid calendar date to calculate an estimate."],
       eligible: null,
+      ineligibleReasons: [],
+      uncheckedDates: [],
     };
   const missing: string[] = [];
   const warnings: string[] = [];
   const categories: PointCategory[] = [];
-  let failed = false;
-  let unknown = false;
+  // Each reason the modeled eligibility fails; any reason means `false`.
+  const ineligibleReasons: string[] = [];
+  const uncheckedDates: UncheckedDate[] = [];
   const add = (key: string, label: string, points: number, max: number) =>
     categories.push({ key, label, points, max });
   const dob = parseDate(profile.dob);
   const age = dob && dob <= today ? ageOn(dob, today) : null;
   if (age === null) missing.push("Date of birth");
   else if (age < 18 || age >= 45) {
-    failed = true;
+    ineligibleReasons.push(age < 18 ? "age under 18" : "age 45 or over");
     warnings.push("Age is outside the modeled 18–44 skilled visa range.");
   }
   add("age", "Age", age === null ? 0 : agePoints(age), 30);
@@ -170,17 +199,17 @@ export function calculatePoints(profile: Profile, asOf: string): PointsResult {
   let englishValid = true;
   if (profile.english === "unknown") missing.push("English proficiency");
   else if (!profile.englishDate) {
-    unknown = true;
+    uncheckedDates.push("englishDate");
     warnings.push(
       "English points are self-reported; test validity is unknown without a test date.",
     );
   } else if (!englishDate || englishDate > today) {
     englishValid = false;
-    unknown = true;
+    uncheckedDates.push("englishDate");
     warnings.push("English test date is invalid or in the future.");
   } else if (today >= addYears(englishDate, 3)) {
     englishValid = false;
-    failed = true;
+    ineligibleReasons.push("English test expired");
     warnings.push(
       "English test has expired under the modeled three-year validity rule.",
     );
@@ -315,17 +344,17 @@ export function calculatePoints(profile: Profile, asOf: string): PointsResult {
   const assessmentDate = parseDate(profile.assessmentDate);
   const assessmentExpiry = assessmentEnd(profile);
   if (!assessmentDate || assessmentDate > today) {
-    unknown = true;
+    uncheckedDates.push("assessmentDate");
     warnings.push(
       "Add a valid skills assessment issue date to check the modeled assessment requirement.",
     );
   }
   if (profile.assessmentExpiry && !parseDate(profile.assessmentExpiry)) {
-    unknown = true;
+    uncheckedDates.push("assessmentExpiry");
     warnings.push("Skills assessment letter expiry date is invalid.");
   }
   if (assessmentExpiry && today >= assessmentExpiry) {
-    failed = true;
+    ineligibleReasons.push("skills assessment expired");
     warnings.push(
       "Skills assessment has expired (letter expiry or the three-year cap, whichever is earlier).",
     );
@@ -348,7 +377,14 @@ export function calculatePoints(profile: Profile, asOf: string): PointsResult {
     categories,
     missing,
     warnings,
-    eligible: failed ? false : unknown || missing.length > 0 ? null : true,
+    eligible:
+      ineligibleReasons.length > 0
+        ? false
+        : uncheckedDates.length > 0 || missing.length > 0
+          ? null
+          : true,
+    ineligibleReasons,
+    uncheckedDates,
   };
 }
 
@@ -450,16 +486,27 @@ export function buildTimeline(profile: Profile, asOf: string): TimelineEvent[] {
   );
 }
 
+/** Fixed month names: ICU versions differ (en-GB may print "Sept"). */
+export const MONTH_NAMES = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+] as const;
+
+/** "2026-10-15" becomes "15 Oct 2026"; an invalid date becomes "—". */
 export function formatDate(value: string): string {
   const date = parseDate(value);
-  return date
-    ? new Intl.DateTimeFormat("en-GB", {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-        timeZone: "UTC",
-      }).format(date)
-    : "—";
+  if (!date) return "—";
+  return `${date.getUTCDate()} ${MONTH_NAMES[date.getUTCMonth()]} ${date.getUTCFullYear()}`;
 }
 export function localToday(): string {
   const date = new Date();

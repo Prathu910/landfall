@@ -14,6 +14,7 @@ src/data/occupation-index.json       Code, name and hasData for every occupation
 src/data/occupations/<code>.json     Core record: pools, status history, invited-by-score, state pools and state invitations, 189 rounds.
 src/data/occupations/<code>.detail.json   Detail record: cohorts, cohorts by score, invited profiles.
 src/data/rounds.json                 { rounds, skipped }: every parsed 189 round (all occupations, newest first) and every skipped round with its reason.
+src/data/state-rules/                State nomination rules and lists for the state outlook; see "State rules" below.
 ```
 
 - Only the importer writes `data/raw/` and `src/data/`. Never hand-edit them.
@@ -203,6 +204,53 @@ After an import:
 1. Review the printed revisions, skipped rounds and unmatched names.
 2. Run `npm run check` and `npm run build`. The evidence tests in `src/lib/report-evidence.test.ts` validate every generated occupation.
 3. Commit `data/raw/` and `src/data/` together, in a `data:` commit.
+
+## State rules
+
+The state outlook (`#state-outlook` in the report) reads three kinds of state data. They are separate from the SkillSelect dataset above.
+
+```
+src/data/state-rules/2026-27/<state>.ts      Hand-curated 2026–27 rules per state and visa: streams, cohorts, status, requirements, restrictions.
+src/data/state-rules/2026-27/index.ts        Combines them and validates them on import (rules-guards.ts).
+src/data/state-rules/lists/<wa|sa|qld|nsw>.json   Imported state occupation lists: code → visa → cohorts (and per-visa stream tags).
+src/data/state-rules/federal-occupations.json     The Home Affairs skilled occupation list: each code's 190 and 491 eligibility.
+```
+
+**Sources.** The curated rules come from `docs/research/state-nomination-2026-27.md`. The lists are imported from the official pages:
+
+- WA: [occupation search CSV](https://migration.wa.gov.au/v2_occupation_search/occupation-search?combine=&_format=csv).
+- SA: [occupation list](https://migration.sa.gov.au/before-applying/work-in-sa/occupation-lists/occupations-list).
+- QLD: the [onshore](https://www.migration.qld.gov.au/occupation-lists/queensland-onshore-skilled-occupation-list) and [offshore](<https://www.migration.qld.gov.au/occupation-lists/offshore-queensland-skilled-occupation-lists-(qsol)>) lists.
+- NSW: the [skills lists](https://www.nsw.gov.au/visas-and-migration/skilled-visas/nsw-skills-lists), published as 4-digit unit groups and expanded to every 6-digit code in the occupation index (`viaUnitGroup`).
+- Federal: the [skilled occupation list](https://immi.homeaffairs.gov.au/visas/working-in-australia/skill-occupation-list).
+
+VIC, ACT, TAS and NT publish no list we import. Their rules are `secondary`, so their tiles read "Not yet verified" and still show the published evidence (founder decision, 17 Nov 2026).
+
+**Verification.** Every rule carries `source`, `checkedAt` (YYYY-MM-DD) and `verification`:
+
+- `verified`: read directly on the official page (`[D]` in the research).
+- `secondary`: a search extract (`[S]`), a contradiction between official pages, our own approximation, or a rule read directly that Landfall's questions cannot test (for example WA's 87 weeks of face-to-face study, SA's 46-week CRICOS course, or whether SA's months came after the course; ruling P28). It never decides eligibility: a check that depends on it reads "Not yet verified on the official page".
+
+**Check order and findings.** Every stream starts with two checks from the user's own points check (ruling P27): age, English test and skills assessment within the federal limits (`PointsResult.eligible`; a `false` names each `ineligibleReasons` entry), then at least 65 points for the visa with nomination. A failing points check makes every state "Not open to you now"; an incomplete one (`eligible: null`) never passes: each missing answer is its own line (ruling P32). A missing or invalid English test date, skills assessment issue date or expiry date (`PointsResult.uncheckedDates`) is asked in "Sharpen my state outlook" as a date question affecting every state; anything else in `missing` reads "Edit your answers to add …". These lines say "From your points check" and link no page. Then come the federal list, the stream's status, cohorts, occupation list and requirements. Every check carries its `finding` (ruling P29). A failed line, and a verified, fresh rule the answers cannot confirm, show the finding; "Not yet verified on the official page" is only for `secondary` and stale rules. A not-open panel lists each stream's first failing finding, or one line when every stream fails on the same check. A filtered list check names its stream ("…list for 190 under Building and construction workers").
+
+**Which work counts.** Work-months and experience requirements carry `related` (rulings P15, P31): `same-occupation`, `anzsco-2-digit`, `anzsco-3-digit`, `anzsco-4-digit` or `any-skilled`. WA Schedule 1 experience is the same first 4 ANZSCO digits, QLD (all pathways) the same first 3, SA work the same first 2, SA offshore experience any skilled work; the rest are the occupation itself. The rule label and question name the definition; when the affected states count different work, the experience question asks about the nominated occupation alone. An experience answer below a wider definition's minimum is unverified, not a fail. Changing the occupation clears the work answers (ruling P30).
+
+**Restrictions.** A stream's `restrictions` are shown as "Restriction, not checked here" lines and never decide a group, for example SA's visa-expiry gate text, QLD's 2025–26 ATO Notice of Assessment gate on every onshore pathway and the Queensland employer rule on the onshore pathway.
+
+Federal eligibility comes only from the imported federal list, never from the dashboard having EOIs for a visa. A code that is absent or `false` there is "Not open to you now" in every state for that visa. If the federal list is missing or invalid, every tile is "Not yet verified". A state list that fails validation in the browser is left out, so the rules that need it read "Not yet verified" too.
+
+**Staleness.** Tests never read the clock; they use fixed dates.
+
+- At render time, a rule or list checked more than 60 days before the report's `asOf` counts as unverified, and its panel line says "Last checked {date}; may have changed".
+- At build time, `npm run build` runs `scripts/check-rule-staleness.ts`. It prints a `WARNING` naming the rules checked more than 45 days before today (the first 20, then a count). It never fails the build.
+
+**Monthly re-verify routine** (alongside the SkillSelect import):
+
+1. Re-import the lists: `npm run data:state-lists` (all of them), or `npm run data:state-lists -- --only federal|wa|sa|qld|nsw`. Add `--checked-at YYYY-MM-DD` to set the check date (default: today). The importer stops on a list that shrinks below its floor, fails validation, loses a column it reads (for example the QLD onshore list's Building and Construction pathway column), or is blocked by the source (HTTP 403, a login wall, JS-only data); never work around a block.
+2. Open each rule's `source` page in a browser and compare it with the curated rule. Update the rule and its `checkedAt`. Mark anything you could not read yourself as `secondary`, with the reason in `note`.
+3. Run `npm run check` and `npm run build` (the build prints no staleness warning once every rule is fresh), then commit the list JSON and the rule files together in a `data:` commit.
+
+**Client import.** The rules (TypeScript), the four lists and the federal list are imported whole by `src/components/data/state-rule-data.ts`, the only client module that may import them. Two lists are above the plan's 100 KB guide (SA 174 KB and WA 138 KB raw), but the four lists and the federal list total about 11 KB gzipped (10.8 KB measured with gzip at its default level, 18 Nov 2026), so they are not split per state (ruling P24). Adding state-outlook code and data grew the first-load JS by about 29 KB gzipped on `/check/` and 53 KB on `/sample/`. Split the lists per state if that budget (about 60 KB) is ever exceeded.
 
 ## Reproducibility against the legacy data (Task 10)
 

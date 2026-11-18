@@ -14,7 +14,7 @@ import type {
 } from "./types";
 
 export type StateSide = {
-  competitorsAtOrAbove: Interval;
+  competitorsAtOrAbove: Interval | null; // null: no pool counts published
   invitedAtOrBelow: MonthlyInvited[]; // fetched months in the window, oldest first
   notPublished: MonthKey[]; // window months that were not fetched
   peak: MonthlyInvited | null; // null unless some month confirms an invitation
@@ -62,9 +62,7 @@ function side(
     invitedAtLeast: sumScores(cells[i], (s) => s <= score),
   }));
   return {
-    competitorsAtOrAbove: pool
-      ? sumScores(pool, (s) => s >= score)
-      : { min: 0, max: 0 },
+    competitorsAtOrAbove: pool ? sumScores(pool, (s) => s >= score) : null,
     invitedAtOrBelow,
     notPublished,
     peak: peakMonth(invitedAtOrBelow),

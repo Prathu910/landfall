@@ -34,11 +34,15 @@ import {
   formatDate,
   type Profile,
 } from "@/lib/migration";
+import { resetStateRelativeAnswers, restoreProfile } from "@/lib/state-answers";
 import type { ReportSource } from "@/lib/data/report-source";
 import { publishedOccupationCode } from "@/lib/data/occupation-url";
 import { occupationIndex } from "./data/occupation-index";
 import { toReportOccupation } from "./data/report-occupation";
-import { useOccupationCore } from "./data/use-occupation-core";
+import {
+  useOccupationCore,
+  useOccupationDetail,
+} from "./data/use-occupation-core";
 import { Report } from "./report";
 import styles from "./check-flow.module.css";
 
@@ -102,7 +106,7 @@ export function CheckFlow({ source }: { source: ReportSource }) {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (isProfile(parsed)) {
-          setProfile(parsed);
+          setProfile(restoreProfile(parsed));
           setSave(true);
         }
       }
@@ -111,7 +115,10 @@ export function CheckFlow({ source }: { source: ReportSource }) {
     }
     const code = new URLSearchParams(window.location.search).get("occupation");
     if (code && occupationIndex.some((o) => o.code === code))
-      setProfile((p) => ({ ...p, occupation: code }));
+      // A saved profile's work answers were about its own occupation.
+      setProfile((p) =>
+        resetStateRelativeAnswers(p, { ...p, occupation: code }),
+      );
     setLoaded(true);
   }, []);
   useEffect(() => {
@@ -125,16 +132,23 @@ export function CheckFlow({ source }: { source: ReportSource }) {
   }, [profile, save, loaded]);
   const result = calculatePoints(profile, asOf);
   // Fetched as soon as an occupation is chosen, so the report is usually ready.
-  const occupation = toReportOccupation(
-    useOccupationCore(
-      publishedOccupationCode(profile.occupation, occupationIndex),
-      occupationIndex,
-    ),
+  const publishedCode = publishedOccupationCode(
+    profile.occupation,
+    occupationIndex,
   );
-  const update = <K extends keyof Profile>(key: K, value: Profile[K]) => {
-    setProfile((p) => ({ ...p, [key]: value }));
+  const occupation = toReportOccupation(
+    useOccupationCore(publishedCode, occupationIndex),
+    useOccupationDetail(publishedCode, occupationIndex),
+  );
+  // Every answer goes through here, so the opt-in saving effect applies to all
+  // and answers about the state you live in, or about the occupation, reset
+  // when that changes.
+  const updateMany = (patch: Partial<Profile>) => {
+    setProfile((p) => resetStateRelativeAnswers(p, { ...p, ...patch }));
     setError("");
   };
+  const update = <K extends keyof Profile>(key: K, value: Profile[K]) =>
+    updateMany({ [key]: value });
   const changeStep = (next: number) => {
     setStep(next);
     setError("");
@@ -242,6 +256,7 @@ export function CheckFlow({ source }: { source: ReportSource }) {
         occupation={occupation}
         comparisonIndex={occupationIndex}
         source={source}
+        onAnswer={updateMany}
         onEdit={() => {
           setReport(false);
           changeStep(3);

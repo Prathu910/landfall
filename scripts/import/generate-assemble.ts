@@ -7,6 +7,7 @@ import type {
   StateVisa,
   Visa,
 } from "../../src/lib/data/types";
+import { cohortWindowStart } from "../../src/lib/data/months";
 import type { CoveredPart, ParsedRow } from "./generate-rows";
 import { VIEWS, type ViewId } from "./views";
 
@@ -22,9 +23,6 @@ type Builder = AssembledOccupation & {
 };
 
 const VISAS: Visa[] = ["189", "190", "491"];
-
-/** Cohorts cover the last 36 submitted months (pre-approved reduction 1). */
-const COHORT_MONTHS = 36;
 
 /** Nested map level, created empty on first use. Every level is a plain object map. */
 function child<T extends object>(
@@ -69,16 +67,6 @@ function stateVisa(row: ParsedRow, view: ViewId): StateVisa {
     throw new Error(`${view} ${row.asAt}: 189 row in a state view`);
   }
   return row.visa;
-}
-
-function monthIndex(month: MonthKey): number {
-  return Number(month.slice(0, 4)) * 12 + Number(month.slice(5, 7)) - 1;
-}
-
-export function cohortWindowStart(asAt: MonthKey): MonthKey {
-  const index = monthIndex(asAt) - (COHORT_MONTHS - 1);
-  const month = String((index % 12) + 1).padStart(2, "0");
-  return `${Math.floor(index / 12)}-${month}`;
 }
 
 type Handler = (o: Builder, row: ParsedRow, view: ViewId) => void;

@@ -40,6 +40,47 @@ describe("federal points estimate", () => {
     expect(points(profile, "age", "2026-11-18")).toBe(0);
   });
 
+  it("names each reason the modeled eligibility fails, and none when it holds", () => {
+    const check = (overrides: Partial<Profile>) =>
+      calculatePoints(complete(overrides), "2026-11-18").ineligibleReasons;
+    expect(check({})).toEqual([]);
+    expect(check({ dob: "1979-06-01" })).toEqual(["age 45 or over"]);
+    expect(check({ dob: "2010-01-01" })).toEqual(["age under 18"]);
+    expect(check({ englishDate: "2023-11-17" })).toEqual([
+      "English test expired",
+    ]);
+    expect(check({ assessmentDate: "2023-11-17" })).toEqual([
+      "skills assessment expired",
+    ]);
+    expect(check({ dob: "1979-06-01", englishDate: "2023-11-17" })).toEqual([
+      "age 45 or over",
+      "English test expired",
+    ]);
+    // Unknown is not a failure: the reasons list only what failed.
+    expect(calculatePoints(sampleProfile, "2026-11-18")).toMatchObject({
+      eligible: null,
+      ineligibleReasons: [],
+    });
+  });
+
+  it("names the date fields that leave eligibility unknown (ruling P32)", () => {
+    const unchecked = (overrides: Partial<Profile>) =>
+      calculatePoints(complete(overrides), "2026-11-18").uncheckedDates;
+    expect(unchecked({})).toEqual([]);
+    expect(unchecked({ englishDate: "" })).toEqual(["englishDate"]);
+    expect(unchecked({ englishDate: "2027-01-01" })).toEqual(["englishDate"]);
+    expect(unchecked({ assessmentDate: "" })).toEqual(["assessmentDate"]);
+    expect(unchecked({ assessmentExpiry: "2029-02-31" })).toEqual([
+      "assessmentExpiry",
+    ]);
+    expect(unchecked({ englishDate: "", assessmentDate: "" })).toEqual([
+      "englishDate",
+      "assessmentDate",
+    ]);
+    // Without an English level there is no test date to ask for yet.
+    expect(unchecked({ english: "unknown", englishDate: "" })).toEqual([]);
+  });
+
   it("caps combined employment at 20 and uses threshold years", () => {
     expect(
       points(complete({ overseasYears: 8, australianYears: 8 }), "employment"),
@@ -416,6 +457,10 @@ describe("dated change timeline", () => {
 describe("date display helpers", () => {
   it("formats valid dates safely and refuses invalid dates", () => {
     expect(formatDate("2026-11-17")).toBe("17 Nov 2026");
+    // Three-letter months like formatMonth, whatever the ICU version prints for en-GB.
+    expect(formatDate("2024-09-05")).toBe("5 Sep 2024");
+    expect(formatDate("2026-06-04")).toBe("4 Jun 2026");
+    expect(formatDate("2025-01-01")).toBe("1 Jan 2025");
     expect(formatDate("2026-02-31")).toBe("—");
     expect(formatDate("")).toBe("—");
     expect(localToday()).toMatch(/^\d{4}-\d{2}-\d{2}$/);

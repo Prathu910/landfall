@@ -34,7 +34,7 @@ function useComparison(
     index,
   );
   if (preloaded) return { status: "ready", evidence: preloaded };
-  return toReportOccupation(load);
+  return toReportOccupation(load, { status: "idle" });
 }
 
 function CompareCard({
@@ -90,6 +90,7 @@ export function CompareSection({
   initialComparison,
   score,
   snapshotDate,
+  label,
 }: {
   occupation: ReportOccupation;
   occupationCode: string;
@@ -97,13 +98,14 @@ export function CompareSection({
   initialComparison?: OccupationEvidence;
   score: number;
   snapshotDate: string;
+  label: string;
 }) {
   const [comparison, setComparison] = useState(DEFAULT_COMPARISON);
   const compared = useComparison(comparison, index, initialComparison);
   const nameOf = (code: string) => index.find((o) => o.code === code)?.name;
   return (
     <section className="report-section" id="compare">
-      <span className="section-label">07 / OCCUPATION CONTEXT</span>
+      <span className="section-label">{label}</span>
       <h2>
         A little more <em>perspective.</em>
       </h2>

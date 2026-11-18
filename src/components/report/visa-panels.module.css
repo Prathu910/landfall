@@ -1,0 +1,27 @@
+.trend {
+  margin-top: 20px;
+}
+.trendHeading {
+  margin: 0 0 10px;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+.trendNote {
+  margin: 10px 0 0;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--muted);
+}
+@media print {
+  /* The chart and its monthly table together outgrow a page; let them part, not leave a blank page. */
+  .trend :global(.trend-chart) {
+    break-inside: auto;
+  }
+  .trend :global(.trend-chart > svg) {
+    break-inside: avoid;
+  }
+  .trendHeading {
+    break-after: avoid;
+  }
+}

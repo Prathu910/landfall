@@ -1,0 +1,81 @@
+.section {
+  margin: 28px 0;
+}
+.h2 {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 1.625rem;
+  line-height: 1.25;
+  color: var(--ink);
+}
+.subtitle {
+  margin: 8px 0 0;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.control {
+  margin-top: 16px;
+}
+.visa {
+  margin-top: 20px;
+}
+.h3 {
+  break-after: avoid;
+  margin: 0 0 6px;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+.summary {
+  margin: 0 0 14px;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--ink);
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+.any {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  align-items: baseline;
+  max-width: 420px;
+  margin-top: 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--paper);
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: var(--ink);
+  break-inside: avoid;
+}
+.anyNote {
+  flex-basis: 100%;
+  color: var(--muted);
+}
+.panels {
+  display: grid;
+  gap: 10px;
+  margin-top: 18px;
+}
+@media (max-width: 720px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media screen {
+  .offScreen {
+    display: none;
+  }
+}
+@media print {
+  .control {
+    display: none;
+  }
+}

@@ -353,6 +353,7 @@ describe("writeGenerated", () => {
       "manifest.json",
       "occupation-index.json",
       "occupations",
+      "rounds-meta.json",
       "rounds.json",
       "states.ts",
     ]);
@@ -367,6 +368,7 @@ describe("writeGenerated", () => {
     expect(read("manifest.json")).toEqual(data.manifest);
     expect(read("occupation-index.json")).toEqual(data.index);
     expect(read("rounds.json")).toEqual(data.rounds);
+    expect(read("rounds-meta.json")).toEqual({ skipped: data.rounds.skipped });
     expect(read("occupations/261313.json")).toEqual(data.cores[1]);
     expect(read("occupations/254499.detail.json")).toEqual(data.details[0]);
     expect(readFileSync(join(outRoot, "states.ts"), "utf8")).toBe(

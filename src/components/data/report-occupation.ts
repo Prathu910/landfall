@@ -1,32 +1,37 @@
 import type { OccupationEvidence } from "../../lib/report-evidence";
-import {
-  toOccupationEvidence,
-  toPoolOccupation,
-  type PoolOccupation,
-} from "../../lib/data/legacy";
-import type { OccupationIndexEntry } from "../../lib/data/types";
-import type { OccupationLoad } from "./use-occupation-core";
+import { toOccupationEvidence } from "../../lib/data/legacy";
+import type {
+  OccupationCore,
+  OccupationIndexEntry,
+} from "../../lib/data/types";
+import type { ScorecardData } from "../../lib/report/scorecard";
+import type { DetailLoad, OccupationLoad } from "./use-occupation-core";
 
 /** The nominated occupation's published data, as the report reads it. */
 export type ReportOccupation =
   | { status: "loading" }
   | {
       status: "ready";
-      pool: PoolOccupation | null; // null: no 189 pool published
       evidence: OccupationEvidence;
+      core: OccupationCore;
+      detail: DetailLoad;
     }
   | { status: "unavailable" };
 
 /** An occupation that was never requested has no data to show, like a failed load. */
-export function toReportOccupation(load: OccupationLoad): ReportOccupation {
+export function toReportOccupation(
+  load: OccupationLoad,
+  detail: DetailLoad,
+): ReportOccupation {
   switch (load.status) {
     case "loading":
       return { status: "loading" };
     case "ready":
       return {
         status: "ready",
-        pool: toPoolOccupation(load.core),
         evidence: toOccupationEvidence(load.core),
+        core: load.core,
+        detail,
       };
     default:
       return { status: "unavailable" };
@@ -49,18 +54,25 @@ export function unavailableReason(
   return entry.hasData ? "loadFailed" : "noData";
 }
 
-const POOL_UNAVAILABLE_MESSAGE: Record<UnavailableReason, string> = {
-  notIndexed:
-    "This occupation is not in the imported snapshot. Your points are available; no pool comparison has been invented.",
-  noData:
-    "No submitted EOIs are published for this occupation in this snapshot. Your points are available; no pool comparison has been invented.",
-  loadFailed:
-    "Published data for this occupation could not be loaded. Your points are still calculated; try again later.",
-};
-
-export function poolUnavailableMessage(
+/** The scorecard's view of the occupation; the detail joins once it has loaded. */
+export function toScorecardData(
+  occupation: ReportOccupation,
   code: string,
   index: OccupationIndexEntry[],
-): string {
-  return POOL_UNAVAILABLE_MESSAGE[unavailableReason(code, index)];
+): ScorecardData {
+  switch (occupation.status) {
+    case "ready":
+      return {
+        kind: "ready",
+        core: occupation.core,
+        detail:
+          occupation.detail.status === "ready"
+            ? occupation.detail.detail
+            : null,
+      };
+    case "loading":
+      return { kind: "none", reason: "loading" };
+    default:
+      return { kind: "none", reason: unavailableReason(code, index) };
+  }
 }

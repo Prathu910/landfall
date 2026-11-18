@@ -68,7 +68,7 @@ describe("stateEvidence", () => {
   it("returns zeros, nulls and every month not published without state rows", () => {
     const empty = stateEvidence(coreFixture, "491", "NSW", 90, 2).state;
     expect(empty).toEqual({
-      competitorsAtOrAbove: { min: 0, max: 0 },
+      competitorsAtOrAbove: null,
       invitedAtOrBelow: [],
       notPublished: ["2026-09", "2026-10"],
       peak: null,

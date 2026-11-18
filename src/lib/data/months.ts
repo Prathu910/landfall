@@ -33,3 +33,11 @@ export function splitCoverage(
   const notPublished = window.filter((month) => byMonth?.[month] === undefined);
   return { covered, notPublished };
 }
+
+/** Cohorts cover the last 36 submitted months (pre-approved reduction 1). */
+export const COHORT_MONTHS = 36;
+
+/** The oldest submitted month stored in a record's cohorts. */
+export function cohortWindowStart(asAt: MonthKey): MonthKey {
+  return monthAt(monthIndex(asAt) - (COHORT_MONTHS - 1));
+}

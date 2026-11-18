@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calendarMonths } from "./months";
+import { calendarMonths, cohortWindowStart } from "./months";
 
 describe("calendarMonths", () => {
   it("lists the calendar months ending at asAt, oldest first, across a year", () => {
@@ -14,5 +14,13 @@ describe("calendarMonths", () => {
   it("returns no months for a zero or negative count", () => {
     expect(calendarMonths("2026-10", 0)).toEqual([]);
     expect(calendarMonths("2026-10", -3)).toEqual([]);
+  });
+});
+
+describe("cohortWindowStart", () => {
+  it("is the oldest of the 36 stored cohort months", () => {
+    expect(cohortWindowStart("2026-10")).toBe("2023-11");
+    expect(cohortWindowStart("2026-12")).toBe("2024-01");
+    expect(cohortWindowStart("2026-01")).toBe("2023-02");
   });
 });

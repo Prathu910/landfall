@@ -1,9 +1,13 @@
 import { occupationIndex } from "@/components/data/occupation-index";
 import { Report } from "@/components/report";
-import { toOccupationEvidence, toPoolOccupation } from "@/lib/data/legacy";
-import { loadManifest, loadOccupationCore } from "@/lib/data/load-server";
+import { toOccupationEvidence } from "@/lib/data/legacy";
+import {
+  loadManifest,
+  loadOccupationCore,
+  loadOccupationDetail,
+} from "@/lib/data/load-server";
 import { reportSource } from "@/lib/data/report-source";
-import type { OccupationCore } from "@/lib/data/types";
+import type { OccupationCore, OccupationDetail } from "@/lib/data/types";
 import { sampleProfile } from "@/lib/migration";
 export const metadata = { title: "Explore the sample report" };
 
@@ -16,8 +20,17 @@ function requireCore(code: string): OccupationCore {
   return core;
 }
 
+/** The sample's panels need the detail file: a missing one fails the build, not the page. */
+function requireDetail(code: string): OccupationDetail {
+  const detail = loadOccupationDetail(code);
+  if (!detail)
+    throw new Error(`Sample report needs the detail file for ${code}`);
+  return detail;
+}
+
 export default function SamplePage() {
   const nominated = requireCore(sampleProfile.occupation);
+  const nominatedDetail = requireDetail(sampleProfile.occupation);
   const comparison = requireCore(SAMPLE_COMPARISON);
   const profile = {
     ...sampleProfile,
@@ -48,8 +61,9 @@ export default function SamplePage() {
         sample
         occupation={{
           status: "ready",
-          pool: toPoolOccupation(nominated),
           evidence: toOccupationEvidence(nominated),
+          core: nominated,
+          detail: { status: "ready", detail: nominatedDetail },
         }}
         comparisonIndex={occupationIndex}
         initialComparison={toOccupationEvidence(comparison)}
