@@ -149,14 +149,14 @@ function checkLine(check: RuleCheck): CanApplyLine {
 
 function canApplyLines(
   outcome: StateOutcome,
-  rules: StateVisaRules,
+  rules: StateVisaRules | undefined,
   asOf: string,
 ): CanApplyLine[] {
   const deciding = outcome.deciding;
   if (deciding === null) {
     return [{ text: outcome.reasonText, mark: "?", checkedNote: NOT_VERIFIED }];
   }
-  const stream = rules.streams.find((s) => s.id === deciding.streamId);
+  const stream = rules?.streams.find((s) => s.id === deciding.streamId);
   const lines: CanApplyLine[] = [];
   let checks = deciding.checks;
   // A secondary closure is never decisive, so say it before anything else and
@@ -270,11 +270,11 @@ function dataSentences(outcome: StateOutcome, points: number): string[] {
 
 function pointsLines(
   outcome: StateOutcome,
-  rules: StateVisaRules,
+  rules: StateVisaRules | undefined,
   points: number,
 ): string[] {
   const lines = [`${points} federal points with nomination`];
-  const system = rules.ownScoreSystem?.value.name;
+  const system = rules?.ownScoreSystem?.value.name;
   if (system !== undefined) {
     lines.push(
       `${STATE_NAMES[outcome.state]} ranks with its own ${system}, which is not calculated here.`,
@@ -283,10 +283,10 @@ function pointsLines(
   return lines;
 }
 
-/** Everything one state's detail panel shows, as plain strings. */
+/** Everything one state's detail panel shows, as plain strings; `rules` is undefined when none are recorded. */
 export function buildStatePanel(
   outcome: StateOutcome,
-  rules: StateVisaRules,
+  rules: StateVisaRules | undefined,
   points: number,
   asOf: string,
 ): StatePanel {
@@ -300,7 +300,7 @@ export function buildStatePanel(
     data: dataSentences(outcome, points),
     pointsThere: pointsLines(outcome, rules, points),
     resultsLink:
-      rules.resultsUrl === undefined
+      rules?.resultsUrl === undefined
         ? null
         : {
             href: rules.resultsUrl,

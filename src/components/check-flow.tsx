@@ -137,10 +137,13 @@ export function CheckFlow({ source }: { source: ReportSource }) {
     useOccupationCore(publishedCode, occupationIndex),
     useOccupationDetail(publishedCode, occupationIndex),
   );
-  const update = <K extends keyof Profile>(key: K, value: Profile[K]) => {
-    setProfile((p) => ({ ...p, [key]: value }));
+  // Every answer goes through here, so the opt-in saving effect applies to all.
+  const updateMany = (patch: Partial<Profile>) => {
+    setProfile((p) => ({ ...p, ...patch }));
     setError("");
   };
+  const update = <K extends keyof Profile>(key: K, value: Profile[K]) =>
+    updateMany({ [key]: value });
   const changeStep = (next: number) => {
     setStep(next);
     setError("");
@@ -248,6 +251,7 @@ export function CheckFlow({ source }: { source: ReportSource }) {
         occupation={occupation}
         comparisonIndex={occupationIndex}
         source={source}
+        onAnswer={updateMany}
         onEdit={() => {
           setReport(false);
           changeStep(3);

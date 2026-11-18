@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
+import { stateRules } from "../../data/state-rules/2026-27/index";
 import { detailFixture } from "../data/__fixtures__/occupation";
 import { sampleProfile, type Profile } from "../migration";
+import {
+  realFederal,
+  realLists,
+} from "../state-outlook/__fixtures__/real-data";
 import { noneRoundsCore, no189PoolCore } from "./__fixtures__/scorecard";
 import { buildReportView, type ReportViewInput } from "./report-view";
 
@@ -15,6 +20,11 @@ function input(overrides: Partial<ReportViewInput> = {}): ReportViewInput {
     profile,
     asOf: AS_OF,
     skippedRounds: [],
+    stateRuleData: {
+      rules: stateRules,
+      lists: realLists(),
+      federal: realFederal(),
+    },
     ...overrides,
   };
 }
@@ -90,6 +100,34 @@ describe("buildReportView", () => {
     for (const reason of ["loading", "notIndexed", "noData"] as const) {
       const view = buildReportView(input({ data: { kind: "none", reason } }));
       expect(view.panels).toBeNull();
+    }
+  });
+
+  it("builds the state outlook and puts its summaries on the 190 and 491 cards", () => {
+    const view = buildReportView(input());
+    const outlook = view.stateOutlook;
+    expect(outlook).not.toBeNull();
+    const [, c190, c491] = view.scorecard.cards;
+    expect(c190.sentence).toBe(outlook!.summaryByVisa["190"]);
+    expect(c491.sentence).toBe(outlook!.summaryByVisa["491"]);
+    // Evidence is read at each visa's points with nomination.
+    expect(outlook!.panelsByVisa["190"][0].pointsThere[0]).toBe(
+      "95 federal points with nomination",
+    );
+    expect(outlook!.panelsByVisa["491"][0].pointsThere[0]).toBe(
+      "105 federal points with nomination",
+    );
+  });
+
+  it("has no state outlook without occupation data", () => {
+    for (const reason of [
+      "loading",
+      "notIndexed",
+      "noData",
+      "loadFailed",
+    ] as const) {
+      const view = buildReportView(input({ data: { kind: "none", reason } }));
+      expect(view.stateOutlook).toBeNull();
     }
   });
 });

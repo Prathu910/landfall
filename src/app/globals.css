@@ -1776,38 +1776,6 @@ svg {
   color: #627e67;
   margin-top: 6px;
 }
-.report-state-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  align-items: flex-start;
-  padding: 16px 0;
-  border-bottom: 1px solid #e8eee3;
-}
-.report-state-row h3 {
-  font-size: 13px;
-  margin-bottom: 6px;
-}
-.report-state-row p {
-  font-size: 11px;
-  line-height: 1.85;
-  color: #5e7b63;
-}
-.report-state-row small {
-  font-size: 10px;
-  color: #896836;
-}
-.report-state-row > a {
-  font-size: 10px;
-  white-space: nowrap;
-  display: flex;
-  gap: 4px;
-  align-items: center;
-}
-.report-state-row .pill {
-  font-size: 8px;
-  margin-left: 8px;
-}
 .compare-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -2631,21 +2599,6 @@ svg {
   .report-event p {
     font-size: 10px;
   }
-  .report-state-row {
-    gap: 12px;
-  }
-  .report-state-row h3 {
-    font-size: 12px;
-  }
-  .report-state-row p {
-    font-size: 10px;
-  }
-  .report-state-row > a {
-    font-size: 8px;
-  }
-  .report-state-row .pill {
-    font-size: 7px;
-  }
   .compare-grid,
   .checklist-grid {
     grid-template-columns: 1fr;
@@ -2784,7 +2737,6 @@ svg {
   .report-event,
   .notice,
   .trend-chart,
-  .report-state-row,
   .compare-card,
   .checklist-item,
   tr {

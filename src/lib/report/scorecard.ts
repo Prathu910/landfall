@@ -1,20 +1,14 @@
-import { invitationActivity } from "../data/invitations";
 import { poolPosition } from "../data/pool-position";
 import { monthEnd } from "../data/report-source";
 import type {
   MonthKey,
   OccupationCore,
   OccupationDetail,
+  StateVisa,
   Visa,
 } from "../data/types";
 import { formatDate } from "../migration";
-import {
-  formatCount,
-  formatMonth,
-  isMasked,
-  QUEUE_NOTE,
-  type LinkedNote,
-} from "./copy";
+import { formatCount, formatMonth, QUEUE_NOTE, type LinkedNote } from "./copy";
 import {
   CHIP_LABEL,
   summarise189Rounds,
@@ -50,10 +44,11 @@ export type Scorecard = {
 };
 
 type Points = { base: number; subclass190: number; subclass491: number };
+/** Each nominated visa's state outlook summary; null without occupation data. */
+type StateSummaries = Record<StateVisa, string> | null;
 type Chip = ScorecardCard["chip"];
 type NoneReason = Extract<ScorecardData, { kind: "none" }>["reason"];
 
-const INVITATION_WINDOW_MONTHS = 12;
 export const LOADING_HEADLINE = "Loading published data…";
 const NO_DATA_SENTENCE = "No published data to compare for this occupation.";
 const LOAD_FAILED_SENTENCE = "Published data could not be loaded.";
@@ -80,30 +75,6 @@ const POINTS_NOTES: Record<Visa, string | null> = {
   "190": "with +5 if nominated",
   "491": "with +15 if nominated or sponsored",
 };
-
-function stateSentence(core: OccupationCore, visa: Visa): string {
-  const activity = invitationActivity(core, visa, INVITATION_WINDOW_MONTHS);
-  const confirmed = activity.lastConfirmedMonth;
-  if (confirmed) {
-    const month = activity.months.find((m) => m.asAt === confirmed);
-    const count = formatCount({
-      min: month?.invitedAtLeast.min ?? 0,
-      max: month?.invitedAtLeast.min ?? 0,
-    });
-    const laterMasked = activity.months.some(
-      (m) => m.asAt > confirmed && isMasked(m.invitedAtLeast),
-    );
-    const later = laterMasked ? "; later months under 20, so may be zero" : "";
-    return `At least ${count} invited as at ${formatMonth(confirmed)}, across all states${later}. Each state selects by its own rules.`;
-  }
-  if (activity.lastPossibleMonth) {
-    return "Invitations recorded in the last 12 months are each under 20, so may be zero.";
-  }
-  if (activity.months.length === 0) {
-    return "Invitations for the last 12 months are not published for this occupation.";
-  }
-  return `No ${visa} invitations recorded for this occupation in the last 12 months.`;
-}
 
 function cutoffText(
   value: { date: string; cutoff: number } | null,
@@ -192,11 +163,28 @@ function noneCardParts(
   };
 }
 
+/** The 190/491 sentence is the state outlook's summary (ruling S1 retired). */
+function nominatedCardParts(
+  visa: StateVisa,
+  summaries: StateSummaries,
+): { chip: Chip; sentence: string } {
+  if (summaries === null) {
+    throw new Error(
+      `The ${visa} card needs the state outlook summaries when occupation data is ready`,
+    );
+  }
+  return {
+    chip: { label: "State decides", tone: "amber" },
+    sentence: summaries[visa],
+  };
+}
+
 function buildCard(
   visa: Visa,
   points: number,
   data: ScorecardData,
   submittedMonth: MonthKey | null,
+  summaries: StateSummaries,
 ): ScorecardCard {
   const base = {
     visa,
@@ -230,10 +218,7 @@ function buildCard(
   const { chip, sentence } =
     visa === "189"
       ? card189Parts(data.core)
-      : {
-          chip: { label: "State decides", tone: "amber" } as Chip,
-          sentence: stateSentence(data.core, visa),
-        };
+      : nominatedCardParts(visa, summaries);
   return { ...base, chip, sentence, ...counts, href: `#visa-${visa}` };
 }
 
@@ -242,12 +227,14 @@ export function buildScorecard(input: {
   data: ScorecardData;
   points: Points;
   submittedMonth: MonthKey | null;
+  stateSummaries: StateSummaries;
 }): Scorecard {
-  const { occupationName, data, points, submittedMonth } = input;
+  const { occupationName, data, points, submittedMonth, stateSummaries } =
+    input;
   const cards: Scorecard["cards"] = [
-    buildCard("189", points.base, data, submittedMonth),
-    buildCard("190", points.subclass190, data, submittedMonth),
-    buildCard("491", points.subclass491, data, submittedMonth),
+    buildCard("189", points.base, data, submittedMonth, stateSummaries),
+    buildCard("190", points.subclass190, data, submittedMonth, stateSummaries),
+    buildCard("491", points.subclass491, data, submittedMonth, stateSummaries),
   ];
   return {
     headline: headlineFor(occupationName, data, points.base),

@@ -13,6 +13,10 @@ import {
 import { buildScorecard, type ScorecardData } from "./scorecard";
 
 const POINTS = { base: 90, subclass190: 95, subclass491: 105 };
+const SUMMARIES = {
+  "190": "Strongest evidence in SA and WA. Not open to you now in 2 states.",
+  "491": "No state shows strong published evidence for your profile yet.",
+};
 const QUEUE_NOTE = {
   text: "Counts of EOIs with a higher score, not your place in a queue: ties use an unpublished date of effect, and one person can hold several EOIs.",
   link: { href: "/methodology/#pool", text: "How to read the pool" },
@@ -24,6 +28,7 @@ function build(data: ScorecardData, name = "Software Engineer") {
     data,
     points: POINTS,
     submittedMonth: null,
+    stateSummaries: data.kind === "ready" ? SUMMARIES : null,
   });
 }
 const ready = (core: typeof noneRoundsCore): ScorecardData => ({
@@ -97,56 +102,34 @@ describe("buildScorecard", () => {
     }
   });
 
-  it("describes 190 and 491 invitations without summing months", () => {
+  it("uses each visa's state outlook summary as the 190 and 491 sentence", () => {
     const [, c190, c491] = build(ready(noneRoundsCore)).cards;
     expect(c190.chip).toEqual({ label: "State decides", tone: "amber" });
-    expect(c190.sentence).toBe(
-      "At least 35 invited as at Oct 2026, across all states. Each state selects by its own rules.",
-    );
+    expect(c190.sentence).toBe(SUMMARIES["190"]);
     expect(c190.ahead).toBe("0");
     expect(c190.atScore).toBe("40");
-    expect(c491.sentence).toBe(
-      "No 491 invitations recorded for this occupation in the last 12 months.",
-    );
+    expect(c491.sentence).toBe(SUMMARIES["491"]);
   });
 
-  it("adds that later masked months may be zero after the last confirmed month", () => {
-    const core = {
-      ...noneRoundsCore,
-      statusHistory: {
-        ...noneRoundsCore.statusHistory,
-        "190": {
-          ...noneRoundsCore.statusHistory["190"],
-          "2026-05": { INVITED: "29" },
-          "2026-07": { INVITED: "<20" },
-          "2026-09": {},
-          "2026-10": {},
-        },
-      },
-    };
-    const [, c190] = build(ready(core)).cards;
-    expect(c190.sentence).toBe(
-      "At least 29 invited as at May 2026, across all states; later months under 20, so may be zero. Each state selects by its own rules.",
-    );
+  it("no longer counts invitations across all states in the 190 and 491 cards", () => {
+    for (const core of [noneRoundsCore, allMaskedCore, occasionalCore]) {
+      const [, c190, c491] = build(ready(core)).cards;
+      for (const card of [c190, c491]) {
+        expect(card.sentence).not.toMatch(/invited|across all states/);
+      }
+    }
   });
 
-  it("says invitations are not published when no month in the window was fetched", () => {
-    const core = {
-      ...noneRoundsCore,
-      statusHistory: { "190": noneRoundsCore.statusHistory["190"] },
-    };
-    const [, c190, c491] = build(ready(core)).cards;
-    expect(c491.sentence).toBe(
-      "Invitations for the last 12 months are not published for this occupation.",
-    );
-    expect(c190.sentence).toContain("At least 35 invited");
-  });
-
-  it("says masked invitations may be zero", () => {
-    const [, c190] = build(ready(allMaskedCore)).cards;
-    expect(c190.sentence).toBe(
-      "Invitations recorded in the last 12 months are each under 20, so may be zero.",
-    );
+  it("refuses to build 190 and 491 cards from data without state summaries", () => {
+    expect(() =>
+      buildScorecard({
+        occupationName: "Software Engineer",
+        data: ready(noneRoundsCore),
+        points: POINTS,
+        submittedMonth: null,
+        stateSummaries: null,
+      }),
+    ).toThrow("state outlook summaries");
   });
 
   it("handles occasional, regular and never-listed rounds", () => {

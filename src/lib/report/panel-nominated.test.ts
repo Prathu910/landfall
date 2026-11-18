@@ -14,8 +14,8 @@ describe("buildNominatedPanel", () => {
       "This is the national pool. States select by their own rules.",
     );
     expect(panel.statesLink).toEqual({
-      href: "#states",
-      text: "See how each state selects",
+      href: "#state-outlook-190",
+      text: "See your state outlook",
     });
     expect(panel.invitations).toHaveLength(12);
     expect(panel.invitations[0]).toEqual({
@@ -65,6 +65,7 @@ describe("buildNominatedPanel", () => {
     expect(panel.whereYouStand).toEqual(
       buildWhereYouStand(noneRoundsCore, 90, "491"),
     );
+    expect(panel.statesLink.href).toBe("#state-outlook-491");
   });
 
   it("puts the queue note under each national queue bar", () => {

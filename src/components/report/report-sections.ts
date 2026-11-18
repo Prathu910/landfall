@@ -5,12 +5,12 @@ const PANELS: ReportSection[] = [
   ["visa-189", "189 in detail"],
   ["visa-190", "190 in detail"],
   ["visa-491", "491 in detail"],
+  ["state-outlook", "State outlook"],
 ];
 const REST: ReportSection[] = [
   ["points", "Your points"],
   ["scenarios", "What could change"],
   ["timeline", "Your personal dates"],
-  ["states", "State pathways"],
   ["compare", "Occupation context"],
   ["prepare", "Get organised"],
   ["definitions", "Useful definitions"],
@@ -20,7 +20,7 @@ const REST: ReportSection[] = [
 const WITH_PANELS = [...OPENING, ...PANELS, ...REST];
 const WITHOUT_PANELS = [...OPENING, ...REST];
 
-/** The report's nav, in page order; the visa panels appear only once they render. */
+/** The report's nav, in page order; the visa panels and state outlook appear only once they render. */
 export function reportSections(withPanels: boolean): ReportSection[] {
   return withPanels ? WITH_PANELS : WITHOUT_PANELS;
 }

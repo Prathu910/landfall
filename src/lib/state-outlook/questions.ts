@@ -167,3 +167,19 @@ export function questionsNeeded(
   }
   return questions;
 }
+
+/**
+ * The questions still needed plus any already shown, in the form's order. An
+ * answer can settle its rule (so `questionsNeeded` drops it) while the user is
+ * still typing; keeping it lets them see, change or clear that answer.
+ */
+export function keepAskedQuestions(
+  shown: Question[],
+  needed: Question[],
+): Question[] {
+  const byField = new Map<keyof Profile, Question>();
+  for (const question of [...shown, ...needed]) {
+    byField.set(question.field, question);
+  }
+  return FIELD_ORDER.flatMap((field) => byField.get(field) ?? []);
+}

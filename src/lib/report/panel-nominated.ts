@@ -17,7 +17,7 @@ export type NominatedPanel = {
   invitationsHeading: string;
   nationalNote: string;
   invitations: InvitationRow[];
-  statesLink: { href: "#states"; text: string };
+  statesLink: { href: `#state-outlook-${StateVisa}`; text: string };
 };
 
 const MONTHS_SHOWN = 12;
@@ -74,6 +74,9 @@ export function buildNominatedPanel(
     // INVITED counts every state's nominations together.
     invitationsHeading: "Invitations recorded, all states",
     invitations: invitationRows(core, visa),
-    statesLink: { href: "#states", text: "See how each state selects" },
+    statesLink: {
+      href: `#state-outlook-${visa}`,
+      text: "See your state outlook",
+    },
   };
 }

@@ -21,7 +21,6 @@ import {
 import type { ReportSource } from "@/lib/data/report-source";
 import type { OccupationIndexEntry } from "@/lib/data/types";
 import type { OccupationEvidence } from "@/lib/report-evidence";
-import { statePrograms } from "@/data/states";
 import type { ReportOccupation } from "./data/report-occupation";
 import { CompareSection } from "./report/compare-section";
 import { PointsAudit } from "./report/points-audit";
@@ -29,6 +28,7 @@ import { reportSections, sectionLabel } from "./report/report-sections";
 import { reportView } from "./report/report-view";
 import { ScenariosSection } from "./report/scenarios-section";
 import { RealityScorecard } from "./report/scorecard";
+import { StateOutlookSection } from "./report/state-outlook-section";
 import { VisaPanels } from "./report/visa-panels";
 const preparations = [
   "Identity and passport details",
@@ -71,6 +71,7 @@ export function Report({
   asOf,
   sample = false,
   onEdit,
+  onAnswer,
   occupation,
   comparisonIndex,
   initialComparison,
@@ -80,6 +81,8 @@ export function Report({
   asOf: string;
   sample?: boolean;
   onEdit?: () => void;
+  /** Merges a "Sharpen my state outlook" answer into the profile; absent on the sample. */
+  onAnswer?: (patch: Partial<Profile>) => void;
   occupation: ReportOccupation;
   /** Must keep a stable identity: the comparison loader's effect depends on it. */
   comparisonIndex: OccupationIndexEntry[];
@@ -192,6 +195,13 @@ export function Report({
               panels={view.panels}
               source={view.scorecard.sourceLine}
             />
+            {view.stateOutlook && (
+              <StateOutlookSection
+                view={view.stateOutlook}
+                profile={profile}
+                onAnswer={onAnswer}
+              />
+            )}
             <PointsAudit
               result={result}
               label={sectionLabel(sections, "points", "YOUR POINTS AUDIT")}
@@ -277,56 +287,6 @@ export function Report({
                   </Accordion.Panel>
                 </Accordion.Item>
               </Accordion>
-            </section>
-            <section className="report-section" id="states">
-              <span className="section-label">
-                {sectionLabel(sections, "states", "STATE PATHWAYS")}
-              </span>
-              <h2>
-                Federal points.
-                <br />
-                <em>Different state systems.</em>
-              </h2>
-              <p>
-                Victoria’s VPT, ACT’s Canberra Matrix and Tasmania’s attributes
-                use separate criteria. These are sourced summaries, rather than
-                a personal eligibility or selection assessment.
-              </p>
-              {statePrograms.map((s) => (
-                <div className="report-state-row" key={s.code}>
-                  <div>
-                    <h3>
-                      {s.name}
-                      {profile.onshore && profile.state === s.code && (
-                        <span className="pill">Your current state</span>
-                      )}
-                    </h3>
-                    <p>
-                      <strong>{s.system}.</strong> {s.summary}
-                    </p>
-                    {["WA", "NT"].includes(s.code) && (
-                      <small>
-                        Current cohort criteria need further verification.
-                      </small>
-                    )}
-                  </div>
-                  <a
-                    className="source-link"
-                    href={s.url}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Criteria <ArrowUpRight size={11} />
-                  </a>
-                </div>
-              ))}
-              <Link
-                className="text-link"
-                style={{ marginTop: 22, fontSize: 12 }}
-                href="/states/"
-              >
-                Explore the detailed state summaries <ArrowRight size={14} />
-              </Link>
             </section>
             <CompareSection
               occupation={occupation}
@@ -457,13 +417,16 @@ export function Report({
                     self-reported points audit, hypothetical credential
                     scenarios, three dated occupation pools, twelve monthly 189
                     totals, published invitation rounds, published outcomes of
-                    EOIs by submission month, personal dates, state summaries
+                    EOIs by submission month, personal dates, a state outlook
+                    from each state’s published 2026–27 rules and invitations,
                     and preparation tools. Exact queue rank, invitation dates,
-                    personal probabilities, a full state eligibility engine,
-                    current ceiling utilisation and gross EOI movements are
-                    unavailable here. These need additional verified data or a
-                    defensible model. Payment, automated report delivery and
-                    ongoing monitoring are future product work.
+                    personal probabilities, state nomination decisions,
+                    state-run scores (such as Victoria’s points test or the
+                    Canberra Matrix), current ceiling utilisation and gross EOI
+                    movements are unavailable here. These need additional
+                    verified data or a defensible model. Payment, automated
+                    report delivery and ongoing monitoring are future product
+                    work.
                   </Accordion.Panel>
                 </Accordion.Item>
               </Accordion>

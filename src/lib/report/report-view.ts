@@ -17,6 +17,11 @@ import {
   type Scorecard,
   type ScorecardData,
 } from "./scorecard";
+import {
+  buildStateOutlookView,
+  type StateOutlookView,
+  type StateRuleData,
+} from "./state-outlook-view";
 import { buildWhatCouldChange, type ChangeItem } from "./what-could-change";
 
 export type ReportViewInput = {
@@ -27,6 +32,7 @@ export type ReportViewInput = {
   profile: Profile;
   asOf: string;
   skippedRounds: { date: string }[];
+  stateRuleData: StateRuleData;
 };
 
 export type PanelViews = {
@@ -38,8 +44,12 @@ export type PanelViews = {
   nominated: [NominatedPanel, NominatedPanel];
 };
 
-/** `panels` is null without occupation data: the scorecard explains why. */
-export type ReportView = { scorecard: Scorecard; panels: PanelViews | null };
+/** `panels` and `stateOutlook` are null without occupation data: the scorecard explains why. */
+export type ReportView = {
+  scorecard: Scorecard;
+  panels: PanelViews | null;
+  stateOutlook: StateOutlookView | null;
+};
 
 const SAME_SCORE_FAILED: SameScore = {
   kind: "unavailable",
@@ -109,15 +119,28 @@ function buildPanels(
 /** Every reality-check view-model the report renders, from one profile and occupation. */
 export function buildReportView(input: ReportViewInput): ReportView {
   const { occupationName, data, profile, asOf } = input;
+  const points = calculatePoints(profile, asOf);
+  const stateOutlook =
+    data.kind === "ready"
+      ? buildStateOutlookView({
+          core: data.core,
+          profile,
+          asOf,
+          points: { "190": points.subclass190, "491": points.subclass491 },
+          data: input.stateRuleData,
+        })
+      : null;
   const scorecard = buildScorecard({
     occupationName,
     data,
-    points: calculatePoints(profile, asOf),
+    points,
     submittedMonth: submissionMonth(profile.eoiDate),
+    stateSummaries: stateOutlook?.summaryByVisa ?? null,
   });
   return {
     scorecard,
     panels:
       data.kind === "ready" ? buildPanels(input, data.core, data.detail) : null,
+    stateOutlook,
   };
 }

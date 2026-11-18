@@ -7,7 +7,7 @@ import { BANNED_COPY } from "../report/copy";
 import { cases, realFederal, realLists } from "./__fixtures__/real-data";
 import { stateOutlook } from "./outlook";
 import type { Outlook, RuleCheck, StateOutcome } from "./outlook";
-import { questionsNeeded } from "./questions";
+import { keepAskedQuestions, questionsNeeded } from "./questions";
 import type { Question } from "./questions";
 import type { RelatedWork } from "./rules-types";
 
@@ -246,5 +246,42 @@ describe("questionsNeeded", () => {
     ];
     for (const text of all.filter((x) => x !== undefined))
       expect(text).not.toMatch(BANNED_COPY);
+  });
+});
+
+describe("keepAskedQuestions", () => {
+  const question = (
+    field: Question["field"],
+    text = `${field}?`,
+  ): Question => ({
+    field,
+    kind: "months",
+    text,
+    affects: ["Queensland"],
+    affectsText: "Affects: Queensland",
+  });
+
+  it("keeps a question already shown after its answer settles the rule", () => {
+    const shown = [question("monthsLivingInState"), question("studyState")];
+    const needed = [question("studyState")];
+    expect(keepAskedQuestions(shown, needed).map((q) => q.field)).toEqual([
+      "monthsLivingInState",
+      "studyState",
+    ]);
+  });
+
+  it("adds newly needed questions in the form's field order", () => {
+    const shown = [question("studyState")];
+    const needed = [question("yearsExperienceLast10"), question("studyState")];
+    expect(keepAskedQuestions(shown, needed).map((q) => q.field)).toEqual([
+      "yearsExperienceLast10",
+      "studyState",
+    ]);
+  });
+
+  it("prefers the current wording of a question that is still needed", () => {
+    const shown = [question("monthsLivingInState", "old")];
+    const needed = [question("monthsLivingInState", "new")];
+    expect(keepAskedQuestions(shown, needed)[0].text).toBe("new");
   });
 });

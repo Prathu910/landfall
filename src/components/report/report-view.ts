@@ -6,6 +6,7 @@ import {
   type ReportOccupation,
 } from "../data/report-occupation";
 import { skippedRounds } from "../data/rounds-meta";
+import { stateRuleData } from "../data/state-rule-data";
 
 /** Adapts the loaded occupation to the reality check's view-models. */
 export function reportView(input: {
@@ -27,5 +28,6 @@ export function reportView(input: {
     profile,
     asOf,
     skippedRounds,
+    stateRuleData,
   });
 }
