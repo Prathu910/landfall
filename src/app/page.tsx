@@ -244,7 +244,7 @@ export default function Home() {
               The number today is only part of your picture. Bring the dates
               together and understand what might change under current rules.
             </p>
-            <Link href="/sample/#timeline" className="button button-lime">
+            <Link href="/sample/#timeline" className="button button-accent">
               Explore a personal timeline <ArrowUpRight size={17} />
             </Link>
             <small>From Aarav’s illustrative sample profile</small>
@@ -335,7 +335,7 @@ export default function Home() {
             <em>Made for you.</em>
           </h2>
           <p>A few details. Your points, possibilities and personal dates.</p>
-          <Link href="/check/" className="button button-lime">
+          <Link href="/check/" className="button button-accent">
             Start my free check <ArrowUpRight size={18} />
           </Link>
           <span className="cta-note">

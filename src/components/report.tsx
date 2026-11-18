@@ -489,7 +489,7 @@ export function Report({
               Now, <em>your numbers.</em>
             </h2>
             <p>The free check builds this overview from your own answers.</p>
-            <Link className="button button-lime" href="/check/">
+            <Link className="button button-accent" href="/check/">
               Start my free check <ArrowRight size={17} />
             </Link>
           </div>

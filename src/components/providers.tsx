@@ -4,23 +4,23 @@ import { DatesProvider } from "@mantine/dates";
 import { MotionConfig } from "motion/react";
 const theme = createTheme({
   respectReducedMotion: true,
-  primaryColor: "forest",
-  primaryShade: 7,
+  primaryColor: "ink",
+  primaryShade: 0,
   defaultRadius: "md",
-  fontFamily: '"DM Sans", Arial, sans-serif',
-  headings: { fontFamily: '"DM Sans", Arial, sans-serif', fontWeight: "600" },
+  fontFamily: "Inter, Arial, sans-serif",
+  headings: { fontFamily: "Newsreader, Georgia, serif", fontWeight: "600" },
   colors: {
-    forest: [
-      "#edf9f2",
-      "#daf1e4",
-      "#b3e3ca",
-      "#88d4ae",
-      "#61c797",
-      "#46bd88",
-      "#32b17b",
-      "#127b61",
-      "#12614e",
-      "#102e29",
+    ink: [
+      "#1B1A17",
+      "#2E2C27",
+      "#4A463E",
+      "#6B6558",
+      "#948B77",
+      "#B9AF9A",
+      "#DDD4C2",
+      "#ECE7DC",
+      "#F3EEE3",
+      "#FBF8F2",
     ],
   },
   components: {

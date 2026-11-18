@@ -1,7 +1,7 @@
 .panel {
   margin: 28px 0;
-  background: var(--white);
-  border: 1px solid var(--line);
+  background: var(--card);
+  border: 1px solid var(--rule);
   border-radius: 14px;
   padding: 22px;
 }
@@ -9,7 +9,7 @@
   outline: none;
 }
 .panel:focus-visible {
-  outline: 2px solid var(--forest);
+  outline: 2px solid var(--ink);
   outline-offset: 2px;
 }
 .eyebrow {
@@ -36,7 +36,7 @@
 .block {
   margin-top: 18px;
   padding-top: 18px;
-  border-top: 1px solid var(--line);
+  border-top: 1px solid var(--rule);
 }
 .h3 {
   /* Blocks can outgrow a page (the trend, the nearby-months table), so only the heading stays with its content. */
@@ -81,8 +81,8 @@
   font-size: 1.0625rem;
 }
 .listed {
-  background: var(--lime);
-  color: var(--forest-dark);
+  background: var(--status-strongest-bg);
+  color: var(--status-strongest-fg);
 }
 .listed .tileValue {
   font-family: var(--serif);
@@ -91,7 +91,7 @@
   line-height: 1.2;
 }
 .muted {
-  background: var(--pale);
+  background: var(--surface);
   color: var(--muted);
 }
 .muted .tileValue {
@@ -104,7 +104,7 @@
   cursor: pointer;
   font-size: 0.9375rem;
   font-weight: 600;
-  color: var(--forest);
+  color: var(--ink);
   padding: 4px 0;
 }
 .allRounds {
@@ -118,7 +118,7 @@
   justify-content: space-between;
   gap: 12px;
   padding: 6px 0;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid var(--rule);
   font-size: 0.9375rem;
 }
 .stats {
@@ -128,7 +128,7 @@
   margin: 14px 0 0;
 }
 .stats div {
-  border: 1px solid var(--line);
+  border: 1px solid var(--rule);
   border-radius: 10px;
   padding: 10px 12px;
 }
@@ -150,7 +150,7 @@
   margin-top: 14px;
   border-radius: 6px;
   overflow: hidden;
-  background: var(--pale);
+  background: var(--surface);
 }
 .stack span {
   display: block;
@@ -158,16 +158,16 @@
   flex: none;
 }
 .invited {
-  background: var(--forest-dark);
+  background: var(--ink);
 }
 .lodged {
-  background: #3f9a74;
+  background: #6b6558;
 }
 .waiting {
-  background: #e0a33a;
+  background: #d9731a;
 }
 .closed {
-  background: #b9c7c0;
+  background: #b9af9a;
 }
 .legend {
   display: flex;
@@ -201,7 +201,7 @@
 .table td {
   padding: 8px 10px;
   text-align: right;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid var(--rule);
 }
 .table th:first-child {
   text-align: left;
@@ -214,7 +214,7 @@
 }
 .you th,
 .you td {
-  background: var(--amber-tint);
+  background: var(--question-bg);
   font-weight: 700;
 }
 .changes {
@@ -224,11 +224,11 @@
 }
 .changes li {
   padding: 8px 0;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid var(--rule);
   font-size: 1rem;
 }
 .changes a {
-  color: var(--forest);
+  color: var(--ink);
   text-decoration: underline;
   text-underline-offset: 3px;
 }

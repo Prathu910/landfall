@@ -47,9 +47,9 @@
   max-width: 420px;
   margin-top: 12px;
   padding: 10px 14px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--rule);
   border-radius: 12px;
-  background: var(--paper);
+  background: var(--newsprint);
   font-size: 0.875rem;
   line-height: 1.4;
   color: var(--ink);

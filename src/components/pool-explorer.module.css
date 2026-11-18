@@ -6,9 +6,9 @@
   min-height: 15rem;
   margin: 22px 0 5px;
   padding: 0 1.5rem;
-  border: 1px dashed var(--line);
+  border: 1px dashed var(--rule);
   border-radius: 10px;
-  background: var(--pale);
+  background: var(--surface);
   color: var(--muted);
   font-size: 0.8125rem;
   line-height: 1.6;

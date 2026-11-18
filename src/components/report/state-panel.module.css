@@ -1,12 +1,12 @@
 .panel {
-  background: var(--white);
-  border: 1px solid var(--line);
+  background: var(--card);
+  border: 1px solid var(--rule);
   border-radius: 14px;
   scroll-margin-top: 96px;
 }
 .panel:target,
 .panel[open] {
-  border-color: var(--forest);
+  border-color: var(--ink);
 }
 .summary {
   cursor: pointer;
@@ -25,13 +25,13 @@
 .summary::before {
   content: "▸";
   margin-top: 6px;
-  color: var(--forest);
+  color: var(--ink);
 }
 .panel[open] > .summary::before {
   content: "▾";
 }
 .summary:focus-visible {
-  outline: 3px solid var(--forest-dark);
+  outline: 3px solid var(--ink);
   outline-offset: 2px;
   border-radius: 14px;
 }
@@ -65,24 +65,25 @@
   color: var(--ink);
 }
 .strongest {
-  background: var(--lime);
-  color: var(--forest-dark);
+  background: var(--status-strongest-bg);
+  color: var(--status-strongest-fg);
 }
 .watching {
-  background: var(--amber-tint);
-  color: var(--amber);
+  background: var(--status-watching-bg);
+  color: var(--status-watching-fg);
 }
 .needs-answers {
-  background: var(--white);
-  border: 1px dashed var(--muted);
+  background: var(--status-needs-answers-bg);
+  color: var(--status-needs-answers-fg);
+  border: 1px dashed var(--muted-soft);
 }
 .unverified {
-  background: var(--pale);
-  color: var(--muted);
+  background: var(--status-unverified-bg);
+  color: var(--status-unverified-fg);
 }
 .not-open {
-  background: var(--danger-tint);
-  color: var(--danger);
+  background: var(--status-not-open-bg);
+  color: var(--status-not-open-fg);
 }
 .body {
   padding: 0 20px 20px;
@@ -90,7 +91,7 @@
 .block {
   margin-top: 16px;
   padding-top: 16px;
-  border-top: 1px solid var(--line);
+  border-top: 1px solid var(--rule);
 }
 .h5 {
   break-after: avoid;
@@ -135,20 +136,20 @@
   color: var(--muted);
 }
 .met .mark {
-  color: var(--forest);
+  color: var(--status-strongest-fg);
 }
 .unmet {
-  background: var(--danger-tint);
+  background: var(--status-not-open-bg);
 }
 .unmet .mark {
-  color: var(--danger);
+  color: var(--status-not-open-fg);
 }
 .open {
-  background: var(--amber-tint);
-  border-left: 4px solid var(--amber);
+  background: var(--question-bg);
+  border-left: 4px solid var(--saffron);
 }
 .open .mark {
-  color: var(--amber);
+  color: var(--question-fg);
 }
 .open .lineText {
   font-weight: 600;
@@ -166,6 +167,6 @@
   color: var(--muted);
 }
 .panel a {
-  color: var(--forest-dark);
+  color: var(--ink);
   text-decoration: underline;
 }

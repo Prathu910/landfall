@@ -45,7 +45,7 @@ export function PoolChart({
             x2="430"
             y1={20 + i * 52}
             y2={20 + i * 52}
-            stroke="#e4ebe7"
+            stroke="#ECE7DC"
             strokeDasharray="3 5"
           />
         ))}
@@ -74,12 +74,12 @@ export function PoolChart({
                 rx="4"
                 fill={
                   hover === band
-                    ? "#3a9f80"
+                    ? "#6B6558"
                     : band === score
-                      ? "#91dcb8"
+                      ? "#B9AF9A"
                       : band > score
-                        ? "#16634f"
-                        : "#e1ece6"
+                        ? "#1B1A17"
+                        : "#ECE7DC"
                 }
               />
               <text
@@ -87,13 +87,13 @@ export function PoolChart({
                 y="152"
                 textAnchor="middle"
                 fontSize="11"
-                fill={band === score ? "#102e29" : "#5c7066"}
+                fill={band === score ? "#1B1A17" : "#6B6558"}
                 fontWeight={band === score ? 700 : 400}
               >
                 {band}
               </text>
               {band === score && (
-                <circle cx={center} cy="167" r="3" fill="#127b61" />
+                <circle cx={center} cy="167" r="3" fill="#1B1A17" />
               )}
             </g>
           );
