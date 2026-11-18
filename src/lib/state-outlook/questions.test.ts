@@ -207,6 +207,45 @@ describe("questionsNeeded", () => {
     ]);
   });
 
+  it("names the state's definition of work on an experience question (ruling P31)", () => {
+    const years = (related: RelatedWork): RuleCheck =>
+      check({ field: "yearsExperienceLast10", related });
+    const one = ask([outlook("190", [["WA", [years("anzsco-4-digit")]]])]);
+    expect(one[0].text).toBe(
+      "Years of skilled work in the last 10 years in your nominated occupation or one Western Australia treats as related (same first 4 ANZSCO digits)",
+    );
+    const any = ask([
+      outlook("190", [
+        [
+          "SA",
+          [check({ field: "yearsExperienceLast5", related: "any-skilled" })],
+        ],
+      ]),
+    ]);
+    expect(any[0].text).toBe(
+      "Years of skilled work in the last 5 years in any skilled occupation (South Australia counts any skilled work)",
+    );
+  });
+
+  it("asks about the nominated occupation alone when states count different work (ruling P31)", () => {
+    const qs = ask([
+      outlook("190", [
+        [
+          "QLD",
+          [check({ field: "yearsExperienceLast3", related: "anzsco-3-digit" })],
+        ],
+        [
+          "SA",
+          [check({ field: "yearsExperienceLast3", related: "any-skilled" })],
+        ],
+      ]),
+    ]);
+    expect(qs[0].text).toBe(
+      "Years of skilled work in your nominated occupation in the last 3 years",
+    );
+    expect(qs[0].help).toMatch(/some states also count related work/);
+  });
+
   it("gives the short questions for the remaining fields", () => {
     const qs = ask([
       outlook("190", [

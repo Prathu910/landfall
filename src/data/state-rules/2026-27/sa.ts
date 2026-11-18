@@ -163,13 +163,15 @@ const streams: Stream[] = [
       // last 3 (3 years within 5 always includes 1 within the last 3), so that
       // check is verified. The 3-in-5 rule exempts listed construction and
       // trades occupations, which the imported list does not mark.
+      // Ruling P31: the page asks for "skilled experience" without naming an
+      // occupation, so any skilled work counts.
       verified(
-        experience(1, 3),
+        experience(1, 3, "any-skilled"),
         OFFSHORE_PAGE,
         "The minimum for every occupation: listed construction and trades occupations need 1 year of skilled experience in the last 3. Full-time here means 20 hours a week.",
       ),
       secondary(
-        experience(3, 5),
+        experience(3, 5, "any-skilled"),
         OFFSHORE_PAGE,
         "Read directly: at least 3 years of skilled experience in the last 5, except listed construction and trades occupations. The imported SA list does not mark those occupations, so this check is not applied as verified.",
       ),

@@ -97,8 +97,13 @@ export function livingOffshore(months: number): Requirement {
   return { kind: "min-months-living-offshore", months };
 }
 
-export function experience(years: number, withinYears: number): Requirement {
-  return { kind: "min-years-experience", years, withinYears };
+/** `related` is which work the state counts towards the years (ruling P31). */
+export function experience(
+  years: number,
+  withinYears: number,
+  related: RelatedWork,
+): Requirement {
+  return { kind: "min-years-experience", years, withinYears, related };
 }
 
 export function visaExpiryBy(date: string): Requirement {

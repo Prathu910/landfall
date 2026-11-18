@@ -57,7 +57,7 @@ const contract190 = secondary(
 // Research §WA item 4. The window is 10 years; a "last 5 years" answer can
 // show a pass but not a fail (carry to the evaluator).
 const schedule1Experience = verified(
-  experience(1, 10),
+  experience(1, 10, "anzsco-4-digit"),
   ELIGIBILITY,
   "At least 1 year in the nominated or a closely related occupation (same first 4 ANZSCO digits) in the last 10 years. Only paid, post-qualification work of 20+ hours a week counts, and Australian and overseas experience cannot be combined.",
 );

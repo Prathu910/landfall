@@ -253,6 +253,30 @@ describe("2026–27 state rules", () => {
     }
   });
 
+  it("records which work counts on every experience requirement (ruling P31)", () => {
+    // Research §WA item 4 (Schedule 1: same first four ANZSCO digits); §QLD
+    // item 4 (all pathways: "closely related" means the same first 3); §SA
+    // item 4 (offshore: "skilled experience", no occupation named).
+    const expected: Record<string, string> = {
+      "wa-general-schedule-1": "anzsco-4-digit",
+      "qld-offshore": "anzsco-3-digit",
+      "sa-offshore": "any-skilled",
+    };
+    const seen = new Set<string>();
+    for (const r of stateRules.rules) {
+      for (const s of r.streams) {
+        for (const q of s.requirements) {
+          if (q.value.kind !== "min-years-experience") continue;
+          seen.add(s.id);
+          expect(q.value.related, s.id).toBe(
+            expected[s.id] ?? "same-occupation",
+          );
+        }
+      }
+    }
+    for (const id of Object.keys(expected)) expect(seen).toContain(id);
+  });
+
   it("accepts those living in another state where no residence condition is stated", () => {
     // Research §NSW item 4 and §QLD item 4.
     for (const [state, id] of [

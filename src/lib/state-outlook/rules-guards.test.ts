@@ -37,7 +37,12 @@ function validRules() {
             requirements: [
               s({ kind: "min-months-living-in-state", months: 6 }),
               s({ kind: "visa-expiry-before", date: "2027-01-31" }),
-              s({ kind: "min-years-experience", years: 3, withinYears: 5 }),
+              s({
+                kind: "min-years-experience",
+                years: 3,
+                withinYears: 5,
+                related: "any-skilled",
+              }),
               s({ kind: "job-offer-in-state" }),
             ],
           },
@@ -132,6 +137,8 @@ describe("month and work requirements", () => {
       "same-occupation",
       "anzsco-2-digit",
       "anzsco-3-digit",
+      "anzsco-4-digit",
+      "any-skilled",
     ]) {
       const req = { kind: "min-months-working-in-state", months: 9, related };
       expect(isStateRules(withRequirement(req))).toBe(true);
@@ -154,7 +161,7 @@ describe("month and work requirements", () => {
     const base = { kind: "min-months-working-in-state", months: 9 };
     expect(isStateRules(withRequirement(base))).toBe(false);
     expect(
-      isStateRules(withRequirement({ ...base, related: "anzsco-4-digit" })),
+      isStateRules(withRequirement({ ...base, related: "anzsco-5-digit" })),
     ).toBe(false);
     expect(
       isStateRules(
@@ -165,6 +172,17 @@ describe("month and work requirements", () => {
         }),
       ),
     ).toBe(false);
+  });
+
+  it("requires a known related-work definition on an experience requirement (ruling P31)", () => {
+    const base = { kind: "min-years-experience", years: 1, withinYears: 10 };
+    expect(
+      isStateRules(withRequirement({ ...base, related: "anzsco-4-digit" })),
+    ).toBe(true);
+    expect(isStateRules(withRequirement(base))).toBe(false);
+    expect(isStateRules(withRequirement({ ...base, related: "nearby" }))).toBe(
+      false,
+    );
   });
 
   it("rejects a month window that is negative, not a number or shorter than the months", () => {

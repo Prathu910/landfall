@@ -92,7 +92,7 @@ const overseas190: Stream = {
   occupations,
   requirements: [
     secondary(
-      experience(3, 5),
+      experience(3, 5, "same-occupation"),
       OVERSEAS_190,
       "3 years of full-time, post-graduate work in the occupation within the last 5 years.",
     ),
@@ -114,7 +114,7 @@ const overseas491: Stream = {
   occupations,
   requirements: [
     secondary(
-      experience(1, 5),
+      experience(1, 5, "same-occupation"),
       OVERSEAS_491,
       "1 year of experience in the last 5 years, with otherwise similar rules to the 190 overseas cohort (not itemised in the extract).",
     ),

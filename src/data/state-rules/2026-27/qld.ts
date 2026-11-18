@@ -131,9 +131,11 @@ function streams(visa: StateVisa): Stream[] {
       "Skilled workers living offshore",
       verified(OFFSHORE, OFFSHORE_PAGE),
       verified(list("qld", ["offshore"]), OFFSHORE_LIST),
+      // Ruling P31: on every QLD pathway "closely related" work (same first 3
+      // ANZSCO digits) counts.
       [
         verified(
-          experience(1, 3),
+          experience(1, 3, "anzsco-3-digit"),
           OFFSHORE_PAGE,
           `At least 1 year of skilled employment in the last 3 years; current employment is not required. ${WORK_NOTE}`,
         ),

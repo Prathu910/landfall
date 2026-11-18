@@ -1,6 +1,6 @@
 import type { StateCode } from "../data/types";
 import type { Profile } from "../migration";
-import { STATE_CODES, STATE_NAMES } from "./context";
+import { joinWords, STATE_CODES, STATE_NAMES } from "./context";
 import type { Outlook, RuleCheck } from "./outlook";
 import type { RelatedWork } from "./rules-types";
 
@@ -24,10 +24,14 @@ export type Question = {
   max?: number; // upper bound for a number answer, matching state-answers.ts
 };
 
+type Asked = Map<StateCode, RuleCheck>; // the check each affected state asks
+
 type Template = {
   kind: QuestionKind;
-  text: (state: StateCode | null, check: RuleCheck) => string;
-  help?: string;
+  // `state` is the user's own state when affected; `asked` holds every
+  // affected state's check.
+  text: (state: StateCode | null, check: RuleCheck, asked: Asked) => string;
+  help?: (asked: Asked) => string;
   max?: number;
 };
 
@@ -35,6 +39,8 @@ const WORK_DEFINITIONS: Record<RelatedWork, string> = {
   "same-occupation": "same occupation",
   "anzsco-2-digit": "same first 2 ANZSCO digits",
   "anzsco-3-digit": "same first 3 ANZSCO digits",
+  "anzsco-4-digit": "same first 4 ANZSCO digits",
+  "any-skilled": "any skilled occupation",
 };
 
 const MONTHS_HELP =
@@ -55,12 +61,45 @@ function workText(state: StateCode | null, check: RuleCheck): string {
   return `your nominated occupation or one ${name} treats as related (${WORK_DEFINITIONS[related]})`;
 }
 
+/** The one definition of related work every affected state shares, if any. */
+function sharedDefinition(asked: Asked): RelatedWork | null {
+  const definitions = new Set(
+    [...asked.values()].map((c) => c.related ?? "same-occupation"),
+  );
+  return definitions.size === 1 ? [...definitions][0] : null;
+}
+
+function affectedNames(asked: Asked): string[] {
+  return STATE_CODES.filter((s) => asked.has(s)).map((s) => STATE_NAMES[s]);
+}
+
+// Ruling P31: name the work the affected states count. When they count
+// different work, ask about the nominated occupation alone, which every
+// state counts, so a pass is true for each of them.
+function yearsText(window: 3 | 5 | 10, asked: Asked): string {
+  const related = sharedDefinition(asked) ?? "same-occupation";
+  const lead = `Years of skilled work in the last ${window} years`;
+  const names = affectedNames(asked);
+  const counts = names.length === 1 ? "counts" : "count";
+  const treats = names.length === 1 ? "treats" : "treat";
+  if (related === "same-occupation") {
+    return `Years of skilled work in your nominated occupation in the last ${window} years`;
+  }
+  if (related === "any-skilled") {
+    return `${lead} in any skilled occupation (${joinWords(names, "and")} ${counts} any skilled work)`;
+  }
+  return `${lead} in your nominated occupation or one ${joinWords(names, "and")} ${treats} as related (${WORK_DEFINITIONS[related]})`;
+}
+
 function yearsTemplate(window: 3 | 5 | 10): Template {
+  const range = `Between 0 and ${window}. Decimals such as 1.5 are fine.`;
   return {
     kind: "years",
-    text: () =>
-      `Years of skilled work in your nominated occupation in the last ${window} years`,
-    help: `Between 0 and ${window}. Decimals such as 1.5 are fine.`,
+    text: (_state, _check, asked) => yearsText(window, asked),
+    help: (asked) =>
+      sharedDefinition(asked) === null
+        ? `${range} Count only your nominated occupation; some states also count related work.`
+        : range,
     max: window,
   };
 }
@@ -75,21 +114,21 @@ const TEMPLATES: Partial<Record<keyof Profile, Template>> = {
     kind: "months",
     text: (state) =>
       `How many months in a row, up to now, have you lived in ${stateName(state)}?`,
-    help: MONTHS_HELP,
+    help: () => MONTHS_HELP,
     max: 600,
   },
   monthsLivingOffshore: {
     kind: "months",
     text: () =>
       "How many months in a row, up to now, have you lived outside Australia?",
-    help: MONTHS_HELP,
+    help: () => MONTHS_HELP,
     max: 600,
   },
   monthsWorkingInState: {
     kind: "months",
     text: (state, check) =>
       `How many months in a row, up to now, have you worked in ${stateName(state)}${state === null ? "," : ""} in ${workText(state, check)}?`,
-    help: MONTHS_HELP,
+    help: () => MONTHS_HELP,
     max: 600,
   },
   yearsExperienceLast3: yearsTemplate(3),
@@ -114,8 +153,6 @@ const TEMPLATES: Partial<Record<keyof Profile, Template>> = {
 };
 
 const FIELD_ORDER = Object.keys(TEMPLATES) as (keyof Profile)[];
-
-type Asked = Map<StateCode, RuleCheck>; // the check each affected state asks
 
 function addCheck(
   asked: Map<keyof Profile, Asked>,
@@ -179,8 +216,8 @@ export function questionsNeeded(
     questions.push({
       field,
       kind: template.kind,
-      text: template.text(own, check),
-      ...(template.help === undefined ? {} : { help: template.help }),
+      text: template.text(own, check, entry),
+      ...(template.help === undefined ? {} : { help: template.help(entry) }),
       affects,
       affectsText: `Affects: ${affects.join(", ")}`,
       ...(template.max === undefined ? {} : { max: template.max }),

@@ -11,6 +11,7 @@ import {
 } from "./context";
 import type { StreamContext, Verdict } from "./context";
 import type { Cohort, RelatedWork, Requirement } from "./rules-types";
+import { monthsText, widerWork, workText, yearsText } from "./wording";
 
 type MonthsField =
   "monthsLivingInState" | "monthsWorkingInState" | "monthsLivingOffshore";
@@ -25,54 +26,6 @@ type MonthsTest = {
   place: string; // "living in South Australia"
   question: string;
 };
-
-const RELATED_DIGITS: Record<Exclude<RelatedWork, "same-occupation">, 2 | 3> = {
-  "anzsco-2-digit": 2,
-  "anzsco-3-digit": 3,
-};
-
-function monthsText(months: number, ofLastMonths?: number): string {
-  if (ofLastMonths !== undefined) {
-    return `${months} of the last ${ofLastMonths} months`;
-  }
-  return months === 1 ? "1 month" : `${months} months`;
-}
-
-function yearsText(years: number): string {
-  return years === 1 ? "1 year" : `${years} years`;
-}
-
-// Ruling P15: the work question names which work the state counts.
-function workText(related: RelatedWork, name: string): string {
-  if (related === "same-occupation") return "your nominated occupation";
-  return `your nominated occupation or one ${name} treats as related (same first ${RELATED_DIGITS[related]} ANZSCO digits)`;
-}
-
-/** The rule as one line, e.g. "At least 12 months living in South Australia". */
-export function requirementLabel(
-  requirement: Requirement,
-  ctx: StreamContext,
-): string {
-  const name = STATE_NAMES[ctx.state];
-  switch (requirement.kind) {
-    case "min-months-living-in-state":
-      return `At least ${monthsText(requirement.months, requirement.ofLastMonths)} living in ${name}`;
-    case "min-months-working-in-state":
-      return `At least ${monthsText(requirement.months, requirement.ofLastMonths)} working in ${name} in ${workText(requirement.related, name)}`;
-    case "min-months-living-offshore":
-      return `At least ${monthsText(requirement.months, requirement.ofLastMonths)} living offshore`;
-    case "job-offer-in-state":
-      return `A job offer in ${name}`;
-    case "visa-expiry-before":
-      return `Current visa expires on or before ${formatDate(requirement.date)}`;
-    case "min-years-experience":
-      return `At least ${yearsText(requirement.years)} of skilled work in the last ${requirement.withinYears} years`;
-    case "lives-regional":
-      return "Living in a regional area";
-    case "studied-in-state":
-      return `Studied in ${name}`;
-  }
-}
 
 /** Records which answer decided a verdict, so the question stays editable. */
 function answered(field: keyof Profile, verdict: Verdict): Verdict {
@@ -136,31 +89,49 @@ function experienceField(withinYears: number): {
   return { field: "yearsExperienceLast10", years: 10 };
 }
 
-function experience(
+// Ruling P31: one answer serves states that count different work, so an
+// answer below a wider definition's minimum can't show the rule is missed.
+function shortOfExperience(
   years: number,
-  withinYears: number,
-  profile: Profile,
+  window: number,
+  related: RelatedWork,
+  ctx: StreamContext,
 ): Verdict {
-  const window = experienceField(withinYears);
-  const value = profile[window.field];
-  const topic = `years of skilled work in the last ${window.years} years`;
-  if (value === null || value === undefined) {
-    return ask(
-      window.field,
-      topic,
-      `How many years of skilled work have you done in the last ${window.years} years?`,
+  if (related === "same-occupation") {
+    return fail(
+      `Under ${yearsText(years)} of skilled work in the last ${window} years`,
     );
   }
-  return answered(
-    window.field,
+  return unverified(
+    `Under ${yearsText(years)} in the last ${window} years by your answer; ${STATE_NAMES[ctx.state]} also counts ${widerWork(related)}`,
+  );
+}
+
+function experience(
+  requirement: Extract<Requirement, { kind: "min-years-experience" }>,
+  ctx: StreamContext,
+): Verdict {
+  const { years, withinYears, related } = requirement;
+  const window = experienceField(withinYears);
+  const value = ctx.profile[window.field];
+  const topic = `years of skilled work in the last ${window.years} years`;
+  if (value === null || value === undefined) {
+    return {
+      ...ask(
+        window.field,
+        topic,
+        `How many years of skilled work have you done in the last ${window.years} years?`,
+      ),
+      related,
+    };
+  }
+  const verdict =
     value >= years
       ? pass(
           `${yearsText(value)} of skilled work in the last ${window.years} years`,
         )
-      : fail(
-          `Under ${yearsText(years)} of skilled work in the last ${window.years} years`,
-        ),
-  );
+      : shortOfExperience(years, window.years, related, ctx);
+  return { ...answered(window.field, verdict), related };
 }
 
 function visaExpiry(date: string, profile: Profile): Verdict {
@@ -286,11 +257,7 @@ export function judgeRequirement(
     case "visa-expiry-before":
       return visaExpiry(requirement.date, ctx.profile);
     case "min-years-experience":
-      return experience(
-        requirement.years,
-        requirement.withinYears,
-        ctx.profile,
-      );
+      return experience(requirement, ctx);
     case "lives-regional":
       return livesRegional(ctx.profile);
     case "studied-in-state":

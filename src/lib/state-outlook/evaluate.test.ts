@@ -8,6 +8,7 @@ import type {
   FederalList,
   ImportedList,
   OccupationListRef,
+  RelatedWork,
   Requirement,
   Sourced,
   Stream,
@@ -454,7 +455,12 @@ describe("evaluateStream: unanswered requirements", () => {
       livingInWa,
     ],
     [
-      { kind: "min-years-experience", years: 1, withinYears: 3 },
+      {
+        kind: "min-years-experience",
+        years: 1,
+        withinYears: 3,
+        related: "same-occupation",
+      },
       "yearsExperienceLast3",
       livingInWa,
     ],
@@ -654,13 +660,75 @@ describe("evaluateStream: other requirements", () => {
     "maps a %i-year experience window to %s (ruling P14)",
     (withinYears, field) => {
       const s = requirementStream(
-        verified({ kind: "min-years-experience", years: 1, withinYears }),
+        verified({
+          kind: "min-years-experience",
+          years: 1,
+          withinYears,
+          related: "same-occupation",
+        }),
       );
       expect(lastCheck(s, ctx()).field).toBe(field);
       const answered = (value: number) =>
         ctx({ profile: { ...livingInWa, [field]: value } });
       expect(lastCheck(s, answered(1)).outcome).toBe("pass");
       expect(lastCheck(s, answered(0.5)).outcome).toBe("fail");
+    },
+  );
+
+  it("names which work counts in the experience rule and keeps it on the check (ruling P31)", () => {
+    const s = requirementStream(
+      verified({
+        kind: "min-years-experience",
+        years: 1,
+        withinYears: 10,
+        related: "anzsco-4-digit",
+      }),
+    );
+    const check = lastCheck(s, ctx());
+    expect(check.label).toBe(
+      "At least 1 year of skilled work in the last 10 years in your nominated occupation or one Western Australia treats as related (same first 4 ANZSCO digits)",
+    );
+    expect(check.related).toBe("anzsco-4-digit");
+    const any = requirementStream(
+      verified({
+        kind: "min-years-experience",
+        years: 3,
+        withinYears: 5,
+        related: "any-skilled",
+      }),
+    );
+    expect(lastCheck(any, ctx()).label).toBe(
+      "At least 3 years of skilled work in the last 5 years in any skilled occupation",
+    );
+  });
+
+  it.each<[RelatedWork, string]>([
+    [
+      "anzsco-4-digit",
+      "Under 1 year in the last 10 years by your answer; Western Australia also counts work in a related occupation (same first 4 ANZSCO digits)",
+    ],
+    [
+      "any-skilled",
+      "Under 1 year in the last 10 years by your answer; Western Australia also counts skilled work in any occupation",
+    ],
+  ])(
+    "never fails a %s experience rule on an answer below it (ruling P31)",
+    (related, finding) => {
+      const s = requirementStream(
+        verified({
+          kind: "min-years-experience",
+          years: 1,
+          withinYears: 10,
+          related,
+        }),
+      );
+      const answered = (value: number) =>
+        ctx({ profile: { ...livingInWa, yearsExperienceLast10: value } });
+      const below = lastCheck(s, answered(0.5));
+      expect(below.outcome).toBe("unverified");
+      expect(below.finding).toBe(finding);
+      expect(below.field).toBe("yearsExperienceLast10");
+      expect(lastCheck(s, answered(1)).outcome).toBe("pass");
     },
   );
 

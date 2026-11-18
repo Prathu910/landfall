@@ -149,8 +149,10 @@ const nt491: StateVisaRules = {
       status: offshoreClosed,
       occupations: offshoreOccupations,
       requirements: [
+        // Ruling P31: no wider definition of the work is recorded, so the
+        // narrowest is held (secondary, so it never decides anyway).
         secondary(
-          experience(2, 5),
+          experience(2, 5, "same-occupation"),
           ELIGIBILITY,
           "When open: at least 2 years of post-qualification experience in the last 5.",
         ),

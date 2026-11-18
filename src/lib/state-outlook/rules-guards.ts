@@ -35,6 +35,8 @@ const RELATED_WORK: readonly string[] = [
   "same-occupation",
   "anzsco-2-digit",
   "anzsco-3-digit",
+  "anzsco-4-digit",
+  "any-skilled",
 ];
 
 function isObj(v: unknown): v is Obj {
@@ -127,9 +129,11 @@ function isRequirement(v: unknown): v is Requirement {
       return hasOnlyKeys(v, ["kind", "date"]) && isDate(v.date);
     case "min-years-experience":
       return (
-        hasOnlyKeys(v, ["kind", "years", "withinYears"]) &&
+        hasOnlyKeys(v, ["kind", "years", "withinYears", "related"]) &&
         isNum(v.years) &&
-        isNum(v.withinYears)
+        isNum(v.withinYears) &&
+        isStr(v.related) &&
+        RELATED_WORK.includes(v.related)
       );
     case "job-offer-in-state":
     case "lives-regional":

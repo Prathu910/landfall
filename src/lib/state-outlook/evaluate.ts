@@ -11,7 +11,8 @@ import {
 import type { Outcome, StreamContext, Verdict } from "./context";
 import { judge, severity } from "./judge";
 import type { Judged, Provenance, RuleCheck } from "./judge";
-import { judgeRequirement, requirementLabel } from "./requirements";
+import { judgeRequirement } from "./requirements";
+import { requirementLabel } from "./wording";
 import type {
   Cohort,
   FederalList,
