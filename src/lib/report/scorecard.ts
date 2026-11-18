@@ -44,6 +44,7 @@ type Points = { base: number; subclass190: number; subclass491: number };
 type Chip = ScorecardCard["chip"];
 
 const INVITATION_WINDOW_MONTHS = 12;
+export const LOADING_HEADLINE = "Loading published data…";
 const NO_DATA_SENTENCE = "No published data to compare for this occupation.";
 const STATUS_TONE: Record<RoundStatus, Tone> = {
   none: "red",
@@ -90,7 +91,7 @@ function cutoffText(
 function headlineFor(name: string, data: ScorecardData, base: number): string {
   if (data.kind === "none") {
     return data.reason === "loading"
-      ? "Loading published data…"
+      ? LOADING_HEADLINE
       : `Published SkillSelect data for ${name} is too limited to compare. Your points breakdown is below.`;
   }
   const { pool, rounds189 } = data.core;

@@ -12,6 +12,8 @@
   --sans: "DM Sans", Arial, sans-serif;
   --danger: #963f32;
   --amber: #8b6226;
+  --danger-tint: #f8e7e3;
+  --amber-tint: #f6ecd9;
 }
 * {
   box-sizing: border-box;
