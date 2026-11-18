@@ -1,0 +1,248 @@
+import { readFileSync } from "node:fs";
+import path from "node:path";
+import { describe, expect, it } from "vitest";
+import { BANNED_COPY } from "../../../lib/report/copy";
+import {
+  isImportedList,
+  isStateRules,
+} from "../../../lib/state-outlook/rules-guards";
+import type {
+  ImportedList,
+  Sourced,
+  StateVisaRules,
+  Stream,
+} from "../../../lib/state-outlook/rules-types";
+import { stateRules } from "./index";
+
+const STATES = ["ACT", "NSW", "NT", "QLD", "SA", "TAS", "VIC", "WA"];
+const LIST_IDS = ["wa", "sa", "qld", "nsw"];
+// The research could not open these sites (HTTP 403): research "How to read this".
+const UNREAD_STATES = ["ACT", "VIC", "TAS", "NT"];
+const UNREAD_DOMAINS = [
+  "act.gov.au",
+  "vic.gov.au",
+  "tas.gov.au",
+  "nt.gov.au",
+  "theterritory.com.au",
+  "australiasnorthernterritory.com.au",
+];
+// Sites the research read directly ([D]).
+const READ_HOSTS = [
+  "migration.wa.gov.au",
+  "www.nsw.gov.au",
+  "www.migration.qld.gov.au",
+  "migration.sa.gov.au",
+  "immi.homeaffairs.gov.au",
+];
+
+function loadList(id: string): ImportedList {
+  const file = path.resolve(
+    process.cwd(),
+    `src/data/state-rules/lists/${id}.json`,
+  );
+  const json: unknown = JSON.parse(readFileSync(file, "utf8"));
+  if (!isImportedList(json)) throw new Error(`list ${id} is invalid`);
+  return json;
+}
+
+const lists = Object.fromEntries(LIST_IDS.map((id) => [id, loadList(id)]));
+
+function rule(state: string, visa: string): StateVisaRules {
+  const found = stateRules.rules.find(
+    (r) => r.state === state && r.visa === visa,
+  );
+  if (!found) throw new Error(`no rule for ${state} ${visa}`);
+  return found;
+}
+
+function streamsOf(state: string): Stream[] {
+  return stateRules.rules
+    .filter((r) => r.state === state)
+    .flatMap((r) => r.streams);
+}
+
+function sourcedOf(r: StateVisaRules): Sourced<unknown>[] {
+  const out: Sourced<unknown>[] = [r.selectionSystem];
+  if (r.ownScoreSystem) out.push(r.ownScoreSystem);
+  for (const s of r.streams) {
+    out.push(s.cohorts, s.status, s.occupations, ...s.requirements);
+    if (s.restriction) out.push(s.restriction);
+  }
+  return out;
+}
+
+const allSourced = stateRules.rules.flatMap(sourcedOf);
+
+function host(url: string): string {
+  return new URL(url).hostname;
+}
+
+function onDomain(url: string, domain: string): boolean {
+  const h = host(url);
+  return h === domain || h.endsWith(`.${domain}`);
+}
+
+function textsOf(r: StateVisaRules): string[] {
+  const out = [r.selectionSystem.value];
+  if (r.ownScoreSystem) out.push(r.ownScoreSystem.value.name);
+  for (const s of r.streams) {
+    out.push(s.name);
+    if (s.restriction) out.push(s.restriction.value);
+  }
+  for (const s of sourcedOf(r)) if (s.note) out.push(s.note);
+  return out;
+}
+
+describe("2026–27 state rules", () => {
+  it("has exactly one rule for every state and visa pair", () => {
+    const pairs = stateRules.rules.map((r) => `${r.state}-${r.visa}`);
+    const expected = STATES.flatMap((s) => [`${s}-190`, `${s}-491`]);
+    expect([...pairs].sort()).toEqual([...expected].sort());
+  });
+
+  it("passes the rules guard, and every rule records the research date", () => {
+    expect(isStateRules(stateRules)).toBe(true);
+    for (const s of allSourced) expect(s.checkedAt).toBe("2026-11-17");
+  });
+
+  it("gives every rule at least one stream, with ids unique within the rule", () => {
+    for (const r of stateRules.rules) {
+      const ids = r.streams.map((s) => s.id);
+      expect(ids.length).toBeGreaterThan(0);
+      expect(new Set(ids).size).toBe(ids.length);
+    }
+  });
+
+  it("marks every ACT, VIC, TAS and NT rule as secondary", () => {
+    const rules = stateRules.rules.filter((r) =>
+      UNREAD_STATES.includes(r.state),
+    );
+    expect(rules).toHaveLength(8);
+    for (const s of rules.flatMap(sourcedOf)) {
+      expect(s.verification).toBe("secondary");
+    }
+  });
+
+  it("never cites an ACT, VIC, TAS or NT page for a verified rule", () => {
+    const verified = allSourced.filter((s) => s.verification === "verified");
+    expect(verified.length).toBeGreaterThan(0);
+    for (const s of verified) {
+      expect(UNREAD_DOMAINS.some((d) => onDomain(s.source, d))).toBe(false);
+      expect(READ_HOSTS).toContain(host(s.source));
+    }
+  });
+
+  it("records NSW 491 as closed in every stream, on a verified source", () => {
+    for (const s of rule("NSW", "491").streams) {
+      expect(s.status.value).toBe("closed");
+      expect(s.status.verification).toBe("verified");
+    }
+  });
+
+  it("records the other programs the research shows as closed", () => {
+    const closed = (state: string, visa: string, id?: string) =>
+      rule(state, visa)
+        .streams.filter((s) => id === undefined || s.id === id)
+        .map((s) => s.status.value);
+    expect(new Set(closed("NT", "190"))).toEqual(new Set(["closed"]));
+    expect(closed("NT", "491", "nt-491-offshore")).toEqual(["closed"]);
+    expect(new Set(closed("VIC", "491"))).toEqual(new Set(["closed"]));
+    expect(closed("TAS", "491", "tas-491-osop")).toEqual(["closed"]);
+  });
+
+  it("points WA, SA, QLD and NSW at their own imported lists", () => {
+    for (const state of ["WA", "SA", "QLD", "NSW"]) {
+      const refs = streamsOf(state).map((s) => s.occupations.value);
+      const listIds = refs.flatMap((r) =>
+        r.kind === "list" ? [r.listId] : [],
+      );
+      expect(listIds.length).toBeGreaterThan(0);
+      expect(new Set(listIds)).toEqual(new Set([state.toLowerCase()]));
+    }
+  });
+
+  it("resolves every listId and stream tag to an imported list", () => {
+    for (const s of stateRules.rules.flatMap((r) => r.streams)) {
+      const ref = s.occupations.value;
+      if (ref.kind !== "list") continue;
+      const list = lists[ref.listId];
+      expect(list, `${s.id} → ${ref.listId}`).toBeDefined();
+      const tags = new Set(
+        Object.values(list.entries).flatMap((e) => e.streams ?? []),
+      );
+      for (const tag of ref.streams ?? []) {
+        expect(tags.has(tag), `${s.id} → ${tag}`).toBe(true);
+      }
+    }
+  });
+
+  it("documents every none-published and not-imported list, and keeps not-imported secondary", () => {
+    for (const s of stateRules.rules.flatMap((r) => r.streams)) {
+      const { value, note, verification } = s.occupations;
+      if (value.kind === "none-published" || value.kind === "not-imported") {
+        expect(note, s.id).toBeTruthy();
+      }
+      if (value.kind === "not-imported") expect(verification).toBe("secondary");
+    }
+  });
+
+  it("treats Victoria as all federally eligible occupations, unverified", () => {
+    for (const s of streamsOf("VIC")) {
+      expect(s.occupations.value.kind).toBe("all-federally-eligible");
+      expect(s.occupations.verification).toBe("secondary");
+    }
+  });
+
+  it("keeps contradictory official pages secondary", () => {
+    expect(rule("WA", "190").selectionSystem.verification).toBe("secondary");
+    expect(rule("WA", "491").selectionSystem.verification).toBe("secondary");
+    expect(rule("SA", "190").selectionSystem.verification).toBe("secondary");
+    expect(rule("SA", "491").selectionSystem.verification).toBe("secondary");
+    expect(rule("NSW", "190").selectionSystem.verification).toBe("secondary");
+    const actMonths = ["190", "491"].flatMap((v) =>
+      rule("ACT", v)
+        .streams.flatMap((s) => s.requirements)
+        .filter((q) => q.value.kind === "min-months-living-in-state"),
+    );
+    expect(actMonths).toHaveLength(2);
+    for (const q of actMonths) expect(q.note).toMatch(/3 months.*6 months/);
+  });
+
+  it("gates every SA onshore stream on visa expiry by 31 January 2027", () => {
+    const onshore = ["190", "491"].flatMap((v) =>
+      rule("SA", v).streams.filter((s) =>
+        s.cohorts.value.includes("living-in-state"),
+      ),
+    );
+    expect(onshore).toHaveLength(6);
+    for (const s of onshore) {
+      expect(s.status.value).toBe("restricted");
+      expect(s.restriction?.value).toMatch(/31 January 2027/);
+      expect(s.requirements.map((q) => q.value)).toContainEqual({
+        kind: "visa-expiry-before",
+        date: "2027-01-31",
+      });
+    }
+  });
+
+  it("names the state's own score system and published results where the research does", () => {
+    for (const state of ["VIC", "ACT", "TAS"]) {
+      for (const visa of ["190", "491"]) {
+        expect(rule(state, visa).ownScoreSystem?.value.url).toMatch(/^https:/);
+      }
+    }
+    for (const state of ["WA", "ACT", "TAS", "SA"]) {
+      for (const visa of ["190", "491"]) {
+        expect(rule(state, visa).resultsUrl).toMatch(/^https:/);
+      }
+    }
+  });
+
+  it("uses no banned copy in any name, restriction, description or note", () => {
+    for (const r of stateRules.rules) {
+      for (const text of textsOf(r)) {
+        expect(text, `${r.state} ${r.visa}: ${text}`).not.toMatch(BANNED_COPY);
+      }
+    }
+  });
+});

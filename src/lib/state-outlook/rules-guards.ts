@@ -78,10 +78,19 @@ function isSourced(v: unknown, valueOk: (x: unknown) => boolean): boolean {
 function isListRef(v: unknown): v is OccupationListRef {
   if (!isObj(v)) return false;
   if (v.kind === "list") {
-    return hasOnlyKeys(v, ["kind", "listId"]) && isNonEmpty(v.listId);
+    return (
+      hasOnlyKeys(v, ["kind", "listId", "streams"]) &&
+      isNonEmpty(v.listId) &&
+      (v.streams === undefined ||
+        (Array.isArray(v.streams) &&
+          v.streams.length > 0 &&
+          v.streams.every(isNonEmpty)))
+    );
   }
   return (
-    (v.kind === "all-federally-eligible" || v.kind === "none-published") &&
+    (v.kind === "all-federally-eligible" ||
+      v.kind === "none-published" ||
+      v.kind === "not-imported") &&
     hasOnlyKeys(v, ["kind"])
   );
 }

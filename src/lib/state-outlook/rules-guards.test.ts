@@ -86,6 +86,33 @@ describe("isStateRules", () => {
     expect(isStateRules({ programYear: "2025-26", rules: [] })).toBe(false);
     expect(isStateRules(null)).toBe(false);
   });
+
+  it("accepts a list reference narrowed to stream tags, and a not-imported list", () => {
+    const a = validRules();
+    a.rules[0].streams[0].occupations = s({
+      kind: "list",
+      listId: "wa",
+      streams: ["schedule-1", "schedule-2"],
+    }) as never;
+    expect(isStateRules(a)).toBe(true);
+    const b = validRules();
+    b.rules[0].streams[0].occupations = s({ kind: "not-imported" }) as never;
+    expect(isStateRules(b)).toBe(true);
+  });
+
+  it("rejects empty or non-string stream tags and extra keys on a not-imported list", () => {
+    const bad = [
+      { kind: "list", listId: "wa", streams: [] },
+      { kind: "list", listId: "wa", streams: [""] },
+      { kind: "list", listId: "wa", streams: "schedule-1" },
+      { kind: "not-imported", listId: "act" },
+    ];
+    for (const ref of bad) {
+      const v = validRules();
+      v.rules[0].streams[0].occupations = s(ref) as never;
+      expect(isStateRules(v)).toBe(false);
+    }
+  });
 });
 
 describe("isImportedList", () => {

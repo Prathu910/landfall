@@ -15,16 +15,22 @@ export type Cohort = "living-in-state" | "living-in-other-state" | "offshore";
 export type ProgramStatus = "open" | "closed" | "restricted" | "unknown";
 
 export type OccupationListRef =
-  | { kind: "list"; listId: string } // an imported list in src/data/state-rules/lists/<listId>.json
+  // An imported list in src/data/state-rules/lists/<listId>.json. With
+  // `streams`, only entries tagged with at least one of those stream tags count
+  // (e.g. WA's Graduate stream accepts only Graduate-list occupations).
+  | { kind: "list"; listId: string; streams?: string[] }
   | { kind: "all-federally-eligible" }
-  | { kind: "none-published" }; // the state names no list
+  | { kind: "none-published" } // the state names no list
+  // The state publishes a list or occupation restriction that is not imported
+  // (its URL is the Sourced `source`), so membership cannot be checked.
+  | { kind: "not-imported" };
 
 export type Requirement =
   | { kind: "min-months-living-in-state"; months: number }
   | { kind: "min-months-working-in-state"; months: number } // working in the nominated occupation
   | { kind: "min-months-living-offshore"; months: number }
   | { kind: "job-offer-in-state" }
-  | { kind: "visa-expiry-before"; date: string }
+  | { kind: "visa-expiry-before"; date: string } // expires on or before `date` ("by 31 Jan 2027")
   | { kind: "min-years-experience"; years: number; withinYears: number }
   | { kind: "lives-regional" }
   | { kind: "studied-in-state" };
