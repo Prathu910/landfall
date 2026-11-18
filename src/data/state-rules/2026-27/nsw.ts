@@ -68,7 +68,7 @@ const nsw190: StateVisaRules = {
   streams: [
     // Ruling P13: NSW sets no minimum duration for this option, only current
     // work of 20+ hours a week (research §NSW item 4). "At least 1 month" is
-    // MigrateLens's approximation, so it is secondary and never decides. No
+    // our approximation, so it is secondary and never decides. No
     // residence condition is stated, so interstate residents count (P17).
     option190(
       "nsw-190-working",
@@ -77,7 +77,7 @@ const nsw190: StateVisaRules = {
       secondary(
         workingInState(1, "same-occupation"),
         NSW_190,
-        "NSW's rule (read directly): currently working in NSW (20+ hours a week) in the nominated occupation, with no minimum duration. 'At least 1 month' is MigrateLens's approximation for its months-working question, so this check is not applied as verified.",
+        "NSW's rule (read directly): currently working in NSW (20+ hours a week) in the nominated occupation, with no minimum duration. 'At least 1 month' is our approximation for the months-working question, so this check is not applied as verified.",
       ),
       "No residence condition is stated for this option; the work must be in NSW.",
     ),

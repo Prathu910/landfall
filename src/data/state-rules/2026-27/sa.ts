@@ -37,7 +37,7 @@ const RELATED_WORK =
 const STUDY_UNTESTED =
   "MigrateLens asks only which state you studied in, so it cannot test the 46 weeks, the 75% or the year living in South Australia, and this check is not applied as verified.";
 const AFTER_COURSE_UNTESTED =
-  "MigrateLens's months answer does not say whether those months came after completing the course, so this check is not applied as verified.";
+  "Our months question does not say whether those months came after completing the course, so this check is not applied as verified.";
 
 // Research §SA items 1 and 7: the 22 Oct 2026 update gates every onshore stream.
 const onshoreStatus = verified(
@@ -134,7 +134,7 @@ const streams: Stream[] = [
       secondary(
         LIVES_REGIONAL,
         OUTER,
-        "Read directly: living and working in outer-regional South Australia. That area is narrower than 'regional', which MigrateLens's question asks about, so this check is not applied as verified. The page still says invitations are issued 'throughout 2025–26'.",
+        "Read directly: living and working in outer-regional South Australia. That area is narrower than 'regional', which our question asks about, so this check is not applied as verified. The page still says invitations are issued 'throughout 2025–26'.",
       ),
       verified(
         livingInState(9),

@@ -30,3 +30,13 @@ describe("product name", () => {
     expect(offenders.map((f) => path.relative(SRC, f))).toEqual([]);
   });
 });
+
+describe("brand possessive", () => {
+  // Plain wording reads better in copy ("our question"), and comments follow.
+  it("never writes MigrateLens's in src", () => {
+    const offenders = sourceFiles(SRC).filter((file) =>
+      /MigrateLens['’]s/.test(readFileSync(file, "utf8")),
+    );
+    expect(offenders.map((f) => path.relative(SRC, f))).toEqual([]);
+  });
+});
