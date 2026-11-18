@@ -1622,5 +1622,5 @@ svg {
 
 /* Mantine badges default to 11px at small sizes; keep the 12px floor. */
 .mantine-Badge-root {
-  --badge-fz: 12px;
+  --badge-fz: 12px !important; /* beats the inline size variable */
 }
