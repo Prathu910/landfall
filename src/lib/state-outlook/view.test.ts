@@ -131,11 +131,20 @@ describe("buildTiles fragments", () => {
     );
   });
 
-  it("uses the short reason for the other groups", () => {
-    for (const group of ["needs-answers", "unverified", "not-open"] as const) {
-      const [tile] = buildTiles(stub(group, side(), "Short reason"), 95);
-      expect(tile.fragment).toBe("Short reason");
+  it("shows published evidence, not the reason, on unverified and needs-answers tiles (P23)", () => {
+    const peak = { asAt: "2026-10", invitedAtLeast: { min: 71, max: 71 } };
+    for (const group of ["needs-answers", "unverified"] as const) {
+      const [tile] = buildTiles(
+        stub(group, side({ peak, invitedAtOrBelow: [peak] }), "Short reason"),
+        95,
+      );
+      expect(tile.fragment).toBe("at least 71 invited at ≤95 (as at Oct 2026)");
     }
+  });
+
+  it("uses the short reason for not-open tiles", () => {
+    const [tile] = buildTiles(stub("not-open", side(), "Short reason"), 95);
+    expect(tile.fragment).toBe("Short reason");
   });
 
   it("labels the any-state tile and keeps it out of the groups", () => {

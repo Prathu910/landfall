@@ -2,12 +2,7 @@ import type { StateSide } from "../data/state-evidence";
 import type { MonthlyInvited } from "../data/invitations";
 import type { StateCode, StateVisa } from "../data/types";
 import { formatDate } from "../migration";
-import {
-  countInSentence,
-  formatCount,
-  formatMonth,
-  isMasked,
-} from "../report/copy";
+import { formatCount, formatMonth, isMasked } from "../report/copy";
 import { STATE_NAMES } from "./context";
 import type { Group, Outlook, StateOutcome } from "./outlook";
 import type { RuleCheck } from "./judge";
@@ -93,10 +88,9 @@ function evidenceFragment(side: StateSide, points: number): string {
 }
 
 function fragmentFor(outcome: StateOutcome, points: number): string {
-  if (outcome.group === "strongest" || outcome.group === "watching") {
-    return evidenceFragment(outcome.evidence, points);
-  }
-  return outcome.reasonText;
+  // Only a closed door shows its reason; the reasons for the rest sit in the panels.
+  if (outcome.group === "not-open") return outcome.reasonText;
+  return evidenceFragment(outcome.evidence, points);
 }
 
 /** Tiles in the outlook's order; `points` is the score the evidence is read at. */
