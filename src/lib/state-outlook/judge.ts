@@ -2,7 +2,7 @@ import { formatDate } from "../migration";
 import type { Profile } from "../migration";
 import { unverified } from "./context";
 import type { Outcome, Verdict } from "./context";
-import type { Sourced } from "./rules-types";
+import type { RelatedWork, Sourced } from "./rules-types";
 import { isStale } from "./staleness";
 
 export type RuleCheck = {
@@ -13,6 +13,7 @@ export type RuleCheck = {
   stale: boolean;
   question?: string;
   field?: keyof Profile; // the profile answer the question fills in
+  related?: RelatedWork; // which work counts, for a work-months question
 };
 
 export type Judged = { check: RuleCheck; finding: string };
@@ -71,5 +72,6 @@ export function judge(
   };
   if (verdict.question !== undefined) check.question = verdict.question;
   if (verdict.field !== undefined) check.field = verdict.field;
+  if (verdict.related !== undefined) check.related = verdict.related;
   return { check, finding: verdict.finding };
 }

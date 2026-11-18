@@ -228,8 +228,8 @@ export function judgeRequirement(
         cohorts,
         ctx,
       );
-    case "min-months-working-in-state":
-      return inStateMonths(
+    case "min-months-working-in-state": {
+      const verdict = inStateMonths(
         {
           ...requirement,
           field: "monthsWorkingInState",
@@ -239,6 +239,10 @@ export function judgeRequirement(
         cohorts,
         ctx,
       );
+      return verdict.outcome === "needs-answer"
+        ? { ...verdict, related: requirement.related }
+        : verdict;
+    }
     case "min-months-living-offshore":
       if (ctx.profile.onshore) return fail("You live in Australia now");
       return compareMonths(

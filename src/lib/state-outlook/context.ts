@@ -1,6 +1,11 @@
 import type { StateCode, StateVisa } from "../data/types";
 import type { Profile } from "../migration";
-import type { Cohort, FederalList, ImportedList } from "./rules-types";
+import type {
+  Cohort,
+  FederalList,
+  ImportedList,
+  RelatedWork,
+} from "./rules-types";
 
 /** Every jurisdiction, keyed by code; the key order is the code order. */
 export const STATE_NAMES: Record<StateCode, string> = {
@@ -38,6 +43,7 @@ export type Verdict = {
   finding: string;
   question?: string;
   field?: keyof Profile;
+  related?: RelatedWork; // which work counts, for a work-months question
 };
 
 export const pass = (finding: string): Verdict => ({
