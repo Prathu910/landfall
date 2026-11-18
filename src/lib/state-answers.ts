@@ -94,9 +94,24 @@ export function restoreProfile(record: Record<string, unknown>): Profile {
   return { ...(base as Profile), ...normaliseStateAnswers(record) };
 }
 
+/** Answers about where the user lives now: months in Queensland are not months in New South Wales. */
+const STATE_RELATIVE: Partial<Profile> = {
+  monthsLivingInState: null,
+  monthsWorkingInState: null,
+  livesRegional: null,
+};
+
+/** Answers about work in the nominated occupation (ruling P30). */
+const OCCUPATION_RELATIVE: Partial<Profile> = {
+  monthsWorkingInState: null,
+  yearsExperienceLast3: null,
+  yearsExperienceLast5: null,
+  yearsExperienceLast10: null,
+};
+
 /**
- * Answers about where the user lives now stop being true when that changes:
- * months lived or worked in Queensland are not months in New South Wales.
+ * Answers that stop being true when what they are about changes: where the
+ * user lives, whether they live in Australia, or their nominated occupation.
  * Cleared answers are null (unanswered), so the outlook asks again.
  */
 export function resetStateRelativeAnswers(
@@ -104,12 +119,13 @@ export function resetStateRelativeAnswers(
   next: Profile,
 ): Profile {
   const onshoreChanged = previous.onshore !== next.onshore;
-  if (!onshoreChanged && previous.state === next.state) return next;
+  const stateChanged = onshoreChanged || previous.state !== next.state;
+  const occupationChanged = previous.occupation !== next.occupation;
+  if (!stateChanged && !occupationChanged) return next;
   return {
     ...next,
-    monthsLivingInState: null,
-    monthsWorkingInState: null,
-    livesRegional: null,
+    ...(stateChanged ? STATE_RELATIVE : {}),
     ...(onshoreChanged ? { monthsLivingOffshore: null } : {}),
+    ...(occupationChanged ? OCCUPATION_RELATIVE : {}),
   };
 }

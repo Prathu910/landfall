@@ -128,6 +128,29 @@ describe("resetStateRelativeAnswers", () => {
     expect(next.monthsLivingOffshore).toBeNull();
   });
 
+  it("clears the answers about your occupation's work when the occupation changes (ruling P30)", () => {
+    const withYears: Profile = {
+      ...answered,
+      occupation: "261313",
+      yearsExperienceLast3: 3,
+      yearsExperienceLast5: 4.5,
+    };
+    const next = resetStateRelativeAnswers(withYears, {
+      ...withYears,
+      occupation: "254499",
+    });
+    expect(next.occupation).toBe("254499");
+    expect(next.monthsWorkingInState).toBeNull();
+    expect(next.yearsExperienceLast3).toBeNull();
+    expect(next.yearsExperienceLast5).toBeNull();
+    expect(next.yearsExperienceLast10).toBeNull();
+    // Still true whatever the occupation.
+    expect(next.monthsLivingInState).toBe(14);
+    expect(next.monthsLivingOffshore).toBe(3);
+    expect(next.livesRegional).toBe(true);
+    expect(next.jobOfferState).toBe("QLD");
+  });
+
   it("keeps every answer when neither the state nor onshore changes", () => {
     const next = { ...answered, name: "Priya", monthsLivingInState: 20 };
     expect(resetStateRelativeAnswers(answered, next)).toEqual(next);
