@@ -20,14 +20,19 @@ type Visa = (typeof VISAS)[number];
 type Parsed = {
   cohorts: Record<Visa, Set<Cohort>>;
   streams: Set<string>;
+  titles: string[];
 };
 
 const HEADER =
-  /^data-occupation-id=\S+ data-occupation-category-id=\S+ data-occupation-anzsco=(\d{6}) data-occupation-title="[^"]*"/;
+  /^data-occupation-id=\S+ data-occupation-category-id=\S+ data-occupation-anzsco=(\d{6}) data-occupation-title="([^"]*)"/;
 const LOCATION = /<div\s+class="[^"]*">([^<]*)</;
 const STREAM_NAME = /^<\/p><div>([^<]*)</;
 
-/** The cohort a location contributes. "Any Location" is not read as one. */
+/**
+ * The cohort a location contributes. "Any Location" (seen on an Outer Regional
+ * block whose text asks for work in Outer Regional SA) is null: it takes the
+ * cohorts the occupation's other blocks give.
+ */
 function cohortOf(location: string, code: string): Cohort | null {
   if (location === "South Australia") return "living-in-state";
   if (location === "Offshore") return "offshore";
@@ -61,7 +66,9 @@ function parseOccupation(chunk: string): { code: string; parsed: Parsed } {
   const parsed: Parsed = {
     cohorts: { "190": new Set(), "491": new Set() },
     streams: new Set(),
+    titles: [header[2]],
   };
+  const anyLocation: Visa[] = [];
   const locations = chunk.split(/Applying from<\/p>/).slice(1);
   if (locations.length === 0) {
     throw new Error(`${code}: no "Applying from" sections; review the source`);
@@ -76,9 +83,14 @@ function parseOccupation(chunk: string): { code: string; parsed: Parsed } {
       }
       for (const visa of subclassesOf(section, code)) {
         if (cohort) parsed.cohorts[visa].add(cohort);
+        else anyLocation.push(visa);
         parsed.streams.add(stream);
       }
     }
+  }
+  const others = new Set([...parsed.cohorts["190"], ...parsed.cohorts["491"]]);
+  for (const visa of anyLocation) {
+    for (const cohort of others) parsed.cohorts[visa].add(cohort);
   }
   return { code, parsed };
 }
@@ -97,27 +109,28 @@ function toEntry(parsed: Parsed): ImportedListEntry | null {
   }
   if (!entry["190"] && !entry["491"]) return null;
   entry.streams = STREAMS.filter((s) => parsed.streams.has(s));
+  // A code listed under several titles names them, so the union can be traced.
+  if (parsed.titles.length > 1) {
+    entry.streams.push(...parsed.titles.map((t) => `title:${t}`));
+  }
   return entry;
 }
 
-/** Keeps only what both of two entries for the same code offer. */
-function intersect(a: Parsed, b: Parsed): Parsed {
+/** Everything either entry offers: a listing under any title counts. */
+function union(a: Parsed, b: Parsed): Parsed {
   return {
     cohorts: {
-      "190": new Set(
-        [...a.cohorts["190"]].filter((c) => b.cohorts["190"].has(c)),
-      ),
-      "491": new Set(
-        [...a.cohorts["491"]].filter((c) => b.cohorts["491"].has(c)),
-      ),
+      "190": new Set([...a.cohorts["190"], ...b.cohorts["190"]]),
+      "491": new Set([...a.cohorts["491"], ...b.cohorts["491"]]),
     },
     streams: new Set([...a.streams, ...b.streams]),
+    titles: [...a.titles, ...b.titles],
   };
 }
 
 /**
  * Reads the list page. A code the page lists twice (two occupation names under
- * one code) keeps only the cohorts both listings offer, and is returned in
+ * one code) gets the union of what its listings offer, and is returned in
  * `repeated` so the run can report it.
  */
 export function parseSaPage(html: string): {
@@ -134,7 +147,7 @@ export function parseSaPage(html: string): {
     const { code, parsed } = parseOccupation(chunk);
     const earlier = byCode.get(code);
     if (earlier) repeated.push(code);
-    byCode.set(code, earlier ? intersect(earlier, parsed) : parsed);
+    byCode.set(code, earlier ? union(earlier, parsed) : parsed);
   }
   const entries: Record<string, ImportedListEntry> = {};
   for (const [code, parsed] of byCode) {

@@ -115,7 +115,7 @@ async function importSa(checkedAt: string): Promise<void> {
     source: SA_LIST_URL,
     checkedAt,
   });
-  console.log(`SA codes listed twice (cohorts intersected): ${repeated}`);
+  console.log(`SA codes listed twice (cohorts unioned): ${repeated}`);
   writeList(list);
 }
 

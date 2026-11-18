@@ -83,14 +83,41 @@ describe("parseSaPage", () => {
     }
   });
 
-  it("keeps only what both entries of a repeated code agree on", () => {
+  it("unions the cohorts of a code listed under two titles", () => {
     // Medical Physicist is 491 only offshore; Physicist (non-medical) has both.
-    expect(entries["234914"]["190"]).toEqual(["living-in-state"]);
+    expect(entries["234914"]["190"]).toEqual(["living-in-state", "offshore"]);
     expect(entries["234914"]["491"]).toEqual(["living-in-state", "offshore"]);
   });
 
-  it("does not read an Any Location block as a cohort", () => {
+  it("names the titles a repeated code was listed under", () => {
+    expect(entries["234914"].streams).toEqual(
+      expect.arrayContaining([
+        "title:Physicist (Medical Physicist Only)",
+        "title:Physicist (non-medical)",
+      ]),
+    );
+    expect(entries["261313"].streams?.some((s) => s.startsWith("title:"))).toBe(
+      false,
+    );
+  });
+
+  it("maps an Any Location block to the cohorts the other blocks give", () => {
     expect(entries["232214"]["190"]).toEqual(["living-in-state", "offshore"]);
+    expect(entries["232214"]["491"]).toEqual(["living-in-state", "offshore"]);
+  });
+
+  it("gives a visa listed only under Any Location the other blocks' cohorts", () => {
+    const html = occupation("261313", [
+      { ...GRAD, subclasses: ["491"] },
+      {
+        location: "Any Location",
+        stream: "Outer Regional Skilled Employment",
+        subclasses: ["190"],
+      },
+    ]);
+    expect(parseSaPage(html).entries["261313"]["190"]).toEqual([
+      "living-in-state",
+    ]);
   });
 
   it("reports the repeated codes", () => {
