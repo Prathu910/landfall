@@ -10,7 +10,7 @@ import {
   occasionalCore,
   regularCore,
 } from "./__fixtures__/scorecard";
-import { buildScorecard, type ScorecardData } from "./scorecard";
+import { EOI_CAVEAT, buildScorecard, type ScorecardData } from "./scorecard";
 
 const POINTS = { base: 90, subclass190: 95, subclass491: 105 };
 const SUMMARIES = {
@@ -249,5 +249,11 @@ describe("buildScorecard", () => {
       ];
       for (const text of texts) expect(text).not.toMatch(BANNED_COPY);
     }
+  });
+});
+
+describe("EOI_CAVEAT", () => {
+  it("is the report's one wording for the EOI caveat", () => {
+    expect(EOI_CAVEAT).toBe("Counts are EOIs (one person can hold several).");
   });
 });

@@ -52,6 +52,8 @@ type NoneReason = Extract<ScorecardData, { kind: "none" }>["reason"];
 export const AT_SCORE_LABEL = "At your score";
 export const POINTS_UNIT = "points";
 export const LOADING_HEADLINE = "Loading published data…";
+/** The one wording of the EOI caveat, here and on the homepage (ruling B7). */
+export const EOI_CAVEAT = "Counts are EOIs (one person can hold several).";
 const NO_DATA_SENTENCE = "No published data to compare for this occupation.";
 const LOAD_FAILED_SENTENCE = "Published data could not be loaded.";
 const POINTS_ONLY_SENTENCE = "Points check only.";
@@ -242,7 +244,7 @@ export function buildScorecard(input: {
     headline: headlineFor(occupationName, data, points.base),
     sourceLine:
       data.kind === "ready"
-        ? `Source: SkillSelect, Department of Home Affairs · snapshot ${formatDate(monthEnd(data.core.asAt))} · counts are EOIs (one person can hold several).`
+        ? `Source: SkillSelect, Department of Home Affairs · snapshot ${formatDate(monthEnd(data.core.asAt))} · ${EOI_CAVEAT[0].toLowerCase()}${EOI_CAVEAT.slice(1)}`
         : "Source: SkillSelect, Department of Home Affairs.",
     cards,
     queueNote: cards.some((card) => card.ahead) ? QUEUE_NOTE : null,

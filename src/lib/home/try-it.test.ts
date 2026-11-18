@@ -1,4 +1,4 @@
-import { AT_SCORE_LABEL } from "../report/scorecard";
+import { AT_SCORE_LABEL, EOI_CAVEAT } from "../report/scorecard";
 import { describe, expect, it } from "vitest";
 import { coreFixture } from "../data/__fixtures__/occupation";
 import { poolPosition } from "../data/pool-position";
@@ -42,7 +42,11 @@ describe("try-it points", () => {
 describe("try-it wording", () => {
   it("keeps the load-failure message distinct from the no-data message", () => {
     expect(TRY_IT_LOAD_FAILED).not.toBe(TRY_IT_NO_DATA);
-    expect(TRY_IT_LOAD_FAILED).toMatch(/load/i);
+    expect(TRY_IT_LOAD_FAILED).toBe(
+      "Couldn't load the published data for this occupation. Reload the page or choose another occupation.",
+    );
+    // There is no retry control, so the message must not offer one.
+    expect(TRY_IT_LOAD_FAILED).not.toMatch(/try again/i);
   });
 
   it("has the three row labels", () => {
@@ -58,7 +62,7 @@ describe("try-it wording", () => {
     const view = buildTryIt(coreFixture, 85);
     if (view.kind !== "data") throw new Error("expected data");
     expect(view.note).toBe(
-      `Counts are EOIs (one person can hold several). ${view.poolTotal} EOIs in the 189 pool.`,
+      `${EOI_CAVEAT} ${view.poolTotal} EOIs in the 189 pool.`,
     );
     expect(view.source).toBe(`SkillSelect, as at ${view.asAt}.`);
     expect(`${view.note} ${view.source}`).not.toMatch(BANNED_COPY);

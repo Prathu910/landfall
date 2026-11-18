@@ -3,7 +3,7 @@ import type { OccupationCore } from "../data/types";
 import { countInSentence, formatMonth } from "../report/copy";
 import { buildRounds } from "../report/panel-189";
 import { CHIP_LABEL, summarise189Rounds } from "../report/round-status";
-import { AT_SCORE_LABEL } from "../report/scorecard";
+import { AT_SCORE_LABEL, EOI_CAVEAT } from "../report/scorecard";
 
 /** Points offered by the homepage try-it: 65 to 140 in steps of 5. */
 export const TRY_IT_POINTS: number[] = Array.from(
@@ -15,9 +15,7 @@ export const TRY_IT_DEFAULT = 85;
 export const TRY_IT_NO_DATA = "No published 189 data for this occupation";
 /** Shown when the occupation's file could not be fetched or was invalid. */
 export const TRY_IT_LOAD_FAILED =
-  "Couldn't load the published data for this occupation. Try again.";
-/** The report's own caveat (scorecard source line). */
-const EOI_CAVEAT = "Counts are EOIs (one person can hold several).";
+  "Couldn't load the published data for this occupation. Reload the page or choose another occupation.";
 export const TRY_IT_ROW_LABELS = {
   higher: "EOIs with a higher score (189)",
   same: AT_SCORE_LABEL,
