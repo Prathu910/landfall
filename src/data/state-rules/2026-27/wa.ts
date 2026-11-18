@@ -62,10 +62,12 @@ const schedule1Experience = verified(
   "At least 1 year in the nominated or a closely related occupation (same first 4 ANZSCO digits) in the last 10 years. Only paid, post-qualification work of 20+ hours a week counts, and Australian and overseas experience cannot be combined.",
 );
 
-const waStudy = verified(
+// Ruling P28: the rule was read directly, but Landfall asks only which state
+// you studied in, so it cannot test the length, mode or level of the study.
+const waStudy = secondary(
   STUDIED_IN_STATE,
   ELIGIBILITY,
-  "At least two academic years (87+ weeks) of face-to-face study in WA, and a WA qualification at Certificate III or above. No employment contract is needed.",
+  "Read directly: at least two academic years (87 weeks or more) of face-to-face study in WA, and a WA qualification at Certificate III or above; no employment contract is needed. Landfall asks only which state you studied in, so it cannot test the 87 weeks, face-to-face study or the qualification level, and this check is not applied as verified.",
 );
 
 // Research §WA item 2: the imported list records membership per code, so a

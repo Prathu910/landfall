@@ -34,6 +34,11 @@ const NEWS = "https://migration.sa.gov.au/news";
 const RELATED_WORK =
   "Work must be in the same ANZSCO sub-major group (first 2 digits) as the nominated occupation.";
 
+const STUDY_UNTESTED =
+  "Landfall asks only which state you studied in, so it cannot test the 46 weeks, the 75% or the year living in South Australia, and this check is not applied as verified.";
+const AFTER_COURSE_UNTESTED =
+  "Landfall's months answer does not say whether those months came after completing the course, so this check is not applied as verified.";
+
 // Research §SA items 1 and 7: the 22 Oct 2026 update gates every onshore stream.
 const onshoreStatus = verified(
   "restricted" as const,
@@ -80,21 +85,24 @@ const streams: Stream[] = [
     "sa-graduates",
     "South Australian Graduates",
     "South Australian Graduates",
+    // Ruling P28: read directly, but Landfall asks only which state you
+    // studied in and for months up to now, so it cannot test the course rules
+    // or whether the months came after the course. All held as secondary.
     [
-      verified(
+      secondary(
         STUDIED_IN_STATE,
         GRADUATES,
-        "A CRICOS course of at least 46 weeks, at least 75% completed in South Australia, with at least 1 year living in South Australia during study.",
+        `Read directly: a CRICOS course of at least 46 weeks, at least 75% completed in South Australia, with at least 1 year living in South Australia during study. ${STUDY_UNTESTED}`,
       ),
-      verified(
+      secondary(
         livingInState(6),
         GRADUATES,
-        "Lived in South Australia for the last 6 months, after completing the course.",
+        `Read directly: lived in South Australia for the last 6 months, after completing the course. ${AFTER_COURSE_UNTESTED}`,
       ),
-      verified(
+      secondary(
         workingInState(6, "anzsco-2-digit"),
         GRADUATES,
-        `Worked full-time for 6 months after completing the course. ${RELATED_WORK}`,
+        `Read directly: worked full-time for 6 months after completing the course. ${RELATED_WORK} ${AFTER_COURSE_UNTESTED}`,
       ),
     ],
   ),

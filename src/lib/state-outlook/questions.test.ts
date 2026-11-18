@@ -14,17 +14,16 @@ import type { RelatedWork } from "./rules-types";
 const lists = realLists();
 const federal = realFederal();
 
-function run(visa: StateVisa): Outlook {
-  const c = cases[0];
-  const core = loadOccupationCore(c.profile.occupation);
+function run(visa: StateVisa, profile = cases[0].profile): Outlook {
+  const core = loadOccupationCore(profile.occupation);
   if (!core) throw new Error("no core");
   return stateOutlook({
     core,
     rules: stateRules,
     lists,
     federal,
-    profile: c.profile,
-    points: c.points[0][visa],
+    profile,
+    points: cases[0].points[0][visa],
     visa,
     asOf: "2026-11-18",
   });
@@ -226,8 +225,14 @@ describe("questionsNeeded", () => {
     ]);
   });
 
-  it("asks the real ICT Business Analyst profile for both visas", () => {
-    const qs = ask([run("190"), run("491")]);
+  it("asks a real Queensland nurse with no extra answers, for both visas", () => {
+    const nurse = {
+      ...sampleProfile,
+      occupation: "254418",
+      onshore: true,
+      state: "QLD",
+    };
+    const qs = ask([run("190", nurse), run("491", nurse)]);
     expect(qs.length).toBeGreaterThan(0);
     expect(new Set(qs.map((q) => q.field)).size).toBe(qs.length);
     for (const q of qs) {

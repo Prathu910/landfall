@@ -307,6 +307,41 @@ describe("2026–27 state rules", () => {
     }
   });
 
+  it("keeps the WA and SA graduate study rules secondary, since the study question can't test them (ruling P28)", () => {
+    const streamOf = (state: string, visa: string, id: string) => {
+      const s = rule(state, visa).streams.find((x) => x.id === id);
+      if (!s) throw new Error(`no stream ${id}`);
+      return s;
+    };
+    for (const visa of ["190", "491"]) {
+      const [waStudy] = streamOf("WA", visa, "wa-graduate").requirements;
+      expect(waStudy.value.kind).toBe("studied-in-state");
+      expect(waStudy.verification).toBe("secondary");
+      expect(waStudy.note).toMatch(/87 weeks/);
+      expect(waStudy.note).toMatch(/not applied as verified/);
+      // Every SA Graduates rule but the visa-expiry gate is about the course.
+      const [gate, ...graduate] = streamOf(
+        "SA",
+        visa,
+        "sa-graduates",
+      ).requirements;
+      expect(gate.value.kind).toBe("visa-expiry-before");
+      expect(graduate.map((q) => q.value.kind)).toEqual([
+        "studied-in-state",
+        "min-months-living-in-state",
+        "min-months-working-in-state",
+      ]);
+      for (const q of graduate) {
+        expect(q.verification, q.value.kind).toBe("secondary");
+        expect(q.note).toMatch(/not applied as verified/);
+      }
+      expect(graduate[0].note).toMatch(/46 weeks.*75%/);
+      for (const q of graduate.slice(1)) {
+        expect(q.note).toMatch(/after completing the course/);
+      }
+    }
+  });
+
   it("lists every cohort for Victoria, unverified", () => {
     for (const s of streamsOf("VIC")) {
       expect([...s.cohorts.value].sort()).toEqual([

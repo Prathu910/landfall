@@ -101,7 +101,6 @@ describe("buildStateOutlookView", () => {
       "yearsExperienceLast10",
       // Answered in the main check, and used by a state's rules.
       "visaExpiry",
-      "studyState",
     ]);
     expect(build(nurse).questions[0].text).toContain("Queensland");
   });
@@ -193,11 +192,9 @@ describe("buildStateOutlookView", () => {
   });
 
   it("does not ask an unanswered question whose answer could not change a tile", () => {
-    // The sample's only open question is where they studied (for WA); the
-    // visa expiry is an answer already given.
-    expect(build(aarav).questions.map((q) => q.field)).toEqual([
-      "visaExpiry",
-      "studyState",
-    ]);
+    // Where the sample studied can't change a tile: the WA and SA graduate
+    // study rules are held as secondary (ruling P28). The visa expiry is an
+    // answer already given.
+    expect(build(aarav).questions.map((q) => q.field)).toEqual(["visaExpiry"]);
   });
 });
