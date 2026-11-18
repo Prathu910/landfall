@@ -56,7 +56,7 @@ describe("try-it wording", () => {
     const view = buildTryIt(coreFixture, 85);
     if (view.kind !== "data") throw new Error("expected data");
     expect(view.note).toBe(
-      `Counts of EOIs, not people. ${view.poolTotal} EOIs in the 189 pool.`,
+      `Counts are EOIs (one person can hold several). ${view.poolTotal} EOIs in the 189 pool.`,
     );
     expect(view.source).toBe(`SkillSelect, as at ${view.asAt}`);
     expect(`${view.note} ${view.source}`.replace("not people", "")).not.toMatch(
@@ -148,8 +148,7 @@ describe("buildTryIt", () => {
     ];
     for (const view of views) {
       for (const text of Object.values(view)) {
-        // "not people" is the required disclaimer; everything else is checked.
-        expect(text.replaceAll("not people", "")).not.toMatch(BANNED_COPY);
+        expect(text).not.toMatch(BANNED_COPY);
         expect(text).not.toContain("%");
       }
     }

@@ -15,6 +15,8 @@ export const TRY_IT_NO_DATA = "No published 189 data for this occupation";
 /** Shown when the occupation's file could not be fetched or was invalid. */
 export const TRY_IT_LOAD_FAILED =
   "Couldn't load the published data for this occupation. Try again.";
+/** The report's own caveat (scorecard source line). */
+const EOI_CAVEAT = "Counts are EOIs (one person can hold several).";
 export const TRY_IT_ROW_LABELS = {
   higher: "EOIs with a higher score (189)",
   same: "At your score",
@@ -33,7 +35,7 @@ export type TryItView =
       /** The newest round in the report's rounds wording; a null cut-off is "Not listed". */
       latestRound: string;
       asAt: string;
-      /** "Counts of EOIs, not people." plus the published pool total. */
+      /** The EOI caveat plus the published pool total. */
       note: string;
       /** "SkillSelect, as at {Mon YYYY}". */
       source: string;
@@ -61,7 +63,7 @@ export function buildTryIt(
     roundStatus: CHIP_LABEL[summarise189Rounds(core.rounds189).status],
     latestRound: newest ? `${newest.value}, ${newest.label}` : NO_ROUNDS,
     asAt,
-    note: `Counts of EOIs, not people. ${poolText} EOIs in the 189 pool.`,
+    note: `${EOI_CAVEAT} ${poolText} EOIs in the 189 pool.`,
     source: `SkillSelect, as at ${asAt}`,
   };
 }
