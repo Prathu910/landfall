@@ -150,7 +150,4 @@
   .grid {
     grid-template-columns: 1fr;
   }
-  .card {
-    break-inside: avoid;
-  }
 }

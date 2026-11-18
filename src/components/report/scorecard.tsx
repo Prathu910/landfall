@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {
   LOADING_HEADLINE,
   type Scorecard,
@@ -39,9 +38,9 @@ function Card({ card, loading }: { card: ScorecardCard; loading: boolean }) {
               <b>{card.atScore}</b>
             </p>
           ) : null}
-          <Link className={styles.link} href={card.href}>
-            {card.title.split(" ")[0]} details
-          </Link>
+          <a className={styles.link} href={card.href}>
+            {card.visa} details
+          </a>
         </>
       )}
     </article>
