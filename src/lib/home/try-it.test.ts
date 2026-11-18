@@ -8,7 +8,14 @@ import { comparePool, formatInterval } from "../pool";
 import { countInSentence, BANNED_COPY } from "../report/copy";
 import { buildRounds } from "../report/panel-189";
 import { CHIP_LABEL } from "../report/round-status";
-import { TRY_IT_DEFAULT, TRY_IT_POINTS, buildTryIt } from "./try-it";
+import {
+  TRY_IT_DEFAULT,
+  TRY_IT_LOAD_FAILED,
+  TRY_IT_NO_DATA,
+  TRY_IT_POINTS,
+  TRY_IT_ROW_LABELS,
+  buildTryIt,
+} from "./try-it";
 
 function withPool(
   byScore: Record<string, string>,
@@ -28,6 +35,33 @@ describe("try-it points", () => {
     expect(TRY_IT_POINTS).toHaveLength(16);
     expect(TRY_IT_POINTS).toContain(TRY_IT_DEFAULT);
     expect(TRY_IT_DEFAULT).toBe(85);
+  });
+});
+
+describe("try-it wording", () => {
+  it("keeps the load-failure message distinct from the no-data message", () => {
+    expect(TRY_IT_LOAD_FAILED).not.toBe(TRY_IT_NO_DATA);
+    expect(TRY_IT_LOAD_FAILED).toMatch(/load/i);
+  });
+
+  it("has the three row labels", () => {
+    expect(TRY_IT_ROW_LABELS).toEqual({
+      higher: "EOIs with a higher score (189)",
+      same: "At your score",
+      latestRound: "Latest 189 round",
+    });
+  });
+
+  it("composes the note and source in the view-model", () => {
+    const view = buildTryIt(coreFixture, 85);
+    if (view.kind !== "data") throw new Error("expected data");
+    expect(view.note).toBe(
+      `Counts of EOIs, not people. ${view.poolTotal} EOIs in the 189 pool.`,
+    );
+    expect(view.source).toBe(`SkillSelect, as at ${view.asAt}`);
+    expect(`${view.note} ${view.source}`.replace("not people", "")).not.toMatch(
+      BANNED_COPY,
+    );
   });
 });
 
@@ -114,7 +148,8 @@ describe("buildTryIt", () => {
     ];
     for (const view of views) {
       for (const text of Object.values(view)) {
-        expect(text).not.toMatch(BANNED_COPY);
+        // "not people" is the required disclaimer; everything else is checked.
+        expect(text.replaceAll("not people", "")).not.toMatch(BANNED_COPY);
         expect(text).not.toContain("%");
       }
     }

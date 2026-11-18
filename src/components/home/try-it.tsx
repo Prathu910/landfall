@@ -4,7 +4,9 @@ import { Select } from "@mantine/core";
 import { useMemo, useState } from "react";
 import {
   TRY_IT_DEFAULT,
+  TRY_IT_LOAD_FAILED,
   TRY_IT_POINTS,
+  TRY_IT_ROW_LABELS,
   buildTryIt,
 } from "../../lib/home/try-it";
 import { occupationIndex } from "../data/occupation-index";
@@ -62,27 +64,23 @@ export function TryIt({ defaultOccupation }: { defaultOccupation: string }) {
         />
       </div>
       <div className={styles.results} aria-live="polite">
-        {load.status === "loading" || load.status === "idle" ? (
+        {load.status === "unavailable" ? (
+          <p className={styles.status}>{TRY_IT_LOAD_FAILED}</p>
+        ) : !view ? (
           <p className={styles.status}>Loading published data…</p>
-        ) : load.status === "unavailable" || !view ? (
-          <p className={styles.status}>
-            No published 189 data for this occupation
-          </p>
-        ) : view.kind === "none" ? (
-          <p className={styles.status}>{view.message}</p>
-        ) : (
+        ) : view.kind === "data" ? (
           <>
             <dl className={styles.rows}>
               <div className={styles.row}>
-                <dt>EOIs with a higher score (189)</dt>
+                <dt>{TRY_IT_ROW_LABELS.higher}</dt>
                 <dd>{view.higher}</dd>
               </div>
               <div className={styles.row}>
-                <dt>At your score</dt>
+                <dt>{TRY_IT_ROW_LABELS.same}</dt>
                 <dd>{view.same}</dd>
               </div>
               <div className={styles.row}>
-                <dt>Latest 189 round</dt>
+                <dt>{TRY_IT_ROW_LABELS.latestRound}</dt>
                 <dd>
                   {view.latestRound}
                   <span className={styles.chip}>{view.roundStatus}</span>
@@ -90,10 +88,11 @@ export function TryIt({ defaultOccupation }: { defaultOccupation: string }) {
               </div>
             </dl>
             <p className={styles.note}>
-              Counts of EOIs, not people. {view.poolTotal} EOIs in the 189 pool.
-              SkillSelect, as at {view.asAt}.
+              {view.note} {view.source}.
             </p>
           </>
+        ) : (
+          <p className={styles.status}>{view.message}</p>
         )}
       </div>
       <a className={styles.link} href={fullReportHref(code)}>

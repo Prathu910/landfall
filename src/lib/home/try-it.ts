@@ -11,7 +11,15 @@ export const TRY_IT_POINTS: number[] = Array.from(
 );
 export const TRY_IT_DEFAULT = 85;
 
-const NO_DATA = "No published 189 data for this occupation";
+export const TRY_IT_NO_DATA = "No published 189 data for this occupation";
+/** Shown when the occupation's file could not be fetched or was invalid. */
+export const TRY_IT_LOAD_FAILED =
+  "Couldn't load the published data for this occupation. Try again.";
+export const TRY_IT_ROW_LABELS = {
+  higher: "EOIs with a higher score (189)",
+  same: "At your score",
+  latestRound: "Latest 189 round",
+} as const;
 const NO_ROUNDS = "Not listed in any round we can read";
 
 export type TryItView =
@@ -25,6 +33,10 @@ export type TryItView =
       /** The newest round in the report's rounds wording; a null cut-off is "Not listed". */
       latestRound: string;
       asAt: string;
+      /** "Counts of EOIs, not people." plus the published pool total. */
+      note: string;
+      /** "SkillSelect, as at {Mon YYYY}". */
+      source: string;
     }
   | { kind: "none"; message: string };
 
@@ -35,16 +47,21 @@ export function buildTryIt(
 ): TryItView {
   // The report's own pool position, so the published total is used, not a row sum.
   const position = core && poolPosition(core, null, "189", total, null);
-  if (!core || !position?.available) return { kind: "none", message: NO_DATA };
+  if (!core || !position?.available)
+    return { kind: "none", message: TRY_IT_NO_DATA };
   const { higher, same, total: poolTotal } = position;
   const newest = buildRounds(core, []).tiles[0];
+  const asAt = formatMonth(core.asAt);
+  const poolText = countInSentence(poolTotal);
   return {
     kind: "data",
     higher: countInSentence(higher),
     same: countInSentence(same),
-    poolTotal: countInSentence(poolTotal),
+    poolTotal: poolText,
     roundStatus: CHIP_LABEL[summarise189Rounds(core.rounds189).status],
     latestRound: newest ? `${newest.value}, ${newest.label}` : NO_ROUNDS,
-    asAt: formatMonth(core.asAt),
+    asAt,
+    note: `Counts of EOIs, not people. ${poolText} EOIs in the 189 pool.`,
+    source: `SkillSelect, as at ${asAt}`,
   };
 }
