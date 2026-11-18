@@ -1696,7 +1696,8 @@
     },
     "234914": {
       "190": [
-        "living-in-state"
+        "living-in-state",
+        "offshore"
       ],
       "491": [
         "living-in-state",
@@ -1706,7 +1707,9 @@
         "South Australian Graduates",
         "Skilled Employment in South Australia",
         "Outer Regional Skilled Employment",
-        "Offshore"
+        "Offshore",
+        "title:Physicist (Medical Physicist Only)",
+        "title:Physicist (non-medical)"
       ]
     },
     "234915": {
@@ -1886,7 +1889,9 @@
         "South Australian Graduates",
         "Skilled Employment in South Australia",
         "Outer Regional Skilled Employment",
-        "Offshore"
+        "Offshore",
+        "title:Vocational Education Teacher (Non-Trades)",
+        "title:Vocational Education Teacher (Trades)"
       ]
     },
     "249111": {
