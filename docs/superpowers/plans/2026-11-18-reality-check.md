@@ -242,7 +242,7 @@ export function buildRounds(
 - [ ] **Step 1: Write failing tests:**
   - Segments for the Task 2 fixture at 90: ahead {872,891}, same {1132,1132}, lower {7441,7460}, total {9464,9464}.
   - The sentence uses "872–891", "1,132" and "9,464".
-  - The split for the Task 3 Pool-position fixture (before {30,49}) produces "About 30–49 were submitted before Mar 2025, 25 in the same month and 40 after."
+  - The split using step 1's `detailFixture` cohortsByScore ("90": older 30, 2025-02 "<20", 2025-03 25, 2025-04 40; submitted month 2025-03) produces "About 30–49 were submitted before Mar 2025, 25 in the same month and 40 after."
   - **Review Focus 2:** an `eoiDate` after `asOf` gives the prompt.
   - Rounds:
     - tiles are capped at 6;
