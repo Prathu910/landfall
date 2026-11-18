@@ -265,7 +265,8 @@
 @media (max-width: 720px) {
   .source,
   .note,
-  .allRounds li {
+  .allRounds li,
+  .details summary {
     font-size: 1rem;
   }
 }

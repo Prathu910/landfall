@@ -1,13 +1,13 @@
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 import { describe, expect, it } from "vitest";
+import { findSmallFontSizes } from "./font-floor";
 
 const ROOT = process.cwd();
-const SRC = join(ROOT, "src");
-const MIN_PX = 12;
-const MIN_REM = 0.75;
 /** Vendored kit: excluded from the floor (ruling B1). */
 const EXCLUDED = "src/components/stageshow-kit/";
+const SCANNED = /\.(css|tsx?)$/;
+const SELF = /src\/app\/(css-floor|font-floor)(\.test)?\.ts$/;
 
 function walk(dir: string): string[] {
   return readdirSync(dir).flatMap((name) => {
@@ -16,39 +16,24 @@ function walk(dir: string): string[] {
   });
 }
 
-const files = walk(SRC)
-  .map((path) => relative(ROOT, path))
-  .filter((path) => !path.startsWith(EXCLUDED));
-
-function tooSmall(value: string): boolean {
-  const lengths = [...value.matchAll(/(\d*\.?\d+)(px|rem|em)\b/g)];
-  return lengths.some(([, n, unit]) =>
-    unit === "px" ? Number(n) < MIN_PX : Number(n) < MIN_REM,
-  );
-}
-
 function findViolations(): string[] {
-  const out: string[] = [];
-  for (const file of files) {
-    const lines = readFileSync(join(ROOT, file), "utf8").split("\n");
-    const isCss = file.endsWith(".css");
-    const isTsx = file.endsWith(".tsx");
-    if (!isCss && !isTsx) continue;
-    lines.forEach((line, i) => {
-      if (isCss) {
-        const m = line.match(/(?:^|[;{\s])font-size\s*:\s*([^;}]+)/);
-        if (m && tooSmall(m[1])) out.push(`${file}:${i + 1} ${m[1].trim()}`);
-      } else {
-        const m = line.match(/fontSize\s*[=:]\s*\{?\s*["']?(\d*\.?\d+)(px)?/);
-        if (m && Number(m[1]) < MIN_PX) out.push(`${file}:${i + 1} ${m[1]}`);
-      }
+  return walk(join(ROOT, "src"))
+    .map((path) => relative(ROOT, path))
+    .filter(
+      (file) =>
+        SCANNED.test(file) && !file.startsWith(EXCLUDED) && !SELF.test(file),
+    )
+    .flatMap((file) => {
+      const kind = file.endsWith(".css") ? "css" : "tsx";
+      const source = readFileSync(join(ROOT, file), "utf8");
+      return findSmallFontSizes(source, kind).map(
+        (hit) => `${file}:${hit.line} ${hit.value}`,
+      );
     });
-  }
-  return out;
 }
 
 describe("type size floor", () => {
-  it("has no font-size under 12px (0.75rem) in CSS or inline TSX", () => {
+  it("has no font size under 12px (0.75rem) in src CSS, TS or TSX", () => {
     expect(findViolations()).toEqual([]);
   });
 });
