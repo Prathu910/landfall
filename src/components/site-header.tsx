@@ -7,10 +7,10 @@ import { ArrowUpRight } from "lucide-react";
 import { Burger, Drawer, Button } from "@mantine/core";
 import { Logo } from "@/components/brand/logo";
 
-export function Brand() {
+export function Brand({ reversed = false }: { reversed?: boolean }) {
   return (
     <Link className="brand" href="/" aria-label="MigrateLens home">
-      <Logo />
+      <Logo reversed={reversed} />
     </Link>
   );
 }
@@ -29,9 +29,7 @@ export function SiteHeader() {
       href={href}
       onClick={() => setOpen(false)}
       aria-current={
-        path === href || (href !== "/" && path === href.slice(0, -1))
-          ? "page"
-          : undefined
+        path === href || path === href.slice(0, -1) ? "page" : undefined
       }
     >
       {label}

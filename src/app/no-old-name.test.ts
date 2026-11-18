@@ -15,13 +15,18 @@ function sourceFiles(dir: string): string[] {
 }
 
 // The preview host is not ours to rename until launch (see metadataBase).
+// The only other place the old name may live: the legacy storage key, so old
+// saves can be moved or cleared.
+const LEGACY_MODULE = path.join("lib", "profile-storage.ts");
 const PREVIEW_HOST = "landfall-migration-report.cappedpike4.chatgpt.site";
 
 describe("product name", () => {
   it("never uses the old working name in src", () => {
-    const offenders = sourceFiles(SRC).filter((file) =>
-      /landfall/i.test(readFileSync(file, "utf8").replace(PREVIEW_HOST, "")),
-    );
+    const offenders = sourceFiles(SRC)
+      .filter((file) => path.relative(SRC, file) !== LEGACY_MODULE)
+      .filter((file) =>
+        /landfall/i.test(readFileSync(file, "utf8").replace(PREVIEW_HOST, "")),
+      );
     expect(offenders.map((f) => path.relative(SRC, f))).toEqual([]);
   });
 });

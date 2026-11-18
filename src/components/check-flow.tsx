@@ -1,5 +1,10 @@
 "use client";
 
+import {
+  clearSavedProfile,
+  migrateLegacyProfile,
+  STORAGE_KEY,
+} from "@/lib/profile-storage";
 import { useEffect, useState, useRef } from "react";
 import {
   Alert,
@@ -46,7 +51,6 @@ import {
 import { Report } from "./report";
 import styles from "./check-flow.module.css";
 
-const STORAGE_KEY = "migratelens-profile-v1";
 const STEPS = [
   "Your profile",
   "English & study",
@@ -102,6 +106,7 @@ export function CheckFlow({ source }: { source: ReportSource }) {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- post-hydration sync with browser storage
     setAsOf(localToday());
     try {
+      migrateLegacyProfile(localStorage);
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
@@ -158,9 +163,7 @@ export function CheckFlow({ source }: { source: ReportSource }) {
     setSave(false);
     setReport(false);
     changeStep(0);
-    try {
-      localStorage.removeItem(STORAGE_KEY);
-    } catch {}
+    clearSavedProfile(localStorage);
   };
   const next = () => {
     if (

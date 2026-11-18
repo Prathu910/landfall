@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { loadManifest } from "@/lib/data/load-server";
-import { Logo } from "@/components/brand/logo";
+import { Brand } from "./site-header";
 
 const MONTHS = [
   "January",
@@ -30,9 +30,7 @@ export function SiteFooter() {
       <div className="container">
         <div className="footer-top">
           <div>
-            <Link className="brand" href="/" aria-label="MigrateLens home">
-              <Logo reversed />
-            </Link>
+            <Brand reversed />
             <p>Published SkillSelect data, as at {asAt}.</p>
           </div>
           <div className="footer-links">
