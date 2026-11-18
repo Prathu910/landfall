@@ -11,7 +11,7 @@ import {
 import { STATE_NAMES } from "./context";
 import type { Group, Outlook, StateOutcome } from "./outlook";
 import type { RuleCheck } from "./judge";
-import type { StateVisaRules, Verification } from "./rules-types";
+import type { StateVisaRules } from "./rules-types";
 import { isStale } from "./staleness";
 
 export type Tile = {
@@ -25,7 +25,7 @@ export type Tile = {
 export type CanApplyLine = {
   text: string;
   mark: "✓" | "✗" | "?";
-  source: string;
+  source?: string; // omitted when the line has no page to link
   checkedNote: string;
 };
 
@@ -62,6 +62,8 @@ const PROGRAM_YEAR = "2026–27";
 const ANY_STATE_NOTE =
   "EOIs not tied to one state; not counted in any state's group";
 const MONTHS_SHOWN = 3;
+const NO_PUBLISHED_INVITATIONS =
+  "no published invitation data for this state in the last 12 months";
 
 function panelId(visa: StateVisa, state: StateCode): string {
   return `state-${visa}-${state}`;
@@ -83,6 +85,7 @@ function peakFragment(peak: MonthlyInvited, points: number): string {
 /** What published invitations say at or below the score, for a tile. */
 function evidenceFragment(side: StateSide, points: number): string {
   if (side.peak !== null) return peakFragment(side.peak, points);
+  if (side.invitedAtOrBelow.length === 0) return NO_PUBLISHED_INVITATIONS;
   if (side.invitedAtOrBelow.some((m) => isMasked(m.invitedAtLeast))) {
     return "under 20 invited, so may be zero";
   }
@@ -118,35 +121,35 @@ export function buildAnyStateTile(
   };
 }
 
+/** One wording for how fresh a rule is; stale wins over unverified. */
 function checkedNote(
   checkedAt: string,
-  verification: Verification,
-  asOf: string,
+  stale: boolean,
+  unverified: boolean,
 ): string {
-  if (isStale(checkedAt, asOf)) {
-    return `Last checked ${formatDate(checkedAt)}; may have changed`;
-  }
-  if (verification === "secondary") return NOT_VERIFIED;
+  if (stale) return `Last checked ${formatDate(checkedAt)}; may have changed`;
+  if (unverified) return NOT_VERIFIED;
   return `checked ${formatDate(checkedAt)}`;
 }
 
+/** A link only when there is a page to point to. */
+function withSource(source: string): { source?: string } {
+  return source === "" ? {} : { source };
+}
+
 function checkLine(check: RuleCheck): CanApplyLine {
-  let note: string;
-  if (check.stale) {
-    note = `Last checked ${formatDate(check.checkedAt)}; may have changed`;
-  } else if (check.outcome === "unverified") {
-    note = NOT_VERIFIED;
-  } else {
-    note = `checked ${formatDate(check.checkedAt)}`;
-  }
   return {
     text:
       check.outcome === "needs-answer" && check.question
         ? check.question
         : check.label,
     mark: MARKS[check.outcome],
-    source: check.source,
-    checkedNote: note,
+    ...withSource(check.source),
+    checkedNote: checkedNote(
+      check.checkedAt,
+      check.stale,
+      check.outcome === "unverified",
+    ),
   };
 }
 
@@ -157,18 +160,13 @@ function canApplyLines(
 ): CanApplyLine[] {
   const deciding = outcome.deciding;
   if (deciding === null) {
-    return [
-      {
-        text: outcome.reasonText,
-        mark: "?",
-        source: "",
-        checkedNote: NOT_VERIFIED,
-      },
-    ];
+    return [{ text: outcome.reasonText, mark: "?", checkedNote: NOT_VERIFIED }];
   }
   const stream = rules.streams.find((s) => s.id === deciding.streamId);
   const lines: CanApplyLine[] = [];
-  // A secondary closure is never decisive, so say it before anything else.
+  let checks = deciding.checks;
+  // A secondary closure is never decisive, so say it before anything else and
+  // drop the stream's own (duplicate) status check.
   if (
     stream?.status.value === "closed" &&
     stream.status.verification === "secondary"
@@ -179,18 +177,19 @@ function canApplyLines(
       source: stream.status.source,
       checkedNote: NOT_VERIFIED,
     });
+    checks = checks.filter((c) => c.label !== `Closed in ${PROGRAM_YEAR}`);
   }
-  lines.push(...deciding.checks.map(checkLine));
+  lines.push(...checks.map(checkLine));
   const restriction = stream?.restriction;
   if (restriction !== undefined) {
     lines.push({
-      text: `Also required: ${restriction.value.replace(/[.\s]+$/, "")} — not checked here`,
+      text: `Restriction, not checked here: ${restriction.value.replace(/[.\s]+$/, "")}`,
       mark: "?",
-      source: restriction.source,
+      ...withSource(restriction.source),
       checkedNote: checkedNote(
         restriction.checkedAt,
-        restriction.verification,
-        asOf,
+        isStale(restriction.checkedAt, asOf),
+        restriction.verification === "secondary",
       ),
     });
   }
@@ -216,30 +215,56 @@ function monthlySentence(month: MonthlyInvited, points: number): string {
   return `At least ${formatCount({ min: count.min, max: count.min })} invited ${where} ${when}`;
 }
 
+function competitorSentence(
+  outcome: StateOutcome,
+  points: number,
+  snapshot: string,
+): string {
+  const count = outcome.evidence.competitorsAtOrAbove;
+  if (count === null)
+    return "No published count of competing EOIs for this state";
+  const state = STATE_NAMES[outcome.state];
+  const when = `(as at ${formatMonth(snapshot)})`;
+  const tail = `EOIs for the ${outcome.visa} visa that name ${state} and have ${points} points or more ${when}`;
+  if (isMasked(count)) return `Published as under 20: ${tail}`;
+  return `${formatCount(count)} EOIs for the ${outcome.visa} visa name ${state} and have ${points} points or more ${when}`;
+}
+
+function scoreRangeSentence(
+  range: { min: number; max: number },
+  snapshot: string,
+): string {
+  const where =
+    range.min === range.max
+      ? `at ${range.min} points`
+      : `between ${range.min} and ${range.max} points`;
+  return `Published invitations in the last 12 months were ${where} (as at ${formatMonth(snapshot)})`;
+}
+
 function dataSentences(outcome: StateOutcome, points: number): string[] {
   const side = outcome.evidence;
   const snapshot = snapshotMonth(side);
   const sentences: string[] = [];
   if (snapshot !== null) {
-    const count = capitalise(countInSentence(side.competitorsAtOrAbove));
-    sentences.push(
-      `${count} EOIs for visa ${outcome.visa} nominating ${STATE_NAMES[outcome.state]} have ${points} points or more (as at ${formatMonth(snapshot)})`,
-    );
+    sentences.push(competitorSentence(outcome, points, snapshot));
   }
-  for (const month of side.invitedAtOrBelow.slice(-MONTHS_SHOWN).reverse()) {
-    sentences.push(monthlySentence(month, points));
+  const shown = side.invitedAtOrBelow.slice(-MONTHS_SHOWN).reverse();
+  if (side.invitedAtOrBelow.length === 0) {
+    sentences.push(capitalise(NO_PUBLISHED_INVITATIONS));
   }
-  if (side.peak !== null) {
+  for (const month of shown) sentences.push(monthlySentence(month, points));
+  const peak = side.peak;
+  if (peak !== null && !shown.some((m) => m.asAt === peak.asAt)) {
+    const count = formatCount({
+      min: peak.invitedAtLeast.min,
+      max: peak.invitedAtLeast.min,
+    });
     sentences.push(
-      `Peak in the last 12 months: ${peakFragment(side.peak, points)}`,
+      `Highest month: at least ${count} invited at ${points} points or below (${formatMonth(peak.asAt)})`,
     );
   }
   if (side.scoreRange !== null && snapshot !== null) {
-    const { min, max } = side.scoreRange;
-    const scores = min === max ? `only at ${min}` : `from ${min} to ${max}`;
-    sentences.push(
-      `Invited scores ran ${scores} over the last 12 months (as at ${formatMonth(snapshot)})`,
-    );
+    sentences.push(scoreRangeSentence(side.scoreRange, snapshot));
   }
   if (side.notPublished.length > 0 && snapshot !== null) {
     sentences.push(
@@ -258,7 +283,7 @@ function pointsLines(
   const system = rules.ownScoreSystem?.value.name;
   if (system !== undefined) {
     lines.push(
-      `${STATE_NAMES[outcome.state]} ranks with its own ${system} (not calculated here).`,
+      `${STATE_NAMES[outcome.state]} ranks with its own ${system}, which is not calculated here.`,
     );
   }
   return lines;

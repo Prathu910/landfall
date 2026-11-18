@@ -121,6 +121,16 @@ describe("buildTiles fragments", () => {
     );
   });
 
+  it("does not call unpublished months a confirmed zero", () => {
+    const [tile] = buildTiles(
+      stub("watching", side({ notPublished: ["2026-09", "2026-10"] })),
+      95,
+    );
+    expect(tile.fragment).toBe(
+      "no published invitation data for this state in the last 12 months",
+    );
+  });
+
   it("uses the short reason for the other groups", () => {
     for (const group of ["needs-answers", "unverified", "not-open"] as const) {
       const [tile] = buildTiles(stub(group, side(), "Short reason"), 95);
@@ -157,9 +167,9 @@ describe("buildStatePanel", () => {
     expect(panel.pointsThere[0]).toBe("95 federal points with nomination");
     expect(panel.data.length).toBeGreaterThan(1);
     expect(panel.data.some((d) => d.includes("points or more"))).toBe(true);
-    expect(panel.data.every((d) => /as at [A-Z][a-z]{2} \d{4}/.test(d))).toBe(
-      true,
-    );
+    expect(
+      panel.data.every((d) => /(as at )?[A-Z][a-z]{2} \d{4}\)/.test(d)),
+    ).toBe(true);
     expect(panel.footer).toBe(
       "Not advice to apply. Rules change; check the official page.",
     );
@@ -180,7 +190,7 @@ describe("buildStatePanel", () => {
     const panel = buildStatePanel(vic, rulesFor("VIC", "190"), 90, AS_OF);
     expect(panel.pointsThere).toEqual([
       "90 federal points with nomination",
-      "Victoria ranks with its own Victorian Points Test (VPT) (not calculated here).",
+      "Victoria ranks with its own Victorian Points Test (VPT), which is not calculated here.",
     ]);
   });
 
@@ -200,6 +210,9 @@ describe("buildStatePanel", () => {
     const rules = rulesFor("VIC", "491");
     const panel = buildStatePanel(vic, rules, 90, AS_OF);
     expect(panel.groupLabel).toBe("Not yet verified");
+    expect(panel.canApply.map((l) => l.text)).not.toContain(
+      "Closed in 2026–27",
+    );
     expect(panel.canApply[0]).toEqual({
       text: "Reported closed for 491 in 2026–27, not yet verified on the official page",
       mark: "?",
@@ -231,10 +244,10 @@ describe("buildStatePanel", () => {
             AS_OF,
           );
           const line = panel.canApply.find((l) =>
-            l.text.startsWith("Also required:"),
+            l.text.startsWith("Restriction, not checked here:"),
           );
           expect(line?.text).toBe(
-            `Also required: ${stream.restriction.value.replace(/\.$/, "")} — not checked here`,
+            `Restriction, not checked here: ${stream.restriction.value.replace(/\.$/, "")}`,
           );
           expect(line?.mark).toBe("?");
           expect(line?.source).toBe(stream.restriction.source);
@@ -263,6 +276,69 @@ describe("buildStatePanel", () => {
     ).toBe(true);
   });
 
+  it("does not turn unpublished data into zeros", () => {
+    const evidence = side({
+      competitorsAtOrAbove: null,
+      notPublished: ["2026-09", "2026-10"],
+    });
+    const outcome = stub("watching", evidence).states[0];
+    const panel = buildStatePanel(outcome, rulesFor("WA", "190"), 90, AS_OF);
+    expect(panel.data).toContain(
+      "No published count of competing EOIs for this state",
+    );
+    expect(panel.data).toContain(
+      "No published invitation data for this state in the last 12 months",
+    );
+    expect(panel.data.join(" ")).not.toMatch(/no invitations recorded/i);
+  });
+
+  it("shows the highest month only when it is not already listed", () => {
+    const month = (asAt: string, min: number) => ({
+      asAt,
+      invitedAtLeast: { min, max: min },
+    });
+    const months = [
+      month("2026-06", 40),
+      month("2026-07", 1),
+      month("2026-08", 2),
+      month("2026-09", 3),
+    ];
+    const hidden = stub(
+      "strongest",
+      side({ invitedAtOrBelow: months, peak: months[0] }),
+    ).states[0];
+    const rules = rulesFor("WA", "190");
+    expect(buildStatePanel(hidden, rules, 90, AS_OF).data).toContain(
+      "Highest month: at least 40 invited at 90 points or below (Jun 2026)",
+    );
+    const shown = stub(
+      "strongest",
+      side({ invitedAtOrBelow: months, peak: months[3] }),
+    ).states[0];
+    expect(
+      buildStatePanel(shown, rules, 90, AS_OF).data.some((d) =>
+        d.startsWith("Highest month"),
+      ),
+    ).toBe(false);
+  });
+
+  it("words a single invited score", () => {
+    const outcome = stub(
+      "watching",
+      side({
+        invitedAtOrBelow: [
+          { asAt: "2026-09", invitedAtLeast: { min: 2, max: 2 } },
+        ],
+        scoreRange: { min: 80, max: 80 },
+      }),
+    ).states[0];
+    expect(
+      buildStatePanel(outcome, rulesFor("WA", "190"), 90, AS_OF).data,
+    ).toContain(
+      "Published invitations in the last 12 months were at 80 points (as at Sep 2026)",
+    );
+  });
+
   it("describes a state with no recorded rules", () => {
     const outcome = stub("unverified", side(), "Rules not recorded for 190")
       .states[0];
@@ -274,6 +350,7 @@ describe("buildStatePanel", () => {
     );
     expect(panel.canApply).toHaveLength(1);
     expect(panel.canApply[0].mark).toBe("?");
+    expect(panel.canApply[0].source).toBeUndefined();
     expect(panel.streamName).toBeNull();
   });
 
@@ -290,13 +367,15 @@ describe("buildStatePanel", () => {
     const outcome = stub("watching", evidence).states[0];
     const panel = buildStatePanel(outcome, rulesFor("WA", "190"), 90, AS_OF);
     expect(panel.data[0]).toBe(
-      "Under 20 (so may be zero) EOIs for visa 190 nominating Western Australia have 90 points or more (as at Sep 2026)",
+      "Published as under 20: EOIs for the 190 visa that name Western Australia and have 90 points or more (as at Sep 2026)",
     );
     const monthly = panel.data.filter((d) => d.includes("invited at"));
     expect(monthly).toHaveLength(3);
     expect(monthly[0]).toContain("Sep 2026");
     expect(monthly[0]).toContain("Under 20 invited");
-    expect(panel.data.some((d) => d.includes("from 85 to 95"))).toBe(true);
+    expect(
+      panel.data.some((d) => d.includes("were between 85 and 95 points")),
+    ).toBe(true);
   });
 });
 
@@ -311,9 +390,8 @@ describe("tiles and panels over the real profiles", () => {
           expect(tiles.map((t) => t.state)).toEqual(
             outlook.states.map((s) => s.state),
           );
-          const strings: string[] = [
-            buildAnyStateTile(outlook.anyState, points[visa]).fragment,
-          ];
+          const any = buildAnyStateTile(outlook.anyState, points[visa]);
+          const strings: string[] = [any.label, any.fragment, any.note];
           for (const tile of tiles) {
             expect(GROUP_LABELS).toContain(
               buildStatePanel(
@@ -341,6 +419,7 @@ describe("tiles and panels over the real profiles", () => {
               panel.footer,
               ...panel.data,
               ...panel.pointsThere,
+              ...(panel.streamName ? [panel.streamName] : []),
               ...panel.canApply.flatMap((l) => [l.text, l.checkedNote]),
               ...(panel.resultsLink ? [panel.resultsLink.text] : []),
             );
@@ -348,6 +427,17 @@ describe("tiles and panels over the real profiles", () => {
           for (const text of strings) {
             expect(text).not.toMatch(BANNED_COPY);
             expect(text).not.toMatch(/'s \d{4}/);
+          }
+          for (const outcome of outlook.states) {
+            const panel = buildStatePanel(
+              outcome,
+              rulesFor(outcome.state, visa),
+              points[visa],
+              AS_OF,
+            );
+            for (const line of panel.canApply) {
+              expect(line.source).not.toBe("");
+            }
           }
         });
       }
