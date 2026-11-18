@@ -416,6 +416,10 @@ describe("dated change timeline", () => {
 describe("date display helpers", () => {
   it("formats valid dates safely and refuses invalid dates", () => {
     expect(formatDate("2026-11-17")).toBe("17 Nov 2026");
+    // Three-letter months like formatMonth, whatever the ICU version prints for en-GB.
+    expect(formatDate("2024-09-05")).toBe("5 Sep 2024");
+    expect(formatDate("2026-06-04")).toBe("4 Jun 2026");
+    expect(formatDate("2025-01-01")).toBe("1 Jan 2025");
     expect(formatDate("2026-02-31")).toBe("—");
     expect(formatDate("")).toBe("—");
     expect(localToday()).toMatch(/^\d{4}-\d{2}-\d{2}$/);

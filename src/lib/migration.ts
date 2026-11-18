@@ -450,16 +450,27 @@ export function buildTimeline(profile: Profile, asOf: string): TimelineEvent[] {
   );
 }
 
+/** Fixed month names: ICU versions differ (en-GB may print "Sept"). */
+export const MONTH_NAMES = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+] as const;
+
+/** "2026-10-15" becomes "15 Oct 2026"; an invalid date becomes "—". */
 export function formatDate(value: string): string {
   const date = parseDate(value);
-  return date
-    ? new Intl.DateTimeFormat("en-GB", {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-        timeZone: "UTC",
-      }).format(date)
-    : "—";
+  if (!date) return "—";
+  return `${date.getUTCDate()} ${MONTH_NAMES[date.getUTCMonth()]} ${date.getUTCFullYear()}`;
 }
 export function localToday(): string {
   const date = new Date();

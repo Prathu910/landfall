@@ -46,6 +46,7 @@ type Chip = ScorecardCard["chip"];
 const INVITATION_WINDOW_MONTHS = 12;
 export const LOADING_HEADLINE = "Loading published data…";
 const NO_DATA_SENTENCE = "No published data to compare for this occupation.";
+const LOAD_FAILED_SENTENCE = "Published data could not be loaded.";
 const STATUS_TONE: Record<RoundStatus, Tone> = {
   none: "red",
   occasional: "amber",
@@ -93,6 +94,10 @@ function cutoffText(
 
 function headlineFor(name: string, data: ScorecardData, base: number): string {
   if (data.kind === "none") {
+    // A failed fetch is a network fact, not a finding about the dataset.
+    if (data.reason === "loadFailed") {
+      return `Published data for ${name} could not be loaded. Your points breakdown is below.`;
+    }
     return data.reason === "loading"
       ? LOADING_HEADLINE
       : `Published SkillSelect data for ${name} is too limited to compare. Your points breakdown is below.`;
@@ -161,7 +166,8 @@ function buildCard(
         visa === "189"
           ? { label: "No data", tone: "neutral" }
           : { label: "State decides", tone: "neutral" },
-      sentence: NO_DATA_SENTENCE,
+      sentence:
+        data.reason === "loadFailed" ? LOAD_FAILED_SENTENCE : NO_DATA_SENTENCE,
       ahead: null,
       atScore: null,
     };

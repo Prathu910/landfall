@@ -1,20 +1,6 @@
 import type { Interval, MonthKey } from "../data/types";
+import { MONTH_NAMES } from "../migration";
 import { formatInterval } from "../pool";
-
-const MONTHS = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
-];
 
 /** Wording the report must never use (spec section 7). */
 export const BANNED_COPY =
@@ -37,7 +23,7 @@ export function countPhrase(i: Interval): string {
 /** "2026-10" becomes "Oct 2026". */
 export function formatMonth(month: MonthKey): string {
   const [year, m] = month.split("-");
-  return `${MONTHS[Number(m) - 1]} ${year}`;
+  return `${MONTH_NAMES[Number(m) - 1]} ${year}`;
 }
 
 /** The YYYY-MM of a valid YYYY-MM-DD calendar date, otherwise null. */

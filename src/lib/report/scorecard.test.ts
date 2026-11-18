@@ -161,6 +161,33 @@ describe("buildScorecard", () => {
     );
   });
 
+  it("says a failed load could not be loaded, never that data is too limited", () => {
+    const card = build({ kind: "none", reason: "loadFailed" });
+    expect(card.headline).toBe(
+      "Published data for Software Engineer could not be loaded. Your points breakdown is below.",
+    );
+    for (const c of card.cards) {
+      expect(c.sentence).toBe("Published data could not be loaded.");
+      expect(c.chip.tone).toBe("neutral");
+      expect(c.ahead).toBeNull();
+      expect(c.atScore).toBeNull();
+      expect(c.href).toBeNull();
+    }
+    expect(card.cards.map((c) => c.points)).toEqual([90, 95, 105]);
+  });
+
+  it("keeps the too-limited headline for occupations without published data", () => {
+    for (const reason of ["notIndexed", "noData"] as const) {
+      const card = build({ kind: "none", reason });
+      expect(card.headline).toBe(
+        "Published SkillSelect data for Software Engineer is too limited to compare. Your points breakdown is below.",
+      );
+      expect(card.cards[0].sentence).toBe(
+        "No published data to compare for this occupation.",
+      );
+    }
+  });
+
   it("shows a loading headline", () => {
     expect(build({ kind: "none", reason: "loading" }).headline).toBe(
       "Loading published data…",
@@ -177,6 +204,7 @@ describe("buildScorecard", () => {
       ready(no189PoolCore),
       ready(noPoolsCore),
       { kind: "none", reason: "notIndexed" },
+      { kind: "none", reason: "loadFailed" },
       { kind: "none", reason: "loading" },
     ];
     for (const data of datas) {
