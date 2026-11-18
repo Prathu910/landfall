@@ -1,6 +1,23 @@
 # Resume here
 
-## Latest: data foundation complete (17 November 2026)
+## Latest: reality check complete (18 November 2026)
+
+Roadmap step 2 is done on branch `roadmap/reality-check`. The report now opens with the reality check, then a detail panel for each visa:
+
+1. Header.
+2. **Reality check** (`#reality-check`): a factual headline from the last four 189 rounds, three visa cards (chip, one sentence, your points, "Ahead of you", "At your score", a details link) and the pool-overlap note.
+3. **189 panel** (`#visa-189`): where you stand (with the 12-month trend and its coverage caveat), among your score, recent rounds (all rounds on tap), what happened to EOIs like yours (nearby months on tap), what could change your position.
+4. **190 and 491 panels** (`#visa-190`, `#visa-491`): where you stand in the national pool and 12 months of recorded invitations, linking to the state pathways.
+5. Points audit (the eligibility notice now opens it), scenarios, timeline, state pathways, occupation context, get organised, definitions.
+
+- The old score cards, pool section and invitation-history section are gone. View-models live in `src/lib/report/` (`report-view.ts` builds them all from one profile and occupation); components in `src/components/report/`. The nav numbers follow the sections actually shown: without occupation data the panels are left out and the scorecard explains why.
+- Ruling S1: until step 3, the 190/491 card sentences summarise national invitations, not a state outlook (decision log in `docs/STRATEGY.md`).
+- Print: closed `<details>` content (all rounds) and the trend's monthly table now print; panel blocks may break across pages, headings stay with their content.
+- Verified: `npm run check`, `npm run build`, and headless Chrome against `out/` at 1440px and 390px — `/sample/` (ICT Business Analyst at 90: "none" headline, 865–903 ahead, 1,093 at your score, all three panels), the nurse check (`?occupation=254499`, EOI date 14 Feb 2025: Feb 2025 cohort, 175 invited, 60 lodged), points only, print media and a printed PDF, reduced motion, loading and failed-detail states, details links moving focus to the panels, no console errors. Screenshots for the founder are in `.superpowers/sdd/2026-11-18-reality-check/screenshots/`.
+
+Next: roadmap step 3, the 190/491 state outlook (same spec, sections 3 onward). It replaces the "State pathways" section and the S1 card sentences. Known small follow-ups: dates print as "Sept" for September (`formatDate` uses en-GB); the legacy trend chart's axis labels are small at 390px; an occupation whose data file fails to load gets the "too limited to compare" headline rather than a "could not be loaded" one.
+
+## Earlier: data foundation complete (17 November 2026)
 
 Roadmap step 1 is done on branch `roadmap/foundation`. The site is fed by one validated, versioned dataset covering every occupation: snapshot `skillselect-2026-10-31`, 493 occupations (479 with published EOIs), produced by the TypeScript importer in `scripts/import/`. The Python importer and the 11-occupation `pool.json` / `report-evidence.json` are gone; the two files are kept as test fixtures, and the new pipeline reproduces them with zero differences. `docs/DATA.md` is the data dictionary; read it before using the data.
 
@@ -34,8 +51,8 @@ Production browser checks exercised homepage searchable occupation, keyboard sco
 
 As of 17 November 2026, follow the approved roadmap in `docs/STRATEGY.md`, in order:
 
-1. Data foundation: done (see "Latest" above).
-2. A reality-check section in the report.
+1. Data foundation: done.
+2. A reality-check section in the report: done (see "Latest" above).
 3. A 190/491 state outlook, covering rules, evidence and points, ranked into groups.
 4. SEO foundation and occupation pages for every occupation.
 5. Polish: readability, copy, sample report, `npm ci` lockfile.

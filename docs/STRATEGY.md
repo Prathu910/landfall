@@ -2,7 +2,7 @@
 
 **Read this first.** This is the current source of truth for product direction. Where it disagrees with `PRODUCT.md`, `REPORT-COVERAGE.md`, `HANDOFF.md` or `docs/original-references/`, this file wins. Record every new founder decision in the decision log at the bottom, with its date.
 
-Last updated: 17 November 2026.
+Last updated: 18 November 2026.
 
 ## Why Landfall exists
 
@@ -163,3 +163,4 @@ Also planned:
 | 17 Nov 2026 | Reality-check design (browser mockups): three-pathway scorecard with a factual headline strip and one-line verdicts (C2); 189 detail panel order approved; "EOIs like yours" = your month first, nearby months on tap (D3). See `docs/superpowers/specs/2026-11-17-reality-check-and-state-outlook-design.md`. |
 | 17 Nov 2026 | State outlook design: colour-coded tiles for all eight jurisdictions (E2), each opening a panel with rules, evidence and points, sources and checked dates.                                                                                                                                                    |
 | 17 Nov 2026 | ACT, VIC, TAS and NT rules are not browser-verified yet. Launch with those tiles showing "Not yet verified" (published evidence still shown). The founder will decide later how to verify them.                                                                                                                |
+| 18 Nov 2026 | Ruling S1: until the step 3 state outlook ships, the 190 and 491 scorecard sentences summarise national invitations ("At least N invited as at Mon YYYY, across all states"), not a state outlook.                                                                                                             |
