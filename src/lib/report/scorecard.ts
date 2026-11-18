@@ -8,7 +8,7 @@ import type {
   Visa,
 } from "../data/types";
 import { formatDate } from "../migration";
-import { countPhrase, formatCount, formatMonth } from "./copy";
+import { formatCount, formatMonth } from "./copy";
 import {
   CHIP_LABEL,
   summarise189Rounds,
