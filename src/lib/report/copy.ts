@@ -15,9 +15,27 @@ export function formatCount(i: Interval): string {
   return isMasked(i) ? "under 20" : formatInterval(i);
 }
 
-/** A count inside a sentence; a masked count says it may be zero. */
-export function countPhrase(i: Interval): string {
-  return isMasked(i) ? "under 20, so may be zero" : formatInterval(i);
+/** A count mid-sentence: "1,132", or "under 20 (so may be zero)" when masked. */
+export function countInSentence(i: Interval): string {
+  return isMasked(i) ? "under 20 (so may be zero)" : formatInterval(i);
+}
+
+/**
+ * One sentence about one count: "{lead}{count}{tail}{after}.". Without a lead
+ * the count opens the sentence and is capitalised; a masked count ends with
+ * ", so this may be zero".
+ */
+export function countClause(
+  count: Interval,
+  tail: string,
+  lead = "",
+  after = "",
+): string {
+  const text = formatCount(count);
+  const body = lead
+    ? `${lead}${text}${tail}${after}`
+    : `${text[0].toUpperCase()}${text.slice(1)}${tail}${after}`;
+  return `${body}${isMasked(count) ? ", so this may be zero" : ""}.`;
 }
 
 /** "2026-10" becomes "Oct 2026". */

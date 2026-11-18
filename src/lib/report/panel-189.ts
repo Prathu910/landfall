@@ -7,7 +7,12 @@ import type {
   Visa,
 } from "../data/types";
 import { formatDate } from "../migration";
-import { formatCount, formatMonth, isMasked, submissionMonth } from "./copy";
+import {
+  countClause,
+  countInSentence,
+  formatMonth,
+  submissionMonth,
+} from "./copy";
 
 export type QueueSegments = {
   ahead: Interval;
@@ -50,15 +55,6 @@ const SAME_SCORE_UNAVAILABLE =
 const ROUNDS_NOTE =
   "“Not listed” means the official results didn't include this occupation. It is not a cut-off of zero.";
 
-/** One sentence; a masked count is capitalised if first and may be zero. */
-function clause(count: Interval, tail: string, lead = "", after = ""): string {
-  const text = formatCount(count);
-  const body = lead
-    ? `${lead}${text}${tail}${after}`
-    : `${text[0].toUpperCase()}${text.slice(1)}${tail}${after}`;
-  return `${body}${isMasked(count) ? ", so this may be zero" : ""}.`;
-}
-
 export function buildWhereYouStand(
   core: OccupationCore,
   score: number,
@@ -78,9 +74,9 @@ export function buildWhereYouStand(
   return {
     segments: { ahead, same, lower, total },
     sentence: [
-      clause(ahead, " EOIs have a higher score"),
-      clause(same, ` share your ${position.score} points`),
-      clause(
+      countClause(ahead, " EOIs have a higher score"),
+      countClause(same, ` share your ${position.score} points`),
+      countClause(
         total,
         " EOIs",
         "The pool holds ",
@@ -110,7 +106,7 @@ export function buildSameScore(
   const { before, sameMonth, after } = position.sameSubmitted;
   return {
     kind: "split",
-    sentence: `About ${formatCount(before)} were submitted before ${formatMonth(submittedMonth)}, ${formatCount(sameMonth)} in the same month and ${formatCount(after)} after.`,
+    sentence: `About ${countInSentence(before)} were submitted before ${formatMonth(submittedMonth)}, ${countInSentence(sameMonth)} in the same month and ${countInSentence(after)} after.`,
     note: SAME_SCORE_NOTE,
   };
 }

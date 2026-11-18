@@ -105,6 +105,38 @@ describe("buildSameScore", () => {
     });
   });
 
+  it("says a masked same-month count may be zero, mid-sentence", () => {
+    const result = buildSameScore(
+      core,
+      detailFixture,
+      90,
+      "2025-02",
+      "2026-11-18",
+    );
+    expect(result).toMatchObject({
+      kind: "split",
+      sentence:
+        "About 30 were submitted before Feb 2025, under 20 (so may be zero) in the same month and 65 after.",
+    });
+  });
+
+  it("says a masked earlier count may be zero, mid-sentence", () => {
+    const detail = {
+      ...detailFixture,
+      cohortsByScore: {
+        "189": { "90": { "2025-02": "<20", "2025-03": "25" } },
+      },
+    };
+    const result = buildSameScore(core, detail, 90, "2025-03", "2026-11-18");
+    expect(result).toMatchObject({
+      kind: "split",
+      sentence:
+        "About under 20 (so may be zero) were submitted before Mar 2025, 25 in the same month and 0 after.",
+    });
+    if (result.kind === "split")
+      expect(result.sentence).not.toMatch(BANNED_COPY);
+  });
+
   it("prompts without an EOI month", () => {
     const result = buildSameScore(core, detailFixture, 90, null, "2026-11-18");
     expect(result).toEqual({

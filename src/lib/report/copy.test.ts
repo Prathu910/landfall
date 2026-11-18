@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
   BANNED_COPY,
-  countPhrase,
+  countClause,
+  countInSentence,
   formatCount,
   formatMonth,
   submissionMonth,
@@ -19,12 +20,33 @@ describe("formatCount", () => {
   });
 });
 
-describe("countPhrase", () => {
-  it("says a masked count may be zero", () => {
-    expect(countPhrase({ min: 0, max: 19 })).toBe("under 20, so may be zero");
+describe("countInSentence", () => {
+  it("says a masked count may be zero, mid-sentence", () => {
+    expect(countInSentence({ min: 0, max: 19 })).toBe(
+      "under 20 (so may be zero)",
+    );
   });
   it("matches formatCount otherwise", () => {
-    expect(countPhrase({ min: 1132, max: 1132 })).toBe("1,132");
+    expect(countInSentence({ min: 1132, max: 1132 })).toBe("1,132");
+    expect(countInSentence({ min: 30, max: 49 })).toBe("30–49");
+  });
+});
+
+describe("countClause", () => {
+  it("capitalises a leading masked count and says it may be zero", () => {
+    expect(countClause({ min: 0, max: 19 }, " EOIs have a higher score")).toBe(
+      "Under 20 EOIs have a higher score, so this may be zero.",
+    );
+  });
+  it("places a lead and a trailing phrase around the count", () => {
+    expect(
+      countClause(
+        { min: 9464, max: 9464 },
+        " EOIs",
+        "The pool holds ",
+        " as at Oct 2026",
+      ),
+    ).toBe("The pool holds 9,464 EOIs as at Oct 2026.");
   });
 });
 

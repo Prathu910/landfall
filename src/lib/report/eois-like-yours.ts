@@ -7,7 +7,7 @@ import type {
   OccupationDetail,
 } from "../data/types";
 import { formatInterval } from "../pool";
-import { formatCount, formatMonth, isMasked } from "./copy";
+import { countInSentence, formatCount, formatMonth } from "./copy";
 
 export type CohortRow = {
   month: MonthKey;
@@ -62,11 +62,6 @@ function sum(intervals: Interval[]): Interval {
   );
 }
 
-/** A count inside a sentence; a masked count says it may be zero. */
-function inSentence(i: Interval): string {
-  return isMasked(i) ? "under 20 (so may be zero)" : formatInterval(i);
-}
-
 export function buildEoisLikeYours(input: {
   occupationName: string;
   core: OccupationCore;
@@ -114,7 +109,7 @@ export function buildEoisLikeYours(input: {
     basisNote: submittedMonth
       ? null
       : `You haven't added an EOI date, so this shows EOIs submitted in ${formatMonth(month)}.`,
-    sentence: `Of the ${formatInterval(range)} ${occupationName} EOIs from ${formatMonth(month)}, as at ${asAtLabel}: ${inSentence(INVITED)} are invited and ${inSentence(LODGED)} have a visa application lodged.`,
+    sentence: `Of the ${formatInterval(range)} ${occupationName} EOIs from ${formatMonth(month)}, as at ${asAtLabel}: ${countInSentence(INVITED)} are invited and ${countInSentence(LODGED)} have a visa application lodged.`,
     numbers: {
       invited: formatCount(INVITED),
       lodged: formatCount(LODGED),
