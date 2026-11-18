@@ -2858,6 +2858,10 @@ svg {
   }
 }
 @media print {
+  details:not([open]) > :not(summary) {
+    display: block !important;
+    content-visibility: visible !important;
+  }
   body {
     background: #fff;
     font-size: 11px;

@@ -67,6 +67,9 @@ function Ready({ view }: { view: Ready }) {
         <summary>Compare with nearby months</summary>
         <div className={styles.tableWrap}>
           <table className={styles.table}>
+            <caption className="sr-only">
+              EOIs submitted in nearby months, by outcome
+            </caption>
             <thead>
               <tr>
                 <th scope="col">Submitted</th>
