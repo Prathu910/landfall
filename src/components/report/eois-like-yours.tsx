@@ -1,6 +1,6 @@
 import type { EoisLikeYours as View } from "../../lib/report/eois-like-yours";
 import { LoadingData } from "./loading-data";
-import { OUTCOMES, OutcomeBar, type OutcomeView } from "./outcome-bar";
+import { OutcomeBar, type OutcomeView } from "./outcome-bar";
 import styles from "./panel-189.module.css";
 
 function Ready({ view }: { view: OutcomeView }) {
@@ -10,18 +10,12 @@ function Ready({ view }: { view: OutcomeView }) {
       {view.basisNote ? <p className={styles.note}>{view.basisNote}</p> : null}
       <p className={styles.note}>{view.statusNote}</p>
       <dl className={styles.stats}>
-        {OUTCOMES.map((o) => (
+        {view.outcomes.map((o) => (
           <div key={o.key}>
             <dt>{o.label}</dt>
-            <dd>{view.numbers[o.key]}</dd>
+            <dd>{o.count}</dd>
           </div>
         ))}
-        {view.numbers.hold ? (
-          <div>
-            <dt>On hold</dt>
-            <dd>{view.numbers.hold}</dd>
-          </div>
-        ) : null}
       </dl>
       <OutcomeBar view={view} />
       <p className={styles.note}>{view.closedNote}</p>

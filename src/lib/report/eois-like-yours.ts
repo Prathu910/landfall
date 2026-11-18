@@ -31,6 +31,22 @@ type Bar = {
   closed: Interval;
 };
 
+/** One outcome in the key: the bar's four, plus on hold when it isn't zero. */
+export type OutcomeRow = {
+  key: keyof Bar | "hold";
+  label: string;
+  count: string;
+  interval: Interval;
+};
+
+export const OUTCOME_LABELS: Record<OutcomeRow["key"], string> = {
+  invited: "Invited, not yet lodged",
+  lodged: "Lodged a visa",
+  waiting: "Still waiting",
+  closed: "Closed",
+  hold: "On hold",
+};
+
 export type EoisLikeYours =
   | {
       kind: "ready";
@@ -46,6 +62,8 @@ export type EoisLikeYours =
         hold: string | null;
       };
       bar: Bar;
+      /** Every outcome counted in the sentence's total, for the key. */
+      outcomes: OutcomeRow[];
       statusNote: string;
       closedNote: string;
       nearby: CohortRow[];
@@ -102,6 +120,22 @@ export function buildEoisLikeYours(input: {
 
   const { SUBMITTED, INVITED, LODGED, HOLD, CLOSED } = outcome.counts;
   const range = sum([SUBMITTED, INVITED, LODGED, HOLD, CLOSED]);
+  const holdIsZero = HOLD.min === 0 && HOLD.max === 0;
+  const bar: Bar = {
+    invited: INVITED,
+    lodged: LODGED,
+    waiting: SUBMITTED,
+    closed: CLOSED,
+  };
+  const counted = { ...bar, hold: HOLD };
+  const keys: OutcomeRow["key"][] = ["invited", "lodged", "waiting", "closed"];
+  if (!holdIsZero) keys.push("hold");
+  const outcomes = keys.map((key): OutcomeRow => ({
+    key,
+    label: OUTCOME_LABELS[key],
+    count: formatCount(counted[key]),
+    interval: counted[key],
+  }));
   const asAtLabel = formatMonth(core.asAt);
 
   const months = Object.keys(detail.cohorts["189"] ?? {})
@@ -136,14 +170,10 @@ export function buildEoisLikeYours(input: {
       lodged: formatCount(LODGED),
       waiting: formatCount(SUBMITTED),
       closed: formatCount(CLOSED),
-      hold: HOLD.min === 0 && HOLD.max === 0 ? null : formatCount(HOLD),
+      hold: holdIsZero ? null : formatCount(HOLD),
     },
-    bar: {
-      invited: INVITED,
-      lodged: LODGED,
-      waiting: SUBMITTED,
-      closed: CLOSED,
-    },
+    bar,
+    outcomes,
     statusNote: `Each EOI is counted once, in its status as at ${asAtLabel}; EOIs that lodged or closed may have been invited earlier.`,
     closedNote: CLOSED_NOTE,
     nearby,

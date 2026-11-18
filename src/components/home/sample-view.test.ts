@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { SAMPLE_AS_OF, sampleReportProfile } from "../../lib/sample";
 import { calculatePoints, sampleProfile } from "../../lib/migration";
 import { buildDemoContent } from "../../lib/home/demo-content";
+import { formatInterval } from "../../lib/pool";
 import { buildSampleView } from "./sample-view";
 
 describe("sample profile", () => {
@@ -47,5 +48,19 @@ describe("demo content matches the sample report view", () => {
         label: tile.label,
       });
     });
+  });
+});
+
+describe("the homepage's outcome key", () => {
+  it("sums to the total in the sample's sentence", () => {
+    const eois = buildSampleView().view.panels!.eois;
+    if (eois.kind !== "ready") throw new Error(`got ${eois.kind}`);
+    const sum = eois.outcomes.reduce(
+      (a, o) => ({ min: a.min + o.interval.min, max: a.max + o.interval.max }),
+      { min: 0, max: 0 },
+    );
+    expect(eois.sentence).toMatch(/^Of the \S+ /);
+    expect(eois.sentence).toContain(`Of the ${formatInterval(sum)} `);
+    expect(eois.outcomes.map((o) => o.key)).toContain("hold");
   });
 });

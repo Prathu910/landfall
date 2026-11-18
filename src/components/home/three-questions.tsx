@@ -94,6 +94,8 @@ export function ThreeQuestions({
       >
         <p className={styles.sentence}>{eois.sentence}</p>
         <OutcomeBar view={eois} withCounts />
+        <p className={styles.note}>{eois.statusNote}</p>
+        <p className={styles.note}>{eois.closedNote}</p>
       </Question>
       <Question
         id="question-states"

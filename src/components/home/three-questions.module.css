@@ -72,6 +72,13 @@
   line-height: 1.5;
 }
 
+.note {
+  margin-top: 10px;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
 .caption {
   margin-top: 14px;
   font-size: 0.8125rem;
@@ -92,7 +99,8 @@
 }
 
 @media (max-width: 720px) {
-  .link {
+  .link,
+  .note {
     font-size: 1rem;
   }
 
