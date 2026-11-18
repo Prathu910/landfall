@@ -34,7 +34,7 @@ function useComparison(
     index,
   );
   if (preloaded) return { status: "ready", evidence: preloaded };
-  return toReportOccupation(load);
+  return toReportOccupation(load, { status: "idle" });
 }
 
 function CompareCard({

@@ -9,22 +9,30 @@ import {
 
 describe("toReportOccupation", () => {
   it("keeps loading distinct from unavailable", () => {
-    expect(toReportOccupation({ status: "loading" })).toEqual({
+    expect(
+      toReportOccupation({ status: "loading" }, { status: "idle" }),
+    ).toEqual({
       status: "loading",
     });
-    expect(toReportOccupation({ status: "unavailable" })).toEqual({
+    expect(
+      toReportOccupation({ status: "unavailable" }, { status: "idle" }),
+    ).toEqual({
       status: "unavailable",
     });
   });
 
   it("treats an occupation that was never requested as unavailable", () => {
-    expect(toReportOccupation({ status: "idle" })).toEqual({
+    expect(toReportOccupation({ status: "idle" }, { status: "idle" })).toEqual({
       status: "unavailable",
     });
   });
 
   it("adapts a loaded core to the report's pool and evidence", () => {
-    const ready = toReportOccupation({ status: "ready", core: coreFixture });
+    const detail = { status: "loading" } as const;
+    const ready = toReportOccupation(
+      { status: "ready", core: coreFixture },
+      detail,
+    );
     expect(ready).toEqual({
       status: "ready",
       pool: {
@@ -37,15 +45,21 @@ describe("toReportOccupation", () => {
         ],
       },
       evidence: toOccupationEvidence(coreFixture),
+      core: coreFixture,
+      detail,
     });
   });
 
   it("keeps a loaded occupation with no 189 pool ready, with a null pool", () => {
     const core = { ...coreFixture, pool: {} };
-    expect(toReportOccupation({ status: "ready", core })).toEqual({
+    expect(
+      toReportOccupation({ status: "ready", core }, { status: "unavailable" }),
+    ).toEqual({
       status: "ready",
       pool: null,
       evidence: toOccupationEvidence(core),
+      core,
+      detail: { status: "unavailable" },
     });
   });
 });

@@ -38,7 +38,10 @@ import type { ReportSource } from "@/lib/data/report-source";
 import { publishedOccupationCode } from "@/lib/data/occupation-url";
 import { occupationIndex } from "./data/occupation-index";
 import { toReportOccupation } from "./data/report-occupation";
-import { useOccupationCore } from "./data/use-occupation-core";
+import {
+  useOccupationCore,
+  useOccupationDetail,
+} from "./data/use-occupation-core";
 import { Report } from "./report";
 import styles from "./check-flow.module.css";
 
@@ -125,11 +128,13 @@ export function CheckFlow({ source }: { source: ReportSource }) {
   }, [profile, save, loaded]);
   const result = calculatePoints(profile, asOf);
   // Fetched as soon as an occupation is chosen, so the report is usually ready.
+  const publishedCode = publishedOccupationCode(
+    profile.occupation,
+    occupationIndex,
+  );
   const occupation = toReportOccupation(
-    useOccupationCore(
-      publishedOccupationCode(profile.occupation, occupationIndex),
-      occupationIndex,
-    ),
+    useOccupationCore(publishedCode, occupationIndex),
+    useOccupationDetail(publishedCode, occupationIndex),
   );
   const update = <K extends keyof Profile>(key: K, value: Profile[K]) => {
     setProfile((p) => ({ ...p, [key]: value }));

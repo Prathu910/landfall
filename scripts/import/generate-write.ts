@@ -32,6 +32,10 @@ function stage(
   writeFileSync(join(staging, "manifest.json"), serialize(data.manifest));
   writeFileSync(join(staging, "occupation-index.json"), serialize(data.index));
   writeFileSync(join(staging, "rounds.json"), serialize(data.rounds));
+  writeFileSync(
+    join(staging, "rounds-meta.json"),
+    serialize({ skipped: data.rounds.skipped }),
+  );
 }
 
 /** Moves each staged entry into place; on any failure restores what was there. */
@@ -59,7 +63,8 @@ function swapIn(swaps: Swap[]): void {
 }
 
 /**
- * Writes manifest.json, occupation-index.json, rounds.json and occupations/
+ * Writes manifest.json, occupation-index.json, rounds.json, rounds-meta.json
+ * (the skipped rounds, small enough for client code to import) and occupations/
  * under `outRoot`. Everything is first written to a staging folder inside
  * `outRoot` (same filesystem, so renames are atomic), then swapped in. A
  * failure while staging leaves `outRoot` untouched. Other files are kept.
@@ -80,6 +85,7 @@ export function writeGenerated(
         "manifest.json",
         "occupation-index.json",
         "rounds.json",
+        "rounds-meta.json",
       ].map((name) => ({
         staged: join(staging, name),
         live: join(outRoot, name),

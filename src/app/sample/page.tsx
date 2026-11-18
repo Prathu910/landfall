@@ -1,7 +1,11 @@
 import { occupationIndex } from "@/components/data/occupation-index";
 import { Report } from "@/components/report";
 import { toOccupationEvidence, toPoolOccupation } from "@/lib/data/legacy";
-import { loadManifest, loadOccupationCore } from "@/lib/data/load-server";
+import {
+  loadManifest,
+  loadOccupationCore,
+  loadOccupationDetail,
+} from "@/lib/data/load-server";
 import { reportSource } from "@/lib/data/report-source";
 import type { OccupationCore } from "@/lib/data/types";
 import { sampleProfile } from "@/lib/migration";
@@ -18,6 +22,7 @@ function requireCore(code: string): OccupationCore {
 
 export default function SamplePage() {
   const nominated = requireCore(sampleProfile.occupation);
+  const nominatedDetail = loadOccupationDetail(sampleProfile.occupation);
   const comparison = requireCore(SAMPLE_COMPARISON);
   const profile = {
     ...sampleProfile,
@@ -50,6 +55,10 @@ export default function SamplePage() {
           status: "ready",
           pool: toPoolOccupation(nominated),
           evidence: toOccupationEvidence(nominated),
+          core: nominated,
+          detail: nominatedDetail
+            ? { status: "ready", detail: nominatedDetail }
+            : { status: "unavailable" },
         }}
         comparisonIndex={occupationIndex}
         initialComparison={toOccupationEvidence(comparison)}

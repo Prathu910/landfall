@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { isOccupationCore } from "../../lib/data/guards";
+import { isOccupationCore, isOccupationDetail } from "../../lib/data/guards";
 import { occupationDataUrl } from "../../lib/data/occupation-url";
 import type {
   OccupationCore,
+  OccupationDetail,
   OccupationIndexEntry,
 } from "../../lib/data/types";
+import { useValidatedRecord } from "./use-validated-record";
 
 export type OccupationLoad =
   | { status: "idle" }
@@ -14,39 +15,39 @@ export type OccupationLoad =
   | { status: "ready"; core: OccupationCore }
   | { status: "unavailable" };
 
-type Settled = { code: string; load: OccupationLoad };
+export type DetailLoad =
+  | { status: "idle" }
+  | { status: "loading" }
+  | { status: "ready"; detail: OccupationDetail }
+  | { status: "unavailable" };
 
+/**
+ * `index` must be a stable, module-level array (see `occupationIndex`): the
+ * fetch effect depends on it.
+ */
 export function useOccupationCore(
   code: string | null,
   index: OccupationIndexEntry[],
 ): OccupationLoad {
-  const [settled, setSettled] = useState<Settled | null>(null);
+  const load = useValidatedRecord(
+    code !== null,
+    code === null ? null : occupationDataUrl(code, index, "core"),
+    isOccupationCore,
+  );
+  return load.status === "ready" ? { status: "ready", core: load.value } : load;
+}
 
-  useEffect(() => {
-    if (code === null) return;
-    const controller = new AbortController();
-    const url = occupationDataUrl(code, index, "core");
-    const finish = (load: OccupationLoad) => {
-      if (!controller.signal.aborted) setSettled({ code, load });
-    };
-    if (url === null) {
-      finish({ status: "unavailable" });
-      return () => controller.abort();
-    }
-    fetch(url, { signal: controller.signal })
-      .then((res) => (res.ok ? res.json() : Promise.reject(new Error("http"))))
-      .then((value: unknown) =>
-        finish(
-          isOccupationCore(value)
-            ? { status: "ready", core: value }
-            : { status: "unavailable" },
-        ),
-      )
-      .catch(() => finish({ status: "unavailable" }));
-    return () => controller.abort();
-  }, [code, index]);
-
-  if (code === null) return { status: "idle" };
-  if (settled !== null && settled.code === code) return settled.load;
-  return { status: "loading" };
+/** The detail file (state, cohort and history evidence); same rules as the core hook. */
+export function useOccupationDetail(
+  code: string | null,
+  index: OccupationIndexEntry[],
+): DetailLoad {
+  const load = useValidatedRecord(
+    code !== null,
+    code === null ? null : occupationDataUrl(code, index, "detail"),
+    isOccupationDetail,
+  );
+  return load.status === "ready"
+    ? { status: "ready", detail: load.value }
+    : load;
 }

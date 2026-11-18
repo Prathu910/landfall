@@ -5,7 +5,8 @@ import {
   type PoolOccupation,
 } from "../../lib/data/legacy";
 import type { OccupationIndexEntry } from "../../lib/data/types";
-import type { OccupationLoad } from "./use-occupation-core";
+import type { OccupationCore } from "../../lib/data/types";
+import type { DetailLoad, OccupationLoad } from "./use-occupation-core";
 
 /** The nominated occupation's published data, as the report reads it. */
 export type ReportOccupation =
@@ -14,11 +15,16 @@ export type ReportOccupation =
       status: "ready";
       pool: PoolOccupation | null; // null: no 189 pool published
       evidence: OccupationEvidence;
+      core: OccupationCore;
+      detail: DetailLoad;
     }
   | { status: "unavailable" };
 
 /** An occupation that was never requested has no data to show, like a failed load. */
-export function toReportOccupation(load: OccupationLoad): ReportOccupation {
+export function toReportOccupation(
+  load: OccupationLoad,
+  detail: DetailLoad,
+): ReportOccupation {
   switch (load.status) {
     case "loading":
       return { status: "loading" };
@@ -27,6 +33,8 @@ export function toReportOccupation(load: OccupationLoad): ReportOccupation {
         status: "ready",
         pool: toPoolOccupation(load.core),
         evidence: toOccupationEvidence(load.core),
+        core: load.core,
+        detail,
       };
     default:
       return { status: "unavailable" };
