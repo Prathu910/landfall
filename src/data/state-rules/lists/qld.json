@@ -7,73 +7,91 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "121211": {
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "121213": {
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "121214": {
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "121299": {
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "121311": {
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "121312": {
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "121321": {
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "121411": {
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "133111": {
       "190": [
@@ -84,22 +102,31 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ],
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "133112": {
       "491": [
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "133211": {
       "190": [
@@ -110,11 +137,18 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ],
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "133411": {
       "190": [
@@ -123,9 +157,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "133512": {
       "190": [
@@ -134,9 +173,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "133513": {
       "190": [
@@ -145,9 +189,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "134111": {
       "190": [
@@ -156,9 +205,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "139912": {
       "190": [
@@ -167,9 +221,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "139914": {
       "190": [
@@ -178,41 +237,54 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "141111": {
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "141311": {
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "141999": {
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "231111": {
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "232212": {
       "190": [
@@ -223,10 +295,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "232214": {
       "190": [
@@ -235,9 +313,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "232611": {
       "190": [
@@ -248,10 +331,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "233111": {
       "190": [
@@ -262,10 +351,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "233112": {
       "190": [
@@ -274,9 +369,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "233211": {
       "190": [
@@ -287,10 +387,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "233212": {
       "190": [
@@ -301,10 +407,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "233213": {
       "190": [
@@ -315,10 +427,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "233214": {
       "190": [
@@ -329,10 +447,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "233215": {
       "190": [
@@ -341,9 +465,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "233311": {
       "190": [
@@ -354,10 +483,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "233411": {
       "190": [
@@ -366,9 +501,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "233511": {
       "190": [
@@ -377,9 +517,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "233512": {
       "190": [
@@ -390,10 +535,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "233513": {
       "190": [
@@ -402,9 +553,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "233611": {
       "190": [
@@ -415,10 +571,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "233612": {
       "190": [
@@ -427,9 +589,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "233912": {
       "190": [
@@ -440,10 +607,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "233913": {
       "190": [
@@ -452,9 +625,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "233915": {
       "190": [
@@ -465,10 +643,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "233999": {
       "190": [
@@ -477,9 +661,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "234111": {
       "190": [
@@ -488,9 +677,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "234112": {
       "190": [
@@ -499,9 +693,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "234113": {
       "190": [
@@ -510,9 +709,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "234211": {
       "190": [
@@ -521,9 +725,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "234212": {
       "190": [
@@ -532,9 +741,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "234312": {
       "190": [
@@ -543,9 +757,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "234411": {
       "190": [
@@ -556,10 +775,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "234413": {
       "190": [
@@ -570,10 +795,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "234513": {
       "190": [
@@ -582,9 +813,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "234514": {
       "190": [
@@ -593,9 +829,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "234599": {
       "190": [
@@ -604,9 +845,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "234611": {
       "190": [
@@ -615,9 +861,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "234711": {
       "190": [
@@ -628,10 +879,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "234912": {
       "190": [
@@ -640,17 +897,24 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "234915": {
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "241111": {
       "190": [
@@ -659,9 +923,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "241213": {
       "190": [
@@ -670,9 +939,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "241311": {
       "190": [
@@ -681,9 +955,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "241411": {
       "190": [
@@ -692,9 +971,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "241511": {
       "190": [
@@ -705,10 +989,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "241512": {
       "190": [
@@ -719,10 +1009,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "241513": {
       "190": [
@@ -733,10 +1029,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "241599": {
       "190": [
@@ -747,20 +1049,28 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "242211": {
       "491": [
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "251111": {
       "190": [
@@ -769,9 +1079,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "251211": {
       "190": [
@@ -782,10 +1097,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "251212": {
       "190": [
@@ -796,10 +1117,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "251213": {
       "190": [
@@ -810,10 +1137,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "251214": {
       "190": [
@@ -824,18 +1157,26 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "251311": {
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "251511": {
       "190": [
@@ -844,9 +1185,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "251513": {
       "190": [
@@ -855,9 +1201,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "251912": {
       "190": [
@@ -866,9 +1217,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "252311": {
       "190": [
@@ -877,17 +1233,24 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "252312": {
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "252411": {
       "190": [
@@ -898,10 +1261,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "252511": {
       "190": [
@@ -912,10 +1281,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "252611": {
       "190": [
@@ -926,10 +1301,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "252711": {
       "190": [
@@ -940,10 +1321,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "252712": {
       "190": [
@@ -954,10 +1341,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "253111": {
       "190": [
@@ -966,9 +1359,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "253112": {
       "190": [
@@ -977,17 +1375,24 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "253211": {
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "253311": {
       "190": [
@@ -996,9 +1401,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "253312": {
       "190": [
@@ -1007,9 +1417,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "253313": {
       "190": [
@@ -1018,9 +1433,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "253314": {
       "190": [
@@ -1029,9 +1449,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "253315": {
       "190": [
@@ -1040,9 +1465,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "253316": {
       "190": [
@@ -1051,9 +1481,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "253317": {
       "190": [
@@ -1062,9 +1497,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "253318": {
       "190": [
@@ -1073,9 +1513,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "253321": {
       "190": [
@@ -1084,9 +1529,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "253322": {
       "190": [
@@ -1095,9 +1545,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "253323": {
       "190": [
@@ -1106,9 +1561,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "253324": {
       "190": [
@@ -1117,9 +1577,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "253399": {
       "190": [
@@ -1128,9 +1593,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "253411": {
       "190": [
@@ -1141,10 +1611,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "253511": {
       "190": [
@@ -1153,9 +1629,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "253512": {
       "190": [
@@ -1164,9 +1645,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "253513": {
       "190": [
@@ -1175,9 +1661,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "253514": {
       "190": [
@@ -1186,9 +1677,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "253515": {
       "190": [
@@ -1197,9 +1693,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "253516": {
       "190": [
@@ -1208,9 +1709,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "253518": {
       "190": [
@@ -1219,9 +1725,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "253521": {
       "190": [
@@ -1230,9 +1741,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "253911": {
       "190": [
@@ -1241,9 +1757,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "253912": {
       "190": [
@@ -1252,9 +1773,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "253913": {
       "190": [
@@ -1263,9 +1789,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "253914": {
       "190": [
@@ -1274,9 +1805,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "253915": {
       "190": [
@@ -1285,9 +1821,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "253917": {
       "190": [
@@ -1296,9 +1837,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "253918": {
       "190": [
@@ -1307,9 +1853,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "253999": {
       "190": [
@@ -1318,9 +1869,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "254111": {
       "190": [
@@ -1331,10 +1887,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "254411": {
       "190": [
@@ -1345,10 +1907,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "254412": {
       "190": [
@@ -1359,10 +1927,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "254413": {
       "190": [
@@ -1373,10 +1947,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "254414": {
       "190": [
@@ -1387,10 +1967,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "254415": {
       "190": [
@@ -1401,10 +1987,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "254416": {
       "190": [
@@ -1415,10 +2007,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "254417": {
       "190": [
@@ -1429,10 +2027,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "254418": {
       "190": [
@@ -1443,10 +2047,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "254421": {
       "190": [
@@ -1457,10 +2067,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "254422": {
       "190": [
@@ -1471,10 +2087,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "254423": {
       "190": [
@@ -1485,10 +2107,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "254424": {
       "190": [
@@ -1499,10 +2127,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "254425": {
       "190": [
@@ -1513,10 +2147,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "254499": {
       "190": [
@@ -1527,10 +2167,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "261311": {
       "190": [
@@ -1539,9 +2185,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "261312": {
       "190": [
@@ -1550,9 +2201,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "261313": {
       "190": [
@@ -1561,9 +2217,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "261399": {
       "190": [
@@ -1572,9 +2233,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "262112": {
       "190": [
@@ -1585,10 +2251,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "272199": {
       "190": [
@@ -1597,9 +2269,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "272311": {
       "190": [
@@ -1610,10 +2287,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "272312": {
       "190": [
@@ -1624,10 +2307,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "272313": {
       "190": [
@@ -1638,10 +2327,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "272314": {
       "190": [
@@ -1652,10 +2347,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "272399": {
       "190": [
@@ -1666,10 +2367,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "272511": {
       "190": [
@@ -1678,25 +2385,34 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "272613": {
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "311111": {
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "311213": {
       "190": [
@@ -1705,9 +2421,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "312111": {
       "190": [
@@ -1718,11 +2439,18 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ],
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "312113": {
       "190": [
@@ -1733,33 +2461,44 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ],
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "312114": {
       "491": [
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "312116": {
       "491": [
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "312199": {
       "190": [
@@ -1770,11 +2509,18 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ],
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "312211": {
       "190": [
@@ -1785,11 +2531,18 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ],
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "312212": {
       "190": [
@@ -1800,11 +2553,18 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ],
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "312311": {
       "190": [
@@ -1813,10 +2573,16 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "building-and-construction"
+        ],
+        "491": [
+          "onshore",
+          "building-and-construction"
+        ]
+      }
     },
     "312312": {
       "190": [
@@ -1827,22 +2593,31 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ],
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "312511": {
       "491": [
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "312512": {
       "190": [
@@ -1853,20 +2628,29 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ],
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "312611": {
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "491": [
+          "onshore",
+          "building-and-construction"
+        ]
+      }
     },
     "312912": {
       "190": [
@@ -1877,10 +2661,16 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore"
+        ],
+        "491": [
+          "onshore",
+          "offshore"
+        ]
+      }
     },
     "312913": {
       "190": [
@@ -1889,42 +2679,55 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "312999": {
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "491": [
+          "onshore",
+          "building-and-construction"
+        ]
+      }
     },
     "321111": {
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "321211": {
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "321212": {
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "322211": {
       "190": [
@@ -1935,11 +2738,18 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ],
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "322311": {
       "190": [
@@ -1950,11 +2760,18 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ],
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "322312": {
       "190": [
@@ -1965,11 +2782,18 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ],
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "322313": {
       "190": [
@@ -1980,11 +2804,18 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ],
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "323111": {
       "190": [
@@ -1995,11 +2826,18 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ],
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "323112": {
       "190": [
@@ -2010,11 +2848,18 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ],
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "323113": {
       "190": [
@@ -2025,11 +2870,18 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ],
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "323211": {
       "190": [
@@ -2040,11 +2892,18 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ],
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "323212": {
       "190": [
@@ -2055,11 +2914,18 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ],
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "323213": {
       "190": [
@@ -2070,11 +2936,18 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ],
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "323214": {
       "190": [
@@ -2085,11 +2958,18 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ],
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "323299": {
       "190": [
@@ -2100,11 +2980,18 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ],
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "331111": {
       "190": [
@@ -2115,11 +3002,18 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ],
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "331112": {
       "190": [
@@ -2130,11 +3024,18 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ],
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "331211": {
       "190": [
@@ -2145,11 +3046,18 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ],
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "331212": {
       "190": [
@@ -2160,11 +3068,18 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ],
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "331213": {
       "190": [
@@ -2175,22 +3090,31 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ],
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "332111": {
       "491": [
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "332211": {
       "190": [
@@ -2199,9 +3123,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "333111": {
       "190": [
@@ -2212,11 +3141,18 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ],
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "333211": {
       "190": [
@@ -2227,11 +3163,18 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ],
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "333212": {
       "190": [
@@ -2242,11 +3185,18 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ],
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "333311": {
       "190": [
@@ -2257,11 +3207,18 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ],
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "333411": {
       "190": [
@@ -2272,11 +3229,18 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ],
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "334111": {
       "190": [
@@ -2287,11 +3251,18 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ],
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "334112": {
       "190": [
@@ -2302,11 +3273,18 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ],
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "334113": {
       "190": [
@@ -2317,11 +3295,18 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ],
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "334114": {
       "190": [
@@ -2332,11 +3317,18 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ],
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "334115": {
       "190": [
@@ -2347,11 +3339,18 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ],
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "341111": {
       "190": [
@@ -2362,11 +3361,18 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ],
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "341112": {
       "190": [
@@ -2377,11 +3383,18 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ],
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "341113": {
       "190": [
@@ -2390,9 +3403,14 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "342111": {
       "190": [
@@ -2403,22 +3421,31 @@
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "190": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ],
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "342211": {
       "491": [
         "living-in-state",
         "offshore"
       ],
-      "streams": [
-        "onshore",
-        "offshore",
-        "building-and-construction"
-      ]
+      "streams": {
+        "491": [
+          "onshore",
+          "offshore",
+          "building-and-construction"
+        ]
+      }
     },
     "342212": {
       "190": [
@@ -2427,25 +3454,34 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "351311": {
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "351411": {
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "394111": {
       "190": [
@@ -2454,17 +3490,24 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "399111": {
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "399213": {
       "190": [
@@ -2473,49 +3516,64 @@
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "190": [
+          "onshore"
+        ],
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "411211": {
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "411213": {
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "411214": {
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "411411": {
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "491": [
+          "onshore"
+        ]
+      }
     },
     "411716": {
       "491": [
         "living-in-state"
       ],
-      "streams": [
-        "onshore"
-      ]
+      "streams": {
+        "491": [
+          "onshore"
+        ]
+      }
     }
   }
 }
