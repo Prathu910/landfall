@@ -1,0 +1,3 @@
+# Task 9 report
+Implemented PanelNominated (src/components/report/panel-nominated.tsx) + panel-nominated.module.css; reuses panel-189 module for shared panel/h2/h3/lead/note classes and QueueBar. Single h2, h3 for heading and "Invitations recorded", unavailable branch shows text only, 12-row list newest first with muted text for not-published/none rows, no totals, plain #states anchor.
+No unit test written (brief specifies none; presentational component, no test infra for components). CSS module compiled via temporary page.tsx import, build passed, import reverted. npm run check and npm run build pass.
