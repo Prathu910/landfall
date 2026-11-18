@@ -1,0 +1,70 @@
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 132px;
+  padding: 14px 14px 12px;
+  border: 1px solid var(--forest);
+  border-radius: 14px;
+  color: var(--ink);
+  text-decoration: none;
+  break-inside: avoid;
+}
+.tile:hover {
+  box-shadow: 0 6px 16px -10px var(--forest-dark);
+}
+.tile:focus-visible {
+  outline: 3px solid var(--forest-dark);
+  outline-offset: 2px;
+}
+.code {
+  font-family: var(--serif);
+  font-size: 1.5rem;
+  line-height: 1.1;
+}
+.group {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.fragment {
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+.cue {
+  margin-top: auto;
+  padding-top: 6px;
+  font-size: 0.8125rem;
+  text-decoration: underline;
+}
+.strongest {
+  background: var(--lime);
+  border-color: var(--forest);
+}
+.watching {
+  background: var(--amber-tint);
+  border-color: var(--amber);
+}
+.needs-answers {
+  background: var(--white);
+  border: 2px dashed var(--muted);
+}
+.unverified {
+  background: color-mix(in srgb, var(--muted) 12%, var(--white));
+  border-color: var(--muted);
+}
+.not-open {
+  background: var(--danger-tint);
+  border-color: var(--danger);
+}
+.not-open .group {
+  color: var(--danger);
+}
+@media print {
+  .cue {
+    display: none;
+  }
+  .tile {
+    min-height: 0;
+  }
+}
