@@ -1,5 +1,5 @@
 import type { OccupationCore, StateVisa } from "../data/types";
-import type { Profile } from "../migration";
+import type { PointsResult, Profile } from "../migration";
 import { stateOutlook, type Outlook } from "../state-outlook/outlook";
 import { questionsNeeded, type Question } from "../state-outlook/questions";
 import type {
@@ -68,16 +68,21 @@ function byVisa<T>(make: (visa: StateVisa) => T): Record<StateVisa, T> {
 
 /**
  * The state outlook for both nominated visas. Each visa's evidence is read at
- * that visa's points with nomination (`points`).
+ * that visa's points with nomination, and every state starts from the points
+ * check's federal minimums (ruling P27).
  */
 export function buildStateOutlookView(input: {
   core: OccupationCore;
   profile: Profile;
   asOf: string;
-  points: Record<StateVisa, number>;
+  points: PointsResult;
   data: StateRuleData;
 }): StateOutlookView {
-  const { core, profile, asOf, points, data } = input;
+  const { core, profile, asOf, data } = input;
+  const points: Record<StateVisa, number> = {
+    "190": input.points.subclass190,
+    "491": input.points.subclass491,
+  };
   const outlooks = byVisa((visa) =>
     stateOutlook({
       core,
@@ -86,6 +91,7 @@ export function buildStateOutlookView(input: {
       federal: data.federal,
       profile,
       points: points[visa],
+      eligibility: input.points,
       visa,
       asOf,
     }),

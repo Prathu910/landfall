@@ -1,5 +1,5 @@
 import type { StateCode, StateVisa } from "../data/types";
-import type { Profile } from "../migration";
+import type { PointsResult, Profile } from "../migration";
 import type {
   Cohort,
   FederalList,
@@ -21,6 +21,12 @@ export const STATE_NAMES: Record<StateCode, string> = {
 
 export const STATE_CODES = Object.keys(STATE_NAMES) as StateCode[];
 
+/** What the points check says about the federal minimums (ruling P27). */
+export type PointsEligibility = Pick<
+  PointsResult,
+  "eligible" | "ineligibleReasons"
+>;
+
 /** Everything one stream's rules are judged against. */
 export type StreamContext = {
   state: StateCode;
@@ -31,6 +37,8 @@ export type StreamContext = {
   federal: FederalList | null;
   asOf: string; // YYYY-MM-DD
   programYear: string; // display form, "2026–27"
+  points: number; // the visa's points with nomination
+  eligibility: PointsEligibility;
 };
 
 export type Outcome = "pass" | "fail" | "needs-answer" | "unverified";

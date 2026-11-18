@@ -2,7 +2,12 @@ import { describe, expect, it } from "vitest";
 import { stateRules } from "../../data/state-rules/2026-27/index";
 import { loadOccupationCore } from "../data/load-server";
 import type { StateCode, StateVisa } from "../data/types";
-import { sampleProfile, type Profile } from "../migration";
+import {
+  calculatePoints,
+  sampleProfile,
+  type PointsResult,
+  type Profile,
+} from "../migration";
 import { resetStateRelativeAnswers } from "../state-answers";
 import {
   realFederal,
@@ -18,7 +23,12 @@ import {
 
 // Fixed date: the rules were checked on 17 Nov 2026, so none is stale.
 const AS_OF = "2026-11-17";
-const POINTS: Record<StateVisa, number> = { "190": 95, "491": 105 };
+// The sample's points check, with a skills assessment date so it is complete.
+const POINTS: PointsResult = {
+  ...calculatePoints({ ...sampleProfile, assessmentDate: "2026-02-20" }, AS_OF),
+  subclass190: 95,
+  subclass491: 105,
+};
 const data: StateRuleData = {
   rules: stateRules,
   lists: realLists(),
@@ -34,14 +44,18 @@ const aarav: Profile = {
 // A registered nurse living in Queensland who has answered nothing extra.
 const nurse: Profile = { ...aarav, occupation: "254418", state: "QLD" };
 
-function build(profile: Profile, ruleData = data): StateOutlookView {
+function build(
+  profile: Profile,
+  ruleData = data,
+  points = POINTS,
+): StateOutlookView {
   const core = loadOccupationCore(profile.occupation);
   if (!core) throw new Error(`no core for ${profile.occupation}`);
   return buildStateOutlookView({
     core,
     profile,
     asOf: AS_OF,
-    points: POINTS,
+    points,
     data: ruleData,
   });
 }
@@ -110,6 +124,29 @@ describe("buildStateOutlookView", () => {
     const after = build({ ...nurse, yearsExperienceLast10: 8 });
     expect(groupOf(before, "491", "WA")).toBe("needs-answers");
     expect(groupOf(after, "491", "WA")).not.toBe("needs-answers");
+  });
+
+  it("puts no state in a pass group for a points check that fails on age (ruling P27)", () => {
+    // A real WA 491 pass at 75 points before the baseline check existed.
+    const older: Profile = {
+      ...aarav,
+      occupation: "331212",
+      state: "NSW",
+      dob: "1979-06-01",
+      assessmentDate: "2026-02-20",
+    };
+    const points = calculatePoints(older, AS_OF);
+    expect(points.eligible).toBe(false);
+    const view = build(older, data, points);
+    for (const visa of ["190", "491"] as const) {
+      expect(groupsOf(view, visa)).not.toContain("strongest");
+      expect(groupsOf(view, visa)).not.toContain("watching");
+    }
+    const wa = view.tilesByVisa["491"].find((t) => t.state === "WA");
+    expect(wa).toMatchObject({
+      group: "not-open",
+      fragment: "Your points check shows age 45 or over",
+    });
   });
 
   it("makes every tile Not yet verified when the federal list is unavailable", () => {

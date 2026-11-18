@@ -4,7 +4,12 @@ import { loadOccupationCore } from "../data/load-server";
 import type { StateCode, StateVisa } from "../data/types";
 import { sampleProfile } from "../migration";
 import { BANNED_COPY } from "../report/copy";
-import { cases, realFederal, realLists } from "./__fixtures__/real-data";
+import {
+  cases,
+  ELIGIBLE,
+  realFederal,
+  realLists,
+} from "./__fixtures__/real-data";
 import { stateOutlook } from "./outlook";
 import type { Outlook, RuleCheck, StateOutcome } from "./outlook";
 import { questionsNeeded } from "./questions";
@@ -24,6 +29,7 @@ function run(visa: StateVisa, profile = cases[0].profile): Outlook {
     federal,
     profile,
     points: cases[0].points[0][visa],
+    eligibility: ELIGIBLE,
     visa,
     asOf: "2026-11-18",
   });

@@ -93,6 +93,8 @@ export type PointsResult = {
   missing: string[];
   warnings: string[];
   eligible: boolean | null;
+  /** Why `eligible` is false, shortest first: "age 45 or over". Empty otherwise. */
+  ineligibleReasons: string[];
 };
 export type TimelineEvent = {
   date: string;
@@ -169,11 +171,13 @@ export function calculatePoints(profile: Profile, asOf: string): PointsResult {
       missing: ["Valid calculation date"],
       warnings: ["Enter a valid calendar date to calculate an estimate."],
       eligible: null,
+      ineligibleReasons: [],
     };
   const missing: string[] = [];
   const warnings: string[] = [];
   const categories: PointCategory[] = [];
-  let failed = false;
+  // Each reason the modeled eligibility fails; any reason means `false`.
+  const ineligibleReasons: string[] = [];
   let unknown = false;
   const add = (key: string, label: string, points: number, max: number) =>
     categories.push({ key, label, points, max });
@@ -181,7 +185,7 @@ export function calculatePoints(profile: Profile, asOf: string): PointsResult {
   const age = dob && dob <= today ? ageOn(dob, today) : null;
   if (age === null) missing.push("Date of birth");
   else if (age < 18 || age >= 45) {
-    failed = true;
+    ineligibleReasons.push(age < 18 ? "age under 18" : "age 45 or over");
     warnings.push("Age is outside the modeled 18–44 skilled visa range.");
   }
   add("age", "Age", age === null ? 0 : agePoints(age), 30);
@@ -200,7 +204,7 @@ export function calculatePoints(profile: Profile, asOf: string): PointsResult {
     warnings.push("English test date is invalid or in the future.");
   } else if (today >= addYears(englishDate, 3)) {
     englishValid = false;
-    failed = true;
+    ineligibleReasons.push("English test expired");
     warnings.push(
       "English test has expired under the modeled three-year validity rule.",
     );
@@ -345,7 +349,7 @@ export function calculatePoints(profile: Profile, asOf: string): PointsResult {
     warnings.push("Skills assessment letter expiry date is invalid.");
   }
   if (assessmentExpiry && today >= assessmentExpiry) {
-    failed = true;
+    ineligibleReasons.push("skills assessment expired");
     warnings.push(
       "Skills assessment has expired (letter expiry or the three-year cap, whichever is earlier).",
     );
@@ -368,7 +372,13 @@ export function calculatePoints(profile: Profile, asOf: string): PointsResult {
     categories,
     missing,
     warnings,
-    eligible: failed ? false : unknown || missing.length > 0 ? null : true,
+    eligible:
+      ineligibleReasons.length > 0
+        ? false
+        : unknown || missing.length > 0
+          ? null
+          : true,
+    ineligibleReasons,
   };
 }
 

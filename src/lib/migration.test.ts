@@ -40,6 +40,29 @@ describe("federal points estimate", () => {
     expect(points(profile, "age", "2026-11-18")).toBe(0);
   });
 
+  it("names each reason the modeled eligibility fails, and none when it holds", () => {
+    const check = (overrides: Partial<Profile>) =>
+      calculatePoints(complete(overrides), "2026-11-18").ineligibleReasons;
+    expect(check({})).toEqual([]);
+    expect(check({ dob: "1979-06-01" })).toEqual(["age 45 or over"]);
+    expect(check({ dob: "2010-01-01" })).toEqual(["age under 18"]);
+    expect(check({ englishDate: "2023-11-17" })).toEqual([
+      "English test expired",
+    ]);
+    expect(check({ assessmentDate: "2023-11-17" })).toEqual([
+      "skills assessment expired",
+    ]);
+    expect(check({ dob: "1979-06-01", englishDate: "2023-11-17" })).toEqual([
+      "age 45 or over",
+      "English test expired",
+    ]);
+    // Unknown is not a failure: the reasons list only what failed.
+    expect(calculatePoints(sampleProfile, "2026-11-18")).toMatchObject({
+      eligible: null,
+      ineligibleReasons: [],
+    });
+  });
+
   it("caps combined employment at 20 and uses threshold years", () => {
     expect(
       points(complete({ overseasYears: 8, australianYears: 8 }), "employment"),

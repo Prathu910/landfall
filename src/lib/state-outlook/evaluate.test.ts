@@ -91,6 +91,8 @@ function ctx(overrides: Partial<StreamContext> = {}): StreamContext {
     federal,
     asOf: AS_OF,
     programYear: "2026–27",
+    points: 90,
+    eligibility: { eligible: true, ineligibleReasons: [] },
     ...overrides,
   };
 }
@@ -102,12 +104,82 @@ function requirementStream(
   return stream({ cohorts: verified(cohorts), requirements: [requirement] });
 }
 
+// Check order: the two points-check checks, then the federal list, status,
+// cohorts and occupation list, then each requirement.
+const FEDERAL = 2;
+const STATUS = 3;
+const COHORT = 4;
+const LIST = 5;
+
 /** The evaluation of the stream's only requirement (always the last check). */
 function lastCheck(s: Stream, context: StreamContext) {
   const { result, findings } = evaluateStream(s, context);
   const index = result.checks.length - 1;
   return { ...result.checks[index], finding: findings[index] };
 }
+
+describe("evaluateStream: federal baseline from the points check (ruling P27)", () => {
+  it("starts every stream with the points check: eligibility, then the pass mark", () => {
+    const { result } = evaluateStream(stream(), ctx());
+    expect(result.outcome).toBe("pass");
+    expect(result.checks.slice(0, 2)).toMatchObject([
+      {
+        label:
+          "Age, English test and skills assessment within the federal limits",
+        outcome: "pass",
+        basis: "points-check",
+      },
+      {
+        label: "At least 65 points for 190 with nomination",
+        outcome: "pass",
+        basis: "points-check",
+      },
+    ]);
+  });
+
+  it("fails on an ineligible points check and names the reason", () => {
+    const { result, findings } = evaluateStream(
+      stream(),
+      ctx({
+        eligibility: {
+          eligible: false,
+          ineligibleReasons: ["age 45 or over", "English test expired"],
+        },
+      }),
+    );
+    expect(result.outcome).toBe("fail");
+    expect(result.checks[0]).toMatchObject({ outcome: "fail", stale: false });
+    expect(findings[0]).toBe(
+      "Your points check shows age 45 or over and English test expired",
+    );
+  });
+
+  it("fails under the 65-point pass mark for the visa, and passes at 65", () => {
+    const under = evaluateStream(stream(), ctx({ points: 64 }));
+    expect(under.result.outcome).toBe("fail");
+    expect(under.result.checks[1].outcome).toBe("fail");
+    expect(under.findings[1]).toBe("Under the 65-point pass mark for 190");
+    const at = evaluateStream(stream(), ctx({ visa: "491", points: 65 }));
+    expect(at.result.checks[1].outcome).toBe("pass");
+    expect(at.result.checks[1].label).toBe(
+      "At least 65 points for 491 with nomination",
+    );
+  });
+
+  it("asks to complete the points check when eligibility is unknown, never passing", () => {
+    const { result, findings } = evaluateStream(
+      stream(),
+      ctx({ eligibility: { eligible: null, ineligibleReasons: [] } }),
+    );
+    expect(result.outcome).toBe("needs-answer");
+    expect(result.checks[0]).toMatchObject({
+      outcome: "needs-answer",
+      question: "Complete your points check",
+    });
+    expect(result.checks[0].field).toBeUndefined();
+    expect(findings[0]).toBe("your points check");
+  });
+});
 
 describe("evaluateStream: federal list (ruling P6)", () => {
   it("fails a code absent from the federal list", () => {
@@ -116,17 +188,17 @@ describe("evaluateStream: federal list (ruling P6)", () => {
       ctx({ code: "999999" }),
     );
     expect(result.outcome).toBe("fail");
-    expect(result.checks[0]).toMatchObject({
+    expect(result.checks[FEDERAL]).toMatchObject({
       outcome: "fail",
       source: FEDERAL_SOURCE,
       checkedAt: CHECKED,
     });
-    expect(findings[0]).toBe("Not on the federal list for 190");
+    expect(findings[FEDERAL]).toBe("Not on the federal list for 190");
   });
 
   it("fails a code whose federal flag is false", () => {
     const { result } = evaluateStream(stream(), ctx({ code: "111111" }));
-    expect(result.checks[0].outcome).toBe("fail");
+    expect(result.checks[FEDERAL].outcome).toBe("fail");
     expect(result.outcome).toBe("fail");
   });
 
@@ -134,6 +206,8 @@ describe("evaluateStream: federal list (ruling P6)", () => {
     const closed = stream({ status: verified("closed") });
     const { result, findings } = evaluateStream(closed, ctx({ federal: null }));
     expect(result.outcome).toBe("unverified");
+    // Not even the points check: the global constraint is that every tile is
+    // unverified without the federal list.
     expect(result.checks).toHaveLength(1);
     expect(findings[0]).toBe("Federal occupation list not available");
   });
@@ -144,7 +218,7 @@ describe("evaluateStream: federal list (ruling P6)", () => {
       stream(),
       ctx({ code: "111111", federal: old }),
     );
-    expect(result.checks[0]).toMatchObject({
+    expect(result.checks[FEDERAL]).toMatchObject({
       outcome: "unverified",
       stale: true,
     });
@@ -158,7 +232,7 @@ describe("evaluateStream: status", () => {
       ctx({ visa: "491" }),
     );
     expect(result.outcome).toBe("fail");
-    expect(findings[1]).toBe("Closed for 491 in 2026–27");
+    expect(findings[STATUS]).toBe("Closed for 491 in 2026–27");
   });
 
   it("never fails on a secondary closure", () => {
@@ -166,9 +240,11 @@ describe("evaluateStream: status", () => {
       stream({ status: secondary("closed") }),
       ctx(),
     );
-    expect(result.checks[1].outcome).toBe("unverified");
+    expect(result.checks[STATUS].outcome).toBe("unverified");
     expect(result.outcome).toBe("unverified");
-    expect(findings[1]).toBe("Rules not yet verified on the official page");
+    expect(findings[STATUS]).toBe(
+      "Rules not yet verified on the official page",
+    );
   });
 
   it("treats an unknown status as unverified", () => {
@@ -176,7 +252,7 @@ describe("evaluateStream: status", () => {
       stream({ status: verified("unknown") }),
       ctx(),
     );
-    expect(result.checks[1].outcome).toBe("unverified");
+    expect(result.checks[STATUS].outcome).toBe("unverified");
   });
 
   it("passes a verified restricted status (its rules are requirements)", () => {
@@ -184,7 +260,7 @@ describe("evaluateStream: status", () => {
       stream({ status: verified("restricted") }),
       ctx(),
     );
-    expect(result.checks[1].outcome).toBe("pass");
+    expect(result.checks[STATUS].outcome).toBe("pass");
     expect(result.outcome).toBe("pass");
   });
 });
@@ -195,8 +271,10 @@ describe("evaluateStream: cohort", () => {
       stream({ cohorts: verified(["living-in-state"]) }),
       ctx({ profile: livingInVic }),
     );
-    expect(result.checks[2].outcome).toBe("fail");
-    expect(findings[2]).toBe("Not open to those living elsewhere in Australia");
+    expect(result.checks[COHORT].outcome).toBe("fail");
+    expect(findings[COHORT]).toBe(
+      "Not open to those living elsewhere in Australia",
+    );
   });
 
   it("names the offshore cohort when an onshore-only stream excludes it", () => {
@@ -204,7 +282,7 @@ describe("evaluateStream: cohort", () => {
       stream({ cohorts: verified(["living-in-state"]) }),
       ctx({ profile: offshore }),
     );
-    expect(findings[2]).toBe("Not open to those living offshore");
+    expect(findings[COHORT]).toBe("Not open to those living offshore");
   });
 
   it("treats a secondary cohort rule as unverified even when it matches", () => {
@@ -212,14 +290,14 @@ describe("evaluateStream: cohort", () => {
       stream({ cohorts: secondary(ALL) }),
       ctx(),
     );
-    expect(result.checks[2].outcome).toBe("unverified");
+    expect(result.checks[COHORT].outcome).toBe("unverified");
   });
 
   it("asks for the current state when an onshore user has not given one", () => {
     const check = evaluateStream(
       stream({ cohorts: verified(["living-in-state"]) }),
       ctx({ profile: { ...livingInWa, state: "" } }),
-    ).result.checks[2];
+    ).result.checks[COHORT];
     expect(check.outcome).toBe("needs-answer");
     expect(check.field).toBe("state");
     expect(check.question).toMatch(/state or territory/);
@@ -230,7 +308,7 @@ describe("evaluateStream: cohort", () => {
       stream(),
       ctx({ profile: { ...livingInWa, state: "" } }),
     );
-    expect(result.checks[2].outcome).toBe("pass");
+    expect(result.checks[COHORT].outcome).toBe("pass");
   });
 });
 
@@ -240,8 +318,8 @@ describe("evaluateStream: occupation list", () => {
       stream(),
       ctx({ code: "254499", federal: allEligible("254499") }),
     );
-    expect(result.checks[3].outcome).toBe("fail");
-    expect(findings[3]).toBe(
+    expect(result.checks[LIST].outcome).toBe("fail");
+    expect(findings[LIST]).toBe(
       "Not on the Western Australia 2026–27 list for 190",
     );
   });
@@ -251,7 +329,7 @@ describe("evaluateStream: occupation list", () => {
       stream(),
       ctx({ code: "254418", profile: livingInVic }),
     );
-    expect(result.checks[3].outcome).toBe("pass");
+    expect(result.checks[LIST].outcome).toBe("pass");
   });
 
   it("fails an offshore user on an onshore-only entry, naming the cohort", () => {
@@ -259,8 +337,8 @@ describe("evaluateStream: occupation list", () => {
       stream(),
       ctx({ code: "254418", profile: offshore }),
     );
-    expect(result.checks[3].outcome).toBe("fail");
-    expect(findings[3]).toBe(
+    expect(result.checks[LIST].outcome).toBe("fail");
+    expect(findings[LIST]).toBe(
       "On the Western Australia 2026–27 list for 190 only for those living in Australia",
     );
   });
@@ -273,12 +351,12 @@ describe("evaluateStream: occupation list", () => {
         streams: ["schedule-2"],
       }),
     });
-    expect(evaluateStream(schedule2, ctx()).result.checks[3].outcome).toBe(
+    expect(evaluateStream(schedule2, ctx()).result.checks[LIST].outcome).toBe(
       "pass",
     );
     const for491 = evaluateStream(schedule2, ctx({ visa: "491" }));
-    expect(for491.result.checks[3].outcome).toBe("fail");
-    expect(for491.findings[3]).toBe(
+    expect(for491.result.checks[LIST].outcome).toBe("fail");
+    expect(for491.findings[LIST]).toBe(
       "Not on the Western Australia 2026–27 list for 491 under Test stream",
     );
   });
@@ -297,7 +375,7 @@ describe("evaluateStream: occupation list", () => {
       stream({ occupations }),
       ctx({ code: "254499", federal: allEligible("254499") }),
     );
-    expect(result.checks[3].outcome).toBe("unverified");
+    expect(result.checks[LIST].outcome).toBe("unverified");
   });
 
   it("passes a verified all-federally-eligible rule for a federally eligible code", () => {
@@ -305,7 +383,7 @@ describe("evaluateStream: occupation list", () => {
       stream({ occupations: verified({ kind: "all-federally-eligible" }) }),
       ctx({ code: "254499", federal: allEligible("254499") }),
     );
-    expect(result.checks[3].outcome).toBe("pass");
+    expect(result.checks[LIST].outcome).toBe("pass");
     expect(result.outcome).toBe("pass");
   });
 
@@ -319,7 +397,7 @@ describe("evaluateStream: occupation list", () => {
         lists: { wa: old },
       }),
     );
-    expect(result.checks[3]).toMatchObject({
+    expect(result.checks[LIST]).toMatchObject({
       outcome: "unverified",
       stale: true,
     });
@@ -331,11 +409,11 @@ describe("evaluateStream: occupation list", () => {
       stream({ occupations: verified({ kind: "all-federally-eligible" }) }),
       ctx({ code: "111111", federal: old }),
     );
-    expect(result.checks[0]).toMatchObject({
+    expect(result.checks[FEDERAL]).toMatchObject({
       outcome: "unverified",
       stale: true,
     });
-    expect(result.checks[3].outcome).not.toBe("fail");
+    expect(result.checks[LIST].outcome).not.toBe("fail");
     expect(result.outcome).toBe("unverified");
   });
 });

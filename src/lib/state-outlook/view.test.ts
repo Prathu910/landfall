@@ -4,7 +4,12 @@ import { loadOccupationCore } from "../data/load-server";
 import type { StateSide } from "../data/state-evidence";
 import type { StateCode, StateVisa } from "../data/types";
 import { BANNED_COPY } from "../report/copy";
-import { cases, realFederal, realLists } from "./__fixtures__/real-data";
+import {
+  cases,
+  ELIGIBLE,
+  realFederal,
+  realLists,
+} from "./__fixtures__/real-data";
 import { stateOutlook } from "./outlook";
 import type { Group, Outlook, StateOutcome } from "./outlook";
 import type { StateVisaRules } from "./rules-types";
@@ -38,6 +43,7 @@ function run(caseIndex: number, visa: StateVisa, points: number, asOf = AS_OF) {
     federal,
     profile: c.profile,
     points,
+    eligibility: ELIGIBLE,
     visa,
     asOf,
   });
@@ -172,7 +178,13 @@ describe("buildStatePanel", () => {
     expect(panel.groupLabel).toBe("Strongest evidence");
     expect(panel.streamName).not.toBeNull();
     expect(panel.canApply.some((l) => l.mark === "✓")).toBe(true);
-    expect(panel.canApply[0].checkedNote).toMatch(/^checked \d+ Nov 2026$/);
+    // The points check comes first, then the state's dated rules.
+    expect(panel.canApply.slice(0, 2)).toMatchObject([
+      { mark: "✓", checkedNote: "From your points check" },
+      { mark: "✓", checkedNote: "From your points check" },
+    ]);
+    expect(panel.canApply[0].source).toBeUndefined();
+    expect(panel.canApply[2].checkedNote).toMatch(/^checked \d+ Nov 2026$/);
     expect(panel.pointsThere[0]).toBe("95 federal points with nomination");
     expect(panel.data.length).toBeGreaterThan(1);
     expect(panel.data.some((d) => d.includes("points or more"))).toBe(true);

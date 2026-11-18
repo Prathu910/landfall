@@ -3,7 +3,12 @@ import { stateRules } from "../../data/state-rules/2026-27/index";
 import { loadOccupationCore } from "../data/load-server";
 import type { StateVisa } from "../data/types";
 import { BANNED_COPY } from "../report/copy";
-import { cases, realFederal, realLists } from "./__fixtures__/real-data";
+import {
+  cases,
+  ELIGIBLE,
+  realFederal,
+  realLists,
+} from "./__fixtures__/real-data";
 import type { Case } from "./__fixtures__/real-data";
 import { stateOutlook } from "./outlook";
 import type { Outlook, StateOutcome } from "./outlook";
@@ -34,6 +39,7 @@ function run(c: Case, visa: StateVisa, points: number): Outlook {
     federal,
     profile: c.profile,
     points,
+    eligibility: ELIGIBLE,
     visa,
     asOf: AS_OF,
   });
@@ -49,7 +55,8 @@ function host(url: string): string {
 
 /**
  * The verification of the rule behind check `index` of a stream: checks run
- * federal list, status, cohorts, occupation list, then each requirement.
+ * the two points-check checks, federal list, status, cohorts, occupation
+ * list, then each requirement.
  */
 function verificationBehind(
   outcome: StateOutcome,
@@ -60,10 +67,11 @@ function verificationBehind(
     .find((r) => r.state === outcome.state && r.visa === outcome.visa)
     ?.streams.find((st) => st.id === streamId);
   if (!stream) throw new Error(`no stream ${streamId}`);
+  if (index < 2) throw new Error("the points check has no state rule");
   // The federal list is the imported official list.
-  if (index === 0) return "verified";
+  if (index === 2) return "verified";
   const rules = [stream.status, stream.cohorts, stream.occupations];
-  return (rules[index - 1] ?? stream.requirements[index - 4]).verification;
+  return (rules[index - 3] ?? stream.requirements[index - 6]).verification;
 }
 
 function outcomeIn(result: Outlook, state: string): StateOutcome {
@@ -137,7 +145,7 @@ describe("stateOutlook pinned real-data outcomes", () => {
     expect(sa.reasonText).toBe(
       "Not open to those living elsewhere in Australia",
     );
-    for (const st of sa.streams) expect(st.checks[2].outcome).toBe("fail");
+    for (const st of sa.streams) expect(st.checks[4].outcome).toBe("fail");
   });
 
   it("gives NSW 491 not-open for every profile", () => {

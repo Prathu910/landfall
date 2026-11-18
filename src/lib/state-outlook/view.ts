@@ -53,6 +53,7 @@ const MARKS: Record<RuleCheck["outcome"], CanApplyLine["mark"]> = {
 
 const FOOTER = "Not advice to apply. Rules change; check the official page.";
 const NOT_VERIFIED = "Not yet verified on the official page";
+const POINTS_CHECK_NOTE = "From your points check";
 const PROGRAM_YEAR = "2026–27";
 const ANY_STATE_NOTE =
   "EOIs not tied to one state; not counted in any state's group";
@@ -139,11 +140,14 @@ function checkLine(check: RuleCheck): CanApplyLine {
         : check.label,
     mark: MARKS[check.outcome],
     ...withSource(check.source),
-    checkedNote: checkedNote(
-      check.checkedAt,
-      check.stale,
-      check.outcome === "unverified",
-    ),
+    checkedNote:
+      check.basis === "points-check"
+        ? POINTS_CHECK_NOTE
+        : checkedNote(
+            check.checkedAt,
+            check.stale,
+            check.outcome === "unverified",
+          ),
   };
 }
 

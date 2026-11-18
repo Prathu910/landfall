@@ -3,7 +3,7 @@ import type { StateSide } from "../data/state-evidence";
 import type { OccupationCore, StateCode, StateVisa } from "../data/types";
 import type { Profile } from "../migration";
 import { joinWords, STATE_CODES } from "./context";
-import type { Outcome, StreamContext } from "./context";
+import type { Outcome, PointsEligibility, StreamContext } from "./context";
 import { evaluateStream, severity } from "./evaluate";
 import type { StreamEvaluation, StreamResult } from "./evaluate";
 import type { FederalList, ImportedList, StateRules } from "./rules-types";
@@ -36,7 +36,8 @@ export type OutlookInput = {
   lists: Record<string, ImportedList>;
   federal: FederalList | null;
   profile: Profile;
-  points: number;
+  points: number; // the visa's points with nomination
+  eligibility: PointsEligibility;
   visa: StateVisa;
   asOf: string;
 };
@@ -132,6 +133,8 @@ function stateOutcome(
     federal: input.federal,
     asOf: input.asOf,
     programYear: input.rules.programYear.replace("-", "–"),
+    points: input.points,
+    eligibility: input.eligibility,
   };
   const evaluations = rules.streams.map((s) => evaluateStream(s, ctx));
   const deciding = decidingStream(evaluations);

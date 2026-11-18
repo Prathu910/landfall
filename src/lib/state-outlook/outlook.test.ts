@@ -133,6 +133,7 @@ function outlook(
     federal,
     profile: livingInSa,
     points: 90,
+    eligibility: { eligible: true, ineligibleReasons: [] },
     visa: "190",
     asOf: AS_OF,
     ...overrides,
@@ -266,6 +267,8 @@ describe("stateOutlook: groups", () => {
     );
     expect(sa.group).toBe("unverified");
     expect(sa.deciding?.checks.map((c) => c.outcome)).toEqual([
+      "pass", // points check: eligibility
+      "pass", // points check: pass mark
       "pass",
       "pass",
       "pass",
@@ -341,6 +344,33 @@ describe("stateOutlook: groups", () => {
       expect(s.group).toBe("not-open");
       expect(s.reasonText).toBe("Not on the federal list for 190");
     }
+  });
+
+  it("gives not-open everywhere for an ineligible points check, naming the reason (ruling P27)", () => {
+    const result = outlook([visaRules("WA", [stream("wa-a")])], {
+      eligibility: { eligible: false, ineligibleReasons: ["age 45 or over"] },
+    });
+    for (const s of result.states.filter((x) => x.deciding !== null)) {
+      expect(s.group).toBe("not-open");
+      expect(s.reasonText).toBe("Your points check shows age 45 or over");
+    }
+  });
+
+  it("gives not-open everywhere under the 65-point pass mark (ruling P27)", () => {
+    const result = outlook([visaRules("WA", [stream("wa-a")])], {
+      points: 60,
+    });
+    expect(outcomeFor(result, "WA").group).toBe("not-open");
+    expect(outcomeFor(result, "WA").reasonText).toBe(
+      "Under the 65-point pass mark for 190",
+    );
+  });
+
+  it("never passes a state while the points check is incomplete (ruling P27)", () => {
+    const result = outlook([visaRules("WA", [stream("wa-a")])], {
+      eligibility: { eligible: null, ineligibleReasons: [] },
+    });
+    expect(outcomeFor(result, "WA").group).toBe("needs-answers");
   });
 
   it("gives unverified everywhere when the federal list is unavailable", () => {

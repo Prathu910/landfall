@@ -1,3 +1,4 @@
+import { baselineChecks } from "./baseline";
 import {
   cohortIn,
   fail,
@@ -211,9 +212,11 @@ function requirementCheck(
 }
 
 function checksFor(stream: Stream, ctx: StreamContext): Judged[] {
-  // Without the federal list nothing can be decided (ruling P6).
+  // Without the federal list nothing can be decided (ruling P6), not even
+  // the points check: every tile is then unverified.
   if (ctx.federal === null) return [federalMissing(ctx)];
   return [
+    ...baselineChecks(ctx),
     federalCheck(ctx.federal, ctx),
     statusCheck(stream, ctx),
     cohortCheck(stream, ctx),

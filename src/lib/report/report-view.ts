@@ -126,7 +126,7 @@ export function buildReportView(input: ReportViewInput): ReportView {
           core: data.core,
           profile,
           asOf,
-          points: { "190": points.subclass190, "491": points.subclass491 },
+          points,
           data: input.stateRuleData,
         })
       : null;

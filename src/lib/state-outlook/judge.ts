@@ -14,6 +14,8 @@ export type RuleCheck = {
   question?: string;
   field?: keyof Profile; // the profile answer the question fills in
   related?: RelatedWork; // which work counts, for a work-months question
+  // Decided by the user's own points check, not by a state rule page.
+  basis?: "points-check";
 };
 
 export type Judged = { check: RuleCheck; finding: string };

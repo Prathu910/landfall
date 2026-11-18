@@ -4,6 +4,7 @@ import type { StateVisa } from "../../data/types";
 import { sampleProfile } from "../../migration";
 import type { Profile } from "../../migration";
 import { isFederalList, isImportedList } from "../rules-guards";
+import type { PointsEligibility } from "../context";
 import type { FederalList, ImportedList } from "../rules-types";
 
 /** The imported lists that the 2026–27 rules reference. */
@@ -35,6 +36,12 @@ export function realFederal(): FederalList {
   if (!isFederalList(json)) throw new Error("federal list is invalid");
   return json;
 }
+
+/** The cases' fixed points stand for a complete points check that passes. */
+export const ELIGIBLE: PointsEligibility = {
+  eligible: true,
+  ineligibleReasons: [],
+};
 
 /** Three real occupations and profiles used to sweep the real rules and data. */
 export type Case = {
