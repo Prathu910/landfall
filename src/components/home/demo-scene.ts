@@ -1,7 +1,11 @@
 import type { DemoContent } from "../../lib/home/demo-content";
 
+export type SheetLayout = "wide" | "compact";
+
 /** What the hero demo shows at a moment of its story. */
 export type DemoScene = {
+  /** The report, or the check that builds it. */
+  view: "report" | "check";
   /** The profile's points lines are filled in. */
   answered: boolean;
   /** The profile's total is shown. */
@@ -10,26 +14,24 @@ export type DemoScene = {
   counted: boolean;
   /** How many tile groups are lit, in outlook order. */
   lit: number;
-  /** The answers were cleared, so the button offers the sample answers. */
-  cleared: boolean;
 };
 
 /** The payoff: the whole report, as the poster and every loop's start. */
 export const PAYOFF_SCENE: DemoScene = {
+  view: "report",
   answered: true,
   total: true,
   counted: true,
   lit: Number.POSITIVE_INFINITY,
-  cleared: false,
 };
 
-/** After "Start over": the frame stays, the answers and results go. */
+/** After "Start over": the check, empty. */
 export const EMPTY_SCENE: DemoScene = {
+  view: "check",
   answered: false,
   total: false,
   counted: false,
   lit: 0,
-  cleared: true,
 };
 
 type Tile = DemoContent["tiles"][number];

@@ -2,7 +2,13 @@ import type { PointCategory } from "../migration";
 import { countInSentence } from "../report/copy";
 import type { ReportView } from "../report/report-view";
 import type { Group } from "../state-outlook/outlook";
-import { AT_SCORE_LABEL } from "../report/scorecard";
+import {
+  OPEN_OVERVIEW,
+  START_OVER,
+  TRY_SAMPLE_ANSWERS,
+} from "../check-actions";
+import type { Visa } from "../data/types";
+import { AT_SCORE_LABEL, POINTS_UNIT } from "../report/scorecard";
 
 export type DemoContent = {
   occupation: string;
@@ -10,7 +16,9 @@ export type DemoContent = {
   profileLines: string[];
   /** Each visa at its own points (190 and 491 include nomination points). */
   cards: {
-    visa: string;
+    visa: Visa;
+    /** The report's card title, e.g. "190 · Nominated". */
+    title: string;
     points: string;
     aheadLabel: string;
     ahead: string;
@@ -29,9 +37,10 @@ export type DemoContent = {
  */
 const DEMO_LABELS = {
   atScore: AT_SCORE_LABEL,
-  pointsUnit: "points",
-  startOver: "Start over",
-  trySample: "Try sample answers",
+  pointsUnit: POINTS_UNIT,
+  startOver: START_OVER,
+  trySample: TRY_SAMPLE_ANSWERS,
+  openOverview: OPEN_OVERVIEW,
 } as const;
 
 function required<T>(value: T | null, what: string): T {
@@ -52,7 +61,8 @@ export function buildDemoContent(
 ): DemoContent {
   const outlook = required(view.stateOutlook, "the state outlook");
   const cards = view.scorecard.cards.map((card) => ({
-    visa: card.title,
+    visa: card.visa,
+    title: card.title,
     points: String(card.points),
     aheadLabel: card.aheadLabel,
     ahead: required(card.ahead, `${card.title} counts`),
@@ -72,7 +82,7 @@ export function buildDemoContent(
     ...categories
       .filter((c) => c.points > 0)
       .map((c) => `${c.label} · ${c.points} pts`),
-    `${points} points`,
+    `${points} ${POINTS_UNIT}`,
   ];
   // Typed intervals, so a masked count keeps its "may be zero" wording.
   const stand = view.panels?.whereYouStand;

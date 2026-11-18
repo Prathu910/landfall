@@ -25,6 +25,7 @@
   --ss-font: var(--sans);
   --ss-text-strong: var(--ink);
   --ss-text: var(--muted);
+  --ss-accent: var(--slate);
   overflow: hidden;
   background: transparent;
 }
@@ -35,40 +36,57 @@
   height: 1px;
 }
 
-/* The poster scales its design size to the column with CSS alone, as the
-   stage does with script: scale = column width / design width, at most 1 */
+/* The poster scales its design to the column with CSS alone, as the stage
+   does with script: scale = column width / design width, at most 1. Sizes
+   and the 576px switch repeat demo-layout.ts. A browser without tan(atan2())
+   shows the design at 1:1, cropped to the column. */
 .poster {
   container-type: inline-size;
   width: 100%;
   max-width: 720px;
   margin-inline: auto;
+  overflow: clip;
 }
 
 .frame {
   --scale: min(1, tan(atan2(100cqw, 720px)));
   position: relative;
-  height: calc(356px * var(--scale));
+  height: 436px;
+  overflow: clip;
 }
 
 .frame > :global(.ss-stage) {
   width: 720px;
-  height: 356px;
-  transform: scale(var(--scale));
+  height: 436px;
 }
 
 .compact {
   --scale: min(1, tan(atan2(100cqw, 358px)));
   display: none;
-  height: calc(560px * var(--scale));
+  height: 660px;
 }
 
 .compact > :global(.ss-stage) {
   width: 358px;
-  height: 560px;
+  height: 660px;
   margin-left: max(0px, (100cqw - 358px) / 2);
 }
 
-@container (width < 560px) {
+@supports (scale: tan(atan2(1px, 1px))) {
+  .frame {
+    height: calc(436px * var(--scale));
+  }
+
+  .compact {
+    height: calc(660px * var(--scale));
+  }
+
+  .frame > :global(.ss-stage) {
+    transform: scale(var(--scale));
+  }
+}
+
+@container (width < 576px) {
   .wide {
     display: none;
   }

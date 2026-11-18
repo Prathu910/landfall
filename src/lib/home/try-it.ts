@@ -3,6 +3,7 @@ import type { OccupationCore } from "../data/types";
 import { countInSentence, formatMonth } from "../report/copy";
 import { buildRounds } from "../report/panel-189";
 import { CHIP_LABEL, summarise189Rounds } from "../report/round-status";
+import { AT_SCORE_LABEL } from "../report/scorecard";
 
 /** Points offered by the homepage try-it: 65 to 140 in steps of 5. */
 export const TRY_IT_POINTS: number[] = Array.from(
@@ -19,7 +20,7 @@ export const TRY_IT_LOAD_FAILED =
 const EOI_CAVEAT = "Counts are EOIs (one person can hold several).";
 export const TRY_IT_ROW_LABELS = {
   higher: "EOIs with a higher score (189)",
-  same: "At your score",
+  same: AT_SCORE_LABEL,
   latestRound: "Latest 189 round",
 } as const;
 const NO_ROUNDS = "Not listed in any round we can read";

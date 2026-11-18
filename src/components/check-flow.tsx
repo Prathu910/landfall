@@ -7,6 +7,11 @@ import {
 } from "@/lib/profile-storage";
 import { useEffect, useState, useRef } from "react";
 import {
+  OPEN_OVERVIEW,
+  START_OVER,
+  TRY_SAMPLE_ANSWERS,
+} from "@/lib/check-actions";
+import {
   Alert,
   Badge,
   Button,
@@ -740,7 +745,7 @@ export function CheckFlow({ source }: { source: ReportSource }) {
               }
               onClick={() => (step > 0 ? changeStep(step - 1) : clear())}
             >
-              {step > 0 ? "Back" : "Start over"}
+              {step > 0 ? "Back" : START_OVER}
             </Button>
             <Button
               type="submit"
@@ -749,7 +754,7 @@ export function CheckFlow({ source }: { source: ReportSource }) {
               radius="md"
               rightSection={<ArrowRight size={17} />}
             >
-              {step === 3 ? "Open my overview" : "Continue"}
+              {step === 3 ? OPEN_OVERVIEW : "Continue"}
             </Button>
           </div>
         </form>
@@ -766,7 +771,7 @@ export function CheckFlow({ source }: { source: ReportSource }) {
               changeStep(0);
             }}
           >
-            Try sample answers
+            {TRY_SAMPLE_ANSWERS}
           </Button>
         </div>
         <Button

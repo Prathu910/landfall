@@ -1,3 +1,4 @@
+import { AT_SCORE_LABEL } from "../report/scorecard";
 import { describe, expect, it } from "vitest";
 import { coreFixture } from "../data/__fixtures__/occupation";
 import { poolPosition } from "../data/pool-position";
@@ -45,6 +46,7 @@ describe("try-it wording", () => {
   });
 
   it("has the three row labels", () => {
+    expect(TRY_IT_ROW_LABELS.same).toBe(AT_SCORE_LABEL);
     expect(TRY_IT_ROW_LABELS).toEqual({
       higher: "EOIs with a higher score (189)",
       same: "At your score",

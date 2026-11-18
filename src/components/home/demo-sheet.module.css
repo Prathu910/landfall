@@ -1,116 +1,104 @@
-/* The demo's one frame, at its design size (720 × 340 wide, 358 compact).
-   The stage scales it; sizes here are design pixels. */
+/* The demo's frame at its design size (720 × 436 wide, 358 × 660 compact).
+   The stage scales it; sizes here are design pixels. The smallest text is
+   15px, so at the smallest scale a column allows (0.8) it renders at 12px
+   (see demo-layout.ts). */
+
+.window,
+.page {
+  --enter: cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: absolute;
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 20px;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  box-shadow: var(--ss-shadow-hero);
+}
 
 .window {
-  --enter: cubic-bezier(0.25, 0.8, 0.25, 1);
   --ss-canvas: var(--newsprint);
   --ss-chrome: var(--card);
   --ss-line: var(--rule);
-  position: absolute;
   top: 24px;
   left: 24px;
-  width: 736px;
-  height: 380px;
-  box-shadow: var(--ss-shadow-hero);
-  font-family: var(--sans);
-  color: var(--ink);
-  font-variant-numeric: tabular-nums;
+  width: 672px;
+  height: 452px;
 }
 
-.body {
-  display: grid;
-  grid-template-columns: 200px minmax(0, 1fr);
-  height: 100%;
+.page {
+  top: 16px;
+  left: 16px;
+  width: 326px;
+  height: 684px;
+  overflow: hidden;
+  border-radius: 12px;
   background: var(--newsprint);
 }
 
-/* ---- The check: points by category, the total, the button ---- */
+/* The report and the check share one place; one crossfades into the other
+   with a small rise, the chrome holding still */
+.views {
+  display: grid;
+  height: 100%;
+}
 
-.profile {
+.views > section {
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  padding: 16px;
-  background: var(--card);
-  border-right: 1px solid var(--rule);
+  gap: 14px;
+  grid-area: 1 / 1;
+  min-width: 0;
+  padding: 20px;
+  will-change: transform;
+  transition:
+    opacity 0.2s ease,
+    transform 0.3s var(--enter),
+    visibility 0s 0.3s;
 }
 
-.head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  min-height: 20px;
+.views > section[data-on="false"] {
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(8px);
 }
+
+.views > section[data-on="true"] {
+  transition:
+    opacity 0.25s ease 0.1s,
+    transform 0.35s var(--enter) 0.1s,
+    visibility 0s;
+}
+
+/* ---- Shared parts ---- */
 
 .occupation {
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 600;
-  line-height: 20px;
-  white-space: nowrap;
-}
-
-.lines {
-  margin: 10px 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-.line {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  height: 20px;
-  font-size: 12px;
-  line-height: 16px;
-}
-
-.lineLabel {
-  color: var(--muted);
-  white-space: nowrap;
-}
-
-.lineValue {
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.total {
-  margin-top: 10px;
-  padding-top: 8px;
-  border-top: 2px solid var(--saffron);
+  line-height: 22px;
 }
 
 .totalValue {
-  font-size: 13px;
-  line-height: 30px;
   color: var(--muted);
   white-space: nowrap;
 }
 
 .totalNumber {
   font-family: var(--serif);
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 600;
   color: var(--ink);
 }
 
 .button {
-  display: inline-grid;
-  align-self: flex-start;
+  display: inline-flex;
   flex: none;
   align-items: center;
-  height: 28px;
-  margin-top: 14px;
-  padding: 0 12px;
+  height: 34px;
+  padding: 0 14px;
   border: 1px solid var(--rule);
   border-radius: 8px;
   background: #fff;
-  font-size: 12px;
   font-weight: 600;
-  line-height: 16px;
-  color: var(--ink);
   white-space: nowrap;
   will-change: transform;
   transition:
@@ -122,55 +110,51 @@
   background: var(--card);
 }
 
+.button[data-variant="primary"] {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--card);
+}
+
 .button[data-pressed] {
   transform: scale(0.97);
 }
 
-/* The poster's labels: both in one cell, only the current one shown */
-.labels {
-  display: inline-grid;
-  justify-items: center;
+.title {
+  font-weight: 600;
+  white-space: nowrap;
 }
 
-.labels > span {
-  grid-area: 1 / 1;
-  visibility: hidden;
-}
+/* ---- The report ---- */
 
-.labels > [data-on] {
-  visibility: visible;
-}
-
-/* ---- The report: scorecard, then the 190 outlook ---- */
-
-.results {
+.strip {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.who {
+  display: flex;
+  align-items: baseline;
   gap: 14px;
-  padding: 16px 64px 16px 16px;
+  min-width: 0;
 }
 
 .cards {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+  gap: 12px;
 }
 
 .card {
   display: grid;
   grid-template-rows: auto auto auto 2lh auto;
   align-content: start;
-  padding: 12px;
+  padding: 14px;
   border: 1px solid var(--rule);
   border-radius: 10px;
   background: var(--card);
-  font-size: 12px;
-  line-height: 16px;
-}
-
-.visa {
-  font-weight: 600;
-  white-space: nowrap;
 }
 
 .cardPoints {
@@ -178,11 +162,11 @@
 }
 
 .ahead {
-  margin-top: 8px;
+  margin-top: 6px;
   font-family: var(--serif);
-  font-size: 26px;
+  font-size: 30px;
   font-weight: 600;
-  line-height: 30px;
+  line-height: 34px;
   white-space: nowrap;
 }
 
@@ -196,8 +180,8 @@
   align-items: baseline;
   justify-content: space-between;
   gap: 8px;
-  margin-top: 8px;
-  padding-top: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
   border-top: 1px solid var(--rule);
   color: var(--muted);
   white-space: nowrap;
@@ -211,35 +195,29 @@
 .outlook {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
 }
 
 .outlookHead {
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-size: 12px;
-  line-height: 16px;
-}
-
-.outlookVisa {
-  font-weight: 600;
-  white-space: nowrap;
+  gap: 14px;
 }
 
 .legend {
   display: flex;
-  gap: 6px;
+  gap: 8px;
 }
 
 .chip {
-  will-change: transform;
-  padding: 2px 8px;
+  padding: 1px 10px;
+  border: 1px solid transparent;
   border-radius: 999px;
   font-weight: 600;
   white-space: nowrap;
   opacity: 0;
   transform: translateY(3px);
+  will-change: transform;
   transition:
     opacity 0.3s ease,
     transform 0.4s var(--enter);
@@ -253,17 +231,16 @@
 .tiles {
   display: grid;
   grid-template-columns: repeat(8, minmax(0, 1fr));
-  gap: 6px;
+  gap: 8px;
 }
 
 .tile {
   display: grid;
   place-items: center;
-  height: 34px;
+  height: 42px;
   border: 1px solid var(--rule);
   border-radius: 8px;
   background: var(--card);
-  font-size: 12px;
   font-weight: 600;
   color: var(--muted-soft);
   transition:
@@ -277,52 +254,134 @@
   transition-delay: calc(var(--i) * 100ms);
 }
 
-/* The report's status colours, each with its group's label in the legend */
-.chip[data-tone="strongest"],
+/* The report's status colours: the chip names the group, the tile wears it */
+.chip[data-tone="strongest"] {
+  background: var(--status-strongest-bg);
+  color: var(--status-strongest-fg);
+}
+
 .tile[data-on="true"][data-tone="strongest"] {
   border-color: var(--status-strongest-fg);
   background: var(--status-strongest-bg);
   color: var(--status-strongest-fg);
 }
 
-.chip[data-tone="watching"],
+.chip[data-tone="watching"] {
+  background: var(--status-watching-bg);
+  color: var(--status-watching-fg);
+}
+
 .tile[data-on="true"][data-tone="watching"] {
   border-color: var(--status-watching-fg);
   background: var(--status-watching-bg);
   color: var(--status-watching-fg);
 }
 
-.chip[data-tone="needs-answers"],
+.chip[data-tone="needs-answers"] {
+  background: var(--status-needs-answers-bg);
+  color: var(--status-needs-answers-fg);
+}
+
 .tile[data-on="true"][data-tone="needs-answers"] {
   border-color: var(--muted-soft);
   background: var(--status-needs-answers-bg);
   color: var(--status-needs-answers-fg);
 }
 
-.tile[data-on="true"][data-tone="needs-answers"] {
-  border-style: dashed;
+.chip[data-tone="unverified"] {
+  background: var(--status-unverified-bg);
+  color: var(--status-unverified-fg);
 }
 
-.chip[data-tone="unverified"],
 .tile[data-on="true"][data-tone="unverified"] {
   border-color: var(--muted);
   background: var(--status-unverified-bg);
   color: var(--status-unverified-fg);
 }
 
-.chip[data-tone="not-open"],
+.chip[data-tone="not-open"] {
+  background: var(--status-not-open-bg);
+  color: var(--status-not-open-fg);
+}
+
 .tile[data-on="true"][data-tone="not-open"] {
   border-color: var(--status-not-open-fg);
   background: var(--status-not-open-bg);
   color: var(--status-not-open-fg);
 }
 
-/* ---- Values that arrive: each holds its slot, with a placeholder under it ---- */
+/* "Needs your answers" is dashed wherever it shows, as in the report */
+.chip[data-tone="needs-answers"],
+.tile[data-on="true"][data-tone="needs-answers"] {
+  border-style: dashed;
+  border-color: var(--muted-soft);
+}
+
+/* ---- The check ---- */
+
+.fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 24px;
+  margin: 2px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* A form field: its label over its box */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.fieldLabel {
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.fieldBox {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.fieldValue {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* The total's rule, a saffron hairline over it as in the check's panel */
+.rule {
+  height: 2px;
+  margin-top: 6px;
+  background: var(--saffron);
+}
+
+.checkFoot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* ---- Values that arrive: each holds its slot, over a placeholder ---- */
 
 .slot {
   display: inline-grid;
   align-items: center;
   justify-items: start;
+  min-width: 0;
 }
 
 .slot > * {
@@ -334,9 +393,9 @@
 }
 
 .slot > [data-on] {
-  will-change: transform;
   opacity: 0;
   transform: translateY(4px);
+  will-change: transform;
   transition:
     opacity 0.25s ease,
     transform 0.25s ease;
@@ -352,6 +411,16 @@
   transition-delay: calc(var(--i, 0) * 90ms);
 }
 
+/* A counted figure fades in over most of its roll, so its digits never
+   arrive whole and then move */
+.slot > .ahead[data-on="true"],
+.slot > .atScoreValue[data-on="true"] {
+  transition:
+    opacity 0.9s ease,
+    transform 0.9s var(--enter);
+  transition-delay: calc(var(--i, 0) * 90ms);
+}
+
 .placeholder {
   opacity: 1;
   transition: opacity 0.3s ease;
@@ -363,67 +432,31 @@
 
 /* ---- Compact: the page itself, one column for a phone ---- */
 
-.page {
-  --enter: cubic-bezier(0.25, 0.8, 0.25, 1);
-  position: absolute;
-  top: 16px;
-  left: 16px;
-  width: 326px;
-  height: 576px;
-  overflow: hidden;
-  border-radius: 12px;
-  box-shadow: var(--ss-shadow-hero);
-  font-family: var(--sans);
-  color: var(--ink);
-  font-variant-numeric: tabular-nums;
+.page .views > section {
+  padding: 16px;
 }
 
-.page.body {
-  grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: auto 1fr;
+.page .strip {
+  align-items: flex-start;
 }
 
-.page .profile {
-  padding: 14px;
-  border-right: 0;
-  border-bottom: 1px solid var(--rule);
+.page .who {
+  flex-direction: column;
+  gap: 6px;
 }
 
-/* The points by category need the wide design's column; on a phone the
-   total stands for them */
-.page .lines {
-  display: none;
-}
-
-.page .total {
-  margin-top: 8px;
-  padding-top: 6px;
-}
-
-.page .button {
-  margin-top: 0;
-}
-
-.page .results {
-  padding: 14px 0;
-}
-
-.page .outlook {
-  padding: 0 14px;
-}
-
+/* The visas as a list on the page, ruled apart edge to edge */
 .page .cards {
   grid-template-columns: minmax(0, 1fr);
   gap: 0;
+  margin-inline: -16px;
 }
 
-/* A list on the page, the visas ruled apart edge to edge */
 .page .card {
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  grid-template-rows: auto;
-  align-items: baseline;
-  column-gap: 8px;
-  padding: 10px 14px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto auto auto;
+  column-gap: 12px;
+  padding: 12px 16px;
   border: 0;
   border-radius: 0;
   background: none;
@@ -437,49 +470,72 @@
   padding-top: 0;
 }
 
-.page .visa {
-  grid-column: 1 / 3;
-}
-
-.page .cardPoints {
-  grid-column: 3;
-  grid-row: 1;
-  text-align: right;
+.page .card > .slot:nth-child(2) {
+  justify-items: end;
 }
 
 .page .ahead {
   margin-top: 2px;
-  font-size: 22px;
-  line-height: 26px;
 }
 
-.page .aheadLabel {
-  grid-column: 2 / -1;
-}
-
+/* At your score sits beside the figure: its value over its label */
 .page .atScore {
-  grid-column: 1 / -1;
-  margin-top: 4px;
-  padding-top: 0;
-  border-top: 0;
+  flex-direction: column-reverse;
+  align-items: flex-end;
+  justify-content: flex-end;
+  gap: 6px;
+  grid-column: 2;
+  grid-row: 2;
+  margin: 4px 0 0;
+  padding: 0;
+  border: 0;
 }
 
 .page .outlookHead {
   flex-direction: column;
   align-items: flex-start;
+  gap: 8px;
+}
+
+.page .legend {
+  flex-direction: column;
+  align-items: flex-start;
   gap: 6px;
+}
+
+.page .aheadLabel {
+  grid-column: 1 / -1;
+}
+
+/* A long occupation keeps to two lines, so the button keeps its place and
+   the page its height */
+.page .occupation {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .page .tiles {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
-/* A counted figure fades in over most of its roll, so its digits never
-   arrive whole and then move */
-.slot > .ahead[data-on="true"],
-.slot > .atScoreValue[data-on="true"] {
-  transition:
-    opacity 0.9s ease,
-    transform 0.9s var(--enter);
-  transition-delay: calc(var(--i, 0) * 90ms);
+.page .fields {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+}
+
+.page .fieldBox {
+  height: 36px;
+}
+
+.page .actions {
+  flex-direction: column;
+  gap: 10px;
+  align-items: stretch;
+  width: 100%;
+}
+
+.page .actions .button {
+  justify-content: center;
 }

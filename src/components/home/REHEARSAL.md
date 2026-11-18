@@ -1,64 +1,68 @@
 # Rehearsal: homepage hero demo
 
-Gold: `hero-demo` (filmed first; still and 16 s loop). Kept: a hero window pinned
-one gutter from the top-left and bled off the right and bottom, the stage at
-about 720 wide beside copy, a cursor story of a few beats with named targets,
-and a `compact` redesign for the phone column. Changed: the content is
-MigrateLens's own report (the check's points, the scorecard, the 190 state
-tiles) in the Data Desk look on the page's newsprint ground, with no plate. The
-compact design drops the desktop window for the page itself (a portrait
-desktop window fails the window-shape rule) and lets the total stand for the
-points lines. Borrowed from `payout-flow`: values arriving in a stagger, the
-payoff that holds.
+Gold: `hero-demo`, filmed first (a still and a 16 s loop).
 
-Beats: 1 the loop opens on the finished report (the poster) → cursor presses
-"Start over", everything the story added leaves in one reverse stagger → 2 the
-same button now reads "Try sample answers"; pressed, the occupation and points
-lines fill, then "90 points" → 3 the scorecard's three figures count in from
-zeros (189, 190, 491 side by side) → 4 the 190 tiles light group by group, each
-group's status chip arriving with it → payoff holds, cursor rests. Loop 12.1 s
-(1440) and 12.3 s (390), measured from the stage's marks.
+- Kept from the gold:
+  - a hero window bled off the stage;
+  - a stage about 720 wide beside the copy;
+  - a cursor story of a few beats with named targets;
+  - a `compact` redesign for the phone column.
+- Changed: the content is MigrateLens's own check and report, in the Data Desk look, on the page's newsprint ground with no plate.
+- Borrowed from `payout-flow`: values arriving in a stagger, and a payoff that holds.
+- Ruling B9 sets the smallest design text at 15px, with the wide design used only from a 576px column (12 / 15 = 0.8). At that size the report and the check no longer fit one frame, so the story became one window with two views: the report and the check that builds it. They crossfade as a page swap: the body only, a 200 ms fade with an 8px rise.
+- Compact uses the page itself instead of a desktop window, because a portrait desktop window fails the window-shape rule.
 
-Captured: widths 1440 (wide, 720 at 1:1), 390 (compact, 358 at 1:1) and a 566 px
-column (wide at 0.78); light look only (the site has no dark theme); `--states`
-at both widths; the count and reset beats at 80 ms; reduced motion (poster
-only, demo chunk never requested); print emulation (poster shown, stage hidden).
-Built `out/` served on 127.0.0.1:3017 from a temporary page, removed before commit.
+Beats:
 
-Gate: `rehearsal passed (necessary, not sufficient: references/verify.md and the fresh eye in review.md still stand)`
-on the wide loop, the 390 loop, `--states` at 1440 and 390, and the 566 px column.
+1. The loop opens on the finished report, which is the poster.
+2. The cursor presses "Start over", and the body swaps to the empty check.
+3. "Try sample answers" fills the occupation and the six points fields, then "90 points".
+4. "Open my overview" swaps back to the report, where the 189, 190 and 491 figures count in from zeros, side by side.
+5. The 190 tiles light group by group, each group's status chip arriving with it.
+6. The payoff holds and the cursor rests.
+
+Loop: 13.2 s at 1440 and at 390, measured from the stage's marks.
+
+Captured:
+
+- Loops at 1440 (a 584px hero column, wide at 0.81), 768 (wide at 1:1), and 390, 375, 360 and 320 (compact at 1, 0.96, 0.92 and 0.80).
+- `--states` at 1440 and 390.
+- The check view at 600 ms intervals at both widths.
+- Reduced motion: poster only, demo chunk never requested.
+- Print emulation: poster shown, stage hidden.
+- A long occupation ("Software and Applications Programmers nec") on the poster at 390 and 1440.
+- The rendered size of every text node (computed font-size × stage scale) in the poster and the live stage at 320, 360, 375, 390, 768 and 1440. The smallest is 12.07px.
+- Only the light look exists; the site has no dark theme.
+- All of this ran against the built `out/` served on 127.0.0.1:3017 from a temporary page, removed before commit.
+
+Gate: `rehearsal passed (necessary, not sufficient: references/verify.md and the fresh eye in review.md still stand)` on the loop at 1440, 768, 390, 375, 360 and 320, and on `--states` at 1440 and 390.
 
 Film:
 
-- `loose stack:` outlook heading 11 px above the tiles → gap 8 → 4 px; cleared.
-- `framing: window shows 342x544, narrower than tall` (compact) → compact is
-  now the page, not a desktop window; cleared.
-- `uneven gutters:` compact scorecard rows → rows run edge to edge with their
-  rules, as a list on the page; cleared.
-- `touching:` en dash between two counters → one `Count` per figure; cleared.
-- `lands on a transform` / `steps in its box` → lasting layers on arriving
-  values, chips and the button; cleared.
-- `appears, then moves` on count strips → figures fade over 0.9 s with the
-  roll; cleared at 390, the 80 ms count sheet shows the fade with the roll.
-- Stands: `near-empty frames` around the "Start over" beat (about 3.5 s until
-  the scorecard is back): that is the beat, the cleared check before the sample
-  answers fill it. `appears with no entrance: span.ss-count` once per 1440 run,
-  with no timestamp; the 80 ms count and reset sheets show no pop, so it is
-  most likely the stage mounting over the identical poster.
-- `vanishes with no exit` on the poster: the poster now fades out under the
-  identical stage frame instead of switching off.
+- `loose stack:` the outlook heading sat 11px above the tiles. The gap is now 8px at the new type size. Cleared.
+- `framing: window shows 342x544, narrower than tall` (compact). Compact is now the page, not a desktop window. Cleared.
+- `uneven gutters:` in compact:
+  - The scorecard rows now run edge to edge with their rules, as a list on the page. Cleared.
+  - The check's footer: the saffron rule over the total is now its own hairline, not the footer's border. Cleared.
+- `spills its slot:` the compact legend chips wrapped. They now stack. Cleared.
+- `tight control:` the two stacked compact buttons were 6.4px apart at 320. The gap is now 10px, which renders at 8px. Cleared.
+- `touching:`
+  - The en dash between two counters: there is now one `Count` per figure. Cleared.
+  - "At your score" against its value in compact: they now have a 6px gap, clear of the figure's 4px rise as it arrives. Cleared.
+- `lands on a transform` / `steps in its box`: arriving values, chips, buttons and the views now keep their compositing layers for good. Cleared.
+- Stands:
+  - `near-empty frames` around the Start over beat, while the empty check fills. That is the beat.
+  - `appears with no entrance: span.ss-count`, with no timestamp. The count sheet at 80 ms shows each figure fading in with its roll; most likely this is the stage mounting over the identical poster.
+  - `shrunk, not laid out for the phone: drawn at 0.80` at 320. Ruling B9 sizes the design so that 0.8 still renders 12px.
+- `vanishes with no exit` on the poster: the poster now fades out under the identical stage frame.
 
-Review: no fresh-eye review run (the implementer contract forbids dispatching
-reviewers; the controller schedules review).
+Review: no fresh-eye review was run. The implementer contract forbids dispatching reviewers; the controller schedules review.
 
-Assumptions: "Start over" and "Try sample answers" share one button that
-changes label in place (both are the check's own buttons); the payoff is the
-loop's start, so mounting the stage over the poster is seamless.
+Assumptions: the payoff is the loop's start, so mounting the stage over the poster is seamless. A long occupation is clamped to two lines in compact.
 
-Unresolved: at a hero column under about 612 px the wide design scales below
-0.85 and its 12 px labels read near 10 px (Task 8 picks the column width).
+Not checked:
 
-Not checked: Safari and Firefox (the poster's CSS-only scale uses
-`tan(atan2())` and container units); a real touch device; a hidden tab and
-return; pausing via offscreen scroll beyond the stage's own handling; live
-pacing against rAF timestamps.
+- Safari and Firefox. The poster's CSS-only scale uses `tan(atan2())`; without it, the poster shows at 1:1 cropped to the column.
+- A real touch device.
+- A hidden tab and its return.
+- Live pacing against rAF timestamps.

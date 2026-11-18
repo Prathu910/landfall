@@ -10,6 +10,12 @@ import {
   realLists,
 } from "../state-outlook/__fixtures__/real-data";
 import { buildDemoContent } from "./demo-content";
+import { AT_SCORE_LABEL, POINTS_UNIT } from "../report/scorecard";
+import {
+  OPEN_OVERVIEW,
+  START_OVER,
+  TRY_SAMPLE_ANSWERS,
+} from "../check-actions";
 
 const categories = calculatePoints(sampleProfile, "2026-11-17").categories;
 const view = buildReportView({
@@ -44,7 +50,8 @@ describe("buildDemoContent", () => {
   it("maps cards and 190 tiles from the view, in order", () => {
     expect(demo.cards).toEqual(
       view.scorecard.cards.map((c) => ({
-        visa: c.title,
+        visa: c.visa,
+        title: c.title,
         points: String(c.points),
         aheadLabel: c.aheadLabel,
         ahead: c.ahead,
@@ -66,12 +73,13 @@ describe("buildDemoContent", () => {
     expect(v190.aheadLabel).toBe("Higher score (national pool)");
   });
 
-  it("carries the stage's few labels in the product's own words", () => {
+  it("takes the stage's few labels from the product's own constants", () => {
     expect(demo.labels).toEqual({
-      atScore: "At your score",
-      pointsUnit: "points",
-      startOver: "Start over",
-      trySample: "Try sample answers",
+      atScore: AT_SCORE_LABEL,
+      pointsUnit: POINTS_UNIT,
+      startOver: START_OVER,
+      trySample: TRY_SAMPLE_ANSWERS,
+      openOverview: OPEN_OVERVIEW,
     });
   });
 

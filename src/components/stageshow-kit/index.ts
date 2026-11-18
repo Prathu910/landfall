@@ -7,4 +7,3 @@ export type { Point, Rect } from "./measure";
 export type { Layout } from "./looks";
 export { Window, Bar } from "./window";
 export { Count } from "./motion/Count";
-export { States } from "./motion/States";

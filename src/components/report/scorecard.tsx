@@ -1,6 +1,7 @@
 import {
   AT_SCORE_LABEL,
   LOADING_HEADLINE,
+  POINTS_UNIT,
   type Scorecard,
   type ScorecardCard,
 } from "../../lib/report/scorecard";
@@ -21,7 +22,7 @@ function Card({ card, loading }: { card: ScorecardCard; loading: boolean }) {
         </>
       )}
       <p className={styles.points}>
-        <span className={styles.pointsValue}>{card.points}</span> points
+        <span className={styles.pointsValue}>{card.points}</span> {POINTS_UNIT}
         {card.pointsNote ? (
           <span className={styles.pointsNote}> {card.pointsNote}</span>
         ) : null}

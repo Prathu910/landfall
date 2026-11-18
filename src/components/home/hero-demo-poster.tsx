@@ -1,7 +1,7 @@
 import type { DemoContent } from "../../lib/home/demo-content";
 import "../stageshow-kit/stage.css";
-import { DemoSheet, type SheetLayout } from "./demo-sheet";
-import { PAYOFF_SCENE } from "./demo-scene";
+import { DemoSheet } from "./demo-sheet";
+import { PAYOFF_SCENE, type SheetLayout } from "./demo-scene";
 import styles from "./hero-demo.module.css";
 
 function Frame({

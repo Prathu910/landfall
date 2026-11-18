@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo } from "react";
 import type { DemoContent } from "../../lib/home/demo-content";
-import { Count, Stage, States, type Act } from "../stageshow-kit";
+import { Count, Stage, type Act } from "../stageshow-kit";
+import { COMPACT, WIDE } from "./demo-layout";
 import { DemoSheet } from "./demo-sheet";
 import {
   EMPTY_SCENE,
@@ -16,13 +17,10 @@ import styles from "./hero-demo.module.css";
 type State = DemoScene & { zeroed: boolean };
 
 const START: State = { ...PAYOFF_SCENE, zeroed: false };
-// Design sizes; hero-demo.module.css repeats them for the CSS-scaled poster
-const WIDE = { width: 720, height: 356 };
-const COMPACT = { below: 560, width: 358, height: 560 };
-// Empty surface beside the button, in each design
-const REST = { wide: { x: 196, y: 312 }, compact: { x: 168, y: 88 } };
-// The cursor aims at the button's right end, clear of its words
-const BUTTON = { at: "action", x: 0.9, y: 0.62 };
+// Empty surface near the next press, in each design
+const REST = { wide: { x: 500, y: 104 }, compact: { x: 222, y: 84 } };
+// The cursor aims at a button's right end, clear of its words
+const press = (at: string) => ({ at, x: 0.88, y: 0.66 });
 
 const FIGURE = /^[\d,–]+$/;
 
@@ -49,21 +47,27 @@ function script(groupCount: number) {
     // The loop opens on the finished report (the poster) and reads it.
     await a.wait(1000);
     a.mark("start-over");
-    await a.move(BUTTON);
+    await a.move(press("start-over"));
     await a.click();
     await a.set({ ...EMPTY_SCENE });
-    await a.wait(700);
+    await a.wait(400);
     await a.snap({ zeroed: true });
-    await a.wait(500);
+    await a.wait(300);
     a.mark("sample");
-    await a.click(BUTTON);
-    await a.set({ answered: true, cleared: false });
+    await a.move(press("sample"));
+    await a.click();
+    await a.set({ answered: true });
     await a.wait(1100);
     await a.set({ total: true });
-    await a.wait(1000);
+    await a.wait(900);
+    a.mark("open");
+    await a.move(press("open"));
+    await a.click();
+    await a.set({ view: "report" });
+    await a.wait(500);
     a.mark("count");
     await a.set({ counted: true, zeroed: false });
-    await a.wait(2400);
+    await a.wait(2300);
     a.mark("states");
     for (let lit = 1; lit <= groupCount; lit++) {
       await a.set({ lit });
@@ -72,7 +76,7 @@ function script(groupCount: number) {
     await a.set({ lit: PAYOFF_SCENE.lit });
     a.mark("payoff");
     await a.move("rest");
-    await a.wait(1800);
+    await a.wait(1700);
   };
 }
 
@@ -105,12 +109,6 @@ export function HeroDemo({
             scene={s}
             layout={layout}
             figure={(text) => <Figure text={text} zeroed={s.zeroed} />}
-            action={(cleared, [start, sample]) => (
-              <States
-                value={cleared ? "sample" : "start"}
-                states={{ start, sample }}
-              />
-            )}
           />
           <span
             data-target="rest"

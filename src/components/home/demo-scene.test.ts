@@ -31,20 +31,20 @@ describe("splitLine", () => {
 });
 
 describe("scenes", () => {
-  it("shows the whole report in the payoff and nothing in the empty scene", () => {
+  it("opens on the whole report, and Start over goes to an empty check", () => {
     expect(PAYOFF_SCENE).toEqual({
+      view: "report",
       answered: true,
       total: true,
       counted: true,
       lit: Number.POSITIVE_INFINITY,
-      cleared: false,
     });
     expect(EMPTY_SCENE).toEqual({
+      view: "check",
       answered: false,
       total: false,
       counted: false,
       lit: 0,
-      cleared: true,
     });
   });
 });
