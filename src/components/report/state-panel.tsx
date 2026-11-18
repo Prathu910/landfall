@@ -26,6 +26,9 @@ function Line({ line }: { line: CanApplyLine }) {
       </span>
       <span>
         <span className={styles.lineText}>{line.text}</span>
+        {line.finding ? (
+          <span className={styles.finding}>{line.finding}</span>
+        ) : null}
         <span className={styles.checked}>
           {line.checkedNote}
           {line.source ? (
@@ -81,7 +84,7 @@ export function StatePanelView({
           <h5 className={styles.h5}>Can you apply?</h5>
           <ul className={styles.plain}>
             {panel.canApply.map((line) => (
-              <Line key={`${line.mark}${line.text}`} line={line} />
+              <Line key={line.key} line={line} />
             ))}
           </ul>
         </div>

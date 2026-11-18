@@ -1,26 +1,27 @@
 import { fail, joinWords, pass } from "./context";
 import type { StreamContext, Verdict } from "./context";
-import type { Judged } from "./judge";
+import { toCheck } from "./judge";
+import type { RuleCheck } from "./judge";
 
 // The federal points test pass mark for 189, 190 and 491.
 const PASS_MARK = 65;
 
-function fromPointsCheck(label: string, verdict: Verdict): Judged {
-  const check: Judged["check"] = {
-    label,
-    outcome: verdict.outcome,
-    source: "",
-    checkedAt: "",
-    stale: false,
+// The user's own answers, so there is no rule page or check date.
+function fromPointsCheck(label: string, verdict: Verdict): RuleCheck {
+  return {
+    ...toCheck(label, verdict, {
+      source: "",
+      checkedAt: "",
+      stale: false,
+      verification: "verified",
+    }),
     basis: "points-check",
   };
-  if (verdict.question !== undefined) check.question = verdict.question;
-  return { check, finding: verdict.finding };
 }
 
 // `eligible` covers only age, English and the skills assessment, never full
 // visa eligibility; unknown never passes.
-function eligibilityCheck(ctx: StreamContext): Judged {
+function eligibilityCheck(ctx: StreamContext): RuleCheck {
   const label =
     "Age, English test and skills assessment within the federal limits";
   const { eligible, ineligibleReasons } = ctx.eligibility;
@@ -41,7 +42,7 @@ function eligibilityCheck(ctx: StreamContext): Judged {
   return fromPointsCheck(label, pass(label));
 }
 
-function passMarkCheck(ctx: StreamContext): Judged {
+function passMarkCheck(ctx: StreamContext): RuleCheck {
   const label = `At least ${PASS_MARK} points for ${ctx.visa} with nomination`;
   return fromPointsCheck(
     label,
@@ -55,6 +56,6 @@ function passMarkCheck(ctx: StreamContext): Judged {
  * Ruling P27: the federal minimums the points check already tests come before
  * any state rule, so no state reads as open to someone who misses them.
  */
-export function baselineChecks(ctx: StreamContext): Judged[] {
+export function baselineChecks(ctx: StreamContext): RuleCheck[] {
   return [eligibilityCheck(ctx), passMarkCheck(ctx)];
 }

@@ -3,6 +3,8 @@ import { stateRules } from "../../data/state-rules/2026-27/index";
 import { loadOccupationCore } from "../data/load-server";
 import type { StateSide } from "../data/state-evidence";
 import type { StateCode, StateVisa } from "../data/types";
+import { sampleProfile } from "../migration";
+import type { Profile } from "../migration";
 import { BANNED_COPY } from "../report/copy";
 import {
   cases,
@@ -46,6 +48,22 @@ function run(caseIndex: number, visa: StateVisa, points: number, asOf = AS_OF) {
     eligibility: ELIGIBLE,
     visa,
     asOf,
+  });
+}
+
+function runProfile(profile: Profile, visa: StateVisa, points: number) {
+  const core = loadOccupationCore(profile.occupation);
+  if (!core) throw new Error("no core");
+  return stateOutlook({
+    core,
+    rules: stateRules,
+    lists,
+    federal,
+    profile,
+    points,
+    eligibility: ELIGIBLE,
+    visa,
+    asOf: AS_OF,
   });
 }
 
@@ -161,6 +179,11 @@ describe("buildTiles fragments", () => {
     expect(tile.note).toBe(
       "EOIs not tied to one state; not counted in any state's group",
     );
+    expect(
+      buildAnyStateTile(side({ notPublished: ["2026-10"] }), 95).fragment,
+    ).toBe(
+      "no published invitation data for EOIs not tied to one state in the last 12 months",
+    );
     const masked = { asAt: "2026-10", invitedAtLeast: { min: 0, max: 19 } };
     expect(
       buildAnyStateTile(side({ invitedAtOrBelow: [masked] }), 95).fragment,
@@ -235,6 +258,7 @@ describe("buildStatePanel", () => {
       "Closed in 2026–27",
     );
     expect(panel.canApply[0]).toEqual({
+      key: `${rules.streams[0].id}:closure`,
       text: "Reported closed for 491 in 2026–27, not yet verified on the official page",
       mark: "?",
       source: rules.streams[0].status.source,
@@ -257,7 +281,9 @@ describe("buildStatePanel", () => {
           const stream = rules.streams.find(
             (s) => s.id === outcome.deciding?.streamId,
           );
+          // A closed state lists why each stream failed instead (P29).
           if (stream?.restriction === undefined) continue;
+          if (outcome.group === "not-open") continue;
           const panel = buildStatePanel(
             outcome,
             rules,
@@ -441,7 +467,11 @@ describe("tiles and panels over the real profiles", () => {
               ...panel.data,
               ...panel.pointsThere,
               ...(panel.streamName ? [panel.streamName] : []),
-              ...panel.canApply.flatMap((l) => [l.text, l.checkedNote]),
+              ...panel.canApply.flatMap((l) => [
+                l.text,
+                l.checkedNote,
+                ...(l.finding ? [l.finding] : []),
+              ]),
               ...(panel.resultsLink ? [panel.resultsLink.text] : []),
             );
           }
@@ -464,4 +494,108 @@ describe("tiles and panels over the real profiles", () => {
       }
     }
   }
+});
+
+describe("panel lines say why (ruling P29)", () => {
+  const NOT_VERIFIED = "Not yet verified on the official page";
+  const engineerInNsw: Profile = {
+    ...sampleProfile,
+    occupation: "261313",
+    onshore: true,
+    state: "NSW",
+  };
+
+  it("lists each Queensland stream's first failing finding for a Software Engineer living in NSW", () => {
+    const qld = outcomeOf(runProfile(engineerInNsw, "190", 95), "QLD");
+    expect(qld.group).toBe("not-open");
+    const rules = rulesFor("QLD", "190");
+    const panel = buildStatePanel(qld, rules, 95, AS_OF);
+    // Every stream is closed, so no one stream decides.
+    expect(panel.streamName).toBeNull();
+    expect(panel.canApply.map((l) => l.text)).toEqual(
+      rules.streams.map((s) => s.name),
+    );
+    const line = (text: string) => panel.canApply.find((l) => l.text === text);
+    expect(line("Skilled workers living in Queensland")).toMatchObject({
+      mark: "✗",
+      finding: "Not open to those living elsewhere in Australia",
+      checkedNote: "checked 17 Nov 2026",
+    });
+    // 261313 is on the onshore list; only the building pathway's list misses it.
+    expect(line("Building and construction workers")?.finding).toBe(
+      "Not on the Queensland 2026–27 list for 190 under Building and construction workers",
+    );
+    expect(panel.canApply.map((l) => l.text)).not.toContain(
+      "On the Queensland 2026–27 list for 190",
+    );
+  });
+
+  it("shows one line when every stream fails on the same check", () => {
+    const nsw = outcomeOf(runProfile(engineerInNsw, "491", 105), "NSW");
+    const panel = buildStatePanel(nsw, rulesFor("NSW", "491"), 105, AS_OF);
+    expect(panel.canApply).toHaveLength(1);
+    expect(panel.canApply[0]).toMatchObject({
+      mark: "✗",
+      text: "Closed in 2026–27",
+      finding: "Closed for 491 in 2026–27",
+    });
+  });
+
+  it("shows the finding on a verified, fresh rule it can't confirm, and Not yet verified only for secondary or stale rules", () => {
+    const nurse: Profile = {
+      ...sampleProfile,
+      occupation: "254418",
+      onshore: true,
+      state: "QLD",
+      monthsLivingInState: 6,
+      monthsWorkingInState: 6,
+      studyState: "none",
+    };
+    const qld = outcomeOf(runProfile(nurse, "190", 95), "QLD");
+    expect(qld.deciding?.streamId).toBe("qld-onshore");
+    const panel = buildStatePanel(qld, rulesFor("QLD", "190"), 95, AS_OF);
+    const living = panel.canApply.find((l) =>
+      l.text.startsWith(
+        "At least 9 of the last 12 months living in Queensland",
+      ),
+    );
+    expect(living).toMatchObject({
+      mark: "?",
+      finding:
+        "Under 9 months in a row living in Queensland; 9 of the last 12 months may still be met",
+      checkedNote: "checked 17 Nov 2026",
+    });
+    const vic = outcomeOf(run(0, "190", 90), "VIC");
+    const lines = buildStatePanel(
+      vic,
+      rulesFor("VIC", "190"),
+      90,
+      AS_OF,
+    ).canApply;
+    const secondary = lines.filter((l) => l.checkedNote === NOT_VERIFIED);
+    expect(secondary.length).toBeGreaterThan(0);
+    for (const l of secondary) expect(l.finding).toBeUndefined();
+  });
+
+  it("gives every line a key that is unique in its panel and the same on every build", () => {
+    const outlooks = [
+      runProfile(engineerInNsw, "190", 95),
+      runProfile(engineerInNsw, "491", 105),
+      ...cases.map((_, i) => run(i, "190", 95)),
+    ];
+    for (const outlook of outlooks) {
+      for (const outcome of outlook.states) {
+        const build = () =>
+          buildStatePanel(
+            outcome,
+            rulesFor(outcome.state, outlook.visa),
+            95,
+            AS_OF,
+          ).canApply.map((l) => l.key);
+        const keys = build();
+        expect(new Set(keys).size).toBe(keys.length);
+        expect(build()).toEqual(keys);
+      }
+    }
+  });
 });

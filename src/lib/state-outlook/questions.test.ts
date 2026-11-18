@@ -42,6 +42,8 @@ function check(overrides: Partial<RuleCheck>): RuleCheck {
     source: "https://example.test",
     checkedAt: "2026-11-01",
     stale: false,
+    verification: "verified",
+    finding: "a finding",
     ...overrides,
   };
 }

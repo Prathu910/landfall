@@ -5,7 +5,7 @@ import type { Profile } from "../migration";
 import { joinWords, STATE_CODES } from "./context";
 import type { Outcome, PointsEligibility, StreamContext } from "./context";
 import { evaluateStream, severity } from "./evaluate";
-import type { StreamEvaluation, StreamResult } from "./evaluate";
+import type { StreamResult } from "./evaluate";
 import type { FederalList, ImportedList, StateRules } from "./rules-types";
 
 export type { RuleCheck, StreamResult } from "./evaluate";
@@ -56,20 +56,17 @@ const GROUP_WITHOUT_PASS: Record<Exclude<Outcome, "pass">, Group> = {
   "needs-answer": "needs-answers",
 };
 
-function findingsWith(evaluation: StreamEvaluation, outcome: Outcome) {
-  const { result, findings } = evaluation;
-  const matching = findings.filter(
-    (_, i) => result.checks[i].outcome === outcome,
-  );
-  return [...new Set(matching)];
+function findingsWith(stream: StreamResult, outcome: Outcome): string[] {
+  const matching = stream.checks.filter((c) => c.outcome === outcome);
+  return [...new Set(matching.map((c) => c.finding))];
 }
 
 /** Lower decides first among streams that share the state's best outcome. */
-function tiebreak(evaluation: StreamEvaluation): number {
-  const { outcome, checks } = evaluation.result;
+function tiebreak(stream: StreamResult): number {
+  const { outcome, checks } = stream;
   // Fewest questions to answer.
   if (outcome === "needs-answer") {
-    return findingsWith(evaluation, "needs-answer").length;
+    return findingsWith(stream, "needs-answer").length;
   }
   // The stream whose first failing rule comes latest got furthest.
   if (outcome === "fail") {
@@ -79,16 +76,16 @@ function tiebreak(evaluation: StreamEvaluation): number {
 }
 
 /** The state's outcome is its best stream: pass > needs-answer > unverified > fail. */
-function decidingStream(evaluations: StreamEvaluation[]): StreamEvaluation {
-  return evaluations.reduce((best, e) => {
-    const diff = severity(e.result.outcome) - severity(best.result.outcome);
-    if (diff !== 0) return diff < 0 ? e : best;
-    return tiebreak(e) < tiebreak(best) ? e : best;
+function decidingStream(streams: StreamResult[]): StreamResult {
+  return streams.reduce((best, s) => {
+    const diff = severity(s.outcome) - severity(best.outcome);
+    if (diff !== 0) return diff < 0 ? s : best;
+    return tiebreak(s) < tiebreak(best) ? s : best;
   });
 }
 
-function reasonText(deciding: StreamEvaluation): string {
-  const { outcome, name } = deciding.result;
+function reasonText(deciding: StreamResult): string {
+  const { outcome, name } = deciding;
   if (outcome === "pass") return `Meets every verified rule for ${name}`;
   const findings = findingsWith(deciding, outcome);
   if (outcome === "needs-answer") {
@@ -136,14 +133,14 @@ function stateOutcome(
     points: input.points,
     eligibility: input.eligibility,
   };
-  const evaluations = rules.streams.map((s) => evaluateStream(s, ctx));
-  const deciding = decidingStream(evaluations);
+  const streams = rules.streams.map((s) => evaluateStream(s, ctx));
+  const deciding = decidingStream(streams);
   return {
     state,
     visa,
-    group: groupFor(deciding.result.outcome, evidence),
-    deciding: deciding.result,
-    streams: evaluations.map((e) => e.result),
+    group: groupFor(deciding.outcome, evidence),
+    deciding,
+    streams,
     evidence,
     reasonText: reasonText(deciding),
   };

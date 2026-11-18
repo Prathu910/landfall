@@ -1,5 +1,6 @@
 import { baselineChecks } from "./baseline";
 import {
+  closedLabel,
   cohortIn,
   fail,
   joinWords,
@@ -9,8 +10,8 @@ import {
   unverified,
 } from "./context";
 import type { Outcome, StreamContext, Verdict } from "./context";
-import { judge, severity } from "./judge";
-import type { Judged, Provenance, RuleCheck } from "./judge";
+import { judge, severity, toCheck } from "./judge";
+import type { Provenance, RuleCheck } from "./judge";
 import { judgeRequirement } from "./requirements";
 import { requirementLabel } from "./wording";
 import type {
@@ -34,16 +35,13 @@ export type StreamResult = {
   checks: RuleCheck[];
 };
 
-/** A stream's result plus one short finding per check (same order). */
-export type StreamEvaluation = { result: StreamResult; findings: string[] };
-
 function federalLabel(ctx: StreamContext): string {
   return `On the federal occupation list for ${ctx.visa}`;
 }
 
 // Ruling P6: only a missing list is unknown; a code absent from it, or
 // marked false, is federally ineligible.
-function federalCheck(federal: FederalList, ctx: StreamContext): Judged {
+function federalCheck(federal: FederalList, ctx: StreamContext): RuleCheck {
   const label = federalLabel(ctx);
   // The federal list is imported from the official Home Affairs page.
   const provenance: Provenance = {
@@ -58,26 +56,21 @@ function federalCheck(federal: FederalList, ctx: StreamContext): Judged {
   );
 }
 
-function federalMissing(ctx: StreamContext): Judged {
-  return {
-    check: {
-      label: federalLabel(ctx),
-      outcome: "unverified",
-      source: "",
-      checkedAt: "",
-      stale: false,
-    },
-    finding: "Federal occupation list not available",
-  };
+function federalMissing(ctx: StreamContext): RuleCheck {
+  return toCheck(
+    federalLabel(ctx),
+    unverified("Federal occupation list not available"),
+    { source: "", checkedAt: "", stale: false, verification: "verified" },
+  );
 }
 
-function statusCheck(stream: Stream, ctx: StreamContext): Judged {
+function statusCheck(stream: Stream, ctx: StreamContext): RuleCheck {
   const status = stream.status.value;
   const year = ctx.programYear;
   const labels = {
     open: `Open in ${year}`,
     restricted: `Open in ${year}, with restrictions`,
-    closed: `Closed in ${year}`,
+    closed: closedLabel(year),
     unknown: "Status not confirmed",
   };
   return judge(stream.status, labels[status], ctx.asOf, () => {
@@ -92,7 +85,7 @@ function statusCheck(stream: Stream, ctx: StreamContext): Judged {
   });
 }
 
-function cohortCheck(stream: Stream, ctx: StreamContext): Judged {
+function cohortCheck(stream: Stream, ctx: StreamContext): RuleCheck {
   const allowed = stream.cohorts.value;
   const name = STATE_NAMES[ctx.state];
   const phrases: Record<Cohort, string> = {
@@ -158,14 +151,17 @@ function listCheck(
   stream: Stream,
   federal: FederalList,
   ctx: StreamContext,
-): Judged {
+): RuleCheck {
   const rule = stream.occupations;
   const ref: OccupationListRef = rule.value;
   const name = STATE_NAMES[ctx.state];
   const year = ctx.programYear;
   switch (ref.kind) {
     case "list": {
-      const label = `On the ${name} ${year} list for ${ctx.visa}`;
+      // Ruling P29: a filtered list names its stream, so a fail never reads
+      // as the occupation missing from the whole list.
+      const under = ref.streams === undefined ? "" : ` under ${stream.name}`;
+      const label = `On the ${name} ${year} list for ${ctx.visa}${under}`;
       const list = ctx.lists[ref.listId];
       if (list === undefined) {
         return judge(rule, label, ctx.asOf, () =>
@@ -206,13 +202,13 @@ function requirementCheck(
   rule: Sourced<Requirement>,
   stream: Stream,
   ctx: StreamContext,
-): Judged {
+): RuleCheck {
   return judge(rule, requirementLabel(rule.value, ctx), ctx.asOf, () =>
     judgeRequirement(rule.value, stream.cohorts.value, ctx),
   );
 }
 
-function checksFor(stream: Stream, ctx: StreamContext): Judged[] {
+function checksFor(stream: Stream, ctx: StreamContext): RuleCheck[] {
   // Without the federal list nothing can be decided (ruling P6), not even
   // the points check: every tile is then unverified.
   if (ctx.federal === null) return [federalMissing(ctx)];
@@ -230,15 +226,11 @@ function checksFor(stream: Stream, ctx: StreamContext): Judged[] {
 export function evaluateStream(
   stream: Stream,
   ctx: StreamContext,
-): StreamEvaluation {
-  const judged = checksFor(stream, ctx);
-  const checks = judged.map((j) => j.check);
+): StreamResult {
+  const checks = checksFor(stream, ctx);
   const outcome = checks.reduce<Outcome>(
     (worst, c) => (severity(c.outcome) > severity(worst) ? c.outcome : worst),
     "pass",
   );
-  return {
-    result: { streamId: stream.id, name: stream.name, outcome, checks },
-    findings: judged.map((j) => j.finding),
-  };
+  return { streamId: stream.id, name: stream.name, outcome, checks };
 }

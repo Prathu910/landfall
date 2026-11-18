@@ -21,6 +21,11 @@ export const STATE_NAMES: Record<StateCode, string> = {
 
 export const STATE_CODES = Object.keys(STATE_NAMES) as StateCode[];
 
+/** The status line of a closed stream; the panel drops it beside a closure note. */
+export function closedLabel(programYear: string): string {
+  return `Closed in ${programYear}`;
+}
+
 /** What the points check says about the federal minimums (ruling P27). */
 export type PointsEligibility = Pick<
   PointsResult,

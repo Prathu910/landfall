@@ -2,15 +2,19 @@ import { formatDate } from "../migration";
 import type { Profile } from "../migration";
 import { unverified } from "./context";
 import type { Outcome, Verdict } from "./context";
-import type { RelatedWork, Sourced } from "./rules-types";
+import type { RelatedWork, Sourced, Verification } from "./rules-types";
 import { isStale } from "./staleness";
 
 export type RuleCheck = {
   label: string;
   outcome: "pass" | "fail" | "needs-answer" | "unverified";
+  // The deciding fact, short (ruling P29): why it failed or can't be
+  // confirmed, the topic of a missing answer, or the rule met.
+  finding: string;
   source: string;
   checkedAt: string;
   stale: boolean;
+  verification: Verification; // of the rule behind the check
   question?: string;
   field?: keyof Profile; // the profile answer the question fills in
   related?: RelatedWork; // which work counts, for a work-months question
@@ -18,7 +22,6 @@ export type RuleCheck = {
   basis?: "points-check";
 };
 
-export type Judged = { check: RuleCheck; finding: string };
 export type Provenance = Pick<
   Sourced<unknown>,
   "source" | "checkedAt" | "verification"
@@ -46,6 +49,24 @@ function staleFinding(checkedAt: string): string {
     : `Rules last checked ${date}; may have changed`;
 }
 
+/** A verdict as a check, carrying only the optional fields it has. */
+export function toCheck(
+  label: string,
+  verdict: Verdict,
+  origin: Pick<RuleCheck, "source" | "checkedAt" | "stale" | "verification">,
+): RuleCheck {
+  const check: RuleCheck = {
+    label,
+    outcome: verdict.outcome,
+    finding: verdict.finding,
+    ...origin,
+  };
+  if (verdict.question !== undefined) check.question = verdict.question;
+  if (verdict.field !== undefined) check.field = verdict.field;
+  if (verdict.related !== undefined) check.related = verdict.related;
+  return check;
+}
+
 /**
  * A stale or secondary rule never decides: it is unverified whatever the
  * user's answers. Only a verified, fresh rule reaches `decide`.
@@ -55,7 +76,7 @@ export function judge(
   label: string,
   asOf: string,
   decide: () => Verdict,
-): Judged {
+): RuleCheck {
   const stale = isStale(provenance.checkedAt, asOf, MAX_AGE_DAYS);
   let verdict: Verdict;
   if (stale) {
@@ -65,15 +86,10 @@ export function judge(
   } else {
     verdict = decide();
   }
-  const check: RuleCheck = {
-    label,
-    outcome: verdict.outcome,
+  return toCheck(label, verdict, {
     source: provenance.source,
     checkedAt: provenance.checkedAt,
     stale,
-  };
-  if (verdict.question !== undefined) check.question = verdict.question;
-  if (verdict.field !== undefined) check.field = verdict.field;
-  if (verdict.related !== undefined) check.related = verdict.related;
-  return { check, finding: verdict.finding };
+    verification: provenance.verification,
+  });
 }

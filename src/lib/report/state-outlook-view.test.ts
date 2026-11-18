@@ -170,6 +170,7 @@ describe("buildStateOutlookView", () => {
     );
     expect(panel?.canApply).toEqual([
       {
+        key: "no-rules",
         text: "Rules not recorded for 190",
         mark: "?",
         checkedNote: "Not yet verified on the official page",
