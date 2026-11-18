@@ -229,7 +229,13 @@ VIC, ACT, TAS and NT publish no list we import. Their rules are `secondary`, so 
 **Verification.** Every rule carries `source`, `checkedAt` (YYYY-MM-DD) and `verification`:
 
 - `verified`: read directly on the official page (`[D]` in the research).
-- `secondary`: a search extract (`[S]`), a contradiction between official pages, or our own approximation. It never decides eligibility: a check that depends on it reads "Not yet verified on the official page".
+- `secondary`: a search extract (`[S]`), a contradiction between official pages, our own approximation, or a rule read directly that Landfall's questions cannot test (for example WA's 87 weeks of face-to-face study, SA's 46-week CRICOS course, or whether SA's months came after the course; ruling P28). It never decides eligibility: a check that depends on it reads "Not yet verified on the official page".
+
+**Check order and findings.** Every stream starts with two checks from the user's own points check (ruling P27): age, English test and skills assessment within the federal limits (`PointsResult.eligible`; a `false` names each `ineligibleReasons` entry), then at least 65 points for the visa with nomination. A failing points check makes every state "Not open to you now"; an incomplete one (`eligible: null`) needs an answer and never passes. These lines say "From your points check" and link no page. Then come the federal list, the stream's status, cohorts, occupation list and requirements. Every check carries its `finding` (ruling P29). A failed line, and a verified, fresh rule the answers cannot confirm, show the finding; "Not yet verified on the official page" is only for `secondary` and stale rules. A not-open panel lists each stream's first failing finding, or one line when every stream fails on the same check. A filtered list check names its stream ("…list for 190 under Building and construction workers").
+
+**Which work counts.** Work-months and experience requirements carry `related` (rulings P15, P31): `same-occupation`, `anzsco-2-digit`, `anzsco-3-digit`, `anzsco-4-digit` or `any-skilled`. WA Schedule 1 experience is the same first 4 ANZSCO digits, QLD (all pathways) the same first 3, SA work the same first 2, SA offshore experience any skilled work; the rest are the occupation itself. The rule label and question name the definition; when the affected states count different work, the experience question asks about the nominated occupation alone. An experience answer below a wider definition's minimum is unverified, not a fail. Changing the occupation clears the work answers (ruling P30).
+
+**Restrictions.** A stream's `restrictions` are shown as "Restriction, not checked here" lines and never decide a group, for example SA's visa-expiry gate text, QLD's 2025–26 ATO Notice of Assessment gate on every onshore pathway and the Queensland employer rule on the onshore pathway.
 
 Federal eligibility comes only from the imported federal list, never from the dashboard having EOIs for a visa. A code that is absent or `false` there is "Not open to you now" in every state for that visa. If the federal list is missing or invalid, every tile is "Not yet verified". A state list that fails validation in the browser is left out, so the rules that need it read "Not yet verified" too.
 
@@ -240,7 +246,7 @@ Federal eligibility comes only from the imported federal list, never from the da
 
 **Monthly re-verify routine** (alongside the SkillSelect import):
 
-1. Re-import the lists: `npm run data:state-lists` (all of them), or `npm run data:state-lists -- --only federal|wa|sa|qld|nsw`. Add `--checked-at YYYY-MM-DD` to set the check date (default: today). The importer stops on a list that shrinks below its floor, fails validation, or is blocked by the source (HTTP 403, a login wall, JS-only data); never work around a block.
+1. Re-import the lists: `npm run data:state-lists` (all of them), or `npm run data:state-lists -- --only federal|wa|sa|qld|nsw`. Add `--checked-at YYYY-MM-DD` to set the check date (default: today). The importer stops on a list that shrinks below its floor, fails validation, loses a column it reads (for example the QLD onshore list's Building and Construction pathway column), or is blocked by the source (HTTP 403, a login wall, JS-only data); never work around a block.
 2. Open each rule's `source` page in a browser and compare it with the curated rule. Update the rule and its `checkedAt`. Mark anything you could not read yourself as `secondary`, with the reason in `note`.
 3. Run `npm run check` and `npm run build` (the build prints no staleness warning once every rule is fresh), then commit the list JSON and the rule files together in a `data:` commit.
 
