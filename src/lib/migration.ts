@@ -1,3 +1,5 @@
+import type { StateCode } from "./data/types";
+
 export type Profile = {
   name: string;
   dob: string;
@@ -21,6 +23,24 @@ export type Profile = {
   assessmentDate: string;
   assessmentExpiry: string;
   eoiDate: string;
+  // Optional "Sharpen my state outlook" answers. Absent or null = unanswered.
+  /** Continuous months up to now living in the state the user currently lives in. */
+  monthsLivingInState?: number | null;
+  /** Continuous months up to now working in the nominated occupation, or a state-defined related occupation, in the state they live in. */
+  monthsWorkingInState?: number | null;
+  /** Continuous months up to now living offshore. */
+  monthsLivingOffshore?: number | null;
+  /** Years of skilled experience in the last 3 years (0-3). */
+  yearsExperienceLast3?: number | null;
+  /** Years of skilled experience in the last 5 years (0-5). */
+  yearsExperienceLast5?: number | null;
+  /** Years of skilled experience in the last 10 years (0-10). */
+  yearsExperienceLast10?: number | null;
+  jobOfferState?: StateCode | "none" | null;
+  livesRegional?: boolean | null;
+  studyState?: StateCode | "none" | null;
+  /** Stored only; unused until a future visa-points tool needs it. */
+  incomeBand?: "under-60k" | "60-90k" | "90-130k" | "over-130k" | null;
 };
 export const emptyProfile: Profile = {
   name: "",

@@ -34,6 +34,7 @@ import {
   formatDate,
   type Profile,
 } from "@/lib/migration";
+import { restoreProfile } from "@/lib/state-answers";
 import type { ReportSource } from "@/lib/data/report-source";
 import { publishedOccupationCode } from "@/lib/data/occupation-url";
 import { occupationIndex } from "./data/occupation-index";
@@ -105,7 +106,7 @@ export function CheckFlow({ source }: { source: ReportSource }) {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (isProfile(parsed)) {
-          setProfile(parsed);
+          setProfile(restoreProfile(parsed));
           setSave(true);
         }
       }
