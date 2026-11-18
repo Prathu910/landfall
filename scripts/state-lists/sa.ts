@@ -19,7 +19,9 @@ type Visa = (typeof VISAS)[number];
 
 type Parsed = {
   cohorts: Record<Visa, Set<Cohort>>;
-  streams: Set<string>;
+  streams: Record<Visa, Set<string>>;
+  // The titles whose blocks list each visa; every title of the code is in `titles`.
+  titlesByVisa: Record<Visa, Set<string>>;
   titles: string[];
 };
 
@@ -65,7 +67,8 @@ function parseOccupation(chunk: string): { code: string; parsed: Parsed } {
   const code = header[1];
   const parsed: Parsed = {
     cohorts: { "190": new Set(), "491": new Set() },
-    streams: new Set(),
+    streams: { "190": new Set(), "491": new Set() },
+    titlesByVisa: { "190": new Set(), "491": new Set() },
     titles: [header[2]],
   };
   const anyLocation: Visa[] = [];
@@ -84,7 +87,8 @@ function parseOccupation(chunk: string): { code: string; parsed: Parsed } {
       for (const visa of subclassesOf(section, code)) {
         if (cohort) parsed.cohorts[visa].add(cohort);
         else anyLocation.push(visa);
-        parsed.streams.add(stream);
+        parsed.streams[visa].add(stream);
+        parsed.titlesByVisa[visa].add(header[2]);
       }
     }
   }
@@ -117,10 +121,15 @@ function toEntry(parsed: Parsed): ImportedListEntry | null {
     if (cohorts.length > 0) entry[visa] = cohorts;
   }
   if (!entry["190"] && !entry["491"]) return null;
-  entry.streams = STREAMS.filter((s) => parsed.streams.has(s));
-  // A code listed under several titles names them, so the union can be traced.
-  if (parsed.titles.length > 1) {
-    entry.streams.push(...parsed.titles.map((t) => `title:${t}`));
+  for (const visa of VISAS) {
+    if (!entry[visa]) continue;
+    const tags = STREAMS.filter((s) => parsed.streams[visa].has(s));
+    // A code listed under several titles names the titles that list this visa,
+    // so the union can be traced.
+    if (parsed.titles.length > 1) {
+      tags.push(...[...parsed.titlesByVisa[visa]].map((t) => `title:${t}`));
+    }
+    (entry.streams ??= {})[visa] = tags;
   }
   return entry;
 }
@@ -132,7 +141,14 @@ function union(a: Parsed, b: Parsed): Parsed {
       "190": new Set([...a.cohorts["190"], ...b.cohorts["190"]]),
       "491": new Set([...a.cohorts["491"], ...b.cohorts["491"]]),
     },
-    streams: new Set([...a.streams, ...b.streams]),
+    streams: {
+      "190": new Set([...a.streams["190"], ...b.streams["190"]]),
+      "491": new Set([...a.streams["491"], ...b.streams["491"]]),
+    },
+    titlesByVisa: {
+      "190": new Set([...a.titlesByVisa["190"], ...b.titlesByVisa["190"]]),
+      "491": new Set([...a.titlesByVisa["491"], ...b.titlesByVisa["491"]]),
+    },
     titles: [...a.titles, ...b.titles],
   };
 }

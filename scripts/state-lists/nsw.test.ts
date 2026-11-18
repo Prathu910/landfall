@@ -60,7 +60,7 @@ describe("buildNswList", () => {
     const { list } = buildNswList(html, index, meta);
     expect(list.entries["261313"]).toEqual({
       "190": ALL,
-      streams: ["nsw-skills-list"],
+      streams: { "190": ["nsw-skills-list"] },
       viaUnitGroup: "2613",
     });
     expect(list.entries["261312"].viaUnitGroup).toBe("2613");

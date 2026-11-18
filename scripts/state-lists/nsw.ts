@@ -55,7 +55,7 @@ export function buildNswList(
     for (const code of codes) {
       entries[code] = {
         "190": [...ALL_COHORTS],
-        streams: ["nsw-skills-list"],
+        streams: { "190": ["nsw-skills-list"] },
         viaUnitGroup: group,
       };
     }

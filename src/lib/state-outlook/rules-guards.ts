@@ -222,14 +222,25 @@ export function invalidRulePath(rules: StateRules): string | null {
   return isStateRules(rules) ? null : "(programYear)";
 }
 
+function isEntryStreams(v: unknown): boolean {
+  if (!isObj(v) || !hasOnlyKeys(v, ["190", "491"])) return false;
+  const tagLists = Object.values(v);
+  return (
+    tagLists.length > 0 &&
+    tagLists.every(
+      (tags) =>
+        Array.isArray(tags) && tags.length > 0 && tags.every(isNonEmpty),
+    )
+  );
+}
+
 function isListEntry(v: unknown): boolean {
   return (
     isObj(v) &&
     hasOnlyKeys(v, ["190", "491", "streams", "viaUnitGroup"]) &&
     (v["190"] === undefined || isCohorts(v["190"])) &&
     (v["491"] === undefined || isCohorts(v["491"])) &&
-    (v.streams === undefined ||
-      (Array.isArray(v.streams) && v.streams.every(isNonEmpty))) &&
+    (v.streams === undefined || isEntryStreams(v.streams)) &&
     (v.viaUnitGroup === undefined ||
       (isStr(v.viaUnitGroup) && UNIT_GROUP_RE.test(v.viaUnitGroup)))
   );

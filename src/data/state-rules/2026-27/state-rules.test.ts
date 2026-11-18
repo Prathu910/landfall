@@ -161,17 +161,19 @@ describe("2026–27 state rules", () => {
     }
   });
 
-  it("resolves every listId and stream tag to an imported list", () => {
-    for (const s of stateRules.rules.flatMap((r) => r.streams)) {
-      const ref = s.occupations.value;
-      if (ref.kind !== "list") continue;
-      const list = lists[ref.listId];
-      expect(list, `${s.id} → ${ref.listId}`).toBeDefined();
-      const tags = new Set(
-        Object.values(list.entries).flatMap((e) => e.streams ?? []),
-      );
-      for (const tag of ref.streams ?? []) {
-        expect(tags.has(tag), `${s.id} → ${tag}`).toBe(true);
+  it("resolves every listId and, per visa, every stream tag", () => {
+    for (const r of stateRules.rules) {
+      for (const s of r.streams) {
+        const ref = s.occupations.value;
+        if (ref.kind !== "list") continue;
+        const list = lists[ref.listId];
+        expect(list, `${s.id} → ${ref.listId}`).toBeDefined();
+        const tags = new Set(
+          Object.values(list.entries).flatMap((e) => e.streams?.[r.visa] ?? []),
+        );
+        for (const tag of ref.streams ?? []) {
+          expect(tags.has(tag), `${s.id} (${r.visa}) → ${tag}`).toBe(true);
+        }
       }
     }
   });

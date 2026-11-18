@@ -45,7 +45,7 @@ describe("parseQldTable", () => {
     expect(entries["233211"]).toEqual({
       "190": true,
       "491": true,
-      pathways: [],
+      pathways: { "190": [], "491": [] },
     });
   });
 
@@ -54,7 +54,7 @@ describe("parseQldTable", () => {
     expect(entries["351311"]).toEqual({
       "190": false,
       "491": true,
-      pathways: [],
+      pathways: { "190": [], "491": [] },
     });
   });
 
@@ -65,7 +65,7 @@ describe("parseQldTable", () => {
     expect(entries["121111"]).toEqual({
       "190": false,
       "491": true,
-      pathways: [],
+      pathways: { "190": [], "491": [] },
     });
   });
 
@@ -73,7 +73,10 @@ describe("parseQldTable", () => {
     const entries = parseQldTable(
       page(["331211", "Carpenter", TICK, TICK, `&nbsp;${TICK}`]),
     );
-    expect(entries["331211"].pathways).toEqual(["building-and-construction"]);
+    expect(entries["331211"].pathways).toEqual({
+      "190": ["building-and-construction"],
+      "491": ["building-and-construction"],
+    });
   });
 
   it("reads an offshore row with only four cells", () => {
@@ -86,7 +89,7 @@ describe("parseQldTable", () => {
     expect(entries["241512"]).toEqual({
       "190": true,
       "491": true,
-      pathways: [],
+      pathways: { "190": [], "491": [] },
     });
   });
 
@@ -127,7 +130,7 @@ describe("parseQldTable", () => {
     expect(entries["233211"]).toEqual({
       "190": true,
       "491": true,
-      pathways: [],
+      pathways: { "190": [], "491": [] },
     });
   });
 });
@@ -145,7 +148,10 @@ describe("buildQldList", () => {
     expect(list.entries["233211"]).toEqual({
       "190": ["living-in-state", "offshore"],
       "491": ["living-in-state", "offshore"],
-      streams: ["onshore", "offshore"],
+      streams: {
+        "190": ["onshore", "offshore"],
+        "491": ["onshore", "offshore"],
+      },
     });
   });
 
@@ -153,14 +159,14 @@ describe("buildQldList", () => {
     expect(list.entries["261313"]).toEqual({
       "190": ["living-in-state"],
       "491": ["living-in-state"],
-      streams: ["onshore"],
+      streams: { "190": ["onshore"], "491": ["onshore"] },
     });
   });
 
   it("lists Chef for 491 only", () => {
     expect(list.entries["351311"]).toEqual({
       "491": ["living-in-state"],
-      streams: ["onshore"],
+      streams: { "491": ["onshore"] },
     });
   });
 
@@ -177,7 +183,19 @@ describe("buildQldList", () => {
     expect(offshoreOnly.entries["133111"]).toEqual({
       "190": ["offshore"],
       "491": ["offshore"],
-      streams: ["offshore"],
+      streams: { "190": ["offshore"], "491": ["offshore"] },
+    });
+  });
+
+  it("tags each visa only with the lists that offer that visa", () => {
+    const built = buildQldList(
+      page(["331211", "Carpenter", "", TICK, TICK]),
+      page(["331211", "Carpenter", TICK, "", ""]),
+      meta,
+    ).list;
+    expect(built.entries["331211"].streams).toEqual({
+      "190": ["onshore", "building-and-construction"],
+      "491": ["offshore"],
     });
   });
 
@@ -187,10 +205,10 @@ describe("buildQldList", () => {
       page(["233211", "x", TICK, TICK, ""]),
       meta,
     ).list;
-    expect(built.entries["331211"].streams).toEqual([
-      "onshore",
-      "building-and-construction",
-    ]);
+    expect(built.entries["331211"].streams).toEqual({
+      "190": ["onshore", "building-and-construction"],
+      "491": ["onshore", "building-and-construction"],
+    });
   });
 
   it("sorts entries by code", () => {

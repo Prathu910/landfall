@@ -12,7 +12,11 @@ export const QLD_OFFSHORE_URL =
   "https://www.migration.qld.gov.au/occupation-lists/offshore-queensland-skilled-occupation-lists-(qsol)";
 
 /** What one table row offers, before the page's cohort is applied. */
-type Row = { "190": boolean; "491": boolean; pathways: string[] };
+type Row = {
+  "190": boolean;
+  "491": boolean;
+  pathways: { "190": string[]; "491": string[] };
+};
 
 const BUILDING_AND_CONSTRUCTION = "building-and-construction";
 
@@ -63,11 +67,25 @@ export function parseQldTable(html: string): Record<string, Row> {
       throw new Error(`${code}: listed but no visa ticked; review the source`);
     }
     const pathway = hasPathway && tickOf(cells[4] ?? "", code);
-    const row = (found[code] ??= { "190": false, "491": false, pathways: [] });
+    const row = (found[code] ??= {
+      "190": false,
+      "491": false,
+      pathways: { "190": [], "491": [] },
+    });
     row["190"] = row["190"] || v190;
     row["491"] = row["491"] || v491;
-    if (pathway && !row.pathways.includes(BUILDING_AND_CONSTRUCTION)) {
-      row.pathways.push(BUILDING_AND_CONSTRUCTION);
+    // The pathway tags only the visas this row ticks.
+    for (const [visa, ticked] of [
+      ["190", v190],
+      ["491", v491],
+    ] as const) {
+      if (
+        pathway &&
+        ticked &&
+        !row.pathways[visa].includes(BUILDING_AND_CONSTRUCTION)
+      ) {
+        row.pathways[visa].push(BUILDING_AND_CONSTRUCTION);
+      }
     }
   }
   return found;
@@ -95,17 +113,20 @@ export function buildQldList(
 ): { list: ImportedList; counts: { onshore: number; offshore: number } } {
   const parsed = [parseQldTable(onshoreHtml), parseQldTable(offshoreHtml)];
   const cohorts: Record<string, Record<"190" | "491", Set<Cohort>>> = {};
-  const streams: Record<string, Set<string>> = {};
-  const pathways: Record<string, Set<string>> = {};
+  const pages: Record<string, Record<"190" | "491", Set<string>>> = {};
+  const pathways: Record<string, Record<"190" | "491", Set<string>>> = {};
   parsed.forEach((rows, i) => {
     const { stream, cohort } = PAGES[i];
     for (const [code, row] of Object.entries(rows)) {
       const seen = (cohorts[code] ??= { "190": new Set(), "491": new Set() });
       if (row["190"]) seen["190"].add(cohort);
       if (row["491"]) seen["491"].add(cohort);
-      (streams[code] ??= new Set()).add(stream);
-      pathways[code] ??= new Set();
-      row.pathways.forEach((p) => pathways[code].add(p));
+      const onPages = (pages[code] ??= { "190": new Set(), "491": new Set() });
+      const named = (pathways[code] ??= { "190": new Set(), "491": new Set() });
+      for (const visa of ["190", "491"] as const) {
+        if (row[visa]) onPages[visa].add(stream);
+        row.pathways[visa].forEach((p) => named[visa].add(p));
+      }
     }
   });
   const entries: Record<string, ImportedListEntry> = {};
@@ -113,12 +134,13 @@ export function buildQldList(
     const entry: ImportedListEntry = {};
     for (const visa of ["190", "491"] as const) {
       const list = COHORT_ORDER.filter((c) => seen[visa].has(c));
-      if (list.length > 0) entry[visa] = list;
+      if (list.length === 0) continue;
+      entry[visa] = list;
+      (entry.streams ??= {})[visa] = [
+        ...PAGES.map((p) => p.stream).filter((s) => pages[code][visa].has(s)),
+        ...pathways[code][visa],
+      ];
     }
-    entry.streams = [
-      ...PAGES.map((p) => p.stream).filter((s) => streams[code].has(s)),
-      ...pathways[code],
-    ];
     entries[code] = entry;
   }
   return {

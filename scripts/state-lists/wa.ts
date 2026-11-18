@@ -79,8 +79,8 @@ function yesNo(value: string, code: string): boolean {
 
 /**
  * Reads the CSV into entries by ANZSCO code. A visa is listed for all three
- * cohorts when any row of the code offers it, and the entry names every list
- * (stream) the code appears on.
+ * cohorts when any row of the code offers it. Each visa names only the lists
+ * (streams) whose rows offer that visa.
  */
 export function parseWaCsv(text: string): Record<string, ImportedListEntry> {
   const [header, ...rows] = parseCsvRows(text);
@@ -90,7 +90,7 @@ export function parseWaCsv(text: string): Record<string, ImportedListEntry> {
     );
   }
   const offered: Record<string, { "190": boolean; "491": boolean }> = {};
-  const lists: Record<string, Set<string>> = {};
+  const lists: Record<string, { "190": Set<string>; "491": Set<string> }> = {};
   for (const cells of rows) {
     if (cells.length !== COLUMNS.length) {
       throw new Error(
@@ -111,17 +111,22 @@ export function parseWaCsv(text: string): Record<string, ImportedListEntry> {
     const offers491 = yesNo(v491, code);
     seen["190"] = seen["190"] || offers190;
     seen["491"] = seen["491"] || offers491;
-    (lists[code] ??= new Set()).add(id);
+    const tagged = (lists[code] ??= { "190": new Set(), "491": new Set() });
+    if (offers190) tagged["190"].add(id);
+    if (offers491) tagged["491"].add(id);
   }
   const entries: Record<string, ImportedListEntry> = {};
   for (const [code, seen] of Object.entries(offered)) {
     if (!seen["190"] && !seen["491"]) continue;
     const entry: ImportedListEntry = {};
-    if (seen["190"]) entry["190"] = [...ALL_COHORTS];
-    if (seen["491"]) entry["491"] = [...ALL_COHORTS];
-    entry.streams = STREAMS.map(([, id]) => id).filter((id) =>
-      lists[code].has(id),
-    );
+    entry.streams = {};
+    for (const visa of ["190", "491"] as const) {
+      if (!seen[visa]) continue;
+      entry[visa] = [...ALL_COHORTS];
+      entry.streams[visa] = STREAMS.map(([, id]) => id).filter((id) =>
+        lists[code][visa].has(id),
+      );
+    }
     entries[code] = entry;
   }
   return entries;

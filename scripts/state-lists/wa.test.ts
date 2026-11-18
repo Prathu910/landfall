@@ -31,12 +31,16 @@ describe("parseWaCsv", () => {
     expect(entries["261313"]).toEqual({
       "190": ALL,
       "491": ALL,
-      streams: ["schedule-2", "graduate"],
+      streams: {
+        "190": ["schedule-2", "graduate"],
+        "491": ["schedule-2", "graduate"],
+      },
     });
   });
 
   it("records Schedule 1 for Registered Nurses nec", () => {
-    expect(entries["254499"].streams).toContain("schedule-1");
+    expect(entries["254499"].streams?.["190"]).toContain("schedule-1");
+    expect(entries["254499"].streams?.["491"]).toContain("schedule-1");
     expect(entries["254499"]["190"]).toEqual(ALL);
   });
 
@@ -44,13 +48,31 @@ describe("parseWaCsv", () => {
     expect(entries["233512"]).toEqual({
       "190": ALL,
       "491": ALL,
-      streams: ["schedule-2", "schedule-3", "graduate"],
+      streams: {
+        "190": ["schedule-2", "schedule-3", "graduate"],
+        "491": ["schedule-2", "graduate"],
+      },
+    });
+  });
+
+  it("does not tag a visa with a stream whose row does not offer it", () => {
+    const parsed = parseWaCsv(
+      csvWith(
+        line("261313", "General - WASMOL Schedule 2", "Yes", "No"),
+        line("261313", "Graduate", "No", "Yes"),
+      ),
+    );
+    expect(parsed["261313"]).toEqual({
+      "190": ALL,
+      "491": ALL,
+      streams: { "190": ["schedule-2"], "491": ["graduate"] },
     });
   });
 
   it("leaves a visa out when no row of the code offers it", () => {
     expect(entries["223111"]?.["190"]).toBeUndefined();
     expect(entries["223111"]?.["491"]).toEqual(ALL);
+    expect(entries["223111"]?.streams).toEqual({ "491": ["graduate"] });
   });
 
   it("omits a code that no row offers for either visa", () => {
@@ -68,7 +90,7 @@ describe("parseWaCsv", () => {
     );
     expect(parsed["261313"]).toEqual({
       "190": ALL,
-      streams: ["graduate"],
+      streams: { "190": ["graduate"] },
     });
   });
 

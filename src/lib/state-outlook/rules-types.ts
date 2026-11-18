@@ -79,7 +79,10 @@ export type StateRules = { programYear: "2026-27"; rules: StateVisaRules[] };
 export type ImportedListEntry = {
   "190"?: Cohort[];
   "491"?: Cohort[];
-  streams?: string[];
+  // Stream tags per visa: a tag appears under a visa only when a listing for
+  // that visa carries it, so a rule's stream filter cannot pass an occupation
+  // through a stream that lists it for the other visa.
+  streams?: { "190"?: string[]; "491"?: string[] };
   viaUnitGroup?: string; // 4-digit unit group the occupation is listed under
 };
 

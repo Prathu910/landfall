@@ -48,11 +48,13 @@ describe("parseSaPage", () => {
   it("lists Accountant (General) for 491 onshore only", () => {
     expect(entries["221111"]).toEqual({
       "491": ["living-in-state"],
-      streams: [
-        "South Australian Graduates",
-        "Skilled Employment in South Australia",
-        "Outer Regional Skilled Employment",
-      ],
+      streams: {
+        "491": [
+          "South Australian Graduates",
+          "Skilled Employment in South Australia",
+          "Outer Regional Skilled Employment",
+        ],
+      },
     });
   });
 
@@ -64,16 +66,19 @@ describe("parseSaPage", () => {
   it("adds the offshore cohort where the offshore stream lists the visa", () => {
     expect(entries["233211"]["190"]).toEqual(["living-in-state", "offshore"]);
     expect(entries["233211"]["491"]).toEqual(["living-in-state", "offshore"]);
-    expect(entries["233211"].streams).toContain("Offshore");
+    expect(entries["233211"].streams?.["190"]).toContain("Offshore");
+    expect(entries["233211"].streams?.["491"]).toContain("Offshore");
   });
 
   it("lists Chef for 491 only, without the Graduates stream", () => {
     expect(entries["351311"]["190"]).toBeUndefined();
     expect(entries["351311"]["491"]).toEqual(["living-in-state"]);
-    expect(entries["351311"].streams).toEqual([
-      "Skilled Employment in South Australia",
-      "Outer Regional Skilled Employment",
-    ]);
+    expect(entries["351311"].streams).toEqual({
+      "491": [
+        "Skilled Employment in South Australia",
+        "Outer Regional Skilled Employment",
+      ],
+    });
   });
 
   it("never lists living-in-other-state", () => {
@@ -89,16 +94,37 @@ describe("parseSaPage", () => {
     expect(entries["234914"]["491"]).toEqual(["living-in-state", "offshore"]);
   });
 
-  it("names the titles a repeated code was listed under", () => {
-    expect(entries["234914"].streams).toEqual(
-      expect.arrayContaining([
-        "title:Physicist (Medical Physicist Only)",
-        "title:Physicist (non-medical)",
-      ]),
-    );
-    expect(entries["261313"].streams?.some((s) => s.startsWith("title:"))).toBe(
-      false,
-    );
+  it("names the titles a repeated code was listed under, per visa", () => {
+    const titles = [
+      "title:Physicist (Medical Physicist Only)",
+      "title:Physicist (non-medical)",
+    ];
+    const streams = entries["234914"].streams;
+    expect(streams?.["190"]).toEqual(expect.arrayContaining(titles));
+    expect(streams?.["491"]).toEqual(expect.arrayContaining(titles));
+    const single = entries["261313"].streams?.["190"] ?? [];
+    expect(single.some((s) => s.startsWith("title:"))).toBe(false);
+  });
+
+  it("names a title only under the visas its blocks list", () => {
+    const html =
+      occupation("234914", [{ ...GRAD, subclasses: ["491"] }], "Medical") +
+      occupation("234914", [GRAD], "Other");
+    expect(parseSaPage(html).entries["234914"].streams).toEqual({
+      "190": ["South Australian Graduates", "title:Other"],
+      "491": ["South Australian Graduates", "title:Medical", "title:Other"],
+    });
+  });
+
+  it("does not tag a visa with a stream that does not list it", () => {
+    const html = occupation("261313", [
+      { ...GRAD, subclasses: ["491"] },
+      { ...OFFSHORE, subclasses: ["190"] },
+    ]);
+    expect(parseSaPage(html).entries["261313"].streams).toEqual({
+      "190": ["Offshore"],
+      "491": ["South Australian Graduates"],
+    });
   });
 
   it("maps an Any Location block to the cohorts the other blocks give", () => {

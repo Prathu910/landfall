@@ -214,7 +214,11 @@ describe("isImportedList", () => {
     checkedAt: "2026-11-01",
     entries: {
       "261313": { "190": ["offshore"], "491": ["living-in-state"] },
-      "233211": { "190": ["offshore"], streams: ["a"], viaUnitGroup: "2332" },
+      "233211": {
+        "190": ["offshore"],
+        streams: { "190": ["a"], "491": ["b"] },
+        viaUnitGroup: "2332",
+      },
     },
   };
 
@@ -239,6 +243,27 @@ describe("isImportedList", () => {
       isImportedList({ ...list, entries: { "261313": { "190": ["mars"] } } }),
     ).toBe(false);
     expect(isImportedList({ ...list, checkedAt: "2026-13-01" })).toBe(false);
+  });
+
+  it("rejects malformed per-visa streams", () => {
+    const bad = [
+      ["a"],
+      {},
+      { "189": ["a"] },
+      { "190": [] },
+      { "190": [""] },
+      { "190": "a" },
+      { "190": ["a"], other: ["b"] },
+    ];
+    for (const streams of bad) {
+      expect(
+        isImportedList({
+          ...list,
+          entries: { "261313": { "190": ["offshore"], streams } },
+        }),
+        JSON.stringify(streams),
+      ).toBe(false);
+    }
   });
 });
 
