@@ -11,5 +11,7 @@ export default defineConfig([
     "build/**",
     "next-env.d.ts",
     "docs/original-references/**",
+    // Third-party agent skills (installed with `npx skills add`), not app code.
+    ".agents/**",
   ]),
 ]);

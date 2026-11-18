@@ -23,3 +23,6 @@ package-lock.json
 # Captured page fixtures: kept verbatim, not reformatted.
 scripts/import/__fixtures__/
 scripts/state-lists/__fixtures__/
+
+# Third-party agent skills (installed with `npx skills add`), not app code.
+.agents/
