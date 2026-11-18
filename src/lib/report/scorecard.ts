@@ -45,11 +45,14 @@ export type Scorecard = {
 
 type Points = { base: number; subclass190: number; subclass491: number };
 type Chip = ScorecardCard["chip"];
+type NoneReason = Extract<ScorecardData, { kind: "none" }>["reason"];
 
 const INVITATION_WINDOW_MONTHS = 12;
 export const LOADING_HEADLINE = "Loading published data…";
 const NO_DATA_SENTENCE = "No published data to compare for this occupation.";
 const LOAD_FAILED_SENTENCE = "Published data could not be loaded.";
+const POINTS_ONLY_SENTENCE = "Points check only.";
+const STATE_DECIDES_NEUTRAL: Chip = { label: "State decides", tone: "neutral" };
 const STATUS_TONE: Record<RoundStatus, Tone> = {
   none: "red",
   occasional: "amber",
@@ -103,6 +106,9 @@ function cutoffText(
 
 function headlineFor(name: string, data: ScorecardData, base: number): string {
   if (data.kind === "none") {
+    if (data.reason === "notIndexed") {
+      return "You chose a points check only, so there is no occupation data to compare. Your points breakdown is below.";
+    }
     // A failed fetch is a network fact, not a finding about the dataset.
     if (data.reason === "loadFailed") {
       return `Published data for ${name} could not be loaded. Your points breakdown is below.`;
@@ -155,6 +161,28 @@ function card189Parts(core: OccupationCore): { chip: Chip; sentence: string } {
   };
 }
 
+/** A card without occupation data: say why, never imply a finding. */
+function noneCardParts(
+  visa: Visa,
+  reason: NoneReason,
+): { chip: Chip; sentence: string } {
+  if (reason === "notIndexed") {
+    return {
+      chip: { label: "Points only", tone: "neutral" },
+      sentence: POINTS_ONLY_SENTENCE,
+    };
+  }
+  const failed = reason === "loadFailed";
+  const chip: Chip =
+    visa === "189"
+      ? { label: failed ? "Not loaded" : "No data", tone: "neutral" }
+      : STATE_DECIDES_NEUTRAL;
+  return {
+    chip,
+    sentence: failed ? LOAD_FAILED_SENTENCE : NO_DATA_SENTENCE,
+  };
+}
+
 function buildCard(
   visa: Visa,
   points: number,
@@ -172,12 +200,7 @@ function buildCard(
     return {
       ...base,
       href: null,
-      chip:
-        visa === "189"
-          ? { label: "No data", tone: "neutral" }
-          : { label: "State decides", tone: "neutral" },
-      sentence:
-        data.reason === "loadFailed" ? LOAD_FAILED_SENTENCE : NO_DATA_SENTENCE,
+      ...noneCardParts(visa, data.reason),
       ahead: null,
       atScore: null,
     };

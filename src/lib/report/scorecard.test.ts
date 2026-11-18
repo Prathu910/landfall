@@ -163,27 +163,41 @@ describe("buildScorecard", () => {
     );
   });
 
-  it("handles occupations with no data", () => {
+  it("says a points-only check has no occupation data to compare", () => {
     const card = build({ kind: "none", reason: "notIndexed" });
-    expect(card.headline).toContain("too limited to compare");
+    expect(card.headline).toBe(
+      "You chose a points check only, so there is no occupation data to compare. Your points breakdown is below.",
+    );
     for (const c of card.cards) {
       expect(c.ahead).toBeNull();
       expect(c.atScore).toBeNull();
-      expect(c.sentence).toBe(
-        "No published data to compare for this occupation.",
-      );
+      expect(c.sentence).toBe("Points check only.");
+      expect(c.chip).toEqual({ label: "Points only", tone: "neutral" });
     }
-    expect(card.cards[0].chip).toEqual({ label: "No data", tone: "neutral" });
-    expect(card.cards[1].chip).toEqual({
-      label: "State decides",
-      tone: "neutral",
-    });
     expect(card.cards.map((c) => c.points)).toEqual([90, 95, 105]);
     // No visa panels render without data, so there is nothing to link to.
     expect(card.cards.map((c) => c.href)).toEqual([null, null, null]);
     expect(card.sourceLine).toBe(
       "Source: SkillSelect, Department of Home Affairs.",
     );
+  });
+
+  it("says an occupation without published EOIs is too limited to compare", () => {
+    const card = build({ kind: "none", reason: "noData" });
+    expect(card.headline).toBe(
+      "Published SkillSelect data for Software Engineer is too limited to compare. Your points breakdown is below.",
+    );
+    for (const c of card.cards) {
+      expect(c.sentence).toBe(
+        "No published data to compare for this occupation.",
+      );
+      expect(c.href).toBeNull();
+    }
+    expect(card.cards.map((c) => c.chip)).toEqual([
+      { label: "No data", tone: "neutral" },
+      { label: "State decides", tone: "neutral" },
+      { label: "State decides", tone: "neutral" },
+    ]);
   });
 
   it("says a failed load could not be loaded, never that data is too limited", () => {
@@ -198,19 +212,8 @@ describe("buildScorecard", () => {
       expect(c.atScore).toBeNull();
       expect(c.href).toBeNull();
     }
+    expect(card.cards[0].chip.label).toBe("Not loaded");
     expect(card.cards.map((c) => c.points)).toEqual([90, 95, 105]);
-  });
-
-  it("keeps the too-limited headline for occupations without published data", () => {
-    for (const reason of ["notIndexed", "noData"] as const) {
-      const card = build({ kind: "none", reason });
-      expect(card.headline).toBe(
-        "Published SkillSelect data for Software Engineer is too limited to compare. Your points breakdown is below.",
-      );
-      expect(card.cards[0].sentence).toBe(
-        "No published data to compare for this occupation.",
-      );
-    }
   });
 
   it("shows a loading headline", () => {
@@ -229,6 +232,7 @@ describe("buildScorecard", () => {
       ready(no189PoolCore),
       ready(noPoolsCore),
       { kind: "none", reason: "notIndexed" },
+      { kind: "none", reason: "noData" },
       { kind: "none", reason: "loadFailed" },
       { kind: "none", reason: "loading" },
     ];
