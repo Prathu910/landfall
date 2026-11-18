@@ -61,7 +61,7 @@ function living(visa: StateVisa, source: string): Sourced<Requirement> {
 
 function working(visa: StateVisa, source: string): Sourced<Requirement> {
   return verified(
-    workingInState(months(visa)),
+    workingInState(months(visa), "anzsco-3-digit"),
     source,
     `${window(visa)}, for a Queensland employer. ${WORK_NOTE}`,
   );
@@ -139,7 +139,7 @@ function streams(visa: StateVisa): Stream[] {
         living(visa, GRADUATES),
         ...regional,
         secondary(
-          workingInState(months(visa)),
+          workingInState(months(visa), "anzsco-3-digit"),
           GRADUATES,
           `${window(visa)}. Any ANZSCO Skill Level 1 job counts, not only the nominated occupation, so this check is not applied as verified.`,
         ),
@@ -155,7 +155,7 @@ function streams(visa: StateVisa): Stream[] {
       verified(list("qld", ["building-and-construction"]), ONSHORE_LIST),
       [
         verified(
-          workingInState(3),
+          workingInState(3, "anzsco-3-digit"),
           BUILDING,
           "3 continuous months of Queensland work, for both visas.",
         ),

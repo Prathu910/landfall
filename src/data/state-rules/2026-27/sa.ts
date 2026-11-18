@@ -92,7 +92,7 @@ const streams: Stream[] = [
         "Lived in South Australia for the last 6 months, after completing the course.",
       ),
       verified(
-        workingInState(6),
+        workingInState(6, "anzsco-2-digit"),
         GRADUATES,
         `Worked full-time for 6 months after completing the course. ${RELATED_WORK}`,
       ),
@@ -109,7 +109,7 @@ const streams: Stream[] = [
         "Lived in South Australia for the last 12 months.",
       ),
       verified(
-        workingInState(12),
+        workingInState(12, "anzsco-2-digit"),
         EMPLOYMENT,
         `Worked full-time (30+ hours a week) for the last 12 months in a related job. ${RELATED_WORK}`,
       ),
@@ -134,7 +134,7 @@ const streams: Stream[] = [
         "Lived in outer-regional South Australia for the past 9 months.",
       ),
       verified(
-        workingInState(9),
+        workingInState(9, "anzsco-2-digit"),
         OUTER,
         `Worked full-time in outer-regional South Australia for the past 9 months. ${RELATED_WORK}`,
       ),

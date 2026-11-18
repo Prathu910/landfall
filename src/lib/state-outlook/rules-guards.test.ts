@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { isFederalList, isImportedList, isStateRules } from "./rules-guards";
+import {
+  invalidRulePath,
+  isFederalList,
+  isImportedList,
+  isStateRules,
+} from "./rules-guards";
 
 function s<T>(value: T, over: Record<string, unknown> = {}) {
   return {
@@ -112,6 +117,93 @@ describe("isStateRules", () => {
       v.rules[0].streams[0].occupations = s(ref) as never;
       expect(isStateRules(v)).toBe(false);
     }
+  });
+});
+
+describe("month and work requirements", () => {
+  function withRequirement(req: Record<string, unknown>) {
+    const v = validRules();
+    v.rules[0].streams[0].requirements = [s(req)] as never;
+    return v;
+  }
+
+  it("accepts a working requirement with its related-work definition and an optional month window", () => {
+    for (const related of [
+      "same-occupation",
+      "anzsco-2-digit",
+      "anzsco-3-digit",
+    ]) {
+      const req = { kind: "min-months-working-in-state", months: 9, related };
+      expect(isStateRules(withRequirement(req))).toBe(true);
+      expect(isStateRules(withRequirement({ ...req, ofLastMonths: 12 }))).toBe(
+        true,
+      );
+    }
+    for (const kind of [
+      "min-months-living-in-state",
+      "min-months-living-offshore",
+    ]) {
+      expect(isStateRules(withRequirement({ kind, months: 6 }))).toBe(true);
+      expect(
+        isStateRules(withRequirement({ kind, months: 6, ofLastMonths: 9 })),
+      ).toBe(true);
+    }
+  });
+
+  it("rejects a working requirement without a known related-work definition", () => {
+    const base = { kind: "min-months-working-in-state", months: 9 };
+    expect(isStateRules(withRequirement(base))).toBe(false);
+    expect(
+      isStateRules(withRequirement({ ...base, related: "anzsco-4-digit" })),
+    ).toBe(false);
+    expect(
+      isStateRules(
+        withRequirement({
+          kind: "min-months-living-in-state",
+          months: 6,
+          related: "same-occupation",
+        }),
+      ),
+    ).toBe(false);
+  });
+
+  it("rejects a month window that is negative, not a number or shorter than the months", () => {
+    const base = { kind: "min-months-living-in-state", months: 9 };
+    for (const ofLastMonths of [-1, "12", 6]) {
+      expect(isStateRules(withRequirement({ ...base, ofLastMonths }))).toBe(
+        false,
+      );
+    }
+  });
+});
+
+describe("stream tags", () => {
+  it("rejects duplicate stream tags on a list reference", () => {
+    const v = validRules();
+    v.rules[0].streams[0].occupations = s({
+      kind: "list",
+      listId: "wa",
+      streams: ["graduate", "graduate"],
+    }) as never;
+    expect(isStateRules(v)).toBe(false);
+  });
+});
+
+describe("invalidRulePath", () => {
+  it("returns null for valid rules", () => {
+    expect(invalidRulePath(validRules() as never)).toBeNull();
+  });
+
+  it("names the state, visa and stream of the first invalid stream", () => {
+    const v = validRules();
+    v.rules[0].streams[0].status = s("maybe") as never;
+    expect(invalidRulePath(v as never)).toBe("WA 190 stream wa-general");
+  });
+
+  it("names the state and visa when a rule-level field is invalid", () => {
+    const v = validRules();
+    v.rules[0].selectionSystem = s("x", { checkedAt: "2026-13-01" }) as never;
+    expect(invalidRulePath(v as never)).toBe("WA 190 (rule fields)");
   });
 });
 

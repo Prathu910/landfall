@@ -218,6 +218,7 @@ describe("2026–27 state rules", () => {
     expect(working.value).toEqual({
       kind: "min-months-working-in-state",
       months: 1,
+      related: "same-occupation",
     });
     expect(working.verification).toBe("secondary");
     expect(working.note).toMatch(
@@ -226,6 +227,27 @@ describe("2026–27 state rules", () => {
     expect(working.note).toMatch(/approximation/);
     for (const id of ["nsw-190-living", "nsw-190-offshore"]) {
       for (const q of byId(id)) expect(q.verification).toBe("verified");
+    }
+  });
+
+  it("records each state's related-work definition on every working requirement", () => {
+    const expected: Record<string, string> = {
+      SA: "anzsco-2-digit",
+      QLD: "anzsco-3-digit",
+    };
+    for (const r of stateRules.rules) {
+      for (const s of r.streams) {
+        for (const q of s.requirements) {
+          if (q.value.kind !== "min-months-working-in-state") continue;
+          // Research §TAS item 2: 190 TSE priority roles need a job in the
+          // same 3-digit ANZSCO group.
+          const want =
+            s.id === "tas-190-tse-priority"
+              ? "anzsco-3-digit"
+              : (expected[r.state] ?? "same-occupation");
+          expect(q.value.related, s.id).toBe(want);
+        }
+      }
     }
   });
 

@@ -1,6 +1,7 @@
 import type {
   Cohort,
   OccupationListRef,
+  RelatedWork,
   Requirement,
   Sourced,
 } from "../../../lib/state-outlook/rules-types";
@@ -72,12 +73,24 @@ export const ALL_FEDERAL: OccupationListRef = {
   kind: "all-federally-eligible",
 };
 
-export function livingInState(months: number): Requirement {
-  return { kind: "min-months-living-in-state", months };
+/** `ofLastMonths` only for rules phrased "N of the last M months". */
+export function livingInState(
+  months: number,
+  ofLastMonths?: number,
+): Requirement {
+  return ofLastMonths === undefined
+    ? { kind: "min-months-living-in-state", months }
+    : { kind: "min-months-living-in-state", months, ofLastMonths };
 }
 
-export function workingInState(months: number): Requirement {
-  return { kind: "min-months-working-in-state", months };
+export function workingInState(
+  months: number,
+  related: RelatedWork,
+  ofLastMonths?: number,
+): Requirement {
+  return ofLastMonths === undefined
+    ? { kind: "min-months-working-in-state", months, related }
+    : { kind: "min-months-working-in-state", months, related, ofLastMonths };
 }
 
 export function livingOffshore(months: number): Requirement {

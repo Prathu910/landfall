@@ -31,6 +31,11 @@ const COHORTS: readonly string[] = [
 ];
 const STATUSES: readonly string[] = ["open", "closed", "restricted", "unknown"];
 const VERIFICATIONS: readonly string[] = ["verified", "secondary"];
+const RELATED_WORK: readonly string[] = [
+  "same-occupation",
+  "anzsco-2-digit",
+  "anzsco-3-digit",
+];
 
 function isObj(v: unknown): v is Obj {
   return typeof v === "object" && v !== null && !Array.isArray(v);
@@ -84,7 +89,8 @@ function isListRef(v: unknown): v is OccupationListRef {
       (v.streams === undefined ||
         (Array.isArray(v.streams) &&
           v.streams.length > 0 &&
-          v.streams.every(isNonEmpty)))
+          v.streams.every(isNonEmpty) &&
+          new Set(v.streams).size === v.streams.length))
     );
   }
   return (
@@ -95,13 +101,28 @@ function isListRef(v: unknown): v is OccupationListRef {
   );
 }
 
+/** Months, plus an optional "of the last M months" window at least that long. */
+function isMonths(v: Obj): boolean {
+  return (
+    isNum(v.months) &&
+    (v.ofLastMonths === undefined ||
+      (isNum(v.ofLastMonths) && v.ofLastMonths >= v.months))
+  );
+}
+
 function isRequirement(v: unknown): v is Requirement {
   if (!isObj(v)) return false;
   switch (v.kind) {
     case "min-months-living-in-state":
-    case "min-months-working-in-state":
     case "min-months-living-offshore":
-      return hasOnlyKeys(v, ["kind", "months"]) && isNum(v.months);
+      return hasOnlyKeys(v, ["kind", "months", "ofLastMonths"]) && isMonths(v);
+    case "min-months-working-in-state":
+      return (
+        hasOnlyKeys(v, ["kind", "months", "related", "ofLastMonths"]) &&
+        isMonths(v) &&
+        isStr(v.related) &&
+        RELATED_WORK.includes(v.related)
+      );
     case "visa-expiry-before":
       return hasOnlyKeys(v, ["kind", "date"]) && isDate(v.date);
     case "min-years-experience":
@@ -183,6 +204,22 @@ export function isStateRules(v: unknown): v is StateRules {
     Array.isArray(v.rules) &&
     v.rules.every(isVisaRules)
   );
+}
+
+/**
+ * Where curated rules fail the guard: "WA 190 stream wa-graduate",
+ * "WA 190 (rule fields)", or null when they pass. Used for load-time errors.
+ */
+export function invalidRulePath(rules: StateRules): string | null {
+  const ok = (rule: StateVisaRules) =>
+    isStateRules({ programYear: rules.programYear, rules: [rule] });
+  for (const r of rules.rules) {
+    if (ok(r)) continue;
+    if (!ok({ ...r, streams: [] })) return `${r.state} ${r.visa} (rule fields)`;
+    const bad = r.streams.find((s) => !ok({ ...r, streams: [s] }));
+    return `${r.state} ${r.visa} stream ${bad?.id ?? "(unknown)"}`;
+  }
+  return isStateRules(rules) ? null : "(programYear)";
 }
 
 function isListEntry(v: unknown): boolean {

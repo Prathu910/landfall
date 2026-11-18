@@ -82,7 +82,7 @@ const nt190: StateVisaRules = {
           "At least 2 consecutive years living in the NT.",
         ),
         secondary(
-          workingInState(24),
+          workingInState(24, "same-occupation"),
           ELIGIBILITY,
           "At least 2 years of full-time NT employment.",
         ),
@@ -122,7 +122,7 @@ const nt491: StateVisaRules = {
           "At least 12 consecutive months living in the NT. No migrating dependants may live elsewhere in Australia.",
         ),
         secondary(
-          workingInState(6),
+          workingInState(6, "same-occupation"),
           ONSHORE_EXTRA,
           "At least 6 months of full-time NT work.",
         ),

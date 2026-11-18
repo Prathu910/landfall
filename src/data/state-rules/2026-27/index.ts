@@ -1,4 +1,4 @@
-import { isStateRules } from "../../../lib/state-outlook/rules-guards";
+import { invalidRulePath } from "../../../lib/state-outlook/rules-guards";
 import type { StateRules } from "../../../lib/state-outlook/rules-types";
 import { actRules } from "./act";
 import { nswRules } from "./nsw";
@@ -25,8 +25,9 @@ const curated: StateRules = {
 
 // The TypeScript types already shape this data; the guard also catches values
 // the types allow but the rules forbid (e.g. an impossible checkedAt date).
-if (!isStateRules(curated)) {
-  throw new Error("2026–27 state rules failed validation (rules-guards)");
+const invalid = invalidRulePath(curated);
+if (invalid !== null) {
+  throw new Error(`2026–27 state rules failed validation at ${invalid}`);
 }
 
 /** Hand-curated 2026–27 state and territory nomination rules (190 and 491). */

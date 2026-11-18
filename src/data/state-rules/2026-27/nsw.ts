@@ -74,7 +74,7 @@ const nsw190: StateVisaRules = {
       "Working in NSW",
       IN_STATE,
       secondary(
-        workingInState(1),
+        workingInState(1, "same-occupation"),
         NSW_190,
         "NSW's rule (read directly): currently working in NSW (20+ hours a week) in the nominated occupation, with no minimum duration. 'At least 1 month' is Landfall's approximation for its months-working question, so this check is not applied as verified.",
       ),

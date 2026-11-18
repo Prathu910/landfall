@@ -119,7 +119,7 @@ const tas190: StateVisaRules["streams"] = [
     "Tasmanian Skilled Employment (TSE): priority role",
     [
       secondary(
-        workingInState(9),
+        workingInState(9, "anzsco-3-digit"),
         TSE_190_MIN,
         `At least 9 months working in Tasmania, or 6 months for teaching or health roles. The extracts conflict: '9 months' vs 'the last nine months'. ${INCOME}`,
       ),
@@ -132,7 +132,7 @@ const tas190: StateVisaRules["streams"] = [
     "Tasmanian Skilled Employment (TSE): long-term",
     [
       secondary(
-        workingInState(15),
+        workingInState(15, "same-occupation"),
         TSE_190_MIN,
         `At least 15 months working in Tasmania. ${INCOME}`,
       ),
@@ -173,7 +173,7 @@ const tas491: StateVisaRules["streams"] = [
     "Tasmanian Skilled Employment (TSE)",
     [
       secondary(
-        workingInState(12),
+        workingInState(12, "same-occupation"),
         TSE_491,
         "At least 12 months working in Tasmania (average 20 hours a week), currently living in Tasmania, and intending to stay in the industry for 2 years.",
       ),

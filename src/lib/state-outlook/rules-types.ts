@@ -25,10 +25,29 @@ export type OccupationListRef =
   // (its URL is the Sourced `source`), so membership cannot be checked.
   | { kind: "not-imported" };
 
+/** Which work counts towards a state's work rule (shown with the question). */
+export type RelatedWork =
+  "same-occupation" | "anzsco-2-digit" | "anzsco-3-digit";
+
+// `ofLastMonths` marks a rule phrased "N of the last M months": a continuous
+// answer of N or more passes; less than N is not a fail (gaps are allowed).
 export type Requirement =
-  | { kind: "min-months-living-in-state"; months: number }
-  | { kind: "min-months-working-in-state"; months: number } // working in the nominated occupation
-  | { kind: "min-months-living-offshore"; months: number }
+  | {
+      kind: "min-months-living-in-state";
+      months: number;
+      ofLastMonths?: number;
+    }
+  | {
+      kind: "min-months-working-in-state";
+      months: number;
+      related: RelatedWork;
+      ofLastMonths?: number;
+    }
+  | {
+      kind: "min-months-living-offshore";
+      months: number;
+      ofLastMonths?: number;
+    }
   | { kind: "job-offer-in-state" }
   | { kind: "visa-expiry-before"; date: string } // expires on or before `date` ("by 31 Jan 2027")
   | { kind: "min-years-experience"; years: number; withinYears: number }
