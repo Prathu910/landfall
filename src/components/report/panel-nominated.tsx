@@ -57,7 +57,7 @@ export function PanelNominated({
       </section>
       <section className={base.block} aria-labelledby={`${id}-invitations`}>
         <h3 id={`${id}-invitations`} className={base.h3}>
-          Invitations recorded
+          {panel.invitationsHeading}
         </h3>
         <ul className={styles.rows}>
           {panel.invitations.map((row) => (

@@ -8,7 +8,13 @@ import type {
   Visa,
 } from "../data/types";
 import { formatDate } from "../migration";
-import { formatCount, formatMonth, QUEUE_NOTE, type LinkedNote } from "./copy";
+import {
+  formatCount,
+  formatMonth,
+  isMasked,
+  QUEUE_NOTE,
+  type LinkedNote,
+} from "./copy";
 import {
   CHIP_LABEL,
   summarise189Rounds,
@@ -77,15 +83,18 @@ const POINTS_NOTES: Record<Visa, string | null> = {
 
 function stateSentence(core: OccupationCore, visa: Visa): string {
   const activity = invitationActivity(core, visa, INVITATION_WINDOW_MONTHS);
-  if (activity.lastConfirmedMonth) {
-    const month = activity.months.find(
-      (m) => m.asAt === activity.lastConfirmedMonth,
-    );
+  const confirmed = activity.lastConfirmedMonth;
+  if (confirmed) {
+    const month = activity.months.find((m) => m.asAt === confirmed);
     const count = formatCount({
       min: month?.invitedAtLeast.min ?? 0,
       max: month?.invitedAtLeast.min ?? 0,
     });
-    return `At least ${count} invited as at ${formatMonth(activity.lastConfirmedMonth)}, across all states. Each state selects by its own rules.`;
+    const laterMasked = activity.months.some(
+      (m) => m.asAt > confirmed && isMasked(m.invitedAtLeast),
+    );
+    const later = laterMasked ? "; later months under 20, so may be zero" : "";
+    return `At least ${count} invited as at ${formatMonth(confirmed)}, across all states${later}. Each state selects by its own rules.`;
   }
   if (activity.lastPossibleMonth) {
     return "Invitations recorded in the last 12 months are each under 20, so may be zero.";

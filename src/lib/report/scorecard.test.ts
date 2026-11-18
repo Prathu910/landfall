@@ -110,6 +110,26 @@ describe("buildScorecard", () => {
     );
   });
 
+  it("adds that later masked months may be zero after the last confirmed month", () => {
+    const core = {
+      ...noneRoundsCore,
+      statusHistory: {
+        ...noneRoundsCore.statusHistory,
+        "190": {
+          ...noneRoundsCore.statusHistory["190"],
+          "2026-05": { INVITED: "29" },
+          "2026-07": { INVITED: "<20" },
+          "2026-09": {},
+          "2026-10": {},
+        },
+      },
+    };
+    const [, c190] = build(ready(core)).cards;
+    expect(c190.sentence).toBe(
+      "At least 29 invited as at May 2026, across all states; later months under 20, so may be zero. Each state selects by its own rules.",
+    );
+  });
+
   it("says invitations are not published when no month in the window was fetched", () => {
     const core = {
       ...noneRoundsCore,

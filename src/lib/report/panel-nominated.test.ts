@@ -9,6 +9,7 @@ describe("buildNominatedPanel", () => {
   it("lists 12 months newest first with the exact copy", () => {
     const panel = buildNominatedPanel(noneRoundsCore, "190", 90);
     expect(panel.heading).toBe("Where you stand in the national 190 pool");
+    expect(panel.invitationsHeading).toBe("Invitations recorded, all states");
     expect(panel.nationalNote).toBe(
       "This is the national pool. States select by their own rules.",
     );
@@ -44,10 +45,10 @@ describe("buildNominatedPanel", () => {
     expect(panel.invitations[1].text).toBe("not published (as at Sep 2026)");
   });
 
-  it("says under 20, so may be zero, for a masked month and never 'at least'", () => {
+  it("says under 20 invited, so may be zero, for a masked month and never 'at least'", () => {
     const panel = buildNominatedPanel(allMaskedCore, "190", 90);
     expect(panel.invitations[0].text).toBe(
-      "under 20, so may be zero (as at Oct 2026)",
+      "under 20 invited, so may be zero (as at Oct 2026)",
     );
     for (const row of panel.invitations) {
       expect(row.text).not.toMatch(/at least/);

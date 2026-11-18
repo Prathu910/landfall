@@ -14,6 +14,7 @@ export type NominatedPanel = {
   visa: StateVisa;
   heading: string;
   whereYouStand: WhereYouStand;
+  invitationsHeading: string;
   nationalNote: string;
   invitations: InvitationRow[];
   statesLink: { href: "#states"; text: string };
@@ -28,7 +29,9 @@ const NATIONAL_NOTES: Record<StateVisa, string> = {
 
 function invitedText(invited: Interval, label: string): string {
   if (invited.max === 0) return `none recorded (as at ${label})`;
-  if (isMasked(invited)) return `under 20, so may be zero (as at ${label})`;
+  if (isMasked(invited)) {
+    return `under 20 invited, so may be zero (as at ${label})`;
+  }
   return `at least ${formatCount({ min: invited.min, max: invited.min })} invited (as at ${label})`;
 }
 
@@ -68,6 +71,8 @@ export function buildNominatedPanel(
     heading: `Where you stand in the national ${visa} pool`,
     whereYouStand: buildWhereYouStand(core, score, visa),
     nationalNote: NATIONAL_NOTES[visa],
+    // INVITED counts every state's nominations together.
+    invitationsHeading: "Invitations recorded, all states",
     invitations: invitationRows(core, visa),
     statesLink: { href: "#states", text: "See how each state selects" },
   };
