@@ -16,8 +16,10 @@ export const PALETTE = {
 export const STATUS = {
   strongest: { fg: "#1F5136", bg: "#DDEBDF" },
   watching: { fg: "#2E4A7D", bg: "#E4E9F2" },
-  needsAnswers: { fg: "#4A463E", bg: "#ECE7DC" },
-  unverified: { fg: "#4A463E", bg: "#ECE7DC" },
+  // Both are about missing answers or our own checks, not the user's chances:
+  // a light card, never the grey of a dead end (19 Nov 2026).
+  needsAnswers: { fg: "#4A463E", bg: "#FBF8F2" },
+  unverified: { fg: "#2E4A7D", bg: "#FBF8F2" },
   notOpen: { fg: "#8A2E22", bg: "#F5DEDA" },
 } as const;
 

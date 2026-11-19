@@ -1,4 +1,4 @@
-/* The demo's frame at its design size (720 × 436 wide, 346 × 660 compact).
+/* The demo's frame at its design size (720 × 460 wide, 346 × 720 compact).
    The stage scales it; sizes here are design pixels. The smallest text is
    15px, so at the smallest scale a column allows (0.8) it renders at 12px
    (see demo-layout.ts). */
@@ -22,14 +22,14 @@
   top: 24px;
   left: 24px;
   width: 672px;
-  height: 452px;
+  height: 476px;
 }
 
 .page {
   top: 16px;
   left: 16px;
   width: 314px;
-  height: 684px;
+  height: 744px;
   overflow: hidden;
   border-radius: 12px;
   background: var(--newsprint);
@@ -200,8 +200,9 @@
 
 .outlookHead {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 14px;
+  gap: 8px 14px;
 }
 
 .legend {
@@ -291,10 +292,11 @@
 .chip[data-tone="unverified"] {
   background: var(--status-unverified-bg);
   color: var(--status-unverified-fg);
+  box-shadow: inset 0 0 0 1px var(--status-unverified-fg);
 }
 
 .tile[data-on="true"][data-tone="unverified"] {
-  border-color: var(--muted);
+  border-color: var(--status-unverified-fg);
   background: var(--status-unverified-bg);
   color: var(--status-unverified-fg);
 }

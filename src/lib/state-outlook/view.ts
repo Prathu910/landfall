@@ -1,7 +1,12 @@
 import type { StateSide } from "../data/state-evidence";
 import type { StateCode, StateVisa } from "../data/types";
 import { STATE_NAMES } from "./context";
-import { dataSentences, evidenceFragment } from "./evidence-text";
+import {
+  dataSentences,
+  evidenceFragment,
+  evidenceLead,
+  type EvidenceLead,
+} from "./evidence-text";
 import type { Group, Outlook, StateOutcome } from "./outlook";
 import { canApplyLines } from "./panel-lines";
 import type { CanApplyLine } from "./panel-lines";
@@ -13,7 +18,10 @@ export type Tile = {
   state: StateCode;
   group: Group;
   label: string;
+  /** The tile's line in one sentence: a closed door's reason, or the evidence. */
   fragment: string;
+  /** The evidence split for display, headline first; null for a closed door. */
+  lead: EvidenceLead | null;
   href: string; // "#state-<visa>-<code>"
 };
 
@@ -35,7 +43,8 @@ const GROUP_LABELS: Record<Group, string> = {
   strongest: "Strongest evidence",
   watching: "Worth watching",
   "needs-answers": "Needs your answers",
-  unverified: "Not yet verified",
+  // Our check of the official rules, not the user: see ruling in STRATEGY (19 Nov 2026).
+  unverified: "Rules being checked",
   "not-open": "Not open to you now",
 };
 
@@ -60,6 +69,10 @@ export function buildTiles(outlook: Outlook, points: number): Tile[] {
     group: outcome.group,
     label: STATE_NAMES[outcome.state],
     fragment: fragmentFor(outcome, points),
+    lead:
+      outcome.group === "not-open"
+        ? null
+        : evidenceLead(outcome.evidence, points),
     href: `#${panelId(outcome.visa, outcome.state)}`,
   }));
 }

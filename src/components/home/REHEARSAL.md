@@ -81,3 +81,9 @@ Sample changed to Registered Nurses nec (19 Nov 2026), re-filmed against the bui
 
 - Gate: `rehearsal passed` on the loop at 1440, 390 and 320, and on `--states` at 1440. The only extra line is `scale: 0.83` at 1440 (not a gate line).
 - The figures are now 0 / 0–38 / 0 ahead and 0 / 78 / under 20 at score. In compact, "Registered Nurses nec" takes the report header's two-line clamp (as "ICT Business Analyst" did) and one line in the check view.
+
+Sample moved to NSW with "Rules being checked" tiles (19 Nov 2026):
+
+- The legend now has three chips (Strongest evidence, Rules being checked, Not open to you now). In wide it wraps under the "190 · Nominated" heading (the row clipped "Not open to you now" at the window edge); in compact the chips stack and pushed the second tile row out of the crop.
+- Design sizes are now 720 × 460 wide (was 436) and 346 × 720 compact (was 660), with the window and page still bleeding 40px off the stage's foot.
+- Gate: `rehearsal passed` on the loop at 1440, 768, 390, 375, 360 and 320, and on `--states` at 1440 and 390.

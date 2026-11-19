@@ -9,7 +9,7 @@ describe("sample profile", () => {
   it("is the /sample/ profile", () => {
     expect(sampleReportProfile.occupation).toBe(sampleProfile.occupation);
     expect(sampleReportProfile.eoiDate).toBe("2026-03-14");
-    expect(sampleReportProfile.state).toBe("VIC");
+    expect(sampleReportProfile.state).toBe("NSW");
     expect(SAMPLE_AS_OF).toBe("2026-11-17");
   });
 });
@@ -74,5 +74,14 @@ describe("the sample occupation", () => {
     expect(eois.basis).toBe("your-month");
     expect(eois.bar.invited.min).toBeGreaterThan(0);
     expect(eois.bar.lodged.min).toBeGreaterThan(0);
+  });
+});
+
+describe("the sample's state outlook", () => {
+  it("earns Strongest evidence in New South Wales for 190 from verified rules", () => {
+    const outlook = buildSampleView().view.stateOutlook!;
+    const nsw = outlook.tilesByVisa["190"].find((t) => t.state === "NSW");
+    expect(nsw?.group).toBe("strongest");
+    expect(outlook.summaryByVisa["190"]).toContain("Strongest evidence in NSW");
   });
 });

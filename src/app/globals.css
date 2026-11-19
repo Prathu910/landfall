@@ -14,9 +14,9 @@
   --status-watching-fg: #2e4a7d;
   --status-watching-bg: #e4e9f2;
   --status-needs-answers-fg: #4a463e;
-  --status-needs-answers-bg: #ece7dc;
-  --status-unverified-fg: #4a463e;
-  --status-unverified-bg: #ece7dc;
+  --status-needs-answers-bg: #fbf8f2;
+  --status-unverified-fg: #2e4a7d;
+  --status-unverified-bg: #fbf8f2;
   --status-not-open-fg: #8a2e22;
   --status-not-open-bg: #f5deda;
   --question-fg: #1b1a17;

@@ -51,34 +51,34 @@
 .frame {
   --scale: min(1, tan(atan2(100cqw, 720px)));
   position: relative;
-  height: 436px;
+  height: 460px;
   overflow: clip;
 }
 
 .frame > :global(.ss-stage) {
   width: 720px;
-  height: 436px;
+  height: 460px;
 }
 
 .compact {
   --scale: min(1, tan(atan2(100cqw, 346px)));
   display: none;
-  height: 660px;
+  height: 720px;
 }
 
 .compact > :global(.ss-stage) {
   width: 346px;
-  height: 660px;
+  height: 720px;
   margin-left: max(0px, (100cqw - 346px) / 2);
 }
 
 @supports (scale: tan(atan2(1px, 1px))) {
   .frame {
-    height: calc(436px * var(--scale));
+    height: calc(460px * var(--scale));
   }
 
   .compact {
-    height: calc(660px * var(--scale));
+    height: calc(720px * var(--scale));
   }
 
   .frame > :global(.ss-stage) {

@@ -1,0 +1,78 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>State tiles mockup</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1B1A17;--news:#F3EEE3;--card:#FBF8F2;--muted:#4a463e;--soft:#6b6558;--rule:#ddd4c2;--slate:#2E4A7D;--slatebg:#E4E9F2;--saff:#D9731A;--nobg:#F5DEDA;--nofg:#8A2E22;--unbg:#ECE7DC}
+body{margin:0;background:var(--news);color:var(--ink);font:16px/1.5 Inter,sans-serif}
+main{max-width:1000px;margin:0 auto;padding:28px 16px 60px}
+h1{font:600 32px/1.1 Newsreader,serif;margin:0 0 6px}
+h2{font:600 22px/1.2 Newsreader,serif;margin:36px 0 4px}
+.sub{color:var(--muted);margin:0 0 14px;max-width:46em}
+.label{display:inline-block;font:600 12px/1 Inter;letter-spacing:.06em;text-transform:uppercase;padding:5px 8px;border-radius:999px;margin-bottom:10px}
+.before .label{background:#e2dccf;color:var(--muted)} .after .label{background:var(--ink);color:var(--news)}
+.panel{background:var(--card);border:1px solid var(--rule);border-radius:14px;padding:18px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:760px){.grid{grid-template-columns:repeat(2,1fr)}}
+.tile{display:flex;flex-direction:column;gap:4px;min-height:132px;padding:14px 14px 12px;border:1px solid var(--ink);border-radius:14px}
+.code{font:600 1.5rem/1.1 Newsreader,serif}.group{font-size:.8125rem;font-weight:700}.frag{font-size:.875rem;line-height:1.4}.cue{margin-top:auto;padding-top:6px;font-size:.8125rem;text-decoration:underline}
+.b-un{background:var(--unbg);border-color:var(--muted)}
+.no{background:var(--nobg);border-color:var(--nofg)}.no .group{color:var(--nofg)}
+/* after */
+.a-un{background:var(--card);border:1px solid var(--rule);box-shadow:inset 0 3px 0 var(--slate)}
+.a-un .group{color:var(--slate);display:flex;align-items:center;gap:6px}
+.a-un .group svg{flex:none}
+.big{font:600 1.35rem/1.15 Newsreader,serif;margin-top:4px}
+.small{font-size:.8125rem;color:var(--muted);line-height:1.35}
+.note{font-size:.875rem;color:var(--muted);margin-top:12px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.chip{font-size:.875rem;font-weight:600;padding:4px 10px;border-radius:999px}
+.c-bun{background:var(--unbg);color:var(--muted)}.c-no{background:var(--nobg);color:var(--nofg)}
+.c-aun{background:var(--card);color:var(--slate);border:1px solid var(--slate)}
+.trow{display:flex;gap:8px;flex-wrap:wrap}
+.t{width:72px;text-align:center;padding:9px 0;border-radius:9px;font-weight:600;border:1.5px solid var(--muted);background:var(--unbg);color:var(--muted)}
+.t.no2{border-color:var(--nofg);background:var(--nobg);color:var(--nofg)}
+.t.aun{background:var(--card);border-color:var(--slate);color:var(--slate)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:760px){.cols{grid-template-columns:1fr}}
+ul{margin:8px 0 0;padding-left:20px}li{margin:4px 0}
+</style></head><body><main>
+<h1>State tiles: "Not yet verified" redesign</h1>
+<p class="sub">Real figures from the nurse sample (Registered Nurses nec, 190 at 95 points, as at Oct 2026). Only the tiles where <b>we</b> haven't confirmed a rule change. "Not open to you now" stays red because that one is about the user.</p>
+
+<h2>1. Report and homepage tiles</h2>
+<div class="cols">
+<div class="before"><span class="label">Before</span>
+<div class="panel"><div class="grid" style="grid-template-columns:repeat(2,1fr)">
+<div class="tile b-un"><span class="code">Victoria</span><span class="group">Not yet verified</span><span class="frag">at least 337 invited at ≤95 (as at Oct 2026)</span><span class="cue">See the reasons</span></div>
+<div class="tile b-un"><span class="code">New South Wales</span><span class="group">Not yet verified</span><span class="frag">at least 327 invited at ≤95 (as at Oct 2026)</span><span class="cue">See the reasons</span></div>
+<div class="tile b-un"><span class="code">Tasmania</span><span class="group">Not yet verified</span><span class="frag">at least 28 invited at ≤95 (as at Oct 2026)</span><span class="cue">See the reasons</span></div>
+<div class="tile no"><span class="code">Queensland</span><span class="group">Not open to you now</span><span class="frag">Not open to those living elsewhere in Australia</span><span class="cue">See the reasons</span></div>
+</div></div></div>
+<div class="after"><span class="label">After</span>
+<div class="panel"><div class="grid" style="grid-template-columns:repeat(2,1fr)">
+<div class="tile a-un"><span class="code">Victoria</span><span class="group"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 4.5V8l2.3 1.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Rules being checked</span><span class="big">At least 337 invited</span><span class="small">at 95 points or below, as at Oct 2026</span><span class="cue">See the evidence</span></div>
+<div class="tile a-un"><span class="code">New South Wales</span><span class="group"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 4.5V8l2.3 1.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Rules being checked</span><span class="big">At least 327 invited</span><span class="small">at 95 points or below, as at Oct 2026</span><span class="cue">See the evidence</span></div>
+<div class="tile a-un"><span class="code">Tasmania</span><span class="group"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 4.5V8l2.3 1.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Rules being checked</span><span class="big">At least 28 invited</span><span class="small">at 95 points or below, as at Oct 2026</span><span class="cue">See the evidence</span></div>
+<div class="tile no"><span class="code">Queensland</span><span class="group">Not open to you now</span><span class="frag">Not open to those living elsewhere in Australia</span><span class="cue">See the reasons</span></div>
+</div></div></div>
+</div>
+<p class="note">When the published count is masked ("under 20, so may be zero"), the big line becomes "Under 20 invited" and the small line keeps "so may be zero"; when there are none, "No invitations recorded". The headline number never hides a zero.</p>
+
+<h2>2. Homepage demo (the animated hero)</h2>
+<div class="cols">
+<div class="before"><span class="label">Before</span><div class="panel">
+<div class="chips"><b>190 · Nominated</b><span class="chip c-bun">Not yet verified</span><span class="chip c-no">Not open to you now</span></div>
+<div class="trow"><span class="t">VIC</span><span class="t">NSW</span><span class="t">WA</span><span class="t">ACT</span><span class="t">TAS</span><span class="t">NT</span><span class="t no2">QLD</span><span class="t no2">SA</span></div></div></div>
+<div class="after"><span class="label">After</span><div class="panel">
+<div class="chips"><b>190 · Nominated</b><span class="chip c-aun">Rules being checked</span><span class="chip c-no">Not open to you now</span></div>
+<div class="trow"><span class="t aun">VIC</span><span class="t aun">NSW</span><span class="t aun">WA</span><span class="t aun">ACT</span><span class="t aun">TAS</span><span class="t aun">NT</span><span class="t no2">QLD</span><span class="t no2">SA</span></div></div></div>
+</div>
+
+<h2>What changes, and what doesn't</h2>
+<ul>
+<li><b>Label:</b> "Not yet verified" becomes "Rules being checked": it's about our check, not the user.</li>
+<li><b>Look:</b> a light card with a slate top line and a clock icon, instead of the dull grey fill. Slate is the brand's link and "Worth watching" colour, so it reads as "open, look closer", not "no".</li>
+<li><b>Order:</b> the published invitations lead, in the serif, as the tile's headline; the link says "See the evidence".</li>
+<li><b>Same meaning:</b> the group, its rules and the panel's "Not yet verified on the official page" lines stay exactly as they are. Red stays only for "Not open to you now".</li>
+<li><b>Part A runs alongside:</b> as I verify each state's rules on the official pages, tiles leave this group altogether (to "Needs your answers", "Worth watching" or "Strongest evidence", whatever the evidence says).</li>
+</ul>
+</main></body></html>
