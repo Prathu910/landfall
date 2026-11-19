@@ -1,6 +1,6 @@
-import type { Profile } from "@/lib/migration";
-import type { OccupationIndexEntry } from "@/lib/data/types";
-import { buildReportView, type ReportView } from "@/lib/report/report-view";
+import type { Profile } from "../../lib/migration";
+import type { OccupationIndexEntry } from "../../lib/data/types";
+import { buildReportView, type ReportView } from "../../lib/report/report-view";
 import {
   toScorecardData,
   type ReportOccupation,

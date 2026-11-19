@@ -34,6 +34,41 @@ function peakFragment(peak: MonthlyInvited, points: number): string {
   return `at least ${count} invited at ≤${points} (as at ${formatMonth(peak.asAt)})`;
 }
 
+/** A tile's evidence as a short headline and the detail under it. */
+export type EvidenceLead = { headline: string; detail: string };
+
+/**
+ * The same facts as `evidenceFragment`, split so a tile can lead with the
+ * count. A masked count keeps "so may be zero"; a zero is never hidden.
+ */
+export function evidenceLead(side: StateSide, points: number): EvidenceLead {
+  const where = `at ${points} points or below`;
+  if (side.peak !== null) {
+    const { invitedAtLeast, asAt } = side.peak;
+    const count = formatCount({
+      min: invitedAtLeast.min,
+      max: invitedAtLeast.min,
+    });
+    return {
+      headline: `At least ${count} invited`,
+      detail: `${where} (as at ${formatMonth(asAt)})`,
+    };
+  }
+  if (side.invitedAtOrBelow.length === 0) {
+    return {
+      headline: "No published invitation data",
+      detail: "for this state in the last 12 months",
+    };
+  }
+  if (side.invitedAtOrBelow.some((m) => isMasked(m.invitedAtLeast))) {
+    return { headline: "Under 20 invited", detail: `${where}, so may be zero` };
+  }
+  return {
+    headline: "No invitations recorded",
+    detail: "at your score in 12 months",
+  };
+}
+
 /** What published invitations say at or below the score, for a tile. */
 export function evidenceFragment(
   side: StateSide,

@@ -1,25 +1,25 @@
 import Link from "next/link";
-import { Brand } from "./site-header";
 import { ArrowUpRight } from "lucide-react";
+import { loadManifest } from "@/lib/data/load-server";
+import { formatMonth } from "@/lib/report/copy";
+import { Brand } from "./brand/brand";
 
 export function SiteFooter() {
+  // One month style site-wide: "Oct 2026", as the report and homepage show it.
+  const asAt = formatMonth(loadManifest().asAt);
   return (
     <footer className="site-footer">
       <div className="container">
         <div className="footer-top">
           <div>
-            <Brand />
-            <p>
-              A little more clarity.
-              <br />
-              For a very big decision.
-            </p>
+            <Brand reversed />
+            <p>Published SkillSelect data, as at {asAt}.</p>
           </div>
           <div className="footer-links">
-            <Link href="/check/">Points check</Link>
+            <Link href="/check/">Check my points</Link>
             <Link href="/sample/">Sample report</Link>
-            <Link href="/states/">State pathways</Link>
-            <Link href="/methodology/">Methodology & sources</Link>
+            <Link href="/states/">States</Link>
+            <Link href="/methodology/">Method and sources</Link>
             <a href="https://www.mara.gov.au/" target="_blank" rel="noreferrer">
               Find a registered agent <ArrowUpRight size={13} />
             </a>
@@ -27,11 +27,11 @@ export function SiteFooter() {
         </div>
         <div className="footer-bottom">
           <p>
-            General information, not migration advice. Landfall is independent
-            and is not a registered migration agent or affiliated with the
-            Australian Government.
+            MigrateLens gives general information from published data. We are
+            not registered migration agents and don&apos;t give migration
+            advice.
           </p>
-          <span>© {new Date().getFullYear()} Landfall</span>
+          <span>© {new Date().getFullYear()} MigrateLens</span>
         </div>
       </div>
     </footer>

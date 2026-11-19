@@ -2,7 +2,11 @@ import type { TimelineEvent } from "../migration";
 
 export type ChangeItem = {
   label: string;
+  /** The signed change as shown, "+5" or "−5". */
   effect: string;
+  delta: number;
+  /** The event's date (YYYY-MM-DD); null for a scenario. */
+  date: string | null;
   href: "#timeline" | "#scenarios";
 };
 
@@ -26,6 +30,8 @@ export function buildWhatCouldChange(
     .map((e): ChangeItem => ({
       label: e.title,
       effect: signed(e.delta as number),
+      delta: e.delta as number,
+      date: e.date,
       href: "#timeline",
     }));
   const gains = scenarios
@@ -35,6 +41,8 @@ export function buildWhatCouldChange(
     .map((s): ChangeItem => ({
       label: s.label,
       effect: signed(s.delta),
+      delta: s.delta,
+      date: null,
       href: "#scenarios",
     }));
   return [...upcoming, ...gains];

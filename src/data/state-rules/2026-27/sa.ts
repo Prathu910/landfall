@@ -35,9 +35,9 @@ const RELATED_WORK =
   "Work must be in the same ANZSCO sub-major group (first 2 digits) as the nominated occupation.";
 
 const STUDY_UNTESTED =
-  "Landfall asks only which state you studied in, so it cannot test the 46 weeks, the 75% or the year living in South Australia, and this check is not applied as verified.";
+  "MigrateLens asks only which state you studied in, so it cannot test the 46 weeks, the 75% or the year living in South Australia, and this check is not applied as verified.";
 const AFTER_COURSE_UNTESTED =
-  "Landfall's months answer does not say whether those months came after completing the course, so this check is not applied as verified.";
+  "Our months question does not say whether those months came after completing the course, so this check is not applied as verified.";
 
 // Research §SA items 1 and 7: the 22 Oct 2026 update gates every onshore stream.
 const onshoreStatus = verified(
@@ -85,7 +85,7 @@ const streams: Stream[] = [
     "sa-graduates",
     "South Australian Graduates",
     "South Australian Graduates",
-    // Ruling P28: read directly, but Landfall asks only which state you
+    // Ruling P28: read directly, but MigrateLens asks only which state you
     // studied in and for months up to now, so it cannot test the course rules
     // or whether the months came after the course. All held as secondary.
     [
@@ -134,7 +134,7 @@ const streams: Stream[] = [
       secondary(
         LIVES_REGIONAL,
         OUTER,
-        "Read directly: living and working in outer-regional South Australia. That area is narrower than 'regional', which Landfall's question asks about, so this check is not applied as verified. The page still says invitations are issued 'throughout 2025–26'.",
+        "Read directly: living and working in outer-regional South Australia. That area is narrower than 'regional', which our question asks about, so this check is not applied as verified. The page still says invitations are issued 'throughout 2025–26'.",
       ),
       verified(
         livingInState(9),

@@ -1,6 +1,16 @@
 "use client";
 
+import {
+  clearSavedProfile,
+  migrateLegacyProfile,
+  STORAGE_KEY,
+} from "@/lib/profile-storage";
 import { useEffect, useState, useRef } from "react";
+import {
+  OPEN_OVERVIEW,
+  START_OVER,
+  TRY_SAMPLE_ANSWERS,
+} from "@/lib/check-actions";
 import {
   Alert,
   Badge,
@@ -28,12 +38,12 @@ import {
 } from "lucide-react";
 import {
   emptyProfile,
-  sampleProfile,
   calculatePoints,
   localToday,
   formatDate,
   type Profile,
 } from "@/lib/migration";
+import { sampleReportProfile } from "@/lib/sample";
 import { resetStateRelativeAnswers, restoreProfile } from "@/lib/state-answers";
 import type { ReportSource } from "@/lib/data/report-source";
 import { publishedOccupationCode } from "@/lib/data/occupation-url";
@@ -46,7 +56,6 @@ import {
 import { Report } from "./report";
 import styles from "./check-flow.module.css";
 
-const STORAGE_KEY = "landfall-profile-v1";
 const STEPS = [
   "Your profile",
   "English & study",
@@ -54,15 +63,6 @@ const STEPS = [
   "Your overview",
 ];
 const states = ["ACT", "NSW", "NT", "QLD", "SA", "TAS", "VIC", "WA"];
-const example: Profile = {
-  ...sampleProfile,
-  onshore: true,
-  state: "VIC",
-  visaExpiry: "2027-09-30",
-  assessmentDate: "2026-02-20",
-  assessmentExpiry: "2029-02-20",
-  eoiDate: "2026-03-14",
-};
 
 function isProfile(value: unknown): value is Profile {
   if (!value || typeof value !== "object") return false;
@@ -102,6 +102,7 @@ export function CheckFlow({ source }: { source: ReportSource }) {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- post-hydration sync with browser storage
     setAsOf(localToday());
     try {
+      migrateLegacyProfile(localStorage);
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
@@ -158,9 +159,7 @@ export function CheckFlow({ source }: { source: ReportSource }) {
     setSave(false);
     setReport(false);
     changeStep(0);
-    try {
-      localStorage.removeItem(STORAGE_KEY);
-    } catch {}
+    clearSavedProfile(localStorage);
   };
   const next = () => {
     if (
@@ -275,7 +274,7 @@ export function CheckFlow({ source }: { source: ReportSource }) {
           }}
         >
           <div className={styles.stepMeta}>
-            <Badge variant="light" color="teal" radius="sm">
+            <Badge variant="light" color="ink" radius="sm">
               Your free check
             </Badge>
             <span>Step {step + 1} / 4</span>
@@ -284,7 +283,7 @@ export function CheckFlow({ source }: { source: ReportSource }) {
             value={(step + 1) * 25}
             size={4}
             radius="xl"
-            color="teal"
+            color="ink"
             aria-label={`Step ${step + 1} of 4`}
             className={styles.progress}
           />
@@ -317,10 +316,10 @@ export function CheckFlow({ source }: { source: ReportSource }) {
               <h2 className={styles.title} tabIndex={-1} ref={heading}>
                 {
                   [
-                    "Let’s start with you.",
-                    "English. Education. Possibility.",
-                    "Complete your picture.",
-                    "Looking good. One last check.",
+                    "You and your occupation",
+                    "Your English and qualifications",
+                    "Your work and other points",
+                    "Review your answers",
                   ][step]
                 }
               </h2>
@@ -553,7 +552,7 @@ export function CheckFlow({ source }: { source: ReportSource }) {
                   <>
                     <Alert
                       icon={<Info size={17} />}
-                      color="teal"
+                      color="ink"
                       variant="light"
                       radius="md"
                     >
@@ -703,7 +702,7 @@ export function CheckFlow({ source }: { source: ReportSource }) {
                     </div>
                     <Alert
                       icon={<ShieldCheck size={18} />}
-                      color="teal"
+                      color="ink"
                       radius="md"
                     >
                       Your answers are self-reported. This overview explains
@@ -737,16 +736,16 @@ export function CheckFlow({ source }: { source: ReportSource }) {
               }
               onClick={() => (step > 0 ? changeStep(step - 1) : clear())}
             >
-              {step > 0 ? "Back" : "Start over"}
+              {step > 0 ? "Back" : START_OVER}
             </Button>
             <Button
               type="submit"
               size="md"
-              color="teal"
+              color="ink"
               radius="md"
               rightSection={<ArrowRight size={17} />}
             >
-              {step === 3 ? "Open my overview" : "Continue"}
+              {step === 3 ? OPEN_OVERVIEW : "Continue"}
             </Button>
           </div>
         </form>
@@ -757,13 +756,13 @@ export function CheckFlow({ source }: { source: ReportSource }) {
           <Button
             variant="subtle"
             size="xs"
-            color="teal"
+            color="ink"
             onClick={() => {
-              setProfile({ ...example });
+              setProfile({ ...sampleReportProfile });
               changeStep(0);
             }}
           >
-            Try sample answers
+            {TRY_SAMPLE_ANSWERS}
           </Button>
         </div>
         <Button

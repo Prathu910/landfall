@@ -25,3 +25,9 @@
     break-after: avoid;
   }
 }
+
+@media (max-width: 720px) {
+  .trendNote {
+    font-size: 1rem;
+  }
+}

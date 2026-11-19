@@ -6,7 +6,7 @@
   height: 22px;
   border-radius: 6px;
   overflow: hidden;
-  background: var(--pale);
+  background: var(--surface);
 }
 .bar span {
   display: block;
@@ -14,13 +14,13 @@
   flex: none;
 }
 .ahead {
-  background: var(--forest-dark);
+  background: var(--ink);
 }
 .same {
-  background: #e0a33a;
+  background: #d9731a;
 }
 .lower {
-  background: #b9c7c0;
+  background: #b9af9a;
 }
 .legend {
   display: flex;
@@ -49,5 +49,11 @@
   .legend i {
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
+  }
+}
+
+@media (max-width: 720px) {
+  .legend {
+    font-size: 1rem;
   }
 }

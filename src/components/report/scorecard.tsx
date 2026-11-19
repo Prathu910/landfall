@@ -1,9 +1,13 @@
 import {
+  AT_SCORE_LABEL,
   LOADING_HEADLINE,
+  POINTS_UNIT,
   type Scorecard,
   type ScorecardCard,
 } from "../../lib/report/scorecard";
+import type { DataSays } from "../../lib/report/report-view";
 import { Reveal } from "../reveal";
+import { DataSaysDetails } from "./data-says";
 import { NoteWithLink } from "./note-with-link";
 import styles from "./scorecard.module.css";
 
@@ -20,7 +24,7 @@ function Card({ card, loading }: { card: ScorecardCard; loading: boolean }) {
         </>
       )}
       <p className={styles.points}>
-        <span className={styles.pointsValue}>{card.points}</span> points
+        <span className={styles.pointsValue}>{card.points}</span> {POINTS_UNIT}
         {card.pointsNote ? (
           <span className={styles.pointsNote}> {card.pointsNote}</span>
         ) : null}
@@ -35,7 +39,7 @@ function Card({ card, loading }: { card: ScorecardCard; loading: boolean }) {
           ) : null}
           {card.atScore ? (
             <p className={styles.row}>
-              <span>At your score</span>
+              <span>{AT_SCORE_LABEL}</span>
               <b>{card.atScore}</b>
             </p>
           ) : null}
@@ -50,7 +54,14 @@ function Card({ card, loading }: { card: ScorecardCard; loading: boolean }) {
   );
 }
 
-export function RealityScorecard({ scorecard }: { scorecard: Scorecard }) {
+/** "What the data says": the bottom line, the three visas, then the chart, EOIs like yours and the levers. */
+export function RealityScorecard({
+  scorecard,
+  dataSays = null,
+}: {
+  scorecard: Scorecard;
+  dataSays?: DataSays | null;
+}) {
   const loading = scorecard.headline === LOADING_HEADLINE;
   return (
     <section
@@ -60,10 +71,13 @@ export function RealityScorecard({ scorecard }: { scorecard: Scorecard }) {
     >
       <Reveal>
         <div className={styles.strip}>
-          <p className={styles.eyebrow}>Your reality check</p>
+          <p className={styles.eyebrow}>What the data says</p>
           <h2 id="reality-check-heading" className={styles.headline}>
             {scorecard.headline}
           </h2>
+          {loading || !scorecard.detail ? null : (
+            <p className={styles.detail}>{scorecard.detail}</p>
+          )}
           {loading ? null : (
             <p className={styles.source}>{scorecard.sourceLine}</p>
           )}
@@ -79,6 +93,7 @@ export function RealityScorecard({ scorecard }: { scorecard: Scorecard }) {
         {loading ? null : (
           <p className={styles.overlap}>{scorecard.overlapNote}</p>
         )}
+        {loading || !dataSays ? null : <DataSaysDetails says={dataSays} />}
       </Reveal>
     </section>
   );

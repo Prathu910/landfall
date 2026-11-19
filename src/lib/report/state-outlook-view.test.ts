@@ -35,9 +35,10 @@ const data: StateRuleData = {
   lists: realLists(),
   federal: realFederal(),
 };
-// The /sample/ profile: ICT Business Analyst living in Victoria.
+// The sample's answers as an ICT Business Analyst living in Victoria.
 const aarav: Profile = {
   ...sampleProfile,
+  occupation: "261111",
   onshore: true,
   state: "VIC",
   visaExpiry: "2027-09-30",
@@ -258,7 +259,7 @@ describe("buildStateOutlookView", () => {
   });
 
   it("does not ask an unanswered question whose answer could not change a tile", () => {
-    // Where the sample studied can't change a tile: the WA and SA graduate
+    // Where Aarav studied can't change a tile: the WA and SA graduate
     // study rules are held as secondary (ruling P28). The visa expiry is an
     // answer already given.
     expect(build(aarav).questions.map((q) => q.field)).toEqual(["visaExpiry"]);

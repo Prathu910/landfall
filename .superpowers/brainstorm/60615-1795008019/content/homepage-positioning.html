@@ -1,0 +1,76 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,600&display=swap" rel="stylesheet">
+<style>
+  .hv { border: 1px solid #ddd4c2; border-radius: 12px; overflow: hidden; margin-bottom: 22px; cursor: pointer; }
+  .hv.selected { box-shadow: 0 0 0 3px #3b82f6; }
+  .hv-label { padding: 10px 18px; font: 500 14px/1.4 system-ui; background: #fafafa; border-bottom: 1px solid #eee; color: #222; display: flex; justify-content: space-between; gap: 12px; }
+  .page { background: #F3EEE3; color: #1B1A17; font-family: Inter, sans-serif; padding: 26px 28px 28px; }
+  h1.h { font-family: Newsreader, serif; font-weight: 600; font-size: 42px; line-height: 1.04; letter-spacing: -.015em; margin: 0 0 12px; max-width: 15em; }
+  .lede { font-size: 16.5px; line-height: 1.55; color: #4a463e; margin: 0 0 18px; max-width: 36em; }
+  .doors { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 640px; }
+  @media (max-width: 700px) { .doors { grid-template-columns: 1fr; } }
+  .door { background: #FBF8F2; border: 1px solid #cfc5b0; border-radius: 12px; padding: 14px 16px; }
+  .door .k { font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: #A04E0C; font-weight: 600; }
+  .door .t { font-family: Newsreader, serif; font-weight: 600; font-size: 20px; margin: 4px 0 4px; }
+  .door .d { font-size: 13.5px; color: #4a463e; line-height: 1.45; }
+  .door .go { margin-top: 10px; font-weight: 600; font-size: 14px; }
+  .door.primary { background: #1B1A17; color: #F3EEE3; border-color: #1B1A17; }
+  .door.primary .d { color: #d8d0bf; }
+  .door.primary .k { color: #F0A35E; }
+  .btns { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+  .b1 { background: #1B1A17; color: #F3EEE3; padding: 11px 16px; border-radius: 9px; font-weight: 600; font-size: 14px; }
+  .b2 { color: #2E4A7D; font-weight: 600; font-size: 14px; text-decoration: underline; }
+  .trust { margin-top: 16px; font-size: 12.5px; color: #6b6558; display: flex; gap: 12px; flex-wrap: wrap; }
+  .trust span::before { content: "✓ "; color: #A04E0C; font-weight: 700; }
+  .flow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 8px; }
+  @media (max-width: 760px) { .flow { grid-template-columns: 1fr; } }
+  .flow div { background: #fff; border: 1px solid #ddd4c2; border-radius: 10px; padding: 12px 14px; font: 14px/1.5 system-ui; color: #222; }
+  .flow b { display: block; margin-bottom: 4px; }
+  .tag { display: inline-block; font: 600 11px/1 system-ui; padding: 4px 7px; border-radius: 999px; background: #F6DFC6; color: #7a3d06; margin-bottom: 6px; }
+</style>
+
+<h2>One site for both: planning an EOI, or already waiting</h2>
+<p class="subtitle">Three ways to say it at the top of the homepage. All of them lead into the same free check; nothing is built twice.</p>
+
+<!-- P1 -->
+<div class="hv option" data-choice="p1" onclick="toggleSelect(this)">
+  <div class="hv-label"><span><b>P1 · Two doors</b> (my pick)</span><span>Visitors pick their situation; both doors lead to the same check</span></div>
+  <div class="page">
+    <h1 class="h">Know your points. See where they'd put you.</h1>
+    <p class="lede">Count your points, check the points-test basics, then see the EOIs ahead of you and what happened to EOIs like yours. From official SkillSelect data, free.</p>
+    <div class="doors">
+      <div class="door primary"><div class="k">Not lodged an EOI yet</div><div class="t">Am I ready, and is it worth it?</div><div class="d">Your points, what could add more, and where an EOI at your score would sit today.</div><div class="go">Check my points →</div></div>
+      <div class="door"><div class="k">Already lodged</div><div class="t">Where does my EOI stand?</div><div class="d">The EOIs ahead of you, the ones at your score, and what happened to EOIs lodged when yours was.</div><div class="go">Check where I stand →</div></div>
+    </div>
+    <div class="trust"><span>SkillSelect data, as at Oct 2026</span><span>No percentages</span><span>Stays in your browser</span></div>
+  </div>
+</div>
+
+<!-- P2 -->
+<div class="hv option" data-choice="p2" onclick="toggleSelect(this)">
+  <div class="hv-label"><span><b>P2 · One headline that covers both</b></span><span>Simplest; one button</span></div>
+  <div class="page">
+    <h1 class="h">Your points, and where they'd put you.</h1>
+    <p class="lede">Planning your EOI or already waiting? Count your points, check the points-test basics, then see the EOIs ahead of you and what happened to EOIs at your score, from official SkillSelect data.</p>
+    <div class="btns"><span class="b1">Check my points, free</span><span class="b2">See a sample report</span></div>
+    <div class="trust"><span>SkillSelect data, as at Oct 2026</span><span>No percentages</span><span>Stays in your browser</span></div>
+  </div>
+</div>
+
+<!-- P3 -->
+<div class="hv option" data-choice="p3" onclick="toggleSelect(this)">
+  <div class="hv-label"><span><b>P3 · Lead with the honesty</b></span><span>Bolder, more emotional</span></div>
+  <div class="page">
+    <h1 class="h">The real numbers, before or after your EOI.</h1>
+    <p class="lede">No sales call, no percentages. Count your points, check the points-test basics, and see the EOIs ahead of you and what happened to EOIs like yours, from official SkillSelect data.</p>
+    <div class="btns"><span class="b1">Check my points, free</span><span class="b2">See a sample report</span></div>
+    <div class="trust"><span>SkillSelect data, as at Oct 2026</span><span>No percentages</span><span>Stays in your browser</span></div>
+  </div>
+</div>
+
+<h3 style="margin-top:28px">How each visitor is served (already true in the product)</h3>
+<div class="flow">
+  <div><span class="tag">Planning</span><b>No EOI yet</b>The check never needs an EOI date. The report shows where an EOI at their score would sit today, what could add points, and the dates when points change.</div>
+  <div><span class="tag">Waiting</span><b>EOI lodged</b>Adding the EOI date unlocks "EOIs lodged when yours was" and how long similar EOIs waited.</div>
+  <div><span class="tag">Careful wording</span><b>"Points-test basics", never "eligibility"</b>We check age, English and the skills assessment only. "Check your eligibility" would overpromise, since a visa has more requirements than we can check.</div>
+</div>

@@ -108,7 +108,7 @@ const GROUP_LABELS = [
   "Strongest evidence",
   "Worth watching",
   "Needs your answers",
-  "Not yet verified",
+  "Rules being checked",
   "Not open to you now",
 ];
 
@@ -122,6 +122,10 @@ describe("buildTiles fragments", () => {
     expect(tile.label).toBe("Western Australia");
     expect(tile.group).toBe("strongest");
     expect(tile.fragment).toBe("at least 14 invited at ≤95 (as at Sep 2026)");
+    expect(tile.lead).toEqual({
+      headline: "At least 14 invited",
+      detail: "at 95 points or below (as at Sep 2026)",
+    });
     expect(tile.href).toBe("#state-190-WA");
   });
 
@@ -132,6 +136,10 @@ describe("buildTiles fragments", () => {
       95,
     );
     expect(tile.fragment).toBe("under 20 invited, so may be zero");
+    expect(tile.lead).toEqual({
+      headline: "Under 20 invited",
+      detail: "at 95 points or below, so may be zero",
+    });
   });
 
   it("says nothing was recorded when every month is a confirmed zero", () => {
@@ -169,6 +177,7 @@ describe("buildTiles fragments", () => {
   it("uses the short reason for not-open tiles", () => {
     const [tile] = buildTiles(stub("not-open", side(), "Short reason"), 95);
     expect(tile.fragment).toBe("Short reason");
+    expect(tile.lead).toBeNull();
   });
 
   it("labels the any-state tile and keeps it out of the groups", () => {
@@ -241,7 +250,7 @@ describe("buildStatePanel", () => {
   it("marks secondary rules as not yet verified", () => {
     const vic = outcomeOf(run(0, "190", 90), "VIC");
     const panel = buildStatePanel(vic, rulesFor("VIC", "190"), 90, AS_OF);
-    expect(panel.groupLabel).toBe("Not yet verified");
+    expect(panel.groupLabel).toBe("Rules being checked");
     expect(
       panel.canApply.some(
         (l) => l.checkedNote === "Not yet verified on the official page",
@@ -253,7 +262,7 @@ describe("buildStatePanel", () => {
     const vic = outcomeOf(run(0, "491", 90), "VIC");
     const rules = rulesFor("VIC", "491");
     const panel = buildStatePanel(vic, rules, 90, AS_OF);
-    expect(panel.groupLabel).toBe("Not yet verified");
+    expect(panel.groupLabel).toBe("Rules being checked");
     expect(panel.canApply.map((l) => l.text)).not.toContain(
       "Closed in 2026–27",
     );
@@ -321,7 +330,7 @@ describe("buildStatePanel", () => {
       95,
       "2027-03-01",
     );
-    expect(panel.groupLabel).toBe("Not yet verified");
+    expect(panel.groupLabel).toBe("Rules being checked");
     expect(
       panel.canApply.some(
         (l) => l.checkedNote === "Last checked 17 Nov 2026; may have changed",
@@ -455,6 +464,7 @@ describe("tiles and panels over the real profiles", () => {
               ).groupLabel,
             );
             strings.push(tile.label, tile.fragment);
+            if (tile.lead) strings.push(tile.lead.headline, tile.lead.detail);
           }
           for (const outcome of outlook.states) {
             const panel: StatePanel = buildStatePanel(

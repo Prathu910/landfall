@@ -1,5 +1,13 @@
 # Resume here
 
+## Latest: MigrateLens brand and homepage shipped (18 November 2026)
+
+The brand and homepage plan is done on branch `brand/migratelens` (spec `docs/superpowers/specs/2026-11-18-migratelens-brand-and-homepage-design.md`, ledger `.superpowers/sdd/2026-11-18-migratelens-brand-and-homepage/progress.md`). The site is renamed MigrateLens everywhere in rendered HTML; the old storage key is migrated and cleared (ruling B3). New brand tokens, Newsreader + Inter, the C1 logo, favicon and OG image; a 12px text floor under test; a rebuilt homepage (two doors, try-it, three questions, FAQ) with a Stageshow hero demo. "Worth watching" is slate. Where things live: `CLAUDE.md`, "Brand" and "Homepage".
+
+State verification (19 Nov 2026): VIC, ACT, TAS and NT rules still need reading on the official pages through the founder's Chrome (Claude in Chrome must be connected; the sites return 403 to automated requests). NSW's "working in NSW" option needs a "working there now?" question, and WA's 6-month contract rule needs the WA list's Industry Sector column (construction is exempt), before either can be verified.
+
+Next: roadmap step 4, SEO foundation and occupation pages (`robots` stays `noindex` until the founder launches). Known follow-ups: not checked in Safari, Firefox or on touch (the demo poster scales with `tan(atan2())`); the poster CSS repeats the 576/720/436/358/660 layout literals with no test pinning them to `demo-layout.ts`; the fixed demo frame could overflow with more profile categories; `toPoolOccupation` in `src/lib/data/legacy.ts` is now used only by tests; `EOI_CAVEAT` duplicates a scorecard string; `OutcomeBar` shows a double label; a doubled full stop in one doc comment; `verifyPng` checks size only; merge the duplicate mobile media blocks in `globals.css`.
+
 ## Latest: state outlook shipped (18 November 2026)
 
 Roadmap step 3 is done on branch `roadmap/reality-check`. The report order is now: header, reality check, 189 / 190 / 491 panels, **state outlook** (`#state-outlook`) with the optional **"Sharpen my state outlook"** questions under it, then points audit, scenarios, timeline, occupation context, get organised and definitions.
@@ -20,7 +28,7 @@ Next: roadmap step 4, SEO foundation and occupation pages. Known follow-ups: bro
 Roadmap step 2 is done on branch `roadmap/reality-check`. The report now opens with the reality check, then a detail panel for each visa:
 
 1. Header.
-2. **Reality check** (`#reality-check`): a factual headline from the last four 189 rounds, three visa cards (chip, one sentence, your points, "Ahead of you" on 189 or "Higher score (national pool)" on 190/491, "At your score", a details link), the queue caveat with a link to `/methodology/#pool`, and the pool-overlap note.
+2. **What the data says** (`#reality-check`, renamed from "Reality check" on 19 Nov 2026): the bottom line from the last four 189 rounds and a state line ("The published evidence for 190 is strongest in NSW…"), three visa cards (190/491 chips name the best state group) (chip, one sentence, your points, "Ahead of you" on 189 or "Higher score (national pool)" on 190/491, "At your score", a details link), the queue caveat with a link to `/methodology/#pool`, and the pool-overlap note, then the last six 189 cut-offs against the reader's points, "EOIs like yours", and "What could change it" (points you could add, dated changes ahead). The same bottom line is repeated before "What this report can and cannot tell you". View-model: `src/lib/report/data-says.ts`; components: `src/components/report/data-says.tsx`.
 3. **189 panel** (`#visa-189`): where you stand (with the 12-month trend and its coverage caveat), among your score, recent rounds (all rounds on tap), what happened to EOIs like yours (nearby months on tap), what could change your position.
 4. **190 and 491 panels** (`#visa-190`, `#visa-491`): where you stand in the national pool and 12 months of recorded invitations, linking to the state pathways.
 5. Points audit (the eligibility notice now opens it), scenarios, timeline, state pathways, occupation context, get organised, definitions.
@@ -39,7 +47,7 @@ Roadmap step 1 is done on branch `roadmap/foundation`. The site is fed by one va
 
 - The UI looks and behaves as before for the original 11 occupations. The one copy change is the 12-month trend caption: the net-change sentence was replaced by a coverage caveat (ruling R17).
 - Final-review fixes: multi-month data now records every fetched month (`{}` = zero) and accessors use calendar windows from `asAt` (R14, records at `schemaVersion: 2`); the 2020-21 unit-group 189 rounds are skipped with reasons instead of being misread, and `rounds.json` is `{ rounds, skipped }` (R15); the legacy test regenerates 2026-10 from `data/raw` (R16); a short Qlik table read now stops the import. All 493 occupations are now searchable in the homepage explorer, the check's occupation picker and the report's comparison picker.
-- Pages server-load the occupations they render statically (ICT Business Analyst on the homepage; ICT Business Analyst and Software Engineer on `/sample/`). Other occupations are fetched one file at a time from `/data/occupations/<code>.json`, showing "Loading published data…" meanwhile.
+- Pages server-load the occupations they render statically (Registered Nurses nec on the homepage; Registered Nurses nec and Registered Nurse (Aged Care) on `/sample/`, since 19 Nov 2026). Other occupations are fetched one file at a time from `/data/occupations/<code>.json`, showing "Loading published data…" meanwhile.
 - Occupations with no published 189 pool, or no published EOIs, keep the points check and say that no pool comparison is available.
 - Verified: `npm run check`, `npm run build`, and a headless-Chrome run against `out/` (explorer search and loading state, the four-step check from `?occupation=233211`, the sample report, print media, 390px width, reduced motion, no console errors).
 

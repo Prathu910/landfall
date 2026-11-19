@@ -3,17 +3,12 @@ import { ArrowRight } from "lucide-react";
 export default function NotFound() {
   return (
     <main className="not-found" id="main">
-      <span className="eyebrow" style={{ justifyContent: "center" }}>
-        A small detour
-      </span>
-      <h1>
-        Let’s find <em>your way back.</em>
-      </h1>
+      <h1>Page not found</h1>
       <p>
-        That page isn’t here. Your next chapter starts with a little clarity.
+        That page isn’t here. Check the address, or go back to the homepage.
       </p>
       <Link className="button" href="/">
-        Back to Landfall <ArrowRight size={16} />
+        Back to MigrateLens <ArrowRight size={16} />
       </Link>
     </main>
   );

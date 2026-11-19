@@ -45,12 +45,7 @@ export default function MethodologyPage() {
   return (
     <main id="main" className="container">
       <div className="page-head">
-        <span className="eyebrow">Know what’s behind the numbers</span>
-        <h1>
-          Good information starts
-          <br />
-          with <em>honest methods.</em>
-        </h1>
+        <h1>Methodology and limitations</h1>
         <p>
           What we use, what we calculate, and where the data stops. Sources
           checked on 17 November 2026.
@@ -67,9 +62,7 @@ export default function MethodologyPage() {
         </nav>
         <div className="method-content">
           <section id="sources">
-            <h2>
-              Every number has <em>a starting point.</em>
-            </h2>
+            <h2>Our sources</h2>
             <p>
               We use public government information and keep the data date
               visible. The current occupation import covers 11 occupations; it
@@ -89,9 +82,7 @@ export default function MethodologyPage() {
             ))}
           </section>
           <section id="pool">
-            <h2>
-              A pool comparison, <em>with context.</em>
-            </h2>
+            <h2>How to read the pool</h2>
             <p>
               The homepage explorer shows submitted 189 EOIs. Reports also
               include 190 and state-nominated 491 pools by occupation and score,
@@ -129,11 +120,7 @@ export default function MethodologyPage() {
             </p>
           </section>
           <section id="points">
-            <h2>
-              Rules first.
-              <br />
-              <em>Your answers give them context.</em>
-            </h2>
+            <h2>How we calculate points and dates</h2>
             <p>
               The calculator applies current federal category values to your
               self-reported answers. Employment points are capped at 20.
@@ -165,9 +152,7 @@ export default function MethodologyPage() {
             </p>
           </section>
           <section id="limitations">
-            <h2>
-              What we can’t <em>tell you.</em>
-            </h2>
+            <h2>What we can’t tell you</h2>
             <p>
               This overview does not establish full visa eligibility, advise
               which visa to apply for, or predict an invitation. Age, English
@@ -196,9 +181,7 @@ export default function MethodologyPage() {
             </p>
           </section>
           <section id="privacy">
-            <h2>
-              Your answers <em>stay with you.</em>
-            </h2>
+            <h2>Your answers stay in your browser</h2>
             <p>
               This first release calculates in your browser. It does not send
               your profile to an application server, collect an email address,
@@ -218,9 +201,7 @@ export default function MethodologyPage() {
             </p>
           </section>
           <section className="faq" id="questions">
-            <h2>
-              A few useful <em>answers.</em>
-            </h2>
+            <h2>Common questions</h2>
             <Faq
               items={[
                 [
@@ -229,7 +210,7 @@ export default function MethodologyPage() {
                 ],
                 [
                   "Is this migration advice?",
-                  "It is general information and a self-reported calculation. Landfall is not a registered migration agent. A registered agent or Australian legal practitioner can assess your individual circumstances.",
+                  "It is general information and a self-reported calculation. MigrateLens is not a registered migration agent. A registered agent or Australian legal practitioner can assess your individual circumstances.",
                 ],
                 [
                   "Why do some numbers show a range?",

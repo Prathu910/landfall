@@ -1,0 +1,34 @@
+## Global Constraints
+
+- **Definition of done:** `npm run check` (0 warnings) and `npm run build` pass, then browser checks against `out/`, served with `python3 -m http.server 3017 --bind 127.0.0.1 --directory out`. Follow `docs/ENGINEERING.md`, `CLAUDE.md` and `AGENTS.md`. Read the Next 16 docs in `node_modules/next/dist/docs/` before touching pages or metadata.
+- **Colours:**
+  - Ink `#1B1A17`, Newsprint `#F3EEE3`, Card `#FBF8F2`.
+  - Saffron `#D9731A` is for **marks, lines and highlights only, never text**. Saffron text is `#A04E0C`.
+  - Slate `#2E4A7D` is for links and secondary actions. Muted is about `#4A463E` / `#6B6558`, and the rule colour is about `#DDD4C2`.
+- **Status colours (each status keeps its label text):**
+  - Strongest evidence: `#1F5136` on `#DDEBDF`.
+  - Worth watching: `#2E4A7D` on `#E4E9F2`.
+  - Needs your answers: muted on `#ECE7DC`, with a dashed border.
+  - Not yet verified: muted on `#ECE7DC`.
+  - Not open to you now: `#8A2E22` on `#F5DEDA`.
+  - The "?" line tint stays warm and prominent but distinct from brand saffron.
+  - Every text pairing passes WCAG AA: 4.5:1 for text, 3:1 for large text and UI.
+- **Type:** Newsreader 600 for headlines and big numbers; Inter 400/500/600 for everything else. Numbers use `font-variant-numeric: tabular-nums`. No text under 12px, and body text at least 16px on mobile. DM Sans and Instrument Serif are removed. Fonts are self-hosted via `@fontsource`, with no Google Fonts requests.
+- **Logo C1 (48-unit viewBox):** a ring at r=18 with a 3.5 stroke, holding three bars bottom-aligned at y=33:
+  - x=15, width 4.5, height 8 (ink);
+  - x=21.75, width 4.5, height 13 (ink);
+  - x=28.5, width 4.5, height 18 (saffron).
+  - All bars have rx=1. The wordmark is "MigrateLens" in Newsreader 600. The favicon variant has a 5 stroke and square bars (`data-desk-logo.html`, C1).
+- **Copy:**
+  - Say "points-test basics", never "eligibility".
+  - Counts are of EOIs, never people.
+  - A masked "<20" may be zero.
+  - No percentages, testimonials, user counts or invented numbers.
+  - `BANNED_COPY` (`src/lib/report/copy.ts`) applies to homepage copy.
+  - No agency is named. Use "often", never "always".
+- **Privacy:** profile data never goes in the URL. The only query parameter allowed is `?occupation=<code>`; the try-it's points total never goes in the URL.
+- **Static export and data loading:** client components load only `occupation-index.json`, `rounds-meta.json` and the state rule data, plus one occupation at a time via `useOccupationCore`. While loading they show "Loading published data…".
+- **Motion and print:** every animation respects reduced motion. Every section prints.
+- **SEO:** `robots` stays `noindex, nofollow`, and `metadataBase` stays the preview URL until the founder launches.
+- **Git:** never stage `.superpowers/`. End each commit with the `Co-Authored-By` line the harness gives.
+

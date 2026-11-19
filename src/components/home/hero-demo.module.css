@@ -1,0 +1,107 @@
+/* The hero figure: the poster, and the live stage laid over it. */
+
+.figure {
+  position: relative;
+  margin: 0;
+}
+
+/* The stage draws the same frame on top; the poster under it fades away */
+.posterSlot {
+  transition: opacity 0.3s ease;
+}
+
+.posterSlot[data-covered] {
+  opacity: 0;
+}
+
+.demoSlot {
+  position: absolute;
+  inset: 0 0 auto;
+}
+
+/* The look, on the live stage and the poster alike: the page is the ground */
+.stage :global(.ss-stage),
+.look {
+  --ss-font: var(--sans);
+  --ss-text-strong: var(--ink);
+  --ss-text: var(--muted);
+  --ss-accent: var(--slate);
+  overflow: hidden;
+  background: transparent;
+}
+
+.rest {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+}
+
+/* The poster scales its design to the column with CSS alone, as the stage
+   does with script: scale = column width / design width, at most 1. Sizes
+   and the 576px switch repeat demo-layout.ts. A browser without tan(atan2())
+   shows the design at 1:1, cropped to the column. */
+.poster {
+  container-type: inline-size;
+  width: 100%;
+  max-width: 720px;
+  margin-inline: auto;
+  overflow: clip;
+}
+
+.frame {
+  --scale: min(1, tan(atan2(100cqw, 720px)));
+  position: relative;
+  height: 460px;
+  overflow: clip;
+}
+
+.frame > :global(.ss-stage) {
+  width: 720px;
+  height: 460px;
+}
+
+.compact {
+  --scale: min(1, tan(atan2(100cqw, 346px)));
+  display: none;
+  height: 720px;
+}
+
+.compact > :global(.ss-stage) {
+  width: 346px;
+  height: 720px;
+  margin-left: max(0px, (100cqw - 346px) / 2);
+}
+
+@supports (scale: tan(atan2(1px, 1px))) {
+  .frame {
+    height: calc(460px * var(--scale));
+  }
+
+  .compact {
+    height: calc(720px * var(--scale));
+  }
+
+  .frame > :global(.ss-stage) {
+    transform: scale(var(--scale));
+  }
+}
+
+@container (width < 576px) {
+  .wide {
+    display: none;
+  }
+
+  .compact {
+    display: block;
+  }
+}
+
+@media print {
+  .posterSlot[data-covered] {
+    opacity: 1;
+  }
+
+  .demoSlot {
+    display: none;
+  }
+}

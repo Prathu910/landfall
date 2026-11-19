@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { coreFixture, detailFixture } from "../data/__fixtures__/occupation";
 import type { OccupationDetail } from "../data/types";
+import { formatInterval } from "../pool";
 import { BANNED_COPY } from "./copy";
 import { buildEoisLikeYours } from "./eois-like-yours";
 
@@ -68,6 +69,42 @@ describe("buildEoisLikeYours", () => {
     expect(r.closedNote).toBe(
       "Closed means expired, withdrawn or finalised (finalised includes granted visas).",
     );
+  });
+
+  it("keys every outcome, on hold included, summing to the sentence's total", () => {
+    const r = ready(buildEoisLikeYours({ ...base, submittedMonth: "2025-02" }));
+    expect(r.outcomes.map((o) => [o.label, o.count])).toEqual([
+      ["Invited, not yet lodged", "175"],
+      ["Lodged a visa", "60"],
+      ["Still waiting", "142"],
+      ["Closed", "510"],
+      ["On hold", "under 20"],
+    ]);
+    const sum = r.outcomes.reduce(
+      (a, o) => ({ min: a.min + o.interval.min, max: a.max + o.interval.max }),
+      { min: 0, max: 0 },
+    );
+    expect(sum).toEqual({ min: 887, max: 906 });
+    expect(r.sentence).toContain(`Of the ${formatInterval(sum)} `);
+  });
+
+  it("leaves on hold out of the key when it is zero", () => {
+    const r = ready(
+      buildEoisLikeYours({
+        ...base,
+        detail: {
+          ...detail,
+          cohorts: { "189": { "2025-02": { SUBMITTED: "5", INVITED: "6" } } },
+        },
+        submittedMonth: "2025-02",
+      }),
+    );
+    expect(r.outcomes.map((o) => o.key)).toEqual([
+      "invited",
+      "lodged",
+      "waiting",
+      "closed",
+    ]);
   });
 
   it("lists up to two months either side and flags yours", () => {

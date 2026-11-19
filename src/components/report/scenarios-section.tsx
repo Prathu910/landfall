@@ -24,11 +24,7 @@ export function ScenariosSection({
   return (
     <section className="report-section" id="scenarios">
       <span className="section-label">{label}</span>
-      <h2>
-        One change.
-        <br />
-        <em>A different picture.</em>
-      </h2>
+      <h2>What could change your score</h2>
       <p>
         Compare hypothetical qualifying changes together. We recalculate your
         score, including the employment cap. This does not assess whether a
@@ -76,7 +72,7 @@ export function ScenariosSection({
       </div>
       <p className="data-caption">
         No future completion date, cost, invitation or evidence approval is
-        assumed. The reality check and visa panels above use your current score.
+        assumed. The summary and the visa panels above use your current score.
       </p>
     </section>
   );

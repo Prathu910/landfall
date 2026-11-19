@@ -1,0 +1,115 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,600&display=swap" rel="stylesheet">
+<style>
+  .hv { border: 1px solid #ddd4c2; border-radius: 12px; overflow: hidden; margin-bottom: 22px; cursor: pointer; }
+  .hv.selected { box-shadow: 0 0 0 3px #3b82f6; }
+  .hv-label { padding: 10px 18px; font: 500 14px/1.4 system-ui; background: #fafafa; border-bottom: 1px solid #eee; color: #222; display: flex; justify-content: space-between; }
+  .page { background: #F3EEE3; color: #1B1A17; font-family: Inter, sans-serif; padding: 18px 26px 26px; }
+  .hdr { display: flex; align-items: center; gap: 10px; margin-bottom: 22px; font-size: 13px; }
+  .hdr svg { width: 26px; height: 26px; }
+  .hdr .wm { font-family: Newsreader, serif; font-weight: 600; font-size: 19px; }
+  .hdr nav { margin-left: auto; display: flex; gap: 16px; align-items: center; color: #4a463e; }
+  .hdr .cta { background: #1B1A17; color: #F3EEE3; padding: 7px 12px; border-radius: 8px; font-weight: 600; }
+  .grid { display: grid; grid-template-columns: 1fr 1.05fr; gap: 28px; align-items: center; }
+  @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+  h1.h { font-family: Newsreader, serif; font-weight: 600; font-size: 40px; line-height: 1.04; letter-spacing: -.015em; margin: 0 0 12px; }
+  .lede { font-size: 16px; line-height: 1.55; color: #4a463e; margin: 0 0 16px; }
+  .btns { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+  .b1 { background: #1B1A17; color: #F3EEE3; padding: 11px 16px; border-radius: 9px; font-weight: 600; font-size: 14px; }
+  .b2 { color: #2E4A7D; font-weight: 600; font-size: 14px; text-decoration: underline; }
+  .trust { margin-top: 14px; font-size: 12.5px; color: #6b6558; display: flex; gap: 10px; flex-wrap: wrap; }
+  .trust span::before { content: "✓ "; color: #A04E0C; font-weight: 700; }
+  .stage { background: #FBF8F2; border: 1px solid #ddd4c2; border-radius: 12px; padding: 14px; min-height: 250px; position: relative; overflow: hidden; }
+  .frames { display: flex; gap: 8px; }
+  .frame { flex: 1; background: #fff; border: 1px solid #e4dccb; border-radius: 8px; padding: 10px; font-size: 11.5px; min-height: 190px; }
+  .frame .t { font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: #8a8170; margin-bottom: 6px; }
+  .bar { height: 7px; border-radius: 4px; background: #e9e2d3; margin: 6px 0; }
+  .field { border: 1px solid #ddd4c2; border-radius: 6px; padding: 6px 7px; margin: 5px 0; color: #4a463e; }
+  .big { font-family: Newsreader, serif; font-weight: 600; font-size: 19px; line-height: 1.1; margin: 4px 0; }
+  .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-top: 6px; }
+  .tiles div { height: 26px; border-radius: 4px; font-size: 9px; padding: 3px; font-weight: 600; }
+  .arrow { position: absolute; bottom: 10px; left: 14px; right: 14px; font-size: 11.5px; color: #6b6558; text-align: center; }
+  .live { background: #fff; border: 1px solid #ddd4c2; border-radius: 12px; padding: 18px; }
+  .live .row { display: flex; gap: 10px; }
+  .live .sel { flex: 1; border: 1px solid #cfc5b0; border-radius: 8px; padding: 9px 10px; font-size: 14px; }
+  .q { display: flex; height: 16px; border-radius: 5px; overflow: hidden; margin: 14px 0 8px; }
+  .q i { display: block; }
+  .stat { display: flex; justify-content: space-between; font-size: 14px; margin-top: 6px; font-variant-numeric: tabular-nums; }
+  .note { font-size: 12px; color: #6b6558; margin-top: 10px; }
+  .outline { border: 1px solid #ddd4c2; border-radius: 12px; background: #fff; padding: 6px 0; }
+  .outline .s { display: grid; grid-template-columns: 34px 1fr; gap: 10px; padding: 11px 18px; border-bottom: 1px solid #f0ebe0; font: 14px/1.45 system-ui; color: #222; }
+  .outline .s:last-child { border-bottom: 0; }
+  .outline .n { font: 600 12px/1.6 ui-monospace, monospace; color: #A04E0C; }
+  .outline b { display: block; }
+</style>
+
+<h2>Homepage: how should the top of the page work?</h2>
+<p class="subtitle">The headline and buttons are the same in all three; only the right-hand side changes. The full page order I'm proposing is at the bottom.</p>
+
+<!-- A: Stageshow demo -->
+<div class="hv option" data-choice="a" onclick="toggleSelect(this)">
+  <div class="hv-label"><span><b>A · Animated product demo</b> (Stageshow)</span><span>12-second loop · a still for reduced motion</span></div>
+  <div class="page">
+    <div class="hdr"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="18" fill="none" stroke="#1B1A17" stroke-width="3.5"/><rect x="15" y="25" width="4.5" height="8" rx="1" fill="#1B1A17"/><rect x="21.75" y="20" width="4.5" height="13" rx="1" fill="#1B1A17"/><rect x="28.5" y="15" width="4.5" height="18" rx="1" fill="#D9731A"/></svg><span class="wm">MigrateLens</span><nav><span>Sample report</span><span>Occupations</span><span>Method</span><span class="cta">Check my points</span></nav></div>
+    <div class="grid">
+      <div>
+        <h1 class="h">See where your EOI really stands.</h1>
+        <p class="lede">The EOIs ahead of you, the ones at your score, and what happened to EOIs like yours, from official SkillSelect data.</p>
+        <div class="btns"><span class="b1">Check my points, free</span><span class="b2">See a sample report</span></div>
+        <div class="trust"><span>SkillSelect data, as at Oct 2026</span><span>No percentages</span><span>Stays in your browser</span></div>
+      </div>
+      <div class="stage">
+        <div class="frames">
+          <div class="frame"><div class="t">1 · Your profile</div><div class="field">Software Engineer</div><div class="field">Age 31 · Proficient English</div><div class="field">5 yrs offshore experience</div><div style="margin-top:8px;font-weight:600">= 95 points</div></div>
+          <div class="frame"><div class="t">2 · Your reality check</div><div class="big">882–920 EOIs ahead of you</div><div class="bar" style="background:linear-gradient(90deg,#1B1A17 9%,#D9731A 9% 20%,#e9e2d3 20%)"></div><div>1,293 at your score</div><div style="margin-top:6px">189 · 190 · 491 side by side</div></div>
+          <div class="frame"><div class="t">3 · Your states</div><div class="tiles"><div style="background:#DDEBDF">QLD</div><div style="background:#E4E9F2">WA</div><div style="background:#ECE7DC">ACT</div><div style="background:#ECE7DC">VIC</div><div style="background:#F5DEDA">NSW</div><div style="background:#ECE7DC">TAS</div><div style="background:#F5DEDA">SA</div><div style="background:#ECE7DC">NT</div></div><div style="margin-top:6px">Each with its reasons and sources</div></div>
+        </div>
+        <div class="arrow">The cursor fills the profile → the scorecard counts in → the state tiles light up → hold → loop</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- B: Live real-data mini check -->
+<div class="hv option" data-choice="b" onclick="toggleSelect(this)">
+  <div class="hv-label"><span><b>B · Try it right here, with real data</b></span><span>The existing pool explorer, rebuilt</span></div>
+  <div class="page">
+    <div class="grid">
+      <div>
+        <h1 class="h">See where your EOI really stands.</h1>
+        <p class="lede">The EOIs ahead of you, the ones at your score, and what happened to EOIs like yours, from official SkillSelect data.</p>
+        <div class="btns"><span class="b1">Get my full report, free</span><span class="b2">See a sample report</span></div>
+        <div class="trust"><span>SkillSelect data, as at Oct 2026</span><span>No percentages</span><span>Stays in your browser</span></div>
+      </div>
+      <div class="live">
+        <div style="font-weight:600;margin-bottom:10px">Try it: your occupation and points</div>
+        <div class="row"><div class="sel">Registered Nurse ▾</div><div class="sel" style="flex:.45">90 ▾</div></div>
+        <div class="q"><i style="width:12%;background:#1B1A17"></i><i style="width:9%;background:#D9731A"></i><i style="flex:1;background:#e9e2d3"></i></div>
+        <div class="stat"><span>EOIs with a higher score (189)</span><b>412–450</b></div>
+        <div class="stat"><span>At your score</span><b>318</b></div>
+        <div class="stat"><span>Latest 189 round</span><b>Not listed</b></div>
+        <div class="note">Counts of EOIs, not people. Illustrative numbers in this mockup; the real widget reads the published data.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- C: Both -->
+<div class="hv option" data-choice="c" onclick="toggleSelect(this)">
+  <div class="hv-label"><span><b>C · Demo on top, live try-it just below</b> (my pick)</span><span>A at the top, B as the next section</span></div>
+  <div class="page" style="font-size:14px;line-height:1.55">
+    The animated demo (A) sells the <b>whole</b> report in 12 seconds, including the state outlook, which a small widget can't show. Straight underneath, the live try-it (B) turns curiosity into a real number with no form to fill in, then hands off to the full check. Each does the job it's best at, and visitors who skip the animation still meet real data in the first scroll.
+  </div>
+</div>
+
+<h3 style="margin-top:30px">The rest of the page, in order</h3>
+<div class="outline">
+  <div class="s"><span class="n">01</span><span><b>Hero</b>Headline, two buttons, three trust points (A, B or C above).</span></div>
+  <div class="s"><span class="n">02</span><span><b>Try it with your occupation</b>Pick an occupation and points, then see the EOIs ahead and at your score from real data. Links to "Get the full report".</span></div>
+  <div class="s"><span class="n">03</span><span><b>Three questions the report answers</b>Where do I stand? What happened to EOIs like mine? Which states have evidence for me? Each with a small real visual: the queue bar, the outcome bar, the state tiles.</span></div>
+  <div class="s"><span class="n">04</span><span><b>Why we built it</b>A short, anonymous note: we once paid for a PR report that told us nothing we couldn't find ourselves, so we built the one we wanted. No agency named.</span></div>
+  <div class="s"><span class="n">05</span><span><b>Our rules</b>Official data with dates and sources. No percentages or invented numbers. Your answers stay in your browser. General information, not migration advice. Link to the method page.</span></div>
+  <div class="s"><span class="n">06</span><span><b>Questions people ask</b>Answer-first FAQ for Google and AI answers, e.g. "How many EOIs are ahead of me?" and "Does a 190 nomination add points?", each with a date and source.</span></div>
+  <div class="s"><span class="n">07</span><span><b>Final call to action and footer</b>"Check my points, free", plus a clear disclaimer that we're not registered migration agents.</span></div>
+</div>
+<p class="subtitle" style="margin-top:10px">Replaced: the "01 / CONNECT THE DOTS" sections, the poetic headlines ("A big decision. A clearer way forward.") and the generic icon cards.</p>

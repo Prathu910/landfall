@@ -224,7 +224,7 @@ src/data/state-rules/federal-occupations.json     The Home Affairs skilled occup
 - NSW: the [skills lists](https://www.nsw.gov.au/visas-and-migration/skilled-visas/nsw-skills-lists), published as 4-digit unit groups and expanded to every 6-digit code in the occupation index (`viaUnitGroup`).
 - Federal: the [skilled occupation list](https://immi.homeaffairs.gov.au/visas/working-in-australia/skill-occupation-list).
 
-VIC, ACT, TAS and NT publish no list we import. Their rules are `secondary`, so their tiles read "Not yet verified" and still show the published evidence (founder decision, 17 Nov 2026).
+VIC, ACT, TAS and NT publish no list we import. Their rules are `secondary`, so their tiles read "Rules being checked" (the group's label since 19 Nov 2026; it was "Not yet verified") and still show the published evidence (founder decision, 17 Nov 2026).
 
 **Verification.** Every rule carries `source`, `checkedAt` (YYYY-MM-DD) and `verification`:
 
@@ -237,7 +237,7 @@ VIC, ACT, TAS and NT publish no list we import. Their rules are `secondary`, so 
 
 **Restrictions.** A stream's `restrictions` are shown as "Restriction, not checked here" lines and never decide a group, for example SA's visa-expiry gate text, QLD's 2025–26 ATO Notice of Assessment gate on every onshore pathway and the Queensland employer rule on the onshore pathway.
 
-Federal eligibility comes only from the imported federal list, never from the dashboard having EOIs for a visa. A code that is absent or `false` there is "Not open to you now" in every state for that visa. If the federal list is missing or invalid, every tile is "Not yet verified". A state list that fails validation in the browser is left out, so the rules that need it read "Not yet verified" too.
+Federal eligibility comes only from the imported federal list, never from the dashboard having EOIs for a visa. A code that is absent or `false` there is "Not open to you now" in every state for that visa. If the federal list is missing or invalid, every tile is "Rules being checked". A state list that fails validation in the browser is left out, so the rules that need it read "Rules being checked" too.
 
 **Staleness.** Tests never read the clock; they use fixed dates.
 

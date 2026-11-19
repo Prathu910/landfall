@@ -4,21 +4,21 @@
   gap: 28px;
   align-items: start;
   margin: 40px 0 80px;
-  color: #102e29;
+  color: #1b1a17;
 }
 .card {
   padding: 34px 36px;
-  background: #fff;
-  border: 1px solid #dfe8e1;
+  background: #fbf8f2;
+  border: 1px solid #ece7dc;
   border-radius: 22px;
-  box-shadow: 0 16px 55px -35px #183e3938;
+  box-shadow: 0 16px 55px -35px #1b1a1738;
 }
 .stepMeta {
   display: flex;
   align-items: center;
   justify-content: space-between;
   font-size: 12px;
-  color: #59716a;
+  color: #4a463e;
   font-weight: 500;
 }
 .progress {
@@ -38,7 +38,7 @@
   background: transparent;
   padding: 0;
   text-align: left;
-  color: #6c7e76;
+  color: #6b6558;
   cursor: pointer;
 }
 .steps button:disabled {
@@ -52,23 +52,23 @@
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: #e9f0eb;
-  font-size: 11px;
+  background: #f3eee3;
+  font-size: 12px;
 }
 .steps button small {
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.3;
 }
 .steps .activeStep {
-  color: #127b61;
+  color: #1b1a17;
   font-weight: 700;
 }
 .steps .activeStep > span {
-  background: #127b61;
+  background: #1b1a17;
   color: white;
 }
 .title {
-  font-family: "Instrument Serif", Georgia, serif !important;
+  font-family: var(--serif) !important;
   font-size: 38px !important;
   letter-spacing: -1px !important;
   line-height: 1.12 !important;
@@ -77,13 +77,13 @@
   outline: none;
 }
 .title:focus-visible {
-  outline: 2px solid #127b61;
+  outline: 2px solid #1b1a17;
   outline-offset: 6px;
 }
 .intro {
   font-size: 15px;
   line-height: 1.65;
-  color: #5b7169;
+  color: #6b6558;
   margin: 0 0 28px;
 }
 .fields {
@@ -100,45 +100,45 @@
 .fields :global(.mantine-InputWrapper-label),
 .fields :global(.mantine-RadioGroup-label) {
   font-weight: 600;
-  color: #163a30;
+  color: #1b1a17;
   font-size: 13px;
   margin-bottom: 7px;
 }
 .fields :global(.mantine-InputWrapper-description) {
   font-size: 12px;
   line-height: 1.5;
-  color: #65766d;
+  color: #6b6558;
   margin-bottom: 7px;
 }
 .fields :global(.mantine-Input-input) {
   font-size: 14px;
-  background: #fcfdfb;
+  background: #fbf8f2;
   min-height: 46px;
-  border-color: #d8e2d9;
+  border-color: #ddd4c2;
   transition:
     border-color 0.18s,
     box-shadow 0.18s;
 }
 .fields :global(.mantine-Input-input):focus {
-  border-color: #127b61;
-  box-shadow: 0 0 0 3px #127b6112;
+  border-color: #1b1a17;
+  box-shadow: 0 0 0 3px #1b1a1712;
 }
 .fields :global(.mantine-Checkbox-label) {
   font-size: 14px;
   line-height: 1.55;
-  color: #26463a;
+  color: #1b1a17;
 }
 .fields :global(.mantine-Checkbox-description) {
   font-size: 12px;
   line-height: 1.6;
-  color: #607568;
+  color: #6b6558;
 }
 .fields :global(.mantine-Alert-message) {
   font-size: 13px;
   line-height: 1.7;
 }
 .fields :global(.mantine-SegmentedControl-root) {
-  background: #eff3ed;
+  background: #f3eee3;
   padding: 5px;
 }
 .fields :global(.mantine-SegmentedControl-label) {
@@ -163,16 +163,16 @@
   gap: 10px;
   cursor: pointer;
   padding: 16px 12px;
-  border: 1px solid #dfe8e1;
+  border: 1px solid #ece7dc;
   border-radius: 12px;
-  background: #fcfdfb;
+  background: #fbf8f2;
   transition:
     background 0.18s,
     border-color 0.18s,
     transform 0.18s;
 }
 .englishChoice:hover {
-  border-color: #81b4a0;
+  border-color: #d9731a;
   transform: translateY(-2px);
 }
 .englishChoice > span {
@@ -184,30 +184,30 @@
   display: block;
   font-size: 12px;
   margin-top: 7px;
-  color: #59776a;
+  color: #6b6558;
   font-weight: 400;
 }
 .selectedChoice {
-  background: #edf8f1;
-  border-color: #127b61;
-  box-shadow: 0 0 0 1px #127b61;
+  background: #f3eee3;
+  border-color: #1b1a17;
+  box-shadow: 0 0 0 1px #1b1a17;
 }
 .selectedChoice strong {
-  color: #127b61;
+  color: #1b1a17;
 }
 .help {
   font-size: 12px;
-  color: #66796e;
+  color: #6b6558;
   line-height: 1.7;
   margin: -11px 0 0;
 }
 .help a {
-  color: #127b61;
+  color: #1b1a17;
   text-decoration: underline;
   text-underline-offset: 3px;
 }
 .divider {
-  border-top: 1px solid #e6ece5;
+  border-top: 1px solid #ece7dc;
   margin: 3px 0;
 }
 .sectionTitle {
@@ -225,11 +225,11 @@
   align-items: center;
   padding-top: 28px;
   margin-top: 30px;
-  border-top: 1px solid #e5ece5;
+  border-top: 1px solid #ece7dc;
   gap: 10px;
 }
 .review {
-  border: 1px solid #e0e9df;
+  border: 1px solid #ece7dc;
   border-radius: 13px;
   overflow: hidden;
 }
@@ -238,15 +238,15 @@
   justify-content: space-between;
   gap: 20px;
   padding: 13px 17px;
-  background: #fcfdfb;
-  border-bottom: 1px solid #e7ede6;
+  background: #fbf8f2;
+  border-bottom: 1px solid #ece7dc;
   font-size: 13px;
 }
 .review > div:last-child {
   border: 0;
 }
 .review span {
-  color: #667a6e;
+  color: #6b6558;
 }
 .review strong {
   font-weight: 500;
@@ -265,21 +265,22 @@
   align-items: center;
   gap: 7px;
   font-size: 12px;
-  color: #6c7f73;
+  color: #6b6558;
 }
 .clear {
   display: block !important;
   margin: 4px auto 0;
 }
 .aside {
+  --focus-ring: var(--focus-ring-on-dark);
   position: sticky;
   top: 100px;
   padding: 27px;
-  background: #102e29;
-  border: 1px solid #21483e;
+  background: #1b1a17;
+  border: 1px solid #1b1a17;
   border-radius: 22px;
-  box-shadow: 0 25px 60px -35px #0c302a80;
-  color: #e9f5ea;
+  box-shadow: 0 25px 60px -35px #1b1a1780;
+  color: #f3eee3;
   overflow: hidden;
 }
 .asideTop {
@@ -291,30 +292,30 @@
   display: flex;
   align-items: center;
   gap: 7px;
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.01em;
-  color: #add6bd;
+  color: #b9af9a;
 }
 .liveDot {
   display: flex;
   align-items: center;
   gap: 6px;
-  color: #9abbad;
-  font-size: 10px;
+  color: #b9af9a;
+  font-size: 12px;
 }
 .liveDot:before {
   content: "";
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: #a6efba;
-  box-shadow: 0 0 0 4px #a6efba12;
+  background: #ddd4c2;
+  box-shadow: 0 0 0 4px #ddd4c212;
 }
 .aside h3 {
   font-size: 14px;
   font-weight: 400;
   margin: 24px 0 8px;
-  color: #c2d9cb;
+  color: #ddd4c2;
 }
 .total {
   display: flex;
@@ -327,13 +328,13 @@
   line-height: 1;
   font-weight: 500;
   letter-spacing: -5px;
-  color: #d4f7bc;
+  color: #ddd4c2;
   font-variant-numeric: tabular-nums;
 }
 .total > span {
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.8;
-  color: #a6c3b3;
+  color: #b9af9a;
 }
 .nomination {
   display: grid;
@@ -342,41 +343,41 @@
   margin: 21px 0 26px;
 }
 .nomination > div {
-  border: 1px solid #36534a;
+  border: 1px solid #1b1a17;
   border-radius: 11px;
   padding: 13px 11px;
   display: flex;
   flex-direction: column;
   gap: 6px;
-  background: #ffffff04;
+  background: #fbf8f204;
 }
 .nomination strong {
   font-size: 25px;
   font-weight: 500;
   line-height: 1;
-  color: #e0efdc;
+  color: #ece7dc;
 }
 .nomination span {
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.5;
-  color: #a6c3b3;
+  color: #b9af9a;
 }
 .breakdown {
-  border-top: 1px solid #335148;
+  border-top: 1px solid #1b1a17;
   padding: 14px 0 16px;
 }
 .breakdown > div {
   display: flex;
   justify-content: space-between;
-  font-size: 11px;
+  font-size: 12px;
   padding: 7px 0;
   gap: 12px;
 }
 .breakdown span {
-  color: #b6ccbf;
+  color: #b9af9a;
 }
 .breakdown strong {
-  color: #e3efdf;
+  color: #ece7dc;
   font-weight: 500;
   min-width: 20px;
   text-align: right;
@@ -385,21 +386,21 @@
   display: flex;
   align-items: flex-start;
   gap: 9px;
-  border-top: 1px solid #335148;
+  border-top: 1px solid #1b1a17;
   padding-top: 19px;
-  color: #a3c7ac;
+  color: #b9af9a;
 }
 .privacy svg {
   flex: none;
   margin-top: 2px;
 }
 .privacy p {
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.7;
   margin: 0;
 }
 .privacy p span {
-  color: #95b1a2;
+  color: #b9af9a;
 }
 @media (min-width: 1280px) {
   .layout {
@@ -496,7 +497,7 @@
     padding-right: 0;
   }
   .below > span {
-    font-size: 11px;
+    font-size: 12px;
   }
 }
 @media (max-width: 480px) {
@@ -560,5 +561,20 @@
   }
   .englishChoice:hover {
     transform: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .intro,
+  .help,
+  .privacy p,
+  .fieldLabel,
+  .fields :global(.mantine-RadioGroup-label),
+  .fields :global(.mantine-InputWrapper-description),
+  .fields :global(.mantine-Input-input),
+  .fields :global(.mantine-Checkbox-label),
+  .fields :global(.mantine-Checkbox-description),
+  .fields :global(.mantine-Alert-message) {
+    font-size: 1rem;
   }
 }

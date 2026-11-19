@@ -1,0 +1,92 @@
+.card {
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  padding: 18px;
+}
+.heading {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 1.375rem;
+  line-height: 1.2;
+  margin: 0 0 12px;
+}
+.controls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.occupation {
+  flex: 1 1 14rem;
+  min-width: 0;
+}
+.points {
+  flex: 0 1 9rem;
+}
+.results {
+  margin-top: 14px;
+}
+.status {
+  margin: 0;
+  padding: 18px 12px;
+  border: 1px dashed var(--rule);
+  border-radius: 10px;
+  color: var(--muted);
+  font-size: 1rem;
+  text-align: center;
+}
+.rows {
+  margin: 0;
+}
+.row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--surface);
+  font-size: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+.row dt {
+  color: var(--muted);
+}
+.row dd {
+  margin: 0;
+  font-weight: 600;
+  text-align: right;
+}
+.chip {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--muted);
+}
+.note {
+  margin: 10px 0 0;
+  font-size: 0.8125rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.link {
+  display: inline-block;
+  margin-top: 12px;
+  color: var(--slate);
+  font-weight: 600;
+  text-decoration: underline;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 480px) {
+  .row {
+    flex-direction: column;
+    gap: 2px;
+  }
+  .row dd {
+    text-align: left;
+  }
+}
+
+.link:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
+}

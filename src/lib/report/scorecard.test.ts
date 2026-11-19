@@ -10,12 +10,23 @@ import {
   occasionalCore,
   regularCore,
 } from "./__fixtures__/scorecard";
-import { buildScorecard, type ScorecardData } from "./scorecard";
+import { EOI_CAVEAT, buildScorecard, type ScorecardData } from "./scorecard";
 
 const POINTS = { base: 90, subclass190: 95, subclass491: 105 };
 const SUMMARIES = {
   "190": "Strongest evidence in SA and WA. Not open to you now in 2 states.",
   "491": "No state shows strong published evidence for your profile yet.",
+};
+const TILES = {
+  "190": [
+    { state: "SA" as const, group: "strongest" as const },
+    { state: "WA" as const, group: "strongest" as const },
+    { state: "NSW" as const, group: "not-open" as const },
+  ],
+  "491": [
+    { state: "WA" as const, group: "watching" as const },
+    { state: "VIC" as const, group: "unverified" as const },
+  ],
 };
 const QUEUE_NOTE = {
   text: "Counts of EOIs with a higher score, not your place in a queue: ties use an unpublished date of effect, and one person can hold several EOIs.",
@@ -29,6 +40,7 @@ function build(data: ScorecardData, name = "Software Engineer") {
     points: POINTS,
     submittedMonth: null,
     stateSummaries: data.kind === "ready" ? SUMMARIES : null,
+    stateTiles: data.kind === "ready" ? TILES : null,
   });
 }
 const ready = (core: typeof noneRoundsCore): ScorecardData => ({
@@ -57,7 +69,10 @@ describe("buildScorecard", () => {
   it("builds the none-status scorecard", () => {
     const card = build(ready(noneRoundsCore));
     expect(card.headline).toBe(
-      "189 hasn't listed Software Engineer in its last four rounds. Your 190 and 491 prospects depend on state nomination.",
+      "189 hasn't listed Software Engineer in its last four rounds; the last cut-off was 95 points, in Nov 2024.",
+    );
+    expect(card.detail).toBe(
+      "For a profile like yours, the published evidence for 190 is strongest in SA and WA.",
     );
     const c189 = card.cards[0];
     expect(c189.title).toBe("189 · Independent");
@@ -104,7 +119,11 @@ describe("buildScorecard", () => {
 
   it("uses each visa's state outlook summary as the 190 and 491 sentence", () => {
     const [, c190, c491] = build(ready(noneRoundsCore)).cards;
-    expect(c190.chip).toEqual({ label: "State decides", tone: "amber" });
+    expect(c190.chip).toEqual({
+      label: "Strongest evidence: SA, WA",
+      tone: "green",
+    });
+    expect(c491.chip).toEqual({ label: "Worth watching: WA", tone: "amber" });
     expect(c190.sentence).toBe(SUMMARIES["190"]);
     expect(c190.ahead).toBe("0");
     expect(c190.atScore).toBe("40");
@@ -128,8 +147,9 @@ describe("buildScorecard", () => {
         points: POINTS,
         submittedMonth: null,
         stateSummaries: null,
+        stateTiles: null,
       }),
-    ).toThrow("state outlook summaries");
+    ).toThrow("state outlook");
   });
 
   it("handles occasional, regular and never-listed rounds", () => {
@@ -149,9 +169,11 @@ describe("buildScorecard", () => {
     );
   });
 
-  it("keeps the round headline when only the 189 pool is missing", () => {
+  it("says so when only the 189 pool is missing", () => {
     const card = build(ready(no189PoolCore));
-    expect(card.headline).toContain("189 hasn't listed");
+    expect(card.headline).toBe(
+      "The snapshot publishes no 189 EOIs for Software Engineer, so its 190 and 491 prospects depend on state nomination.",
+    );
     expect(card.cards[0].sentence).toBe(
       "No 189 EOIs are published for this occupation in this snapshot.",
     );
@@ -160,10 +182,23 @@ describe("buildScorecard", () => {
     expect(card.cards[1].ahead).not.toBeNull();
   });
 
-  it("reports too-limited data when no pool exists", () => {
-    expect(build(ready(noPoolsCore)).headline).toBe(
+  it("reports too-limited data when no pool exists, with no state line", () => {
+    const card = build(ready(noPoolsCore));
+    expect(card.headline).toBe(
       "Published SkillSelect data for Software Engineer is too limited to compare. Your points breakdown is below.",
     );
+    expect(card.detail).toBeNull();
+  });
+
+  it("has no state line without occupation data", () => {
+    for (const reason of [
+      "notIndexed",
+      "noData",
+      "loadFailed",
+      "loading",
+    ] as const) {
+      expect(build({ kind: "none", reason }).detail).toBeNull();
+    }
   });
 
   it("says a points-only check has no occupation data to compare", () => {
@@ -249,5 +284,11 @@ describe("buildScorecard", () => {
       ];
       for (const text of texts) expect(text).not.toMatch(BANNED_COPY);
     }
+  });
+});
+
+describe("EOI_CAVEAT", () => {
+  it("is the report's one wording for the EOI caveat", () => {
+    expect(EOI_CAVEAT).toBe("Counts are EOIs (one person can hold several).");
   });
 });

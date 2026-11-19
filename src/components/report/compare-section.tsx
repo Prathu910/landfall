@@ -106,9 +106,7 @@ export function CompareSection({
   return (
     <section className="report-section" id="compare">
       <span className="section-label">{label}</span>
-      <h2>
-        A little more <em>perspective.</em>
-      </h2>
+      <h2>Compare another occupation at your score</h2>
       <p>
         Compare another occupation in this import at your current federal score.
         This is descriptive context; your assessment and occupation eligibility

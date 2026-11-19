@@ -1,0 +1,543 @@
+/* The demo's frame at its design size (720 × 460 wide, 346 × 720 compact).
+   The stage scales it; sizes here are design pixels. The smallest text is
+   15px, so at the smallest scale a column allows (0.8) it renders at 12px
+   (see demo-layout.ts). */
+
+.window,
+.page {
+  --enter: cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: absolute;
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 20px;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  box-shadow: var(--ss-shadow-hero);
+}
+
+.window {
+  --ss-canvas: var(--newsprint);
+  --ss-chrome: var(--card);
+  --ss-line: var(--rule);
+  top: 24px;
+  left: 24px;
+  width: 672px;
+  height: 476px;
+}
+
+.page {
+  top: 16px;
+  left: 16px;
+  width: 314px;
+  height: 744px;
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--newsprint);
+}
+
+/* The report and the check share one place; one crossfades into the other
+   with a small rise, the chrome holding still */
+.views {
+  display: grid;
+  height: 100%;
+}
+
+.views > section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  grid-area: 1 / 1;
+  min-width: 0;
+  padding: 20px;
+  will-change: transform;
+  transition:
+    opacity 0.2s ease,
+    transform 0.3s var(--enter),
+    visibility 0s 0.3s;
+}
+
+.views > section[data-on="false"] {
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.views > section[data-on="true"] {
+  transition:
+    opacity 0.25s ease 0.1s,
+    transform 0.35s var(--enter) 0.1s,
+    visibility 0s;
+}
+
+/* ---- Shared parts ---- */
+
+.occupation {
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 22px;
+}
+
+.totalValue {
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.totalNumber {
+  font-family: var(--serif);
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.button {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  height: 34px;
+  padding: 0 14px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: #fff;
+  font-weight: 600;
+  white-space: nowrap;
+  will-change: transform;
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease;
+}
+
+.button[data-hover] {
+  background: var(--card);
+}
+
+.button[data-variant="primary"] {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--card);
+}
+
+.button[data-pressed] {
+  transform: scale(0.97);
+}
+
+.title {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ---- The report ---- */
+
+.strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.who {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  min-width: 0;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.card {
+  display: grid;
+  grid-template-rows: auto auto auto 2lh auto;
+  align-content: start;
+  padding: 14px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--card);
+}
+
+.cardPoints {
+  color: var(--muted);
+}
+
+.ahead {
+  margin-top: 6px;
+  font-family: var(--serif);
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 34px;
+  white-space: nowrap;
+}
+
+.aheadLabel {
+  color: var(--muted);
+  text-wrap: balance;
+}
+
+.atScore {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--rule);
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.atScoreValue {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.outlook {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.outlookHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+}
+
+.legend {
+  display: flex;
+  gap: 8px;
+}
+
+.chip {
+  padding: 1px 10px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(3px);
+  will-change: transform;
+  transition:
+    opacity 0.3s ease,
+    transform 0.4s var(--enter);
+}
+
+.chip[data-on="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.tile {
+  display: grid;
+  place-items: center;
+  height: 42px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--card);
+  font-weight: 600;
+  color: var(--muted-soft);
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+  transition-delay: calc((var(--n) - 1 - var(--i)) * 40ms);
+}
+
+.tile[data-on="true"] {
+  transition-delay: calc(var(--i) * 100ms);
+}
+
+/* The report's status colours: the chip names the group, the tile wears it */
+.chip[data-tone="strongest"] {
+  background: var(--status-strongest-bg);
+  color: var(--status-strongest-fg);
+}
+
+.tile[data-on="true"][data-tone="strongest"] {
+  border-color: var(--status-strongest-fg);
+  background: var(--status-strongest-bg);
+  color: var(--status-strongest-fg);
+}
+
+.chip[data-tone="watching"] {
+  background: var(--status-watching-bg);
+  color: var(--status-watching-fg);
+}
+
+.tile[data-on="true"][data-tone="watching"] {
+  border-color: var(--status-watching-fg);
+  background: var(--status-watching-bg);
+  color: var(--status-watching-fg);
+}
+
+.chip[data-tone="needs-answers"] {
+  background: var(--status-needs-answers-bg);
+  color: var(--status-needs-answers-fg);
+}
+
+.tile[data-on="true"][data-tone="needs-answers"] {
+  border-color: var(--muted-soft);
+  background: var(--status-needs-answers-bg);
+  color: var(--status-needs-answers-fg);
+}
+
+.chip[data-tone="unverified"] {
+  background: var(--status-unverified-bg);
+  color: var(--status-unverified-fg);
+  box-shadow: inset 0 0 0 1px var(--status-unverified-fg);
+}
+
+.tile[data-on="true"][data-tone="unverified"] {
+  border-color: var(--status-unverified-fg);
+  background: var(--status-unverified-bg);
+  color: var(--status-unverified-fg);
+}
+
+.chip[data-tone="not-open"] {
+  background: var(--status-not-open-bg);
+  color: var(--status-not-open-fg);
+}
+
+.tile[data-on="true"][data-tone="not-open"] {
+  border-color: var(--status-not-open-fg);
+  background: var(--status-not-open-bg);
+  color: var(--status-not-open-fg);
+}
+
+/* "Needs your answers" is dashed wherever it shows, as in the report */
+.chip[data-tone="needs-answers"],
+.tile[data-on="true"][data-tone="needs-answers"] {
+  border-style: dashed;
+  border-color: var(--muted-soft);
+}
+
+/* ---- The check ---- */
+
+.fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 24px;
+  margin: 2px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* A form field: its label over its box */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.fieldLabel {
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.fieldBox {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.fieldValue {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* The total's rule, a saffron hairline over it as in the check's panel */
+.rule {
+  height: 2px;
+  margin-top: 6px;
+  background: var(--saffron);
+}
+
+.checkFoot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* ---- Values that arrive: each holds its slot, over a placeholder ---- */
+
+.slot {
+  display: inline-grid;
+  align-items: center;
+  justify-items: start;
+  min-width: 0;
+}
+
+.slot > * {
+  grid-area: 1 / 1;
+}
+
+.atScore .slot {
+  justify-items: end;
+}
+
+.slot > [data-on] {
+  opacity: 0;
+  transform: translateY(4px);
+  will-change: transform;
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+  transition-delay: calc((var(--n, 1) - 1 - var(--i, 0)) * 50ms);
+}
+
+.slot > [data-on="true"] {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.5s ease,
+    transform 0.7s var(--enter);
+  transition-delay: calc(var(--i, 0) * 90ms);
+}
+
+/* A published figure settles into place as it is, side by side across the
+   visas; it never counts through numbers the data didn't publish (B12) */
+.slot > .ahead[data-on="true"],
+.slot > .atScoreValue[data-on="true"] {
+  transition:
+    opacity 0.6s ease,
+    transform 0.8s var(--enter);
+  transition-delay: calc(var(--i, 0) * 120ms);
+}
+
+.placeholder {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.slot:has(> [data-on="true"]) > .placeholder {
+  opacity: 0;
+}
+
+/* ---- Compact: the page itself, one column for a phone ---- */
+
+.page .views > section {
+  padding: 16px;
+}
+
+.page .strip {
+  align-items: flex-start;
+}
+
+.page .who {
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* The visas as a list on the page, ruled apart edge to edge */
+.page .cards {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+  margin-inline: -16px;
+}
+
+.page .card {
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto auto auto;
+  column-gap: 12px;
+  padding: 12px 16px;
+  border: 0;
+  border-radius: 0;
+  background: none;
+}
+
+.page .card + .card {
+  border-top: 1px solid var(--rule);
+}
+
+.page .card:first-child {
+  padding-top: 0;
+}
+
+.page .card > .slot:nth-child(2) {
+  justify-items: end;
+}
+
+.page .ahead {
+  margin-top: 2px;
+}
+
+/* At your score sits beside the figure: its value over its label */
+.page .atScore {
+  flex-direction: column-reverse;
+  align-items: flex-end;
+  justify-content: flex-end;
+  gap: 6px;
+  grid-column: 2;
+  grid-row: 2;
+  margin: 4px 0 0;
+  padding: 0;
+  border: 0;
+}
+
+.page .outlookHead {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.page .legend {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.page .aheadLabel {
+  grid-column: 1 / -1;
+}
+
+/* A long occupation keeps to two lines, so the button keeps its place and
+   the page its height */
+.page .occupation {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.page .tiles {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.page .fields {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+}
+
+.page .fieldBox {
+  height: 36px;
+}
+
+.page .actions {
+  flex-direction: column;
+  gap: 10px;
+  align-items: stretch;
+  width: 100%;
+}
+
+.page .actions .button {
+  justify-content: center;
+}

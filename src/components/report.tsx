@@ -27,6 +27,7 @@ import { PointsAudit } from "./report/points-audit";
 import { reportSections, sectionLabel } from "./report/report-sections";
 import { reportView } from "./report/report-view";
 import { ScenariosSection } from "./report/scenarios-section";
+import { DataSaysRecap } from "./report/data-says";
 import { RealityScorecard } from "./report/scorecard";
 import { StateOutlookSection } from "./report/state-outlook-section";
 import { VisaPanels } from "./report/visa-panels";
@@ -137,7 +138,7 @@ export function Report({
           )}
           <Button
             size="sm"
-            color="forest.9"
+            color="ink.9"
             leftSection={<Printer size={14} />}
             onClick={() => window.print()}
           >
@@ -147,7 +148,7 @@ export function Report({
       </div>
       <div className="report-layout">
         <nav className="report-nav" aria-label="Report sections">
-          <span>YOUR PERSPECTIVE</span>
+          <span>IN THIS REPORT</span>
           {sections.map(([id, title], i) => (
             <a
               key={id}
@@ -165,17 +166,13 @@ export function Report({
         <article className="report-sheet">
           <header className="report-heading">
             <div className="report-heading-top">
-              <span className="eyebrow">
-                THE LANDFALL MIGRATION PERSPECTIVE
-              </span>
               <span className="pill">
                 {sample ? "Sample report" : "Your free overview"}
               </span>
             </div>
             <h1>
-              {profile.name ? `${profile.name}, here’s` : "Here’s"}
-              <br />
-              <em>your migration picture.</em>
+              {profile.name ? `${profile.name}, here’s` : "Here’s"} your
+              skilled-migration report
             </h1>
             <p>
               {nominated?.name ?? "Your nominated occupation"}
@@ -189,7 +186,10 @@ export function Report({
             </div>
           </header>
           <div className="report-body">
-            <RealityScorecard scorecard={view.scorecard} />
+            <RealityScorecard
+              scorecard={view.scorecard}
+              dataSays={view.dataSays}
+            />
             <VisaPanels
               occupation={occupation}
               panels={view.panels}
@@ -219,11 +219,7 @@ export function Report({
               <span className="section-label">
                 {sectionLabel(sections, "timeline", "YOUR PERSONAL DATES")}
               </span>
-              <h2>
-                The next chapter,
-                <br />
-                <em>on your timeline.</em>
-              </h2>
+              <h2>Your dates for the next three years</h2>
               <p>
                 Dated events supported by your answers in the next three years.
                 Future points assume today’s rules.
@@ -301,9 +297,7 @@ export function Report({
               <span className="section-label">
                 {sectionLabel(sections, "prepare", "GET ORGANISED")}
               </span>
-              <h2>
-                Bring the evidence <em>together.</em>
-              </h2>
+              <h2>Organise your evidence</h2>
               <p>
                 A general preparation list to help organise your records. Tick
                 items as you review them. It is not an exhaustive application
@@ -365,9 +359,7 @@ export function Report({
               <span className="section-label">
                 {sectionLabel(sections, "definitions", "USEFUL DEFINITIONS")}
               </span>
-              <h2>
-                The terms, <em>made clearer.</em>
-              </h2>
+              <h2>Terms used in this report</h2>
               <Accordion
                 keepMounted
                 keepMountedMode="display-none"
@@ -385,9 +377,7 @@ export function Report({
             {result.warnings.length > 0 && (
               <section className="report-section">
                 <span className="section-label">ASSUMPTIONS TO REVIEW</span>
-                <h2>
-                  What’s behind <em>your picture.</em>
-                </h2>
+                <h2>Assumptions behind your points</h2>
                 <ul className="warning-list">
                   {result.warnings.map((w) => (
                     <li key={w}>
@@ -398,6 +388,9 @@ export function Report({
                 </ul>
               </section>
             )}
+            {view.dataSays ? (
+              <DataSaysRecap recap={view.dataSays.recap} />
+            ) : null}
             <section className="report-section">
               <Accordion
                 keepMounted
@@ -413,20 +406,20 @@ export function Report({
                     </span>
                   </Accordion.Control>
                   <Accordion.Panel>
-                    Included: a reality check across 189, 190 and 491, a
-                    self-reported points audit, hypothetical credential
-                    scenarios, three dated occupation pools, twelve monthly 189
-                    totals, published invitation rounds, published outcomes of
-                    EOIs by submission month, personal dates, a state outlook
-                    from each state’s published 2026–27 rules and invitations,
-                    and preparation tools. Exact queue rank, invitation dates,
-                    personal probabilities, state nomination decisions,
-                    state-run scores (such as Victoria’s points test or the
-                    Canberra Matrix), current ceiling utilisation and gross EOI
-                    movements are unavailable here. These need additional
-                    verified data or a defensible model. Payment, automated
-                    report delivery and ongoing monitoring are future product
-                    work.
+                    Included: a summary of what the data says across 189, 190
+                    and 491, a self-reported points audit, hypothetical
+                    credential scenarios, three dated occupation pools, twelve
+                    monthly 189 totals, published invitation rounds, published
+                    outcomes of EOIs by submission month, personal dates, a
+                    state outlook from each state’s published 2026–27 rules and
+                    invitations, and preparation tools. Exact queue rank,
+                    invitation dates, personal probabilities, state nomination
+                    decisions, state-run scores (such as Victoria’s points test
+                    or the Canberra Matrix), current ceiling utilisation and
+                    gross EOI movements are unavailable here. These need
+                    additional verified data or a defensible model. Payment,
+                    automated report delivery and ongoing monitoring are future
+                    product work.
                   </Accordion.Panel>
                 </Accordion.Item>
               </Accordion>
@@ -469,8 +462,8 @@ export function Report({
               </p>
               <p>
                 Rule set federal-current-2026-11 · Report v0.2. General
-                information, not migration advice. Landfall is independent and
-                is not a registered migration agent. Government material
+                information, not migration advice. MigrateLens is independent
+                and is not a registered migration agent. Government material
                 attributed under its published licensing terms.{" "}
                 <Link className="source-link" href="/methodology/">
                   Methodology & limitations
@@ -484,12 +477,9 @@ export function Report({
       {sample && (
         <div className="final-cta no-print">
           <div className="container">
-            <span className="eyebrow">MAKE THE PICTURE YOUR OWN</span>
-            <h2>
-              Now, <em>your numbers.</em>
-            </h2>
+            <h2>Check your own points</h2>
             <p>The free check builds this overview from your own answers.</p>
-            <Link className="button button-lime" href="/check/">
+            <Link className="button button-accent" href="/check/">
               Start my free check <ArrowRight size={17} />
             </Link>
           </div>

@@ -42,7 +42,7 @@ export function verified<T>(
  * Never decides eligibility. Used for:
  * - a search-extract fact ([S]);
  * - a contradiction between official pages (both readings go in `note`);
- * - a directly read rule that Landfall's questions or imported lists cannot
+ * - a directly read rule that our questions or imported lists cannot
  *   test faithfully (the reason goes in `note`).
  */
 export function secondary<T>(

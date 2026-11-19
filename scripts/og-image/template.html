@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en-AU">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      @font-face {
+        font-family: "Newsreader";
+        font-weight: 600;
+        src: url("{{NEWSREADER_600}}") format("woff2");
+      }
+      @font-face {
+        font-family: "Inter";
+        font-weight: 500;
+        src: url("{{INTER_500}}") format("woff2");
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+      }
+      html,
+      body {
+        width: 1200px;
+        height: 630px;
+        overflow: hidden;
+      }
+      body {
+        background: #1b1a17;
+        color: #f3eee3;
+        font-family: "Inter", sans-serif;
+        padding: 72px 80px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+      .brand svg {
+        width: 72px;
+        height: 72px;
+      }
+      .wordmark {
+        font-family: "Newsreader", serif;
+        font-weight: 600;
+        font-size: 52px;
+      }
+      h1 {
+        font-family: "Newsreader", serif;
+        font-weight: 600;
+        font-size: 96px;
+        line-height: 1.05;
+        letter-spacing: -0.01em;
+        max-width: 1020px;
+      }
+      .rule {
+        width: 120px;
+        height: 6px;
+        background: #d9731a;
+        margin-bottom: 32px;
+      }
+      .meta {
+        font-weight: 500;
+        font-size: 34px;
+        color: #ddd4c2;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="brand">{{MARK}}<span class="wordmark">MigrateLens</span></div>
+    <div>
+      <div class="rule"></div>
+      <h1>Know your points. See where they&rsquo;d put you.</h1>
+    </div>
+    <p class="meta">Official SkillSelect data &middot; Free</p>
+  </body>
+</html>

@@ -48,9 +48,7 @@ export function PointsAudit({
   return (
     <section className="report-section" id="points">
       <span className="section-label">{label}</span>
-      <h2>
-        Every point, <em>accounted for.</em>
-      </h2>
+      <h2>Your points, category by category</h2>
       <EligibilityNotice result={result} />
       <p>
         Your self-reported score is {result.base} federal points

@@ -1,68 +1,23 @@
-import type { Interval } from "../../lib/data/types";
 import type { EoisLikeYours as View } from "../../lib/report/eois-like-yours";
 import { LoadingData } from "./loading-data";
-import { segmentWidth } from "./queue-bar";
+import { OutcomeBar, type OutcomeView } from "./outcome-bar";
 import styles from "./panel-189.module.css";
 
-type Ready = Extract<View, { kind: "ready" }>;
-
-const OUTCOMES = [
-  { key: "invited", label: "Invited, not yet lodged" },
-  { key: "lodged", label: "Lodged a visa" },
-  { key: "waiting", label: "Still waiting" },
-  { key: "closed", label: "Closed" },
-] as const;
-
-function Ready({ view }: { view: Ready }) {
-  const { bar } = view;
-  const total: Interval = [
-    bar.invited,
-    bar.lodged,
-    bar.waiting,
-    bar.closed,
-  ].reduce((a, b) => ({ min: a.min + b.min, max: a.max + b.max }), {
-    min: 0,
-    max: 0,
-  });
-  const aria = OUTCOMES.map((o) => `${o.label}: ${view.numbers[o.key]}`).join(
-    "; ",
-  );
+function Ready({ view }: { view: OutcomeView }) {
   return (
     <>
       <p className={styles.lead}>{view.sentence}</p>
       {view.basisNote ? <p className={styles.note}>{view.basisNote}</p> : null}
       <p className={styles.note}>{view.statusNote}</p>
       <dl className={styles.stats}>
-        {OUTCOMES.map((o) => (
+        {view.outcomes.map((o) => (
           <div key={o.key}>
             <dt>{o.label}</dt>
-            <dd>{view.numbers[o.key]}</dd>
+            <dd>{o.count}</dd>
           </div>
         ))}
-        {view.numbers.hold ? (
-          <div>
-            <dt>On hold</dt>
-            <dd>{view.numbers.hold}</dd>
-          </div>
-        ) : null}
       </dl>
-      <div className={styles.stack} role="img" aria-label={aria}>
-        {OUTCOMES.map((o) => (
-          <span
-            key={o.key}
-            className={styles[o.key]}
-            style={{ width: segmentWidth(bar[o.key], total) }}
-          />
-        ))}
-      </div>
-      <ul className={styles.legend}>
-        {OUTCOMES.map((o) => (
-          <li key={o.key}>
-            <i className={styles[o.key]} aria-hidden="true" />
-            {o.label}
-          </li>
-        ))}
-      </ul>
+      <OutcomeBar view={view} />
       <p className={styles.note}>{view.closedNote}</p>
       <details className={styles.details} open>
         <summary>Compare with nearby months</summary>

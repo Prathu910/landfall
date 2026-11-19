@@ -1,0 +1,190 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500&family=Newsreader:opsz,wght@6..72,400;6..72,600&display=swap" rel="stylesheet">
+<style>
+  .dir { border-radius: 14px; overflow: hidden; border: 1px solid #d9d9d9; margin: 0 0 28px; cursor: pointer; transition: box-shadow .15s; }
+  .dir.selected { box-shadow: 0 0 0 3px #3b82f6; }
+  .dir-head { padding: 12px 18px; display: flex; justify-content: space-between; align-items: baseline; background: #fafafa; border-bottom: 1px solid #e5e5e5; font: 500 14px/1.4 system-ui; color: #222; }
+  .dir-head b { font-size: 16px; }
+  .dir-body { display: grid; grid-template-columns: 1.35fr 1fr; gap: 0; }
+  @media (max-width: 900px) { .dir-body { grid-template-columns: 1fr; } }
+  .hero { padding: 26px 28px 30px; }
+  .side { padding: 22px 24px; border-left: 1px solid rgba(0,0,0,.06); display: flex; flex-direction: column; gap: 16px; }
+  .brandbar { display: flex; align-items: center; gap: 10px; margin-bottom: 26px; }
+  .brandbar svg { width: 34px; height: 34px; }
+  .nav { margin-left: auto; display: flex; gap: 18px; font-size: 14px; opacity: .75; }
+  .h1 { margin: 0 0 12px; }
+  .lede { margin: 0 0 20px; max-width: 34em; }
+  .btn { display: inline-block; padding: 12px 18px; border-radius: 10px; font-weight: 600; font-size: 15px; }
+  .micro { font-size: 13px; margin-top: 12px; opacity: .75; }
+  .score { margin-top: 24px; border-radius: 12px; padding: 16px 18px; max-width: 420px; }
+  .score .k { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; opacity: .7; }
+  .score .big { font-size: 26px; font-weight: 600; margin: 4px 0 2px; font-variant-numeric: tabular-nums; }
+  .score .row { display: flex; justify-content: space-between; font-size: 14px; margin-top: 8px; font-variant-numeric: tabular-nums; }
+  .chip { font-size: 12px; font-weight: 600; padding: 3px 8px; border-radius: 999px; }
+  .swatches { display: flex; gap: 6px; }
+  .sw { flex: 1; height: 54px; border-radius: 8px; display: flex; align-items: flex-end; padding: 5px 6px; font: 500 11px/1.2 ui-monospace, monospace; }
+  .lbl { font: 600 11px/1 system-ui; letter-spacing: .08em; text-transform: uppercase; color: #777; margin-bottom: 8px; }
+  .icons { display: flex; align-items: flex-end; gap: 14px; }
+  .icons .app { width: 56px; height: 56px; border-radius: 14px; display: grid; place-items: center; }
+  .icons .app svg { width: 36px; height: 36px; }
+  .icons .fav { width: 16px; height: 16px; }
+  .typespec .t1 { font-size: 28px; line-height: 1.1; }
+  .typespec .t2 { font-size: 15px; line-height: 1.5; margin-top: 6px; }
+
+  /* A — Eucalypt & Gold */
+  .dA .hero, .dA .side { background: #F6F4EE; color: #0B2E2A; font-family: Inter, sans-serif; }
+  .dA .word { font-family: Fraunces, serif; font-size: 22px; font-weight: 600; letter-spacing: -.01em; }
+  .dA .word i { font-weight: 400; }
+  .dA .h1 { font-family: Fraunces, serif; font-weight: 600; font-size: 44px; line-height: 1.05; letter-spacing: -.02em; }
+  .dA .lede { font-size: 17px; line-height: 1.55; color: #3d5651; }
+  .dA .btn { background: #1F6F5C; color: #fff; }
+  .dA .score { background: #fff; border: 1px solid #e3e0d5; }
+  .dA .chip { background: #F3E6C4; color: #6b4d10; }
+  .dA .typespec .t1 { font-family: Fraunces, serif; font-weight: 600; }
+
+  /* B — Deep Field */
+  .dB .hero { background: #0B1530; color: #EEF2FF; font-family: Geist, sans-serif; }
+  .dB .side { background: #F7F8FB; color: #0B1530; font-family: Geist, sans-serif; }
+  .dB .word { font-size: 21px; font-weight: 600; letter-spacing: -.02em; }
+  .dB .word span { color: #7C9BFF; }
+  .dB .h1 { font-weight: 600; font-size: 44px; line-height: 1.04; letter-spacing: -.035em; }
+  .dB .lede { font-size: 17px; line-height: 1.55; color: #B7C1DE; }
+  .dB .btn { background: #3A63FF; color: #fff; }
+  .dB .score { background: #121F44; border: 1px solid #22305c; }
+  .dB .score .big { font-family: "Geist Mono", monospace; }
+  .dB .chip { background: #1d3478; color: #c9d6ff; }
+  .dB .typespec .t1 { font-weight: 600; letter-spacing: -.03em; }
+
+  /* C — Data Desk */
+  .dC .hero, .dC .side { background: #F3EEE3; color: #1B1A17; font-family: Inter, sans-serif; }
+  .dC .word { font-family: Newsreader, serif; font-size: 23px; font-weight: 600; }
+  .dC .h1 { font-family: Newsreader, serif; font-weight: 600; font-size: 46px; line-height: 1.04; letter-spacing: -.015em; }
+  .dC .lede { font-size: 17px; line-height: 1.55; color: #4a463e; }
+  .dC .btn { background: #1B1A17; color: #F3EEE3; }
+  .dC .score { background: #FBF8F2; border: 1px solid #ddd4c2; border-left: 4px solid #D9731A; border-radius: 4px; }
+  .dC .chip { background: #F6DFC6; color: #7a3d06; }
+  .dC .typespec .t1 { font-family: Newsreader, serif; font-weight: 600; }
+</style>
+
+<h2>Which direction feels like MigrateLens?</h2>
+<p class="subtitle">Each card shows the logo, colours, type, a homepage hero and a sample number. The numbers are the real sample report (Software Engineer, 95 points). Click the one you like. "Mix A's colours with B's logo" is a fine answer too.</p>
+
+<!-- A -->
+<div class="dir dA option" data-choice="a" onclick="toggleSelect(this)">
+  <div class="dir-head"><span><b>A · Eucalypt &amp; Gold</b> (calm, warm, quietly premium)</span><span>My pick</span></div>
+  <div class="dir-body">
+    <div class="hero">
+      <div class="brandbar">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="18" fill="none" stroke="#0B2E2A" stroke-width="4"/><path d="M18 29a6 6 0 0 1 12 0z" fill="#C8962E"/><path d="M6.7 29h34.6" stroke="#0B2E2A" stroke-width="3" stroke-linecap="round"/></svg>
+        <span class="word">Migrate<i>Lens</i></span>
+        <span class="nav"><span>Sample report</span><span>Occupations</span><span>Method</span></span>
+      </div>
+      <h1 class="h1">See where your EOI really stands.</h1>
+      <p class="lede">The EOIs ahead of you, the ones at your score, and what happened to EOIs like yours, from official SkillSelect data. No percentages, no sales call.</p>
+      <span class="btn">Check my points, free</span>
+      <div class="micro">Your answers stay in your browser.</div>
+      <div class="score">
+        <div class="k">189 · Software Engineer · 95 points</div>
+        <div class="big">882–920 EOIs ahead of you</div>
+        <div class="row"><span>At your score</span><b>1,293</b></div>
+        <div class="row"><span>Latest round</span><span class="chip">Not listed</span></div>
+      </div>
+    </div>
+    <div class="side">
+      <div><div class="lbl">Logo idea</div><div style="font-size:14px;line-height:1.5">A lens with a sun on the horizon: arriving somewhere new, seen clearly.</div></div>
+      <div><div class="lbl">Colours</div>
+        <div class="swatches">
+          <div class="sw" style="background:#0B2E2A;color:#fff">Ink</div>
+          <div class="sw" style="background:#1F6F5C;color:#fff">Eucalypt</div>
+          <div class="sw" style="background:#C8962E;color:#fff">Gold</div>
+          <div class="sw" style="background:#F6F4EE;color:#0B2E2A;border:1px solid #e3e0d5">Paper</div>
+        </div></div>
+      <div class="typespec"><div class="lbl">Type: Fraunces + Inter</div><div class="t1">882–920 ahead</div><div class="t2">Readable at every size, warm without being soft.</div></div>
+      <div><div class="lbl">App icon · favicon</div>
+        <div class="icons">
+          <div class="app" style="background:#0B2E2A"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="18" fill="none" stroke="#F6F4EE" stroke-width="4"/><path d="M18 29a6 6 0 0 1 12 0z" fill="#C8962E"/><path d="M6.7 29h34.6" stroke="#F6F4EE" stroke-width="3" stroke-linecap="round"/></svg></div>
+          <svg class="fav" viewBox="0 0 48 48"><circle cx="24" cy="24" r="18" fill="none" stroke="#0B2E2A" stroke-width="5"/><path d="M17 29a7 7 0 0 1 14 0z" fill="#C8962E"/><path d="M6.7 29h34.6" stroke="#0B2E2A" stroke-width="4"/></svg>
+        </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- B -->
+<div class="dir dB option" data-choice="b" onclick="toggleSelect(this)">
+  <div class="dir-head"><span><b>B · Deep Field</b> (precise, modern, tech-premium)</span><span></span></div>
+  <div class="dir-body">
+    <div class="hero">
+      <div class="brandbar">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><g fill="none" stroke="#EEF2FF" stroke-width="4" stroke-linecap="round"><path d="M26.95 7.26A17 17 0 0 1 39.97 29.81"/><path d="M37.02 34.93A17 17 0 0 1 10.98 34.93"/><path d="M8.03 29.81A17 17 0 0 1 21.05 7.26"/></g><circle cx="24" cy="24" r="5" fill="#3A63FF"/></svg>
+        <span class="word">migrate<span>lens</span></span>
+        <span class="nav"><span>Sample report</span><span>Occupations</span><span>Method</span></span>
+      </div>
+      <h1 class="h1">See where your EOI really stands.</h1>
+      <p class="lede">The EOIs ahead of you, the ones at your score, and what happened to EOIs like yours, from official SkillSelect data. No percentages, no sales call.</p>
+      <span class="btn">Check my points, free</span>
+      <div class="micro">Your answers stay in your browser.</div>
+      <div class="score">
+        <div class="k">189 · Software Engineer · 95 points</div>
+        <div class="big">882–920 EOIs ahead of you</div>
+        <div class="row"><span>At your score</span><b>1,293</b></div>
+        <div class="row"><span>Latest round</span><span class="chip">Not listed</span></div>
+      </div>
+    </div>
+    <div class="side">
+      <div><div class="lbl">Logo idea</div><div style="font-size:14px;line-height:1.5">A camera aperture made of three arcs, one for each visa (189, 190, 491), focused on you.</div></div>
+      <div><div class="lbl">Colours</div>
+        <div class="swatches">
+          <div class="sw" style="background:#0B1530;color:#fff">Night</div>
+          <div class="sw" style="background:#3A63FF;color:#fff">Cobalt</div>
+          <div class="sw" style="background:#7C9BFF;color:#0B1530">Haze</div>
+          <div class="sw" style="background:#F7F8FB;color:#0B1530;border:1px solid #dfe3ee">Cloud</div>
+        </div></div>
+      <div class="typespec"><div class="lbl">Type: Geist + Geist Mono</div><div class="t1">882–920 ahead</div><div class="t2">Crisp, engineered, great for numbers.</div></div>
+      <div><div class="lbl">App icon · favicon</div>
+        <div class="icons">
+          <div class="app" style="background:#0B1530"><svg viewBox="0 0 48 48"><g fill="none" stroke="#EEF2FF" stroke-width="4" stroke-linecap="round"><path d="M26.95 7.26A17 17 0 0 1 39.97 29.81"/><path d="M37.02 34.93A17 17 0 0 1 10.98 34.93"/><path d="M8.03 29.81A17 17 0 0 1 21.05 7.26"/></g><circle cx="24" cy="24" r="5" fill="#3A63FF"/></svg></div>
+          <svg class="fav" viewBox="0 0 48 48"><g fill="none" stroke="#0B1530" stroke-width="5" stroke-linecap="round"><path d="M26.95 7.26A17 17 0 0 1 39.97 29.81"/><path d="M37.02 34.93A17 17 0 0 1 10.98 34.93"/><path d="M8.03 29.81A17 17 0 0 1 21.05 7.26"/></g><circle cx="24" cy="24" r="6" fill="#3A63FF"/></svg>
+        </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- C -->
+<div class="dir dC option" data-choice="c" onclick="toggleSelect(this)">
+  <div class="dir-head"><span><b>C · Data Desk</b> (editorial, independent, like a data newsroom)</span><span></span></div>
+  <div class="dir-body">
+    <div class="hero">
+      <div class="brandbar">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="18" fill="none" stroke="#1B1A17" stroke-width="3.5"/><rect x="15" y="25" width="4.5" height="8" rx="1" fill="#1B1A17"/><rect x="21.75" y="20" width="4.5" height="13" rx="1" fill="#1B1A17"/><rect x="28.5" y="15" width="4.5" height="18" rx="1" fill="#D9731A"/></svg>
+        <span class="word">MigrateLens</span>
+        <span class="nav"><span>Sample report</span><span>Occupations</span><span>Method</span></span>
+      </div>
+      <h1 class="h1">See where your EOI really stands.</h1>
+      <p class="lede">The EOIs ahead of you, the ones at your score, and what happened to EOIs like yours, from official SkillSelect data. No percentages, no sales call.</p>
+      <span class="btn">Check my points, free</span>
+      <div class="micro">Your answers stay in your browser.</div>
+      <div class="score">
+        <div class="k">189 · Software Engineer · 95 points</div>
+        <div class="big">882–920 EOIs ahead of you</div>
+        <div class="row"><span>At your score</span><b>1,293</b></div>
+        <div class="row"><span>Latest round</span><span class="chip">Not listed</span></div>
+      </div>
+    </div>
+    <div class="side">
+      <div><div class="lbl">Logo idea</div><div style="font-size:14px;line-height:1.5">A lens holding a small rising chart: the numbers, looked at closely.</div></div>
+      <div><div class="lbl">Colours</div>
+        <div class="swatches">
+          <div class="sw" style="background:#1B1A17;color:#fff">Ink</div>
+          <div class="sw" style="background:#D9731A;color:#fff">Saffron</div>
+          <div class="sw" style="background:#2E4A7D;color:#fff">Slate</div>
+          <div class="sw" style="background:#F3EEE3;color:#1B1A17;border:1px solid #ddd4c2">Newsprint</div>
+        </div></div>
+      <div class="typespec"><div class="lbl">Type: Newsreader + Inter</div><div class="t1">882–920 ahead</div><div class="t2">Reads like independent reporting, not a sales page.</div></div>
+      <div><div class="lbl">App icon · favicon</div>
+        <div class="icons">
+          <div class="app" style="background:#1B1A17"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="18" fill="none" stroke="#F3EEE3" stroke-width="3.5"/><rect x="15" y="25" width="4.5" height="8" rx="1" fill="#F3EEE3"/><rect x="21.75" y="20" width="4.5" height="13" rx="1" fill="#F3EEE3"/><rect x="28.5" y="15" width="4.5" height="18" rx="1" fill="#D9731A"/></svg></div>
+          <svg class="fav" viewBox="0 0 48 48"><circle cx="24" cy="24" r="18" fill="none" stroke="#1B1A17" stroke-width="5"/><rect x="14" y="24" width="6" height="10" fill="#1B1A17"/><rect x="21" y="19" width="6" height="15" fill="#1B1A17"/><rect x="28" y="14" width="6" height="20" fill="#D9731A"/></svg>
+        </div></div>
+    </div>
+  </div>
+</div>

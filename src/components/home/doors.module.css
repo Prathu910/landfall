@@ -1,0 +1,120 @@
+.doors {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: 12px;
+}
+
+.door {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 18px 20px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--card);
+  transition:
+    box-shadow 0.2s,
+    transform 0.2s;
+}
+
+.door:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px -14px var(--ink);
+}
+
+/* The card shows the action link's focus, so the ring sits on the page */
+.door:has(.action:focus-visible) {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+
+.primary {
+  border-color: var(--ink);
+  background: var(--ink);
+}
+
+.tag {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--saffron-text);
+}
+
+.title {
+  font-family: var(--serif);
+  font-size: 1.375rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.body {
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.action {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 8px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--slate);
+}
+
+.action::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+/* Without :has() the card can't show the ring, so the link keeps its own */
+@supports selector(:has(*)) {
+  .action:focus-visible {
+    outline: none;
+  }
+}
+
+.primary .tag {
+  color: var(--saffron-on-dark);
+}
+
+.primary .title,
+.primary .action,
+.primary .action svg {
+  color: var(--newsprint);
+}
+
+.primary .body {
+  color: var(--muted-on-dark);
+}
+
+@media (max-width: 720px) {
+  .body,
+  .action {
+    font-size: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .door:hover {
+    transform: none;
+  }
+}
+
+@media print {
+  .door {
+    break-inside: avoid;
+  }
+
+  .primary {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+}

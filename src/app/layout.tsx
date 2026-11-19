@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import "@fontsource/dm-sans/400.css";
-import "@fontsource/dm-sans/500.css";
-import "@fontsource/dm-sans/600.css";
-import "@fontsource/instrument-serif/400.css";
-import "@fontsource/instrument-serif/400-italic.css";
+import "@fontsource/newsreader/latin-600.css";
+import "@fontsource/inter/latin-400.css";
+import "@fontsource/inter/latin-500.css";
+import "@fontsource/inter/latin-600.css";
 import "@mantine/core/styles.css";
 import "@mantine/dates/styles.css";
 import "./globals.css";
@@ -13,14 +12,37 @@ import { SiteFooter } from "@/components/site-footer";
 
 export const metadata: Metadata = {
   title: {
-    default: "Landfall — A clearer picture of Australian skilled migration",
-    template: "%s · Landfall",
+    default: "MigrateLens: your points and where they'd put you",
+    template: "%s · MigrateLens",
   },
   description:
-    "Understand your skilled migration points, personal dates and published occupation data. A free, source-backed check for Australian 189, 190 and 491 pathways.",
+    "Check your points-test basics and see where they sit in published SkillSelect data. A free, source-backed report for Australian 189, 190 and 491 pathways.",
   metadataBase: new URL(
     "https://landfall-migration-report.cappedpike4.chatgpt.site",
   ),
+  openGraph: {
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "MigrateLens: Know your points. See where they'd put you.",
+      },
+    ],
+    siteName: "MigrateLens",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "MigrateLens: Know your points. See where they'd put you.",
+      },
+    ],
+  },
   robots: { index: false, follow: false },
 };
 

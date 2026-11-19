@@ -1,7 +1,7 @@
 .form {
   margin: 28px 0;
-  background: var(--white);
-  border: 1px solid var(--line);
+  background: var(--card);
+  border: 1px solid var(--rule);
   border-radius: 14px;
   padding: 16px 20px;
 }
@@ -48,8 +48,15 @@
   font: inherit;
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--forest);
+  color: var(--ink);
   text-decoration: underline;
   text-underline-offset: 3px;
   cursor: pointer;
+}
+
+@media (max-width: 720px) {
+  .note,
+  .affects {
+    font-size: 1rem;
+  }
 }

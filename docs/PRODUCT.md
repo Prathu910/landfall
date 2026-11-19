@@ -1,5 +1,7 @@
 # Landfall product direction
 
+> **Brand note (18 November 2026).** The product is now called **MigrateLens**; "Landfall" below is the old working name. The look described under "First release design" is superseded by the brand and homepage spec, `docs/superpowers/specs/2026-11-18-migratelens-brand-and-homepage-design.md`.
+
 > **Superseded in part.** As of 17 November 2026, `docs/STRATEGY.md` holds the founder's decisions and the approved roadmap. Where the two conflict, it wins. Examples: history-based outcome counts are now allowed, and SEO occupation pages come before monetisation.
 
 17 November 2026. SPEC.md and the HTML files in the parent directory are exploratory context. RESEARCH.md records the evidence informing this direction.
@@ -18,6 +20,8 @@ Build a useful, trustworthy paid product that can become a sustainable second in
 Phases are outcome gates, not calendar promises. Do not take payments until paid delivery, legal review and data-quality gates are met.
 
 ## First release design
+
+_Superseded: the brand, colours and type are now set by the MigrateLens brand and homepage spec (see the note at the top)._
 
 Use Landfall as a replaceable working name. Warm off-white, forest ink, mint accents, sans-serif hierarchy with editorial serif accents, Mantine controls and Motion interactions. See DESIGN.md for the v0.2 design approach. Desktop header with product navigation and a simple mobile menu. The page explains value through a working occupation/points explorer, pathway distinctions, a sample timeline and a readable sample report.
 
