@@ -1,5 +1,32 @@
 # Resume here
 
+## For the founder: what happened while you were away (19 November 2026)
+
+**Done and pushed** to branch `roadmap/occupation-pages` (not merged into `main`; that is your call):
+
+- **479 occupation pages** at `/occupations/<name>-<code>/`, one for every occupation with published data, each opening with "What the data says", then the pool by points (189, 190 and 491 tabs), the last 8 rounds as round cards (your pick), what happened to EOIs submitted each month, a state-by-state table, three questions answered from history, and related occupations.
+- **An A–Z occupations page with search**, "Occupations" in the main menu, and a "See the {occupation} page" link from the homepage try-it.
+- **Google plumbing**: sitemap (354 pages: 5 site pages and 349 occupations), robots file, canonical addresses and structured data. **Everything stays hidden from Google** until launch.
+- **Checks**: 845 tests pass, the build makes all 479 pages, and real pages were checked in a browser at desktop and phone widths (no errors, no sideways scrolling, printing shows every section).
+- **The final review caught a real honesty problem**, now fixed: the "Which states nominate?" answer said a state had "the most invitations" even when the published ranges overlapped (19 pages). It now names a state only when its range is clearly above every other, which is 1 page today.
+
+**To launch** (when you have the domain): change two lines in `src/lib/site.ts` (`SITE_URL` to your domain, `SITE_INDEXABLE = true`), build, and host it. Hosting is still to choose (my suggestion: Cloudflare Pages).
+
+**Decisions I made for you** (each is in the ledger with its cost if wrong):
+
+- R1: the occupation summary's source line wording ("SkillSelect (Department of Home Affairs), snapshot … · counts are EOIs (one person can hold several) · updated monthly"). Cost if wrong: one string.
+- R2 → replaced by R8: "the state with the most 190 invitations" is named only when its range is strictly above every other state's. Cost if wrong: that sentence appears less often.
+- R3: no component render tests (the repo has none); view-model tests and the browser check cover them. Cost if wrong: a render bug caught later.
+- R4: share links use the placeholder domain until you set yours, so preview link images may not show yet. Cost if wrong: one line.
+- R5: commits name the model that wrote them. Cost: cosmetic.
+- R6: a month with no EOIs in the monthly table counts as zero (the data is one full download). Cost if wrong: an empty bar.
+- R7: a test uses its own fully masked example instead of the plan's wrong fixture. Cost: none to behaviour.
+- R9: pages are hidden from Google only when every count is "under 20", which leaves 349 visible pages, not the ~287 I estimated. Cost if wrong: some thin pages indexed at launch; one rule to tighten.
+- R10: a small hardening (a state with an unpublished count) is a follow-up; it never happens in today's data.
+- The alert sign-up box is left out until you choose an email service.
+
+**Small follow-ups** (none block launch) are listed in the ledger: keyboard Home/End on the tabs, "(opens in a new tab)" on state links, two similar greys in the monthly bars, the source line appearing twice on a page, and a few test gaps.
+
 ## Latest: occupation pages shipped, hidden from search (19 November 2026)
 
 Roadmap step 4 tier 1 is done on branch `roadmap/occupation-pages` (spec `docs/superpowers/specs/2026-11-19-occupation-pages-design.md`, ledger `.superpowers/sdd/2026-11-19-occupation-pages/progress.md`). `/occupations/` and a page for each of the 479 occupations with published data (14 of the 493 have none), each with its own title, description, canonical, three JSON-LD scripts, round cards, pool tabs (189 / 190 / 491, all printed), questions, related occupations, a sitemap and robots. Everything is `noindex` and `robots.txt` disallows all until launch. Where things live: `CLAUDE.md`, "Occupation pages".
