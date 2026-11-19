@@ -14,6 +14,7 @@ import {
 } from "../report/__fixtures__/scorecard";
 import type { FederalList } from "../state-outlook/rules-types";
 import {
+  has189Rounds,
   likeTheseSentence,
   mostCommonScore,
   occupationSummary,
@@ -27,6 +28,12 @@ const federal = federalJson as unknown as FederalList;
 const core261313 = loadOccupationCore("261313")!;
 const detail261313 = loadOccupationDetail("261313");
 const core254499 = loadOccupationCore("254499")!;
+// Ophthalmologist: no 189 pool, but 189 listed it at 80 in its last four rounds.
+const core253914 = loadOccupationCore("253914")!;
+const quietNo189Core = {
+  ...no189PoolCore,
+  rounds189: no189PoolCore.rounds189.map((r) => ({ ...r, cutoff: null })),
+};
 
 describe("roundsSentence", () => {
   it("says when 189 has not listed the occupation recently", () => {
@@ -57,7 +64,9 @@ describe("poolSentence", () => {
   });
   it("names the 190 and 491 totals when there is no 189 pool", () => {
     const text = poolSentence("X", no189PoolCore);
-    expect(text).toMatch(/^No 189 EOIs are published for /);
+    expect(text).toMatch(
+      /^No 189 EOIs are waiting in the published pool for X; the 190 pool holds /,
+    );
     expect(text).toContain("190 pool holds");
     expect(text).toContain("491 pool holds");
   });
@@ -92,9 +101,24 @@ describe("likeTheseSentence", () => {
   });
 });
 
+describe("has189Rounds", () => {
+  it("is true with a 189 pool or a listed cut-off in the last 8 rounds", () => {
+    expect(has189Rounds(core261313)).toBe(true);
+    expect(has189Rounds(core253914)).toBe(true);
+    expect(has189Rounds(no189PoolCore)).toBe(true);
+    expect(has189Rounds(quietNo189Core)).toBe(false);
+  });
+});
+
 describe("occupationSummary", () => {
-  it("leaves out 189 and cohort sentences with no 189 pool", () => {
-    const lines = occupationSummary(no189PoolCore, null);
+  it("keeps the 189 rounds when there is no pool but recent cut-offs", () => {
+    expect(occupationSummary(core253914, null)).toEqual([
+      "No 189 EOIs are waiting in the published pool for Ophthalmologist; the 190 pool holds under 20 EOIs (so may be zero).",
+      "189 listed Ophthalmologist in each of its last four rounds, at 80 points.",
+    ]);
+  });
+  it("leaves out 189 and cohort sentences with no 189 pool or rounds", () => {
+    const lines = occupationSummary(quietNo189Core, null);
     expect(lines.length).toBeGreaterThan(0);
     expect(lines.some((l) => l.startsWith("189 "))).toBe(false);
     expect(lines.some((l) => l.includes("EOIs submitted"))).toBe(false);
@@ -126,8 +150,13 @@ describe("statusChips", () => {
   it("leaves the state chips out without a federal list", () => {
     expect(statusChips(core261313, null)).toHaveLength(1);
   });
-  it("leaves the 189 chip out with no 189 pool", () => {
-    expect(statusChips(no189PoolCore, null)).toEqual([]);
+  it("leaves the 189 chip out with no 189 pool or rounds", () => {
+    expect(statusChips(quietNo189Core, null)).toEqual([]);
+  });
+  it("keeps the 189 chip with no pool but recent rounds", () => {
+    expect(statusChips(core253914, null)).toEqual([
+      { label: "189: Regular invitations", tone: "green" },
+    ]);
   });
 });
 

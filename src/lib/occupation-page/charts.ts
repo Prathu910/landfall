@@ -7,6 +7,7 @@ import type {
   MonthKey,
   OccupationDetail,
   ScoreCounts,
+  Visa,
 } from "../data/types";
 import { formatDate } from "../migration";
 import { formatCount, formatMonth, isMasked } from "../report/copy";
@@ -39,6 +40,15 @@ export function poolBars(
     }));
 }
 
+/** "9,464 EOIs in the 189 pool"; null without a pool. */
+export function poolTotalLabel(
+  visa: Visa,
+  pool: { total: CountText } | undefined,
+): string | null {
+  if (!pool) return null;
+  return `${formatCount(parseCountText(pool.total))} EOIs in the ${visa} pool`;
+}
+
 export type RoundCard = { date: string; label: string; cutoff: number | null };
 
 /** The last `n` rounds, oldest first. */
@@ -53,7 +63,8 @@ export function roundCards(rounds189: Round[], n = 8): RoundCard[] {
     }));
 }
 
-function pointsRange(cutoffs: number[]): string {
+/** "70" for one value, "65 to 85" for a spread. */
+export function pointsRange(cutoffs: number[]): string {
   const lo = Math.min(...cutoffs);
   const hi = Math.max(...cutoffs);
   return lo === hi ? `${lo}` : `${lo} to ${hi}`;
@@ -136,6 +147,7 @@ function sumOf(rows: CohortRow[], key: CohortKey): Interval {
 export function cohortNote(name: string, rows: CohortRow[]): string {
   const total = sumIntervals(rows.map((r) => r.total));
   const invited = formatCount(sumOf(rows, "INVITED"));
+  const lodged = formatCount(sumOf(rows, "LODGED"));
   const waiting = formatCount(sumOf(rows, "SUBMITTED"));
-  return `Across the last ${rows.length} submission months, ${formatCount(total)} EOIs for ${name} were submitted. Of those, ${invited} are invited so far and ${waiting} are still waiting.`;
+  return `Across the last ${rows.length} submission months, ${formatCount(total)} EOIs for ${name} were submitted. Of those, ${invited} are invited, ${lodged} have lodged a visa application and ${waiting} are still waiting.`;
 }

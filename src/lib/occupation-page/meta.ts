@@ -1,3 +1,4 @@
+import { cohortWindowStart } from "../data/months";
 import type { OccupationCore, OccupationIndexEntry } from "../data/types";
 import { SITE_NAME, SITE_URL } from "../site";
 import { formatMonth } from "../report/copy";
@@ -67,6 +68,9 @@ export function occupationJsonLd(
       name: pageTitle(core),
       description: pageDescription(summary),
       url,
+      // From the oldest stored submission month to the snapshot (docs/DATA.md R8).
+      temporalCoverage: `${cohortWindowStart(core.asAt)}/${core.asAt}`,
+      isAccessibleForFree: true,
       license: LICENSE,
       creator: {
         "@type": "Organization",

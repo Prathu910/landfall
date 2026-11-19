@@ -29,6 +29,14 @@ const STATUS_TONE: Record<RoundStatus, ChipTone> = {
   regular: "green",
 };
 
+/** 189 has something to show: a published pool, or a listed cut-off in the last 8 rounds. */
+export function has189Rounds(core: OccupationCore): boolean {
+  return (
+    Boolean(core.pool["189"]) ||
+    core.rounds189.slice(0, 8).some((r) => r.cutoff !== null)
+  );
+}
+
 export function sourceLine(core: OccupationCore): string {
   return `SkillSelect (Department of Home Affairs), snapshot ${formatDate(monthEnd(core.asAt))} · counts are EOIs (one person can hold several) · updated monthly`;
 }
@@ -95,7 +103,7 @@ function otherPools(core: OccupationCore): string {
 export function poolSentence(name: string, core: OccupationCore): string {
   const pool = core.pool["189"];
   if (!pool) {
-    return `No 189 EOIs are published for ${name}${otherPools(core)}`;
+    return `No 189 EOIs are waiting in the published pool for ${name}${otherPools(core)}`;
   }
   const lead = `The 189 pool holds ${holds(pool.total)}`;
   const common = mostCommonScore(pool.byScore);
@@ -124,13 +132,17 @@ export function occupationSummary(
   detail: OccupationDetail | null,
 ): string[] {
   const { name } = core;
+  // Without a 189 pool the page leads with 190/491; recent 189 rounds follow.
   const sentences: (string | null)[] = core.pool["189"]
     ? [
         roundsSentence(name, core.rounds189),
         poolSentence(name, core),
         likeTheseSentence(name, core, detail),
       ]
-    : [poolSentence(name, core)];
+    : [
+        poolSentence(name, core),
+        has189Rounds(core) ? roundsSentence(name, core.rounds189) : null,
+      ];
   return sentences.filter((s): s is string => s !== null);
 }
 
@@ -139,7 +151,7 @@ export function statusChips(
   federal: FederalList | null,
 ): StatusChip[] {
   const chips: StatusChip[] = [];
-  if (core.pool["189"]) {
+  if (has189Rounds(core)) {
     const status = summarise189Rounds(core.rounds189).status;
     chips.push({
       label: `189: ${CHIP_LABEL[status]}`,

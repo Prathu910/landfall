@@ -2,9 +2,11 @@ import { describe, expect, it } from "vitest";
 import { loadOccupationCore, loadOccupationDetail } from "../data/load-server";
 import { BANNED_COPY } from "../report/copy";
 import {
+  type CohortKey,
   cohortNote,
   cohortRows,
   poolBars,
+  poolTotalLabel,
   roundCards,
   roundsNote,
 } from "./charts";
@@ -74,6 +76,15 @@ describe("poolBars", () => {
   it("is empty without a pool", () => {
     expect(poolBars(undefined)).toEqual([]);
   });
+  it("labels the pool total", () => {
+    expect(poolTotalLabel("189", core261313.pool["189"])).toBe(
+      "9,464 EOIs in the 189 pool",
+    );
+    expect(poolTotalLabel("190", { total: "<20" })).toBe(
+      "under 20 EOIs in the 190 pool",
+    );
+    expect(poolTotalLabel("491", undefined)).toBeNull();
+  });
 });
 
 describe("cohortRows and cohortNote", () => {
@@ -91,19 +102,42 @@ describe("cohortRows and cohortNote", () => {
   it("is null without detail", () => {
     expect(cohortRows(null, "2026-10")).toBeNull();
   });
+  it("keeps a masked lodged count as under 20", () => {
+    const segment = (key: CohortKey, min: number, max: number) => ({
+      key,
+      label: key,
+      count: { min, max },
+      masked: min === 0 && max === 19,
+    });
+    const row = {
+      month: "Oct 2026",
+      total: { min: 80, max: 99 },
+      segments: [
+        segment("INVITED", 30, 30),
+        segment("LODGED", 0, 19),
+        segment("SUBMITTED", 50, 50),
+      ],
+    };
+    expect(cohortNote("X", [row])).toBe(
+      "Across the last 1 submission months, 80–99 EOIs for X were submitted. Of those, 30 are invited, under 20 have lodged a visa application and 50 are still waiting.",
+    );
+  });
   it("writes notes that pass the copy rules", () => {
     const note = cohortNote(
       "Registered Nurses nec",
       cohortRows(detail254499, "2026-10")!,
     );
     expect(note).toMatch(/^Across the last 12 submission months, /);
-    expect(note).toContain("are invited");
+    expect(note).toMatch(
+      /Of those, [\d,–]+ are invited, [\d,–]+ have lodged a visa application and [\d,–]+ are still waiting\.$/,
+    );
     expect(note).not.toMatch(BANNED_COPY);
     const other = cohortNote(
       "Software Engineer",
       cohortRows(detail261313, "2026-10")!,
     );
     expect(other).not.toMatch(/ 0 are invited/);
+    expect(other).toContain("have lodged a visa application");
     expect(other).not.toMatch(BANNED_COPY);
   });
 });

@@ -1,6 +1,6 @@
 import type { OccupationCore, StateCode, StateVisa } from "../data/types";
 import { sumIntervals, parseCountText } from "../data/published-count";
-import { formatCount } from "../report/copy";
+import { formatCount, formatMonth } from "../report/copy";
 import type { StateRuleData } from "../report/state-outlook-view";
 import { STATE_NAMES, joinWords } from "../state-outlook/context";
 import type {
@@ -102,6 +102,11 @@ function openTo(cohorts: Cohort[], state: StateCode): string {
   }
   const text = joinWords(parts, "or");
   return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+/** The column counts EOIs in INVITED status at the snapshot, not a month's invitations. */
+export function invitedHeading(core: OccupationCore): string {
+  return `Invited for 190, as at ${formatMonth(core.asAt)}`;
 }
 
 function invited190(core: OccupationCore, state: StateCode): string {

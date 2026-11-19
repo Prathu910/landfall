@@ -1,7 +1,13 @@
 import type { StateRow } from "@/lib/occupation-page/states";
 import styles from "./state-table.module.css";
 
-export function StateTable({ rows, asAt }: { rows: StateRow[]; asAt: string }) {
+export function StateTable({
+  rows,
+  invitedHeading,
+}: {
+  rows: StateRow[];
+  invitedHeading: string;
+}) {
   return (
     <div className={styles.wrap}>
       <table role="table" className={styles.table}>
@@ -17,7 +23,7 @@ export function StateTable({ rows, asAt }: { rows: StateRow[]; asAt: string }) {
               Open to
             </th>
             <th scope="col" role="columnheader">
-              190 invitations, {asAt}
+              {invitedHeading}
             </th>
           </tr>
         </thead>
@@ -39,7 +45,7 @@ export function StateTable({ rows, asAt }: { rows: StateRow[]; asAt: string }) {
               <td role="cell" data-label="Open to">
                 {row.openTo}
               </td>
-              <td role="cell" data-label={`190 invitations, ${asAt}`}>
+              <td role="cell" data-label={invitedHeading}>
                 {row.invited190}
               </td>
             </tr>

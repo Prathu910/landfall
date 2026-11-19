@@ -15,13 +15,13 @@ import {
   loadOccupationCore,
   loadOccupationDetail,
 } from "@/lib/data/load-server";
-import { parseCountText } from "@/lib/data/published-count";
 import type { OccupationCore, Visa } from "@/lib/data/types";
 import { formatDate } from "@/lib/migration";
 import {
   cohortNote,
   cohortRows,
   poolBars,
+  poolTotalLabel,
   roundCards,
   roundsNote,
 } from "@/lib/occupation-page/charts";
@@ -38,13 +38,14 @@ import {
   occupationPath,
   occupationSlug,
 } from "@/lib/occupation-page/slug";
-import { stateRows } from "@/lib/occupation-page/states";
+import { invitedHeading, stateRows } from "@/lib/occupation-page/states";
 import {
+  has189Rounds,
   occupationSummary,
   sourceLine,
   statusChips,
 } from "@/lib/occupation-page/summary";
-import { formatCount, formatMonth } from "@/lib/report/copy";
+import { formatMonth } from "@/lib/report/copy";
 import { SITE_INDEXABLE } from "@/lib/site";
 import styles from "./page.module.css";
 
@@ -97,10 +98,7 @@ export default async function OccupationPage({ params }: Props) {
     VISAS.map((v) => [v, core.pool[v] ? poolBars(core.pool[v]) : null]),
   ) as Record<Visa, ReturnType<typeof poolBars> | null>;
   const totals = Object.fromEntries(
-    VISAS.map((v) => {
-      const total = core.pool[v]?.total;
-      return [v, total ? formatCount(parseCountText(total)) : null];
-    }),
+    VISAS.map((v) => [v, poolTotalLabel(v, core.pool[v])]),
   ) as Record<Visa, string | null>;
 
   return (
@@ -110,10 +108,12 @@ export default async function OccupationPage({ params }: Props) {
         <span aria-hidden="true"> › </span>
         <span aria-current="page">{name}</span>
       </nav>
-      <h1 className={styles.title}>{name}</h1>
+      <h1 className={styles.title}>
+        {name} ({code})
+      </h1>
       <p className={styles.subtitle}>
-        ANZSCO {code} · published SkillSelect data as at{" "}
-        {formatMonth(core.asAt)}
+        Australian skilled visas: 189, 190 and 491 EOIs, cut-offs and
+        invitations · as at {formatMonth(core.asAt)}
       </p>
       <OccupationSummary
         chips={statusChips(core, stateRuleData.federal)}
@@ -126,7 +126,7 @@ export default async function OccupationPage({ params }: Props) {
             <h2 id="pool-heading">EOIs waiting, by points</h2>
             <PoolTabs pools={pools} totals={totals} />
           </section>
-          {core.pool["189"] && (
+          {has189Rounds(core) && (
             <section aria-labelledby="rounds-heading" className={styles.block}>
               <h2 id="rounds-heading">Recent 189 rounds</h2>
               <RoundCards
@@ -143,7 +143,7 @@ export default async function OccupationPage({ params }: Props) {
           )}
           <section aria-labelledby="states-heading" className={styles.block}>
             <h2 id="states-heading">State nomination</h2>
-            <StateTable rows={rows} asAt={formatMonth(core.asAt)} />
+            <StateTable rows={rows} invitedHeading={invitedHeading(core)} />
           </section>
           <section aria-labelledby="faq-heading" className={styles.block}>
             <h2 id="faq-heading">Common questions</h2>
@@ -155,7 +155,7 @@ export default async function OccupationPage({ params }: Props) {
           />
         </div>
         <aside className={styles.side}>
-          <TryIt defaultOccupation={code} />
+          <TryIt defaultOccupation={code} currentCode={code} />
           <Link href={`/check/?occupation=${code}`} className={styles.cta}>
             Check my points, free
           </Link>

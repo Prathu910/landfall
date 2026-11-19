@@ -83,6 +83,10 @@ describe("occupationJsonLd", () => {
       "Department of Home Affairs",
     );
   });
+  it("states the coverage and that the data is free", () => {
+    expect(ld[0].temporalCoverage).toBe("2023-11/2026-10");
+    expect(ld[0].isAccessibleForFree).toBe(true);
+  });
   it("uses absolute site URLs", () => {
     const urls = JSON.stringify(ld).match(/"(?:url|item)":"([^"]+)"/g)!;
     for (const u of urls) expect(u).toContain(`"${SITE_URL}`);

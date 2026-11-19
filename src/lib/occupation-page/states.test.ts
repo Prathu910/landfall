@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { stateRuleData } from "../../components/data/state-rule-data";
 import { loadOccupationCore } from "../data/load-server";
 import { BANNED_COPY } from "../report/copy";
-import { stateRows } from "./states";
+import { invitedHeading, stateRows } from "./states";
 
 const core254499 = loadOccupationCore("254499")!;
 const core261313 = loadOccupationCore("261313")!;
@@ -84,5 +84,11 @@ describe("stateRows", () => {
     const row = by(stateRows("000000", core254499, mixed), "NSW");
     expect(row.onList).toBe("Not on its imported list");
     expect(row.openTo).toBe("See the official page");
+  });
+});
+
+describe("invitedHeading", () => {
+  it("names EOIs in invited status as at the snapshot, not monthly invitations", () => {
+    expect(invitedHeading(core254499)).toBe("Invited for 190, as at Oct 2026");
   });
 });

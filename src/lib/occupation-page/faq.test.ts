@@ -33,13 +33,83 @@ describe("occupationFaq", () => {
       true,
     );
   });
-  it("uses recent cut-offs and names the state with most 190 invitations", () => {
+  it("uses recent cut-offs", () => {
     expect(faq254499[2].question).toBe(
       "Is 70 points enough for Registered Nurses nec 189?",
     );
     expect(faq254499[2].answer).toContain("70 to 80 points");
-    expect(faq254499[1].answer).toContain("Victoria");
     expect(faq254499[1].answer).toContain("rules are still being checked");
+  });
+  it("names no state when the leading ranges overlap (VIC 337–375, NSW 327–346)", () => {
+    expect(faq254499[1].answer).not.toMatch(/had the most/);
+  });
+  it("names a state only when its range is above every other state's", () => {
+    const core = loadOccupationCore("254499")!;
+    const at = (counts: Record<string, string>) => ({ [core.asAt]: counts });
+    const clearLead = {
+      ...core,
+      stateInvited: {
+        "190": {
+          VIC: at({ "80": "215", "85": "<20" }),
+          NSW: at({ "80": "168", "85": "26" }),
+          QLD: at({ "80": "<20" }),
+        },
+      },
+    };
+    const [, states] = occupationFaq(
+      clearLead,
+      stateRows("254499", clearLead, stateRuleData),
+    );
+    expect(states.answer).toContain(
+      "Victoria had the most EOIs in invited status for 190, as at Oct 2026 (215–234).",
+    );
+    const masked = {
+      ...core,
+      stateInvited: { "190": { VIC: at({ "80": "<20" }) } },
+    };
+    const [, alone] = occupationFaq(
+      masked,
+      stateRows("254499", masked, stateRuleData),
+    );
+    expect(alone.answer).not.toMatch(/had the most/);
+  });
+  it("names each state once, with both visas when it lists both", () => {
+    expect(faq254499[1].answer).toMatch(
+      /^For 2026–27, QLD, WA and SA list it for 190 and 491; NSW lists it for 190\./,
+    );
+    const core = loadOccupationCore("254499")!;
+    const rows = stateRows("254499", core, stateRuleData).map((r) => ({
+      ...r,
+      onList: r.state === "WA" ? r.onList : "Not on its 2026–27 list",
+    }));
+    const [, states] = occupationFaq(core, rows);
+    expect(states.answer).toMatch(
+      /^For 2026–27, WA lists it for 190 and 491\./,
+    );
+  });
+  it("gives a single cut-off once, not as a range", () => {
+    const core = loadOccupationCore("254499")!;
+    const rounds189 = core.rounds189.map((r) => ({ ...r, cutoff: 65 }));
+    const [, , points] = occupationFaq(
+      { ...core, rounds189 },
+      stateRows("254499", core, stateRuleData),
+    );
+    expect(points.answer).toContain(
+      "listed Registered Nurses nec at 65 points.",
+    );
+    expect(points.answer).not.toMatch(/65 to 65/);
+  });
+  it("has its own sentence when 189 has never listed it", () => {
+    const core = loadOccupationCore("254499")!;
+    const rounds189 = core.rounds189.map((r) => ({ ...r, cutoff: null }));
+    const [, , points] = occupationFaq(
+      { ...core, rounds189 },
+      stateRows("254499", core, stateRuleData),
+    );
+    expect(points.answer).toMatch(
+      /^189 hasn't listed Registered Nurses nec in any round we can read\./,
+    );
+    expect(points.answer).not.toMatch(/not listed points/);
   });
   it("leaves out the points question without a 189 pool", () => {
     const faq = occupationFaq(
