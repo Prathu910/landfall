@@ -5,6 +5,8 @@
   border-radius: 14px;
   padding: 20px 22px;
   break-inside: avoid;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
 }
 .eyebrow {
   margin: 0 0 10px;

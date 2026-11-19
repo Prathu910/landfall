@@ -32,7 +32,7 @@
   background: var(--muted-soft);
 }
 .CLOSED {
-  background: var(--rule);
+  background: var(--muted);
 }
 .masked,
 .maskedSwatch {
@@ -92,4 +92,13 @@
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
   }
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }

@@ -29,6 +29,15 @@ export function CohortBars({
         {rows.map((row) => (
           <li key={row.month} className={styles.row}>
             <span className={styles.month}>{row.month}</span>
+            <span className={styles.srOnly}>
+              {row.segments
+                .map(
+                  (s) =>
+                    `${s.label} ${s.masked ? "under 20" : formatCount(s.count)}`,
+                )
+                .join(", ")}
+              .
+            </span>
             <span
               className={styles.bar}
               style={{ width: `${(row.total.max / largest) * 100}%` }}
