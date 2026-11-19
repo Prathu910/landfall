@@ -17,7 +17,7 @@ export const CHIP_LABEL: Record<RoundStatus, string> = {
   none: "No recent invitations",
 };
 
-type Round = { date: string; cutoff: number | null };
+export type Round = { date: string; cutoff: number | null };
 
 function firstListed(rounds: Round[]): DatedCutoff | null {
   for (const round of rounds) {

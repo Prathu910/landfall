@@ -1,6 +1,6 @@
 export type ReportSection = readonly [id: string, title: string];
 
-const OPENING: ReportSection[] = [["reality-check", "Reality check"]];
+const OPENING: ReportSection[] = [["reality-check", "What the data says"]];
 const PANELS: ReportSection[] = [
   ["visa-189", "189 in detail"],
   ["visa-190", "190 in detail"],

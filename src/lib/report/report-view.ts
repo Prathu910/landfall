@@ -2,6 +2,12 @@ import type { OccupationCore, OccupationDetail } from "../data/types";
 import { buildTimeline, calculatePoints, type Profile } from "../migration";
 import { applyScenarios, buildScenarios } from "../scenarios";
 import { submissionMonth } from "./copy";
+import {
+  buildCutoffChart,
+  buildLevers,
+  type CutoffChart,
+  type Lever,
+} from "./data-says";
 import { buildEoisLikeYours, type EoisLikeYours } from "./eois-like-yours";
 import {
   buildRounds,
@@ -44,9 +50,20 @@ export type PanelViews = {
   nominated: [NominatedPanel, NominatedPanel];
 };
 
-/** `panels` and `stateOutlook` are null without occupation data: the scorecard explains why. */
+/** "What the data says" beyond the scorecard: the chart, EOIs like yours, the levers and the recap. */
+export type DataSays = {
+  chart: CutoffChart | null;
+  /** The 189 panel's "EOIs like yours" sentence; null until it is ready. */
+  like: string | null;
+  levers: { add: Lever[]; dated: Lever[] };
+  /** The bottom line and the state line, for the end of the report. */
+  recap: string;
+};
+
+/** `panels`, `stateOutlook` and `dataSays` are null without occupation data: the scorecard explains why. */
 export type ReportView = {
   scorecard: Scorecard;
+  dataSays: DataSays | null;
   panels: PanelViews | null;
   stateOutlook: StateOutlookView | null;
 };
@@ -116,7 +133,7 @@ function buildPanels(
   };
 }
 
-/** Every reality-check view-model the report renders, from one profile and occupation. */
+/** Every view-model the report renders, from one profile and occupation. */
 export function buildReportView(input: ReportViewInput): ReportView {
   const { occupationName, data, profile, asOf } = input;
   const points = calculatePoints(profile, asOf);
@@ -136,11 +153,34 @@ export function buildReportView(input: ReportViewInput): ReportView {
     points,
     submittedMonth: submissionMonth(profile.eoiDate),
     stateSummaries: stateOutlook?.summaryByVisa ?? null,
+    stateTiles: stateOutlook?.tilesByVisa ?? null,
   });
+  const panels =
+    data.kind === "ready" ? buildPanels(input, data.core, data.detail) : null;
   return {
     scorecard,
-    panels:
-      data.kind === "ready" ? buildPanels(input, data.core, data.detail) : null,
+    dataSays:
+      data.kind === "ready" && panels && scorecard.detail !== null
+        ? {
+            // No 189 EOIs published: the 189 card says so, and a chart of
+            // empty rounds would add nothing.
+            chart: data.core.pool["189"]
+              ? buildCutoffChart(
+                  occupationName,
+                  data.core.rounds189,
+                  points.base,
+                )
+              : null,
+            like: panels.eois.kind === "ready" ? panels.eois.sentence : null,
+            levers: buildLevers(
+              panels.changes,
+              data.core.rounds189,
+              points.base,
+            ),
+            recap: `${scorecard.headline} ${scorecard.detail}`,
+          }
+        : null,
+    panels,
     stateOutlook,
   };
 }

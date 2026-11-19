@@ -72,7 +72,7 @@ export function ScenariosSection({
       </div>
       <p className="data-caption">
         No future completion date, cost, invitation or evidence approval is
-        assumed. The reality check and visa panels above use your current score.
+        assumed. The summary and the visa panels above use your current score.
       </p>
     </section>
   );

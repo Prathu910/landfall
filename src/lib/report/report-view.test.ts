@@ -53,8 +53,32 @@ describe("buildReportView", () => {
     expect(panels.changes).toContainEqual({
       label: "Community language",
       effect: "+5",
+      delta: 5,
+      date: null,
       href: "#scenarios",
     });
+  });
+
+  it("builds what the data says from the same panels", () => {
+    const view = buildReportView(input());
+    const says = view.dataSays!;
+    expect(says.recap).toBe(
+      `${view.scorecard.headline} ${view.scorecard.detail}`,
+    );
+    expect(says.chart?.rounds.at(-1)?.label).toBe("Oct 2026");
+    const eois = view.panels!.eois;
+    expect(says.like).toBe(eois.kind === "ready" ? eois.sentence : null);
+    expect(
+      says.levers.add.some((l) => l.text.startsWith("Community language")),
+    ).toBe(true);
+  });
+
+  it("has nothing to say without occupation data", () => {
+    const view = buildReportView(
+      input({ data: { kind: "none", reason: "notIndexed" } }),
+    );
+    expect(view.dataSays).toBeNull();
+    expect(view.scorecard.detail).toBeNull();
   });
 
   it("still builds the 190 and 491 panels when the 189 pool is absent", () => {

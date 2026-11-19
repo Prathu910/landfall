@@ -27,6 +27,7 @@ import { PointsAudit } from "./report/points-audit";
 import { reportSections, sectionLabel } from "./report/report-sections";
 import { reportView } from "./report/report-view";
 import { ScenariosSection } from "./report/scenarios-section";
+import { DataSaysRecap } from "./report/data-says";
 import { RealityScorecard } from "./report/scorecard";
 import { StateOutlookSection } from "./report/state-outlook-section";
 import { VisaPanels } from "./report/visa-panels";
@@ -185,7 +186,10 @@ export function Report({
             </div>
           </header>
           <div className="report-body">
-            <RealityScorecard scorecard={view.scorecard} />
+            <RealityScorecard
+              scorecard={view.scorecard}
+              dataSays={view.dataSays}
+            />
             <VisaPanels
               occupation={occupation}
               panels={view.panels}
@@ -384,6 +388,9 @@ export function Report({
                 </ul>
               </section>
             )}
+            {view.dataSays ? (
+              <DataSaysRecap recap={view.dataSays.recap} />
+            ) : null}
             <section className="report-section">
               <Accordion
                 keepMounted
@@ -399,20 +406,20 @@ export function Report({
                     </span>
                   </Accordion.Control>
                   <Accordion.Panel>
-                    Included: a reality check across 189, 190 and 491, a
-                    self-reported points audit, hypothetical credential
-                    scenarios, three dated occupation pools, twelve monthly 189
-                    totals, published invitation rounds, published outcomes of
-                    EOIs by submission month, personal dates, a state outlook
-                    from each state’s published 2026–27 rules and invitations,
-                    and preparation tools. Exact queue rank, invitation dates,
-                    personal probabilities, state nomination decisions,
-                    state-run scores (such as Victoria’s points test or the
-                    Canberra Matrix), current ceiling utilisation and gross EOI
-                    movements are unavailable here. These need additional
-                    verified data or a defensible model. Payment, automated
-                    report delivery and ongoing monitoring are future product
-                    work.
+                    Included: a summary of what the data says across 189, 190
+                    and 491, a self-reported points audit, hypothetical
+                    credential scenarios, three dated occupation pools, twelve
+                    monthly 189 totals, published invitation rounds, published
+                    outcomes of EOIs by submission month, personal dates, a
+                    state outlook from each state’s published 2026–27 rules and
+                    invitations, and preparation tools. Exact queue rank,
+                    invitation dates, personal probabilities, state nomination
+                    decisions, state-run scores (such as Victoria’s points test
+                    or the Canberra Matrix), current ceiling utilisation and
+                    gross EOI movements are unavailable here. These need
+                    additional verified data or a defensible model. Payment,
+                    automated report delivery and ongoing monitoring are future
+                    product work.
                   </Accordion.Panel>
                 </Accordion.Item>
               </Accordion>

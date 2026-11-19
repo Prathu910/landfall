@@ -4,11 +4,20 @@ import type {
   MonthKey,
   OccupationCore,
   OccupationDetail,
+  StateCode,
   StateVisa,
   Visa,
 } from "../data/types";
 import { formatDate } from "../migration";
 import { formatCount, formatMonth, QUEUE_NOTE, type LinkedNote } from "./copy";
+import type { Group } from "../state-outlook/outlook";
+import {
+  bottomLine189,
+  no189PoolLine,
+  nominatedChip,
+  stateLine,
+  stateStanding,
+} from "./data-says";
 import {
   CHIP_LABEL,
   summarise189Rounds,
@@ -35,7 +44,10 @@ export type ScorecardCard = {
   href: string | null; // null: no visa panel renders without data
 };
 export type Scorecard = {
+  /** "What the data says": the report's bottom line. */
   headline: string;
+  /** The state line under it; null without occupation data. */
+  detail: string | null;
   sourceLine: string;
   cards: [ScorecardCard, ScorecardCard, ScorecardCard];
   /** Null when no card shows a higher-score count. */
@@ -46,6 +58,11 @@ export type Scorecard = {
 type Points = { base: number; subclass190: number; subclass491: number };
 /** Each nominated visa's state outlook summary; null without occupation data. */
 type StateSummaries = Record<StateVisa, string> | null;
+/** Each nominated visa's state tiles (state and group); null without occupation data. */
+export type StateTiles = Record<
+  StateVisa,
+  { state: StateCode; group: Group }[]
+> | null;
 type Chip = ScorecardCard["chip"];
 type NoneReason = Extract<ScorecardData, { kind: "none" }>["reason"];
 
@@ -88,6 +105,10 @@ function cutoffText(
     : null;
 }
 
+function hasAnyPool(core: OccupationCore): boolean {
+  return Boolean(core.pool["189"] || core.pool["190"] || core.pool["491"]);
+}
+
 function headlineFor(name: string, data: ScorecardData, base: number): string {
   if (data.kind === "none") {
     if (data.reason === "notIndexed") {
@@ -101,20 +122,12 @@ function headlineFor(name: string, data: ScorecardData, base: number): string {
       ? LOADING_HEADLINE
       : `Published SkillSelect data for ${name} is too limited to compare. Your points breakdown is below.`;
   }
-  const { pool, rounds189 } = data.core;
-  if (!pool["189"] && !pool["190"] && !pool["491"]) {
+  const { rounds189 } = data.core;
+  if (!hasAnyPool(data.core)) {
     return `Published SkillSelect data for ${name} is too limited to compare. Your points breakdown is below.`;
   }
-  const summary = summarise189Rounds(rounds189);
-  const cutoff = summary.latestCutoffInLastFour?.cutoff;
-  if (summary.status === "none" || cutoff === undefined) {
-    return `189 hasn't listed ${name} in its last four rounds. Your 190 and 491 prospects depend on state nomination.`;
-  }
-  const listed =
-    summary.status === "regular"
-      ? "was listed in each of the last four 189 rounds"
-      : `was listed in ${summary.listedInLastFour} of the last four 189 rounds`;
-  return `${name} ${listed}. The latest published cut-off was ${cutoff} points; you have ${base}.`;
+  if (!data.core.pool["189"]) return no189PoolLine(name);
+  return bottomLine189(name, rounds189, base);
 }
 
 function card189Parts(core: OccupationCore): { chip: Chip; sentence: string } {
@@ -167,18 +180,22 @@ function noneCardParts(
   };
 }
 
-/** The 190/491 sentence is the state outlook's summary (ruling S1 retired). */
+/**
+ * The 190/491 sentence is the state outlook's summary (ruling S1 retired); the
+ * chip names the visa's best state group ("What the data says").
+ */
 function nominatedCardParts(
   visa: StateVisa,
   summaries: StateSummaries,
+  tiles: StateTiles,
 ): { chip: Chip; sentence: string } {
-  if (summaries === null) {
+  if (summaries === null || tiles === null) {
     throw new Error(
-      `The ${visa} card needs the state outlook summaries when occupation data is ready`,
+      `The ${visa} card needs the state outlook when occupation data is ready`,
     );
   }
   return {
-    chip: { label: "State decides", tone: "amber" },
+    chip: nominatedChip(stateStanding(tiles[visa])),
     sentence: summaries[visa],
   };
 }
@@ -189,6 +206,7 @@ function buildCard(
   data: ScorecardData,
   submittedMonth: MonthKey | null,
   summaries: StateSummaries,
+  tiles: StateTiles,
 ): ScorecardCard {
   const base = {
     visa,
@@ -222,7 +240,7 @@ function buildCard(
   const { chip, sentence } =
     visa === "189"
       ? card189Parts(data.core)
-      : nominatedCardParts(visa, summaries);
+      : nominatedCardParts(visa, summaries, tiles);
   return { ...base, chip, sentence, ...counts, href: `#visa-${visa}` };
 }
 
@@ -232,16 +250,30 @@ export function buildScorecard(input: {
   points: Points;
   submittedMonth: MonthKey | null;
   stateSummaries: StateSummaries;
+  stateTiles: StateTiles;
 }): Scorecard {
-  const { occupationName, data, points, submittedMonth, stateSummaries } =
-    input;
+  const { occupationName, data, points, submittedMonth } = input;
+  const card = (visa: Visa, visaPoints: number) =>
+    buildCard(
+      visa,
+      visaPoints,
+      data,
+      submittedMonth,
+      input.stateSummaries,
+      input.stateTiles,
+    );
   const cards: Scorecard["cards"] = [
-    buildCard("189", points.base, data, submittedMonth, stateSummaries),
-    buildCard("190", points.subclass190, data, submittedMonth, stateSummaries),
-    buildCard("491", points.subclass491, data, submittedMonth, stateSummaries),
+    card("189", points.base),
+    card("190", points.subclass190),
+    card("491", points.subclass491),
   ];
+  const tiles = input.stateTiles;
   return {
     headline: headlineFor(occupationName, data, points.base),
+    detail:
+      data.kind === "ready" && tiles && hasAnyPool(data.core)
+        ? stateLine(stateStanding(tiles["190"]), stateStanding(tiles["491"]))
+        : null,
     sourceLine:
       data.kind === "ready"
         ? `Source: SkillSelect, Department of Home Affairs · snapshot ${formatDate(monthEnd(data.core.asAt))} · ${EOI_CAVEAT[0].toLowerCase()}${EOI_CAVEAT.slice(1)}`

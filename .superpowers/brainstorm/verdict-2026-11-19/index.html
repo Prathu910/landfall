@@ -1,0 +1,109 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>What the data says</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1B1A17;--news:#F3EEE3;--card:#FBF8F2;--muted:#4a463e;--soft:#6b6558;--rule:#ddd4c2;--slate:#2E4A7D;--saff:#D9731A;--saffT:#A04E0C;
+--gfg:#1F5136;--gbg:#DDEBDF;--wfg:#2E4A7D;--wbg:#E4E9F2;--nfg:#8A2E22;--nbg:#F5DEDA;--ubg:#ECE7DC}
+*{box-sizing:border-box}body{margin:0;background:var(--news);color:var(--ink);font:16px/1.5 Inter,sans-serif}
+main{max-width:860px;margin:0 auto;padding:24px 16px 64px}
+.top h1{font:600 30px/1.1 Newsreader,serif;margin:0 0 6px}.top p{color:var(--muted);margin:0 0 14px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 8px}.bar span{font-size:13px;color:var(--soft);align-self:center;margin-right:4px}
+button{font:600 14px Inter;padding:7px 12px;border-radius:999px;border:1px solid var(--ink);background:var(--card);color:var(--ink);cursor:pointer}
+button[aria-pressed=true]{background:var(--ink);color:var(--news)}
+.sec{background:var(--card);border:1px solid var(--rule);border-radius:16px;padding:22px 22px 18px;margin-top:18px;box-shadow:inset 0 4px 0 var(--saff)}
+.kicker{font:600 12px/1 Inter;letter-spacing:.07em;text-transform:uppercase;color:var(--saffT);margin:4px 0 10px}
+.bottom{font:600 26px/1.18 Newsreader,serif;margin:0 0 6px;max-width:30em}
+.sub{color:var(--muted);margin:0 0 18px}
+.rows{display:grid;gap:10px;margin-bottom:18px}
+.row{display:grid;grid-template-columns:118px 1fr auto;gap:14px;align-items:center;padding:12px 14px;border:1px solid var(--rule);border-radius:12px;background:#fff}
+@media(max-width:620px){.row{grid-template-columns:1fr auto}.row .fact{grid-column:1/-1;order:3}}
+.visa{font-weight:700}.visa small{display:block;font-weight:500;color:var(--soft);font-size:13px}
+.fact{font-size:15px;line-height:1.4}
+.num{font:600 22px/1 Newsreader,serif;text-align:right;white-space:nowrap}.num small{display:block;font:500 12px/1.3 Inter;color:var(--soft);margin-top:4px}
+.chip{display:inline-block;font-size:12.5px;font-weight:700;padding:2px 9px;border-radius:999px;margin-bottom:4px}
+.g{background:var(--gbg);color:var(--gfg)}.w{background:var(--wbg);color:var(--wfg)}.n{background:var(--nbg);color:var(--nfg)}.u{background:var(--card);color:var(--slate);box-shadow:inset 0 0 0 1px var(--slate)}
+h3{font:600 18px/1.2 Newsreader,serif;margin:20px 0 8px}
+.chart{border:1px solid var(--rule);border-radius:12px;background:#fff;padding:12px 14px 6px}
+.chart p{font-size:14px;color:var(--muted);margin:2px 0 6px}
+svg text{font-family:Inter}
+.like{font-size:15px;padding:12px 14px;border-left:3px solid var(--slate);background:#fff;border-radius:0 10px 10px 0}
+.levers{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:620px){.levers{grid-template-columns:1fr}}
+.lv{background:#fff;border:1px solid var(--rule);border-radius:12px;padding:12px 14px}
+.lv b{display:block;font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--soft);margin-bottom:6px}
+.pill{display:flex;gap:10px;align-items:baseline;padding:5px 0;font-size:15px}
+.pill i{font-style:normal;font:700 14px Inter;min-width:42px;padding:2px 0;border-radius:6px;text-align:center}
+.plus{background:var(--gbg);color:var(--gfg)}.minus{background:var(--nbg);color:var(--nfg)}
+.foot{font-size:13px;color:var(--soft);margin:16px 0 0;border-top:1px solid var(--rule);padding-top:10px}
+.notes{margin-top:28px;font-size:15px}.notes li{margin:5px 0}
+.recap{margin-top:22px;border:1px dashed var(--soft);border-radius:12px;padding:12px 14px;background:transparent}
+.recap .kicker{margin-top:0}
+</style></head><body><main>
+<div class="top"><h1>Report summary: mockup</h1><p>Real figures from the published data (SkillSelect, as at Oct 2026). Pick a case and a title.</p>
+<div class="bar"><span>Case</span><button data-case="se" aria-pressed="true">Software Engineer · 75</button><button data-case="teach">Secondary School Teacher · 75</button><button data-case="nurse">Registered Nurses nec · 90 (sample)</button></div>
+<div class="bar"><span>Title</span><button data-title="What the data says" aria-pressed="true">What the data says (my pick)</button><button data-title="Verdict">Verdict</button><button data-title="Summary">Summary</button></div></div>
+<section class="sec" id="sec"></section>
+<div class="recap" id="recap"></div>
+<ul class="notes">
+<li><b>Where it goes:</b> right under the report's title, before the scorecard, so the answer comes first; the dashed box is the short recap at the very end of the report.</li>
+<li><b>Every sentence is a template filled from the report's own numbers</b>, tested like the rest: no percentages, no forecasts, no "you should". Comparisons say where "the published evidence is strongest", never which visa to apply for.</li>
+<li><b>The chart</b> shows the last six 189 rounds: each listed cut-off as a dot, "not listed" rounds as hollow rings, and your points as the saffron line.</li>
+<li>"What could change it" uses the report's own scenarios and timeline; "on the record" means the historical rounds above, never a promise.</li>
+</ul>
+</main>
+<script>
+const C={
+se:{occ:"Software Engineer",pts:75,
+ bottom:"At 75 points, none of the three visas shows recent invitations for Software Engineer.",
+ sub:"189 has skipped this occupation since Nov 2024, and no state shows strong published evidence for your profile yet.",
+ rows:[["189","Independent","n","No recent invitations","Not listed in the last 4 rounds. The last cut-off was 95 points, in Nov 2024.","4,555–4,574","ahead of you"],
+ ["190","Nominated, 80 pts","u","No state stands out","Six states' rules are still being checked; none shows strong published evidence for you yet.","7,464–7,483","with a higher score"],
+ ["491","Regional, 90 pts","w","Worth watching: WA","WA's rules pass for you, but it published under 20 invitations at your score (so may be zero).","5,669–5,707","with a higher score"]],
+ rounds:[["Sep 24",100],["Nov 24",95],["Aug 25",null],["Nov 25",null],["Jun 26",null],["Oct 26",null]],
+ chartNote:"Cut-offs in the last six 189 rounds. Software Engineer hasn't been listed since Nov 2024.",
+ like:"Of the 326–383 Software Engineer EOIs lodged in Mar 2026 (your month), <b>0</b> have been invited so far, as at Oct 2026.",
+ plus:[["+10","Superior English"],["+5","Community language (NAATI CCL)"]],
+ minus:[["−5","Your 33rd birthday, 9 Aug 2027"],["−10","English test validity ends, 2 Feb 2028"]],
+ recap:"At 75 points, none of the three visas shows recent invitations for Software Engineer. The levers on the record: +10 for Superior English, +5 for a community language."},
+teach:{occ:"Secondary School Teacher",pts:75,
+ bottom:"189 invites Secondary School Teachers in every recent round, and the latest cut-off was just above you: 80 points, against your 75.",
+ sub:"Cut-offs in the last six rounds ran from 70 to 85. 174–212 EOIs have a higher score than yours.",
+ rows:[["189","Independent","g","Regular invitations","Listed in each of the last 4 rounds. Latest cut-off: 80 points, Oct 2026.","174–212","ahead of you"],
+ ["190","Nominated, 80 pts","u","No state stands out","Victoria published at least 96 invitations at 80 or below; its rules are still being checked.","762–781","with a higher score"],
+ ["491","Regional, 90 pts","w","Worth watching: WA","WA's rules pass for you, but it published under 20 invitations at your score (so may be zero).","335–373","with a higher score"]],
+ rounds:[["Sep 24",75],["Nov 24",70],["Aug 25",85],["Nov 25",75],["Jun 26",75],["Oct 26",80]],
+ chartNote:"Your 75 is at or above 4 of the last 6 cut-offs, but below the latest (80) and the highest (85).",
+ like:"Of the 178–235 Secondary School Teacher EOIs lodged in Mar 2026, under 20 (so may be zero) have been invited so far, as at Oct 2026.",
+ plus:[["+10","Superior English: 85 points is at or above every cut-off in the last 6 rounds"],["+5","Community language (NAATI CCL)"]],
+ minus:[["−5","Your 33rd birthday, 9 Aug 2027"],["−10","English test validity ends, 2 Feb 2028"]],
+ recap:"189 invites Secondary School Teachers every round; the latest cut-off was 80, you have 75. At 85 (with Superior English) you'd be at or above every cut-off of the last 6 rounds."},
+nurse:{occ:"Registered Nurses nec",pts:90,
+ bottom:"189 invited Registered Nurses nec at 70 to 80 points in every recent round, and you have 90.",
+ sub:"No EOIs in the 189 pool have a higher score than yours, and the published evidence for 190 is strongest in NSW.",
+ rows:[["189","Independent","g","Regular invitations","Listed in each of the last 4 rounds. Latest cut-off: 70 points, Oct 2026.","0","ahead of you"],
+ ["190","Nominated, 95 pts","g","Strongest evidence: NSW","Every verified NSW rule passes for you; NSW invited at least 327 at 95 or below.","0–38","with a higher score"],
+ ["491","Regional, 105 pts","g","Strongest evidence: WA","Every verified WA rule passes for you; WA invited at least 85 at 105 or below.","0","with a higher score"]],
+ rounds:[["Sep 24",75],["Nov 24",70],["Aug 25",80],["Nov 25",75],["Jun 26",75],["Oct 26",70]],
+ chartNote:"Your 90 is above every cut-off in the last six 189 rounds.",
+ like:"Of the 527–546 Registered Nurses nec EOIs lodged in Mar 2026 (your month), <b>129</b> have been invited and <b>45</b> have lodged a visa application, as at Oct 2026.",
+ plus:[["+5","Community language (NAATI CCL)"],["+5","Next Australian work band"]],
+ minus:[["−5","Your 33rd birthday, 9 Aug 2027"],["−20","English test validity ends, 2 Feb 2028"]],
+ recap:"189 invited Registered Nurses nec at 70 to 80 points in every recent round, and you have 90; the published evidence for 190 is strongest in NSW and for 491 in WA."}};
+let cur="se",title="What the data says";
+function chart(c){const W=640,H=118,x0=56,x1=W-16,lo=60,hi=105,sx=p=>x0+(p-lo)/(hi-lo)*(x1-x0);
+ let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="${c.chartNote}">`;
+ for(let p=65;p<=100;p+=5){s+=`<line x1="${sx(p)}" x2="${sx(p)}" y1="10" y2="${H-26}" stroke="#eee5d6"/><text x="${sx(p)}" y="${H-10}" font-size="12" text-anchor="middle" fill="#6b6558">${p}</text>`}
+ const n=c.rounds.length;c.rounds.forEach((r,i)=>{const y=16+i*(H-46)/(n-1);s+=`<text x="${x0-8}" y="${y+4}" font-size="11.5" text-anchor="end" fill="#4a463e">${r[0]}</text>`;
+ s+= r[1]===null?`<circle cx="${sx(lo+1.5)}" cy="${y}" r="5" fill="none" stroke="#6b6558" stroke-width="1.5"/><text x="${sx(lo+1.5)+10}" y="${y+4}" font-size="11.5" fill="#6b6558">not listed</text>`:`<circle cx="${sx(r[1])}" cy="${y}" r="6" fill="#1B1A17"/>`});
+ s+=`<line x1="${sx(c.pts)}" x2="${sx(c.pts)}" y1="4" y2="${H-26}" stroke="#D9731A" stroke-width="3"/><text x="${sx(c.pts)+6}" y="10" font-size="12" font-weight="700" fill="#A04E0C">You · ${c.pts}</text></svg>`;return s}
+function render(){const c=C[cur];
+ document.getElementById("sec").innerHTML=`<div class="kicker">${title}</div><p class="bottom">${c.bottom}</p><p class="sub">${c.sub}</p>
+ <div class="rows">${c.rows.map(r=>`<div class="row"><div class="visa">${r[0]}<small>${r[1]}</small></div><div class="fact"><span class="chip ${r[2]}">${r[3]}</span><br>${r[4]}</div><div class="num">${r[5]}<small>${r[6]}</small></div></div>`).join("")}</div>
+ <h3>189 cut-offs against your points</h3><div class="chart"><p>${c.chartNote}</p>${chart(c)}</div>
+ <h3>EOIs like yours</h3><div class="like">${c.like}</div>
+ <h3>What could change it</h3><div class="levers"><div class="lv"><b>Points you could add</b>${c.plus.map(p=>`<div class="pill"><i class="plus">${p[0]}</i>${p[1]}</div>`).join("")}</div><div class="lv"><b>Points you will lose</b>${c.minus.map(p=>`<div class="pill"><i class="minus">${p[0]}</i>${p[1]}</div>`).join("")}</div></div>
+ <p class="foot">Counts of EOIs from SkillSelect (Department of Home Affairs), as at Oct 2026. They describe what happened, not your chances. General information, not migration advice.</p>`;
+ document.getElementById("recap").innerHTML=`<div class="kicker">${title}, in one line · end of the report</div>${c.recap}`;}
+document.querySelectorAll("[data-case]").forEach(b=>b.onclick=()=>{cur=b.dataset.case;document.querySelectorAll("[data-case]").forEach(x=>x.setAttribute("aria-pressed",x===b));render()});
+document.querySelectorAll("[data-title]").forEach(b=>b.onclick=()=>{title=b.dataset.title;document.querySelectorAll("[data-title]").forEach(x=>x.setAttribute("aria-pressed",x===b));render()});
+render();
+</script></body></html>

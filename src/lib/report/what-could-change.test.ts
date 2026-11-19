@@ -34,10 +34,34 @@ describe("buildWhatCouldChange", () => {
       "2026-11-17",
     );
     expect(items).toEqual([
-      { label: "Birthday", effect: "−5", href: "#timeline" },
-      { label: "Work year", effect: "+5", href: "#timeline" },
-      { label: "Superior English", effect: "+10", href: "#scenarios" },
-      { label: "Partner skills", effect: "+5", href: "#scenarios" },
+      {
+        label: "Birthday",
+        effect: "−5",
+        delta: -5,
+        date: "2027-03-01",
+        href: "#timeline",
+      },
+      {
+        label: "Work year",
+        effect: "+5",
+        delta: 5,
+        date: "2027-09-01",
+        href: "#timeline",
+      },
+      {
+        label: "Superior English",
+        effect: "+10",
+        delta: 10,
+        date: null,
+        href: "#scenarios",
+      },
+      {
+        label: "Partner skills",
+        effect: "+5",
+        delta: 5,
+        date: null,
+        href: "#scenarios",
+      },
     ]);
     expect(JSON.stringify(items)).not.toMatch(BANNED_COPY);
   });
