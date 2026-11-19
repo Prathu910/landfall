@@ -53,7 +53,13 @@ function listedCohorts(
   return cohorts;
 }
 
-type Membership = { listed: Cohort[] | null; checked: boolean };
+type Membership = {
+  listed: Cohort[] | null;
+  /** Some stream is judged against an imported list. */
+  checked: boolean;
+  /** Some stream is not list-based, so it could admit the code. */
+  unchecked: boolean;
+};
 
 function membership(
   state: StateCode,
@@ -66,17 +72,21 @@ function membership(
   );
   const found = new Set<Cohort>();
   let checked = false;
+  let unchecked = false;
   let listed = false;
   for (const stream of rule?.streams ?? ([] as Stream[])) {
     const result = listedCohorts(stream.occupations.value, visa, code, data);
-    if (result === "unchecked") continue;
+    if (result === "unchecked") {
+      unchecked = true;
+      continue;
+    }
     checked = true;
     if (result) {
       listed = true;
       result.forEach((c) => found.add(c));
     }
   }
-  return { listed: listed ? [...found] : null, checked };
+  return { listed: listed ? [...found] : null, checked, unchecked };
 }
 
 function openTo(cohorts: Cohort[], state: StateCode): string {
@@ -129,6 +139,14 @@ export function stateRows(
       (v): v is string => Boolean(v),
     );
     if (visas.length === 0) {
+      // A stream we cannot check may still admit the code: no negative claim.
+      if (m190.unchecked || m491.unchecked) {
+        return {
+          ...base,
+          onList: "Not on its imported list",
+          openTo: "See the official page",
+        };
+      }
       return {
         ...base,
         onList: "Not on its 2026–27 list",

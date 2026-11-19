@@ -109,6 +109,7 @@ export function cohortRows(
   const cohorts = detail?.cohorts["189"];
   if (!cohorts) return null;
   return calendarMonths(asAt, months).map((month: MonthKey) => {
+    // Absent month inside the cohort window is genuinely zero (docs/DATA.md R8).
     const statuses = cohorts[month] ?? {};
     const segments = SEGMENTS.map(({ key, label }) => {
       const text = statuses[key];

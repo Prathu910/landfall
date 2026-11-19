@@ -48,7 +48,7 @@ describe("stateRows", () => {
   });
   it("says so when a code is missing from an imported list", () => {
     expect(
-      by(stateRows("000000", core254499, stateRuleData), "NSW").onList,
+      by(stateRows("000000", core254499, stateRuleData), "QLD").onList,
     ).toBe("Not on its 2026–27 list");
   });
   it("links to each state's 190 source over https", () => {
@@ -58,5 +58,31 @@ describe("stateRows", () => {
     for (const r of [...rows254499, ...rows261313]) {
       expect(Object.values(r).join(" ")).not.toMatch(BANNED_COPY);
     }
+  });
+  it("makes no negative claim when a non-list stream could admit the code", () => {
+    const nsw = stateRuleData.rules.rules.find(
+      (r) => r.state === "NSW" && r.visa === "190",
+    )!;
+    const listStream = nsw.streams[0];
+    const other = {
+      ...listStream,
+      id: "nsw-other",
+      occupations: {
+        ...listStream.occupations,
+        value: { kind: "not-imported" as const },
+      },
+    };
+    const mixed = {
+      ...stateRuleData,
+      rules: {
+        ...stateRuleData.rules,
+        rules: stateRuleData.rules.rules.map((r) =>
+          r === nsw ? { ...r, streams: [listStream, other] } : r,
+        ),
+      },
+    };
+    const row = by(stateRows("000000", core254499, mixed), "NSW");
+    expect(row.onList).toBe("Not on its imported list");
+    expect(row.openTo).toBe("See the official page");
   });
 });
