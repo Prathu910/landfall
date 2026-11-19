@@ -1,0 +1,50 @@
+.label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.input {
+  width: 100%;
+  max-width: 480px;
+  padding: 10px 12px;
+  font: inherit;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--card);
+  color: var(--ink);
+}
+.count {
+  font-size: 0.875rem;
+  color: var(--muted);
+  margin: 8px 0 16px;
+}
+.letter {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 1.5rem;
+  margin: 24px 0 6px;
+  border-bottom: 1px solid var(--rule);
+}
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  columns: 2 320px;
+  column-gap: 32px;
+}
+.row {
+  break-inside: avoid;
+  padding: 5px 0;
+}
+.link {
+  color: var(--slate);
+  text-decoration: underline;
+}
+.code {
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+.none {
+  font-size: 0.875rem;
+  color: var(--muted);
+}
