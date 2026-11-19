@@ -11,6 +11,7 @@ import {
 } from "../../lib/home/try-it";
 import { occupationIndex } from "../data/occupation-index";
 import { useOccupationCore } from "../data/use-occupation-core";
+import { occupationPath } from "../../lib/occupation-page/slug";
 import { fullReportHref } from "./try-it-href";
 import styles from "./try-it.module.css";
 
@@ -27,6 +28,7 @@ export function TryIt({ defaultOccupation }: { defaultOccupation: string }) {
   const [code, setCode] = useState(defaultOccupation);
   const [points, setPoints] = useState(TRY_IT_DEFAULT);
   const load = useOccupationCore(code, occupationIndex);
+  const pageEntry = occupationIndex.find((o) => o.code === code);
   const view = useMemo(
     () => (load.status === "ready" ? buildTryIt(load.core, points) : null),
     [load, points],
@@ -98,6 +100,11 @@ export function TryIt({ defaultOccupation }: { defaultOccupation: string }) {
       <a className={styles.link} href={fullReportHref(code)}>
         Get the full report
       </a>
+      {pageEntry && view?.kind === "data" ? (
+        <a className={styles.link} href={occupationPath(pageEntry)}>
+          See the {pageEntry.name} page
+        </a>
+      ) : null}
     </section>
   );
 }

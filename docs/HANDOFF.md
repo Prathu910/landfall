@@ -1,6 +1,16 @@
 # Resume here
 
-## Latest: MigrateLens brand and homepage shipped (18 November 2026)
+## Latest: occupation pages shipped, hidden from search (19 November 2026)
+
+Roadmap step 4 tier 1 is done on branch `roadmap/occupation-pages` (spec `docs/superpowers/specs/2026-11-19-occupation-pages-design.md`, ledger `.superpowers/sdd/2026-11-19-occupation-pages/progress.md`). `/occupations/` and a page for each of the 493 occupations, each with its own title, description, canonical, three JSON-LD scripts, round cards, pool tabs (189 / 190 / 491, all printed), questions, related occupations, a sitemap and robots. Everything is `noindex` and `robots.txt` disallows all until launch. Where things live: `CLAUDE.md`, "Occupation pages".
+
+To launch: set `SITE_URL` in `src/lib/site.ts` to the bought domain and `SITE_INDEXABLE = true`, then build and check `out/sitemap.xml` and `out/robots.txt`. Occupations where every count is "<20" stay `noindex` and out of the sitemap.
+
+Deferred: per-occupation share images (the site-wide `og.png` is used), tier 2 deep pages for the top 30 occupations, the alert sign-up box (waiting for the founder to pick an email service), and `llms.txt`.
+
+Verified: `npm run check`, `npm run build` and headless Chrome against `out/` at 1440, 390 and 320px (index, 261313, 254499, an all-"<20" occupation, one with no 189 pool, 261399): no console errors, no horizontal scroll, tabs switch, index search filters, head tags present, print shows every panel and FAQ answer. Screenshots: `.superpowers/sdd/2026-11-19-occupation-pages/screenshots/`.
+
+## Earlier: MigrateLens brand and homepage shipped (18 November 2026)
 
 The brand and homepage plan is done on branch `brand/migratelens` (spec `docs/superpowers/specs/2026-11-18-migratelens-brand-and-homepage-design.md`, ledger `.superpowers/sdd/2026-11-18-migratelens-brand-and-homepage/progress.md`). The site is renamed MigrateLens everywhere in rendered HTML; the old storage key is migrated and cleared (ruling B3). New brand tokens, Newsreader + Inter, the C1 logo, favicon and OG image; a 12px text floor under test; a rebuilt homepage (two doors, try-it, three questions, FAQ) with a Stageshow hero demo. "Worth watching" is slate. Where things live: `CLAUDE.md`, "Brand" and "Homepage".
 
