@@ -1,0 +1,20 @@
+.heading {
+  margin: 0 0 10px;
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 1.25rem;
+}
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+.link {
+  display: inline-block;
+  padding: 6px 0;
+  font-size: 1rem;
+  color: var(--slate);
+  text-decoration: underline;
+}

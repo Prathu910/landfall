@@ -1,0 +1,73 @@
+.strip {
+  --focus-ring: var(--focus-ring-on-dark);
+  background: var(--ink);
+  color: var(--card);
+  border-radius: 14px;
+  padding: 20px 22px;
+  break-inside: avoid;
+}
+.eyebrow {
+  margin: 0 0 10px;
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--newsprint);
+}
+.chips {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.chip {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.3;
+  padding: 3px 10px;
+  border-radius: 99px;
+}
+.red {
+  color: var(--status-not-open-fg);
+  background: var(--status-not-open-bg);
+}
+.amber {
+  color: var(--status-watching-fg);
+  background: var(--status-watching-bg);
+}
+.green {
+  color: var(--status-strongest-fg);
+  background: var(--status-strongest-bg);
+}
+.neutral {
+  color: var(--muted);
+  background: var(--surface);
+}
+.headline {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 1.5rem;
+  line-height: 1.3;
+  color: var(--card);
+}
+.detail {
+  margin: 10px 0 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--card);
+}
+.source {
+  margin: 12px 0 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--newsprint);
+}
+@media print {
+  .strip {
+    border: 1px solid var(--ink);
+  }
+}
