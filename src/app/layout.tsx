@@ -6,6 +6,7 @@ import "@fontsource/inter/latin-600.css";
 import "@mantine/core/styles.css";
 import "@mantine/dates/styles.css";
 import "./globals.css";
+import { SITE_INDEXABLE, SITE_URL } from "@/lib/site";
 import { Providers } from "@/components/providers";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -17,9 +18,7 @@ export const metadata: Metadata = {
   },
   description:
     "Check your points-test basics and see where they sit in published SkillSelect data. A free, source-backed report for Australian 189, 190 and 491 pathways.",
-  metadataBase: new URL(
-    "https://landfall-migration-report.cappedpike4.chatgpt.site",
-  ),
+  metadataBase: new URL(SITE_URL),
   openGraph: {
     images: [
       {
@@ -43,7 +42,9 @@ export const metadata: Metadata = {
       },
     ],
   },
-  robots: { index: false, follow: false },
+  robots: SITE_INDEXABLE
+    ? { index: true, follow: true }
+    : { index: false, follow: false },
 };
 
 export default function RootLayout({
