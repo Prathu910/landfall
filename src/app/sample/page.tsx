@@ -8,7 +8,6 @@ import {
 } from "@/lib/data/load-server";
 import { reportSource } from "@/lib/data/report-source";
 import type { OccupationCore, OccupationDetail } from "@/lib/data/types";
-import { sampleProfile } from "@/lib/migration";
 import {
   SAMPLE_AS_OF,
   SAMPLE_COMPARISON,
@@ -31,8 +30,8 @@ function requireDetail(code: string): OccupationDetail {
 }
 
 export default function SamplePage() {
-  const nominated = requireCore(sampleProfile.occupation);
-  const nominatedDetail = requireDetail(sampleProfile.occupation);
+  const nominated = requireCore(sampleReportProfile.occupation);
+  const nominatedDetail = requireDetail(sampleReportProfile.occupation);
   const comparison = requireCore(SAMPLE_COMPARISON);
   return (
     <main id="main" className="container">

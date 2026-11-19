@@ -64,3 +64,15 @@ describe("the homepage's outcome key", () => {
     expect(eois.outcomes.map((o) => o.key)).toContain("hold");
   });
 });
+
+describe("the sample occupation", () => {
+  it("shows EOIs from the sample's month that were invited and lodged", () => {
+    // The homepage leads with this example; a data refresh that empties it
+    // should prompt a new sample occupation.
+    const eois = buildSampleView().view.panels!.eois;
+    if (eois.kind !== "ready") throw new Error(`got ${eois.kind}`);
+    expect(eois.basis).toBe("your-month");
+    expect(eois.bar.invited.min).toBeGreaterThan(0);
+    expect(eois.bar.lodged.min).toBeGreaterThan(0);
+  });
+});

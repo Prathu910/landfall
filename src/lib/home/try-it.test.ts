@@ -13,6 +13,7 @@ import {
   TRY_IT_DEFAULT,
   TRY_IT_LOAD_FAILED,
   TRY_IT_NO_DATA,
+  TRY_IT_OCCUPATION,
   TRY_IT_POINTS,
   TRY_IT_ROW_LABELS,
   buildTryIt,
@@ -35,7 +36,7 @@ describe("try-it points", () => {
     expect(TRY_IT_POINTS.at(-1)).toBe(140);
     expect(TRY_IT_POINTS).toHaveLength(16);
     expect(TRY_IT_POINTS).toContain(TRY_IT_DEFAULT);
-    expect(TRY_IT_DEFAULT).toBe(85);
+    expect(TRY_IT_DEFAULT).toBe(75);
   });
 });
 
@@ -121,6 +122,18 @@ describe("buildTryIt", () => {
     expect(Object.values(CHIP_LABEL)).toContain(view.roundStatus);
     expect(view.latestRound).not.toBe("");
     expect(view.asAt).toMatch(/^[A-Z][a-z]{2} \d{4}$/);
+  });
+
+  it("opens on an occupation with recent 189 invitations at or below the default points", () => {
+    // A data refresh that turns this negative should prompt a new default.
+    const core = loadOccupationCore(TRY_IT_OCCUPATION);
+    if (!core) throw new Error("default occupation missing");
+    const view = buildTryIt(core, TRY_IT_DEFAULT);
+    if (view.kind !== "data") throw new Error("expected data");
+    expect(view.roundStatus).toBe(CHIP_LABEL.regular);
+    const cutoff = core.rounds189[0]?.cutoff;
+    expect(cutoff).not.toBeNull();
+    expect(cutoff!).toBeLessThanOrEqual(TRY_IT_DEFAULT);
   });
 
   it("reads the published pool total exactly as the report does", () => {

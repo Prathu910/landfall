@@ -38,12 +38,12 @@ import {
 } from "lucide-react";
 import {
   emptyProfile,
-  sampleProfile,
   calculatePoints,
   localToday,
   formatDate,
   type Profile,
 } from "@/lib/migration";
+import { sampleReportProfile } from "@/lib/sample";
 import { resetStateRelativeAnswers, restoreProfile } from "@/lib/state-answers";
 import type { ReportSource } from "@/lib/data/report-source";
 import { publishedOccupationCode } from "@/lib/data/occupation-url";
@@ -63,15 +63,6 @@ const STEPS = [
   "Your overview",
 ];
 const states = ["ACT", "NSW", "NT", "QLD", "SA", "TAS", "VIC", "WA"];
-const example: Profile = {
-  ...sampleProfile,
-  onshore: true,
-  state: "VIC",
-  visaExpiry: "2027-09-30",
-  assessmentDate: "2026-02-20",
-  assessmentExpiry: "2029-02-20",
-  eoiDate: "2026-03-14",
-};
 
 function isProfile(value: unknown): value is Profile {
   if (!value || typeof value !== "object") return false;
@@ -767,7 +758,7 @@ export function CheckFlow({ source }: { source: ReportSource }) {
             size="xs"
             color="ink"
             onClick={() => {
-              setProfile({ ...example });
+              setProfile({ ...sampleReportProfile });
               changeStep(0);
             }}
           >

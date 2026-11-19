@@ -9,8 +9,10 @@ import {
   type Profile,
 } from "./migration";
 
+// An ICT occupation, so Professional Year points can apply.
 const complete = (overrides: Partial<Profile> = {}): Profile => ({
   ...sampleProfile,
+  occupation: "261111",
   assessmentDate: "2026-01-01",
   ...overrides,
 });

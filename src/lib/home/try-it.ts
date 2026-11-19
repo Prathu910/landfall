@@ -10,7 +10,9 @@ export const TRY_IT_POINTS: number[] = Array.from(
   { length: 16 },
   (_, i) => 65 + i * 5,
 );
-export const TRY_IT_DEFAULT = 85;
+export const TRY_IT_DEFAULT = 75;
+/** The occupation the try-it opens on: Registered Nurses nec, the sample's occupation. */
+export const TRY_IT_OCCUPATION = "254499";
 
 export const TRY_IT_NO_DATA = "No published 189 data for this occupation";
 /** Shown when the occupation's file could not be fetched or was invalid. */

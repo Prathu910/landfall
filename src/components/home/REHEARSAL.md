@@ -76,3 +76,8 @@ Not checked:
 - A real touch device.
 - A hidden tab and its return.
 - Live pacing against rAF timestamps.
+
+Sample changed to Registered Nurses nec (19 Nov 2026), re-filmed against the built `out/` on the real homepage:
+
+- Gate: `rehearsal passed` on the loop at 1440, 390 and 320, and on `--states` at 1440. The only extra line is `scale: 0.83` at 1440 (not a gate line).
+- The figures are now 0 / 0–38 / 0 ahead and 0 / 78 / under 20 at score. In compact, "Registered Nurses nec" takes the report header's two-line clamp (as "ICT Business Analyst" did) and one line in the check view.

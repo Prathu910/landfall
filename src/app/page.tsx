@@ -9,7 +9,7 @@ import { TryIt } from "@/components/home/try-it";
 import { loadManifest } from "@/lib/data/load-server";
 import { buildDemoContent } from "@/lib/home/demo-content";
 import { HOME_COPY, trustLine } from "@/lib/home/home-copy";
-import { SAMPLE_COMPARISON } from "@/lib/sample";
+import { TRY_IT_OCCUPATION } from "@/lib/home/try-it";
 import styles from "./home.module.css";
 
 export default function Home() {
@@ -54,7 +54,7 @@ export default function Home() {
 
       <div className={`container ${styles.band}`}>
         <div className={styles.tryIt}>
-          <TryIt defaultOccupation={SAMPLE_COMPARISON} />
+          <TryIt defaultOccupation={TRY_IT_OCCUPATION} />
         </div>
       </div>
 

@@ -70,7 +70,7 @@ export const sampleProfile: Profile = {
   ...emptyProfile,
   name: "Aarav",
   dob: "1994-08-09",
-  occupation: "261111",
+  occupation: "254499",
   english: "superior",
   englishDate: "2025-02-02",
   qualification: "bachelor",
