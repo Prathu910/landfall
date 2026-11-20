@@ -56,3 +56,7 @@ The dataset also holds EOI statuses, Month Submitted cohorts, per-state pools an
 - [Official visa pricing estimator](https://immi.homeaffairs.gov.au/visas/visa-pricing-estimator) and [processing time guide](https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-processing-times/global-visa-processing-times) — current official tools in place of copied illustrative quotes.
 
 Before a commercial release, the remaining product work includes verified refresh infrastructure, appropriate review of personalised report content, billing and access control, and a clear service scope. The current release demonstrates the free report experience and its evidence base.
+
+## Calculation capture and feedback (20 November 2026)
+
+The personal check requires email and a persisted acknowledgement from the separately deployed Supabase backend before opening its report. Only an allowlisted summary is submitted; full Profile dates and identity fields remain in the browser. `/sample/` and explicit sample-answer runs are excluded. The feedback page accepts suggestions, bugs, improvements and feature requests, with optional email and explicitly selected summary context. The site has no verified-email account, email delivery or marketing subscription. Production collection requires separate project configuration and verification; implementation/local tests do not establish that a deployed site is collecting data. See `docs/OPERATIONS.md`.

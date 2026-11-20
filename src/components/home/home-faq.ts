@@ -64,7 +64,7 @@ export const HOME_FAQ: FaqItem[] = [
     id: "privacy",
     question: "Are my answers saved or shared?",
     answer:
-      "Your answers stay in your browser: they are never sent to us and never put in a web address. If you choose to save them, they are kept on this device only, and you can clear them at any time.",
+      "Your full profile stays in your browser, where you can optionally save and clear it. To view a personal report, you submit an email and a limited summary: occupation, age band, onshore/offshore status, points and data snapshot. We store these to understand usage, without subscribing you to marketing.",
     link: { href: "/methodology/#privacy", text: "Read the privacy note" },
   },
 ];

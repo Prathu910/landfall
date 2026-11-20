@@ -93,9 +93,45 @@
 }
 .columns {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 18px;
-  align-items: start;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(4, auto);
+  column-gap: 18px;
+  align-items: stretch;
+}
+/* Share text and control tracks, including absent help and error text. */
+.columns > :global(.mantine-InputWrapper-root) {
+  display: grid;
+  grid-row: span 4;
+  grid-template-rows: subgrid;
+  min-width: 0;
+}
+.columns
+  > :global(.mantine-InputWrapper-root)
+  > :global(.mantine-InputWrapper-label) {
+  grid-row: 1;
+  align-self: end;
+}
+.columns
+  > :global(.mantine-InputWrapper-root)
+  > :global(.mantine-InputWrapper-description) {
+  grid-row: 2;
+  align-self: end;
+}
+.columns
+  > :global(.mantine-InputWrapper-root)
+  > :global(.mantine-Input-wrapper) {
+  grid-row: 3;
+  align-self: start;
+  margin-block: 0;
+}
+.columns
+  > :global(.mantine-InputWrapper-root)
+  > :global(.mantine-InputWrapper-error),
+.columns
+  > :global(.mantine-InputWrapper-root)
+  > :global(.mantine-InputWrapper-success) {
+  grid-row: 4;
+  align-self: start;
 }
 .fields :global(.mantine-InputWrapper-label),
 .fields :global(.mantine-RadioGroup-label) {
@@ -427,6 +463,12 @@
   }
   .columns {
     grid-template-columns: 1fr;
+    grid-template-rows: none;
+    row-gap: 18px;
+  }
+  .columns > :global(.mantine-InputWrapper-root) {
+    display: block;
+    grid-row: auto;
   }
   .steps button small {
     display: none;
@@ -463,7 +505,13 @@
     border-radius: 18px;
   }
   .columns {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(4, auto);
+    row-gap: 0;
+  }
+  .columns > :global(.mantine-InputWrapper-root) {
+    display: grid;
+    grid-row: span 4;
   }
   .steps button small {
     display: inline;
@@ -503,6 +551,12 @@
 @media (max-width: 480px) {
   .columns {
     grid-template-columns: 1fr;
+    grid-template-rows: none;
+    row-gap: 18px;
+  }
+  .columns > :global(.mantine-InputWrapper-root) {
+    display: block;
+    grid-row: auto;
   }
   .steps button small {
     display: none;
@@ -577,4 +631,11 @@
   .fields :global(.mantine-Alert-message) {
     font-size: 1rem;
   }
+}
+
+.fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
 }

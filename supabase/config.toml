@@ -1,0 +1,22 @@
+project_id = "migratelens"
+
+[api]
+port = 54321
+schemas = ["public"]
+extra_search_path = ["public", "extensions"]
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 17
+
+[studio]
+port = 54323
+
+[functions.submit-calculation]
+verify_jwt = false
+entrypoint = "./functions/submit-calculation/index.ts"
+
+[functions.submit-feedback]
+verify_jwt = false
+entrypoint = "./functions/submit-feedback/index.ts"

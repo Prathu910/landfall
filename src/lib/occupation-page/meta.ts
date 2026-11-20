@@ -12,6 +12,7 @@ const STATIC_PAGES = [
   "/states/",
   "/methodology/",
   "/occupations/",
+  "/feedback/",
 ];
 
 export function relatedOccupations(

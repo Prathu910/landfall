@@ -63,7 +63,7 @@ describe("homepage copy", () => {
     expect(trustLine("2026-10")).toEqual([
       "SkillSelect data, as at Oct 2026",
       "No percentages",
-      "Stays in your browser",
+      "No documents needed",
     ]);
   });
 

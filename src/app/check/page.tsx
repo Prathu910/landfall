@@ -18,7 +18,8 @@ export default function CheckPage() {
         <h1>Check your points</h1>
         <p>
           Understand what counts, see the dates that matter, and compare your
-          score with published occupation data. Free, with no account needed.
+          score with published occupation data. Free, with an email required for
+          your personal report. No account needed.
         </p>
       </div>
       <CheckFlow source={reportSource(manifest.asAt, manifest)} />

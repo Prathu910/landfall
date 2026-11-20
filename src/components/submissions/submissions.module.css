@@ -1,0 +1,43 @@
+.box {
+  display: grid;
+  gap: 1rem;
+  padding: 1.5rem;
+  border: 1px solid var(--rule);
+  border-radius: 1rem;
+  background: var(--card);
+}
+.box p,
+.verification p {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.65;
+}
+.box h2 {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 1.5rem;
+}
+.verification {
+  min-width: 0;
+  max-width: 100%;
+}
+.verification button {
+  min-height: 2.75rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font: inherit;
+  color: var(--ink);
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 0.5rem;
+}
+.hint {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+@media print {
+  .box,
+  .verification {
+    display: none !important;
+  }
+}

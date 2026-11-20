@@ -1,5 +1,43 @@
 # Resume here
 
+## Release integration: production domain confirmed (20 November 2026)
+
+The founder confirmed the three Cloudflare Pages Production public variables are configured, `https://migratelens.com` is live, and requested merging `roadmap/occupation-pages` into `main`. Added the exact production origin to Supabase `ALLOWED_ORIGINS`; both submission endpoints return 204 for production preflights and 403 for an unapproved origin. A read-only aggregate check confirms one saved calculation and no feedback yet; successful hosted feedback remains unverified. The production Turnstile widget must permit `migratelens.com`.
+
+Integration includes the occupation pages, required calculation email and limited summary capture, feedback, Supabase backend, and paired-field alignment. Earlier “not merged/deployed” notes below describe their individual checkpoints. Indexing stays disabled (`SITE_INDEXABLE=false`); enabling search visibility is a separate launch action. Retention Cron scheduling remains explicitly deferred by the founder; the SQL is ready but has not been installed.
+
+## Latest UI fix: paired field alignment (20 November 2026)
+
+Fixed the shared `.columns` layout in `src/components/check-flow.module.css`: paired fields share label, helper, input and error tracks; single-column breakpoints return to normal stacked flow. This covers name/birth date, state/visa expiry, work experience, and assessment dates. Reproduced the original 30px offset; corrected paired controls measure 0px difference. Verified the built export at 1440, 1024, 900, 760, 640, 481, 480 and 390px, including wrapped labels/help and an error, with no horizontal overflow. Scoped code review clean; `npm run check` (860 tests) and `npm run build` pass. Local preview restarted on port 3000. No backend or collection behavior changed.
+
+## Latest: Supabase backend configured, local preview restarted (20 November 2026)
+
+The founder completed Supabase CLI login/link/migrations, supplied Turnstile keys, and confirmed `hello@migratelens.com` is set up. Configured the public project URL/site key/contact in ignored `.env.local`; saved `TURNSTILE_SECRET_KEY` and exact testing `ALLOWED_ORIGINS` in Supabase private secret storage (no private value in source or frontend). The project is `tyhwoehzjjrjwojzwjbg`. Deployed both `submit-calculation` and `submit-feedback` with the pinned CLI; both report ACTIVE and scoped `verify_jwt=false`.
+
+Verified hosted migration dry-run reports up to date, both local-origin preflights return 204 with the expected CORS header, unapproved origins return 403, and valid-shaped requests with intentionally invalid Turnstile tokens return 403 without saving. A successful real human-verified submission and REST gateway role smoke test still remain to be checked. Restarted the local frontend at `http://127.0.0.1:3000`; `/feedback/` returns 200. The testing allowed origins are local port 3000 (127.0.0.1 and localhost) and the exact `https://landfall-584.pages.dev` host. Add the final production origin and use the appropriate widget/project when releasing the frontend.
+
+The founder explicitly deferred step 6 (retention scheduling); no Cron schedule was installed. Complete that before public collection launch. The hosted Pages frontend is still on its prior release: no merge/push or Cloudflare frontend deployment was performed in this configuration step.
+
+## Earlier: calculation capture and feedback implemented locally (20 November 2026)
+
+Implementation remains on `roadmap/occupation-pages`; no merge, push or production deployment was performed. The founder's current Cloudflare hosting test is `https://landfall-584.pages.dev/`; automated requests returned 403, so live page behavior was not independently verified. The provided Supabase public URL is configured in ignored `.env.local`; no credentials were stored or collected.
+
+Implemented: a required email plus allowlisted calculation summary before personal reports; sample-origin exclusion and disabled sample saving; idempotent retries; `/feedback/` with optional email/context; server-validated Turnstile; Supabase Postgres tables/RLS/atomic RPCs and two Edge Functions; explicit CORS and request limits; separate daily retention schedule; privacy and operating documentation. Full profiles/dates remain local, email is excluded from device saving and report printing, and no account/marketing/email-delivery service is implied.
+
+Verified: `npm run check` (85 files, 860 tests; format/lint/TypeScript), `npm run build` (all 479 occupation pages plus feedback, still static), `npm run backend:check`, `npm run backend:test` (11), and `npm run backend:test:sql` (real isolated Postgres role permissions, atomic/concurrent idempotency, backlog statuses and retention boundaries). Separate spec and code-quality reviews are clean after fixes. One intermediate typecheck collided with a simultaneous build regenerating `.next/types`; final sequential checks pass.
+
+Built-export browser checks: desktop 1440px and mobile 390px, reduced motion, required-email rejection, confirmed-save report opening, current-step verification preservation, feedback optional context, linked validation errors, sample capture exclusion, print-hidden feedback prompt, no horizontal overflow, unconfigured unavailable state. Browser success/failure/retry states used controlled Turnstile/API responses; these do not prove live persistence. A stale heading assertion was corrected in the QA script; the report itself opened correctly. Browser captures are in ignored `output/playwright/` (viewport captures avoid full-page screenshot stitching artifacts).
+
+Remaining external work: Supabase CLI is not logged in; no schema/functions/secrets/Cron have been deployed to the founder's project. Need public Turnstile site key and a real privacy/contact mailbox; private keys belong in Supabase secrets. Staging REST-gateway role denial, actual Turnstile verification, real persisted submissions/deletion and scheduled Cron execution still need a configured project. Then configure Cloudflare public build variables and rebuild, integrate the release branch, verify the custom domain, enable indexing and submit Search Console. Exact steps are in `docs/OPERATIONS.md` and `docs/OPERATIONS-BACKEND.md`. The implementation plan is `docs/superpowers/plans/2026-11-20-calculation-capture-and-feedback.md`.
+
+## Planned before launch: calculation emails and feedback (20 November 2026)
+
+The founder purchased `migratelens.com` through Hostinger and is configuring Cloudflare. They requested storing calculation records and collecting feedback on the current `roadmap/occupation-pages` branch before going live, and explicitly chose **email required before viewing the personal report**.
+
+The design is `docs/superpowers/specs/2026-11-20-calculation-capture-and-feedback-design.md`. The founder approved switching the backend plan to **Supabase Postgres and Edge Functions**, retaining **Cloudflare Pages** for the static frontend and **Turnstile** for both submission forms. Store an email plus a limited calculation summary; add `/feedback/`, private review in Supabase, and accurate privacy wording. Use separate staging/production Supabase projects, locked-down table access, and Supabase Cron for daily retention. Login, email verification, delivery, alerts and payments remain later work. This is planning only: no database, form, email gate, or collection behavior has been implemented. Indexing remains disabled. Continue the code work on this branch as requested.
+
+Deployment investigation (20 November): the founder's `main` deployment log shows Next.js static generation succeeding, followed by failure in `npx opennextjs-cloudflare build`. This static-export project should use the Pages static HTML export setup with `npm run build` and output `out`. The logged route list has no occupation pages. Verify the Cloudflare project type, build command and intended release revision before redeploying; the failure has not been resolved or verified in Cloudflare by this documentation update.
+
 ## For the founder: what happened while you were away (19 November 2026)
 
 **Done and pushed** to branch `roadmap/occupation-pages` (not merged into `main`; that is your call):
