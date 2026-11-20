@@ -206,13 +206,13 @@ export default function MethodologyPage() {
               optional feedback email to respond to that message.
             </p>
             <p>
-              Our retention policy is to delete submitted calculations and
-              feedback after 180 days, with daily cleanup once collection is
-              enabled. Deletion from backup copies follows the hosting
+              We delete submitted calculations and feedback 180 days after they
+              are submitted. Deletion from backup copies follows the hosting
               provider’s backup retention. Access is restricted to the site
               operator and the services that process submissions. Hosting and
               security services may also process connection information and keep
-              ordinary access logs.
+              ordinary access logs. We use Cloudflare Web Analytics, which
+              counts page visits without cookies and without identifying you.
             </p>
             <p>
               Your full answers are held in memory unless you enable “Save my

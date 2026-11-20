@@ -1,5 +1,15 @@
 # Resume here
 
+## Search indexing launched (20 November 2026)
+
+The founder launched indexing: `SITE_INDEXABLE = true` in `src/lib/site.ts`, so `robots.txt` allows all crawlers, pages are indexable (occupation pages whose every count is "<20" stay `noindex`), and `sitemap.xml` lists the 5 site pages and 349 occupation pages. Robots rules are a pure function (`src/lib/robots-rules.ts`) tested in both states.
+
+**Deadline: install the daily 180-day retention cleanup in Supabase by 1 May 2027.** The privacy section now says "We delete submitted calculations and feedback 180 days after they are submitted"; the first records (20 Nov 2026) turn 180 days old around 19 May 2027. The steps are in `docs/OPERATIONS-BACKEND.md`.
+
+Privacy text: the "daily cleanup once collection is enabled" clause was removed (no cleanup is scheduled yet) and one sentence now discloses Cloudflare Web Analytics (cookieless page counts). `PRIVACY_VERSION` was left at `2026-11-20` on purpose: the deployed Edge Functions check it exactly, so bumping it needs a coordinated backend deploy.
+
+Founder's open items: the www.migratelens.com redirect (was returning 522), one live personal check and one feedback submission with test rows deleted afterwards, Google Search Console (Domain property via Cloudflare DNS) with the sitemap submitted, Bing Webmaster Tools import, and confirming Cloudflare Web Analytics records `migratelens.com` (its beacon upload failed in a headless test). Live checks on 20 Nov: the backend answers `migratelens.com` with CORS 204, rejects other origins (403) and rejects malformed submissions (400) without saving; the forms and the Turnstile widget render.
+
 ## Deployment fix: complete the npm lockfile (20 November 2026)
 
 Merged and pushed the release to `main` as `16469a8`; Cloudflare's first deployment failed during dependency installation, before `npm run build`. Reproduced its exact missing `@emnapi/runtime@1.11.3` and `@emnapi/core@2.0.0-beta.2` entries in a fresh directory with Node 22.23.4 and npm 10.9.9. Regenerated the existing lockfile using that toolchain: the two entries are added, npm peer metadata is normalized, and existing package versions remain unchanged. Include a fresh `npm ci` check when validating lockfile changes; an existing local dependency tree did not expose this deployment failure.
