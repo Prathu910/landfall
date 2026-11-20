@@ -1,5 +1,9 @@
 # Resume here
 
+## Deployment fix: complete the npm lockfile (20 November 2026)
+
+Merged and pushed the release to `main` as `16469a8`; Cloudflare's first deployment failed during dependency installation, before `npm run build`. Reproduced its exact missing `@emnapi/runtime@1.11.3` and `@emnapi/core@2.0.0-beta.2` entries in a fresh directory with Node 22.23.4 and npm 10.9.9. Regenerated the existing lockfile using that toolchain: the two entries are added, npm peer metadata is normalized, and existing package versions remain unchanged. Include a fresh `npm ci` check when validating lockfile changes; an existing local dependency tree did not expose this deployment failure.
+
 ## Release integration: production domain confirmed (20 November 2026)
 
 The founder confirmed the three Cloudflare Pages Production public variables are configured, `https://migratelens.com` is live, and requested merging `roadmap/occupation-pages` into `main`. Added the exact production origin to Supabase `ALLOWED_ORIGINS`; both submission endpoints return 204 for production preflights and 403 for an unapproved origin. A read-only aggregate check confirms one saved calculation and no feedback yet; successful hosted feedback remains unverified. The production Turnstile widget must permit `migratelens.com`.

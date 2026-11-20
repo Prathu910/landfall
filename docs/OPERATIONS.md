@@ -51,6 +51,8 @@ The Deno CLI is pinned in dev dependencies. Backend SQL verification creates and
 
 Cloudflare build settings: Pages static HTML export, `npm run build`, output `out`, repository root. OpenNext is not part of this architecture. Frontend static builds do not deploy Supabase functions or apply migrations.
 
+Validate dependency changes with a fresh `npm ci`, using the Node/npm versions reported in the Cloudflare build log (the 20 November build uses Node 22.23.4 and npm 10.9.9). Generate lockfile repairs without an existing `node_modules` tree so optional platform dependencies are included. Commit `package-lock.json`; do not replace the clean-install step with `npm install` in Cloudflare to hide a stale lockfile.
+
 ## Failure and rollback
 
 A successful API acknowledgement is required to open the personal report. Network, verification or storage failures keep the answers and show retry; do not disable that acknowledgement check to hide an outage. Feedback independently keeps the message when its write fails. Both depend on the availability of the same Supabase project.
