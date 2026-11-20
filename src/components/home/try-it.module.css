@@ -71,6 +71,7 @@
 .link {
   display: inline-block;
   margin-top: 12px;
+  margin-right: 20px;
   color: var(--slate);
   font-weight: 600;
   text-decoration: underline;

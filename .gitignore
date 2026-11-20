@@ -11,3 +11,9 @@ out/
 output/
 public/data/
 src/data/.generate-*
+
+# Local backend state, secrets and submission exports
+supabase/.temp/
+supabase/.branches/
+supabase/functions/.env*
+submission-exports/

@@ -28,7 +28,7 @@ python3 -m http.server 3017 --bind 127.0.0.1 --directory out
 - Four-step federal points check, with validation and live category totals.
 - Expanded report with conditional nomination totals, credential scenarios, 189/190/state-491 pool comparisons, twelve monthly occupation totals, six actual invitation rounds, personal dates, occupation comparisons, preparation checklist and glossary.
 - Birthdays from 18 through the under-45 boundary, evidence expiries, EOI validity and entered visa expiry.
-- Optional browser-local saving and an explicit clear control. No profile API or personal-data database.
+- Optional browser-local full-profile saving and a clear control. A required email plus limited calculation summary is saved through Supabase before the personal report opens; feedback accepts optional contact details. Full profile dates stay local. See [operations](docs/OPERATIONS.md) for required setup.
 - Sample report, all eight state/territory program summaries, searchable state directory, source links and methodology.
 - Browser print stylesheet and Print / save PDF control.
 

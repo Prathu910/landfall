@@ -27,3 +27,19 @@ export function clearSavedProfile(storage: ProfileStorage): void {
     }
   }
 }
+
+/** Samples must never be restored later as personal calculations. */
+export function persistCheckProfile(
+  storage: Pick<Storage, "setItem" | "removeItem">,
+  profile: unknown,
+  save: boolean,
+  sampleRun: boolean,
+): void {
+  if (sampleRun) return;
+  try {
+    if (save) storage.setItem(STORAGE_KEY, JSON.stringify(profile));
+    else storage.removeItem(STORAGE_KEY);
+  } catch {
+    /* Device saving is optional. */
+  }
+}

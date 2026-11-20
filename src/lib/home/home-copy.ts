@@ -56,7 +56,7 @@ export const HOME_COPY = {
     items: [
       "Official data, with dates and sources.",
       "No percentages or invented numbers.",
-      "Your answers stay in your browser.",
+      "Your full profile stays in your browser.",
       "General information, not migration advice.",
     ],
     link: "Read how we use the data",
@@ -64,7 +64,7 @@ export const HOME_COPY = {
   faqHeading: "Common questions",
   finalCta: {
     heading: "See your own numbers",
-    body: "Four short steps. No account, and your answers stay in your browser.",
+    body: "Four short steps. Email required for your personal report; no account needed.",
     action: "Check my points, free",
     sample: "Or read the sample report first",
   },
@@ -75,7 +75,7 @@ export function trustLine(asAt: MonthKey): string[] {
   return [
     `SkillSelect data, as at ${formatMonth(asAt)}`,
     "No percentages",
-    "Stays in your browser",
+    "No documents needed",
   ];
 }
 

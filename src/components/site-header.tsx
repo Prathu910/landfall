@@ -11,6 +11,7 @@ export function SiteHeader() {
   const path = usePathname();
   const [open, setOpen] = useState(false);
   const links = [
+    ["/occupations/", "Occupations"],
     ["/sample/", "Sample report"],
     ["/states/", "States"],
     ["/methodology/", "Method"],

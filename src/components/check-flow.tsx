@@ -1,16 +1,13 @@
 "use client";
 
 import {
+  persistCheckProfile,
   clearSavedProfile,
   migrateLegacyProfile,
   STORAGE_KEY,
 } from "@/lib/profile-storage";
 import { useEffect, useState, useRef } from "react";
-import {
-  OPEN_OVERVIEW,
-  START_OVER,
-  TRY_SAMPLE_ANSWERS,
-} from "@/lib/check-actions";
+import { START_OVER, TRY_SAMPLE_ANSWERS } from "@/lib/check-actions";
 import {
   Alert,
   Badge,
@@ -26,9 +23,9 @@ import {
 import { DateInput } from "@mantine/dates";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import {
+  ShieldCheck,
   ArrowLeft,
   ArrowRight,
-  ShieldCheck,
   RotateCcw,
   Info,
   CalendarDays,
@@ -40,7 +37,6 @@ import {
   emptyProfile,
   calculatePoints,
   localToday,
-  formatDate,
   type Profile,
 } from "@/lib/migration";
 import { sampleReportProfile } from "@/lib/sample";
@@ -54,6 +50,16 @@ import {
   useOccupationDetail,
 } from "./data/use-occupation-core";
 import { Report } from "./report";
+import { CheckReviewStep } from "./check-review-step";
+import { CalculationEmail } from "./submissions/calculation-email";
+import { configuredSubmissions } from "./submissions/config";
+import { useSubmission } from "./submissions/use-submission";
+import {
+  PRIVACY_VERSION,
+  validEmail,
+  normalizeEmail,
+} from "@/lib/submissions/contract";
+import { calculationSummary } from "@/lib/submissions/summary";
 import styles from "./check-flow.module.css";
 
 const STEPS = [
@@ -89,6 +95,13 @@ function isProfile(value: unknown): value is Profile {
 export function CheckFlow({ source }: { source: ReportSource }) {
   const [profile, setProfile] = useState<Profile>({ ...emptyProfile });
   const [step, setStep] = useState(0);
+  const [sampleRun, setSampleRun] = useState(false);
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [token, setToken] = useState("");
+  const [verification, setVerification] = useState(0);
+  const capture = useSubmission("calculation");
+  const config = configuredSubmissions();
   const [asOf, setAsOf] = useState("2026-11-17");
   const [save, setSave] = useState(false);
   const [loaded, setLoaded] = useState(false);
@@ -125,12 +138,11 @@ export function CheckFlow({ source }: { source: ReportSource }) {
   useEffect(() => {
     if (!loaded) return;
     try {
-      if (save) localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
-      else localStorage.removeItem(STORAGE_KEY);
+      persistCheckProfile(localStorage, profile, save, sampleRun);
     } catch {
       /* Optional local saving may be unavailable. */
     }
-  }, [profile, save, loaded]);
+  }, [profile, save, loaded, sampleRun]);
   const result = calculatePoints(profile, asOf);
   // Fetched as soon as an occupation is chosen, so the report is usually ready.
   const publishedCode = publishedOccupationCode(
@@ -151,17 +163,26 @@ export function CheckFlow({ source }: { source: ReportSource }) {
   const update = <K extends keyof Profile>(key: K, value: Profile[K]) =>
     updateMany({ [key]: value });
   const changeStep = (next: number) => {
+    if (next === step) return;
+    setToken("");
     setStep(next);
     setError("");
   };
   const clear = () => {
+    setToken("");
+    setError("");
+    setSampleRun(false);
+    setEmail("");
+    setEmailError("");
+    capture.reset();
     setProfile({ ...emptyProfile });
     setSave(false);
     setReport(false);
     changeStep(0);
     clearSavedProfile(localStorage);
   };
-  const next = () => {
+  const next = async () => {
+    if (capture.pending) return;
     if (
       step === 0 &&
       (!profile.dob || result.missing.includes("Date of birth"))
@@ -188,6 +209,33 @@ export function CheckFlow({ source }: { source: ReportSource }) {
         "Assessment, EOI and completion dates cannot be in the future.",
       );
     if (step === 3) {
+      if (!sampleRun) {
+        if (!validEmail(email)) {
+          setEmailError("Enter a valid email address to view your report.");
+          document.getElementById("report-email")?.focus();
+          return;
+        }
+        setEmailError("");
+        const saved = await capture.submit(
+          {
+            email: normalizeEmail(email),
+            summary: calculationSummary(
+              profile,
+              result,
+              asOf,
+              source.snapshotDate,
+            ),
+            privacy_version: PRIVACY_VERSION,
+          },
+          token,
+          config,
+        );
+        if (!saved) {
+          setToken("");
+          setVerification((n) => n + 1);
+          return;
+        }
+      }
       setReport(true);
       window.scrollTo({
         top: 0,
@@ -251,12 +299,15 @@ export function CheckFlow({ source }: { source: ReportSource }) {
     return (
       <Report
         profile={profile}
+        sample={sampleRun}
         asOf={asOf}
         occupation={occupation}
         comparisonIndex={occupationIndex}
         source={source}
         onAnswer={updateMany}
         onEdit={() => {
+          setToken("");
+          capture.reset();
           setReport(false);
           changeStep(3);
         }}
@@ -267,497 +318,518 @@ export function CheckFlow({ source }: { source: ReportSource }) {
       <div>
         <form
           className={styles.card}
+          aria-busy={capture.pending}
           noValidate
           onSubmit={(event) => {
             event.preventDefault();
-            next();
+            void next();
           }}
         >
-          <div className={styles.stepMeta}>
-            <Badge variant="light" color="ink" radius="sm">
-              Your free check
-            </Badge>
-            <span>Step {step + 1} / 4</span>
-          </div>
-          <Progress
-            value={(step + 1) * 25}
-            size={4}
-            radius="xl"
-            color="ink"
-            aria-label={`Step ${step + 1} of 4`}
-            className={styles.progress}
-          />
-          <div className={styles.steps} aria-label="Check progress">
-            {STEPS.map((title, index) => (
-              <button
-                type="button"
-                aria-current={step === index ? "step" : undefined}
-                className={step === index ? styles.activeStep : ""}
-                key={title}
-                disabled={index > step}
-                onClick={() => changeStep(index)}
+          <fieldset disabled={capture.pending} className={styles.fieldset}>
+            <div className={styles.stepMeta}>
+              <Badge variant="light" color="ink" radius="sm">
+                Your free check
+              </Badge>
+              <span>Step {step + 1} / 4</span>
+            </div>
+            <Progress
+              value={(step + 1) * 25}
+              size={4}
+              radius="xl"
+              color="ink"
+              aria-label={`Step ${step + 1} of 4`}
+              className={styles.progress}
+            />
+            <div className={styles.steps} aria-label="Check progress">
+              {STEPS.map((title, index) => (
+                <button
+                  type="button"
+                  aria-current={step === index ? "step" : undefined}
+                  className={step === index ? styles.activeStep : ""}
+                  key={title}
+                  disabled={index > step}
+                  onClick={() => changeStep(index)}
+                >
+                  <span>{index < step ? <Check size={12} /> : index + 1}</span>
+                  <small>{title}</small>
+                </button>
+              ))}
+            </div>
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={step}
+                initial={{ opacity: 0, x: reduceMotion ? 0 : 14 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: reduceMotion ? 0 : -10 }}
+                transition={{ duration: reduceMotion ? 0 : 0.18 }}
+                onAnimationComplete={() =>
+                  heading.current?.focus({ preventScroll: true })
+                }
               >
-                <span>{index < step ? <Check size={12} /> : index + 1}</span>
-                <small>{title}</small>
-              </button>
-            ))}
-          </div>
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={step}
-              initial={{ opacity: 0, x: reduceMotion ? 0 : 14 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: reduceMotion ? 0 : -10 }}
-              transition={{ duration: reduceMotion ? 0 : 0.18 }}
-              onAnimationComplete={() =>
-                heading.current?.focus({ preventScroll: true })
-              }
-            >
-              <h2 className={styles.title} tabIndex={-1} ref={heading}>
-                {
-                  [
-                    "You and your occupation",
-                    "Your English and qualifications",
-                    "Your work and other points",
-                    "Review your answers",
-                  ][step]
-                }
-              </h2>
-              <p className={styles.intro}>
-                {
-                  [
-                    "A few details turn the bigger picture into your picture.",
-                    "Every qualification and credential adds a little more clarity.",
-                    "Use experience and credentials you can support with evidence.",
-                    "Review your answers, then explore your personal overview.",
-                  ][step]
-                }
-              </p>
-              <div className={styles.fields}>
-                {step === 0 && (
-                  <>
-                    <div className={styles.columns}>
-                      <TextInput
-                        label="First name (optional)"
-                        autoComplete="given-name"
-                        maxLength={50}
-                        placeholder="What should we call you?"
-                        value={profile.name}
-                        onChange={(event) =>
-                          update("name", event.currentTarget.value)
-                        }
-                        size="md"
-                        radius="md"
-                      />
-                      {dateField(
-                        "dob",
-                        "Date of birth",
-                        "Age points are assessed when invited.",
-                        true,
-                      )}
-                    </div>
-                    <Select
-                      label="Nominated occupation"
-                      description="Use the occupation in your skills assessment. Search by title or ANZSCO code."
-                      placeholder="Search your occupation"
-                      searchable
-                      nothingFoundMessage="No match. Choose Other for a points check."
-                      value={profile.occupation || null}
-                      onChange={(value) => update("occupation", value ?? "")}
-                      data={[
-                        ...occupationIndex.map((o) => ({
-                          value: o.code,
-                          label: `${o.name} · ${o.code}`,
-                        })),
-                        {
-                          value: "other",
-                          label: "Other occupation · points check only",
-                        },
-                      ]}
-                      size="md"
-                      radius="md"
-                      maxDropdownHeight={260}
-                      aria-required
-                    />
-                    <div>
-                      <span className={styles.fieldLabel}>
-                        Where are you living?
-                      </span>
-                      <SegmentedControl
-                        aria-label="Where are you living?"
-                        fullWidth
-                        value={profile.onshore ? "onshore" : "offshore"}
-                        onChange={(value) =>
-                          update("onshore", value === "onshore")
-                        }
-                        data={[
-                          { value: "offshore", label: "Outside Australia" },
-                          { value: "onshore", label: "In Australia" },
-                        ]}
-                        size="md"
-                        radius="md"
-                      />
-                    </div>
-                    {profile.onshore && (
+                <h2 className={styles.title} tabIndex={-1} ref={heading}>
+                  {
+                    [
+                      "You and your occupation",
+                      "Your English and qualifications",
+                      "Your work and other points",
+                      "Review your answers",
+                    ][step]
+                  }
+                </h2>
+                <p className={styles.intro}>
+                  {
+                    [
+                      "A few details turn the bigger picture into your picture.",
+                      "Every qualification and credential adds a little more clarity.",
+                      "Use experience and credentials you can support with evidence.",
+                      "Review your answers, then explore your personal overview.",
+                    ][step]
+                  }
+                </p>
+                <div className={styles.fields}>
+                  {step === 0 && (
+                    <>
                       <div className={styles.columns}>
-                        <Select
-                          label="Current state or territory"
-                          placeholder="Choose your state"
-                          data={states}
-                          value={profile.state || null}
-                          onChange={(value) => update("state", value ?? "")}
+                        <TextInput
+                          label="First name (optional)"
+                          autoComplete="given-name"
+                          maxLength={50}
+                          placeholder="What should we call you?"
+                          value={profile.name}
+                          onChange={(event) =>
+                            update("name", event.currentTarget.value)
+                          }
                           size="md"
                           radius="md"
                         />
                         {dateField(
-                          "visaExpiry",
-                          "Current visa expiry (optional)",
+                          "dob",
+                          "Date of birth",
+                          "Age points are assessed when invited.",
+                          true,
                         )}
                       </div>
-                    )}
-                  </>
-                )}
-                {step === 1 && (
-                  <>
-                    <Radio.Group
-                      label="Your English proficiency"
-                      value={profile.english}
-                      onChange={(value) =>
-                        update("english", value as Profile["english"])
-                      }
-                      size="md"
-                      withAsterisk
-                    >
-                      <div className={styles.englishChoices}>
-                        {[
+                      <Select
+                        label="Nominated occupation"
+                        description="Use the occupation in your skills assessment. Search by title or ANZSCO code."
+                        placeholder="Search your occupation"
+                        searchable
+                        nothingFoundMessage="No match. Choose Other for a points check."
+                        value={profile.occupation || null}
+                        onChange={(value) => update("occupation", value ?? "")}
+                        data={[
+                          ...occupationIndex.map((o) => ({
+                            value: o.code,
+                            label: `${o.name} · ${o.code}`,
+                          })),
                           {
-                            value: "competent",
-                            label: "Competent",
-                            detail: "0 points",
+                            value: "other",
+                            label: "Other occupation · points check only",
                           },
-                          {
-                            value: "proficient",
-                            label: "Proficient",
-                            detail: "10 points",
-                          },
-                          {
-                            value: "superior",
-                            label: "Superior",
-                            detail: "20 points",
-                          },
-                        ].map((option) => (
-                          <label
-                            className={`${styles.englishChoice} ${profile.english === option.value ? styles.selectedChoice : ""}`}
-                            key={option.value}
-                          >
-                            <Radio
-                              value={option.value}
-                              aria-label={option.label}
-                              size="sm"
-                            />
-                            <span>
-                              {option.label}
-                              <strong>{option.detail}</strong>
-                            </span>
-                          </label>
-                        ))}
+                        ]}
+                        size="md"
+                        radius="md"
+                        maxDropdownHeight={260}
+                        aria-required
+                      />
+                      <div>
+                        <span className={styles.fieldLabel}>
+                          Where are you living?
+                        </span>
+                        <SegmentedControl
+                          aria-label="Where are you living?"
+                          fullWidth
+                          value={profile.onshore ? "onshore" : "offshore"}
+                          onChange={(value) =>
+                            update("onshore", value === "onshore")
+                          }
+                          data={[
+                            { value: "offshore", label: "Outside Australia" },
+                            { value: "onshore", label: "In Australia" },
+                          ]}
+                          size="md"
+                          radius="md"
+                        />
                       </div>
-                    </Radio.Group>
-                    <p className={styles.help}>
-                      Choose the level demonstrated by an accepted test, or
-                      Competent if you hold an eligible passport.{" "}
-                      <a
-                        target="_blank"
-                        rel="noreferrer"
-                        href="https://immi.homeaffairs.gov.au/help-support/meeting-our-requirements/english-language"
+                      {profile.onshore && (
+                        <div className={styles.columns}>
+                          <Select
+                            label="Current state or territory"
+                            placeholder="Choose your state"
+                            data={states}
+                            value={profile.state || null}
+                            onChange={(value) => update("state", value ?? "")}
+                            size="md"
+                            radius="md"
+                          />
+                          {dateField(
+                            "visaExpiry",
+                            "Current visa expiry (optional)",
+                          )}
+                        </div>
+                      )}
+                    </>
+                  )}
+                  {step === 1 && (
+                    <>
+                      <Radio.Group
+                        label="Your English proficiency"
+                        value={profile.english}
+                        onChange={(value) =>
+                          update("english", value as Profile["english"])
+                        }
+                        size="md"
+                        withAsterisk
                       >
-                        Check official thresholds ↗
-                      </a>
-                    </p>
-                    {dateField(
-                      "englishDate",
-                      "English test date (optional)",
-                      "Leave blank for passport evidence. Test results use a three-year window in this overview.",
-                      true,
-                    )}
-                    <div className={styles.divider} />
-                    <Select
-                      label="Highest recognised qualification"
-                      placeholder="Choose your highest qualification"
-                      value={
-                        profile.qualification === "unknown"
-                          ? null
-                          : profile.qualification
-                      }
-                      onChange={(value) =>
-                        update(
-                          "qualification",
-                          (value ?? "unknown") as Profile["qualification"],
-                        )
-                      }
-                      data={[
-                        { value: "doctorate", label: "Doctorate · 20 points" },
-                        {
-                          value: "bachelor",
-                          label: "Bachelor’s or master’s degree · 15 points",
-                        },
-                        {
-                          value: "trade",
-                          label:
-                            "Australian diploma/trade, or recognised qualification · 10 points",
-                        },
-                        { value: "none", label: "None of these · 0 points" },
-                      ]}
-                      size="md"
-                      radius="md"
-                      aria-required
-                    />
-                    <Checkbox
-                      label="I meet the Australian study requirement"
-                      description="Qualifying study of at least two academic years over at least 16 months in Australia."
-                      checked={profile.ausStudy}
-                      onChange={(event) => {
-                        update("ausStudy", event.currentTarget.checked);
-                        if (!event.currentTarget.checked)
-                          update("regionalStudy", false);
-                      }}
-                      size="md"
-                    />
-                    {profile.ausStudy && (
+                        <div className={styles.englishChoices}>
+                          {[
+                            {
+                              value: "competent",
+                              label: "Competent",
+                              detail: "0 points",
+                            },
+                            {
+                              value: "proficient",
+                              label: "Proficient",
+                              detail: "10 points",
+                            },
+                            {
+                              value: "superior",
+                              label: "Superior",
+                              detail: "20 points",
+                            },
+                          ].map((option) => (
+                            <label
+                              className={`${styles.englishChoice} ${profile.english === option.value ? styles.selectedChoice : ""}`}
+                              key={option.value}
+                            >
+                              <Radio
+                                value={option.value}
+                                aria-label={option.label}
+                                size="sm"
+                              />
+                              <span>
+                                {option.label}
+                                <strong>{option.detail}</strong>
+                              </span>
+                            </label>
+                          ))}
+                        </div>
+                      </Radio.Group>
+                      <p className={styles.help}>
+                        Choose the level demonstrated by an accepted test, or
+                        Competent if you hold an eligible passport.{" "}
+                        <a
+                          target="_blank"
+                          rel="noreferrer"
+                          href="https://immi.homeaffairs.gov.au/help-support/meeting-our-requirements/english-language"
+                        >
+                          Check official thresholds ↗
+                        </a>
+                      </p>
+                      {dateField(
+                        "englishDate",
+                        "English test date (optional)",
+                        "Leave blank for passport evidence. Test results use a three-year window in this overview.",
+                        true,
+                      )}
+                      <div className={styles.divider} />
+                      <Select
+                        label="Highest recognised qualification"
+                        placeholder="Choose your highest qualification"
+                        value={
+                          profile.qualification === "unknown"
+                            ? null
+                            : profile.qualification
+                        }
+                        onChange={(value) =>
+                          update(
+                            "qualification",
+                            (value ?? "unknown") as Profile["qualification"],
+                          )
+                        }
+                        data={[
+                          {
+                            value: "doctorate",
+                            label: "Doctorate · 20 points",
+                          },
+                          {
+                            value: "bachelor",
+                            label: "Bachelor’s or master’s degree · 15 points",
+                          },
+                          {
+                            value: "trade",
+                            label:
+                              "Australian diploma/trade, or recognised qualification · 10 points",
+                          },
+                          { value: "none", label: "None of these · 0 points" },
+                        ]}
+                        size="md"
+                        radius="md"
+                        aria-required
+                      />
                       <Checkbox
-                        label="I meet the regional Australian study requirement"
-                        description="Living and studying in an eligible regional area during the qualifying study, excluding distance education."
-                        checked={profile.regionalStudy}
+                        label="I meet the Australian study requirement"
+                        description="Qualifying study of at least two academic years over at least 16 months in Australia."
+                        checked={profile.ausStudy}
+                        onChange={(event) => {
+                          update("ausStudy", event.currentTarget.checked);
+                          if (!event.currentTarget.checked)
+                            update("regionalStudy", false);
+                        }}
+                        size="md"
+                      />
+                      {profile.ausStudy && (
+                        <Checkbox
+                          label="I meet the regional Australian study requirement"
+                          description="Living and studying in an eligible regional area during the qualifying study, excluding distance education."
+                          checked={profile.regionalStudy}
+                          onChange={(event) =>
+                            update("regionalStudy", event.currentTarget.checked)
+                          }
+                          size="md"
+                        />
+                      )}
+                      <Checkbox
+                        label="I have a qualifying Australian research master’s or doctorate"
+                        description="At least two academic years of eligible STEM/ICT study for specialist education points."
+                        checked={profile.specialistEducation}
                         onChange={(event) =>
-                          update("regionalStudy", event.currentTarget.checked)
+                          update(
+                            "specialistEducation",
+                            event.currentTarget.checked,
+                          )
                         }
                         size="md"
                       />
-                    )}
-                    <Checkbox
-                      label="I have a qualifying Australian research master’s or doctorate"
-                      description="At least two academic years of eligible STEM/ICT study for specialist education points."
-                      checked={profile.specialistEducation}
-                      onChange={(event) =>
-                        update(
-                          "specialistEducation",
-                          event.currentTarget.checked,
-                        )
-                      }
-                      size="md"
-                    />
-                  </>
-                )}
-                {step === 2 && (
-                  <>
-                    <Alert
-                      icon={<Info size={17} />}
-                      color="ink"
-                      variant="light"
-                      radius="md"
-                    >
-                      Qualifying work must be paid, at least 20 hours a week,
-                      and in your nominated or a closely related occupation.
-                      Australian work must meet visa conditions.
-                    </Alert>
-                    <div className={styles.columns}>
-                      {numberField(
-                        "overseasYears",
-                        "Overseas skilled experience",
+                    </>
+                  )}
+                  {step === 2 && (
+                    <>
+                      <Alert
+                        icon={<Info size={17} />}
+                        color="ink"
+                        variant="light"
+                        radius="md"
+                      >
+                        Qualifying work must be paid, at least 20 hours a week,
+                        and in your nominated or a closely related occupation.
+                        Australian work must meet visa conditions.
+                      </Alert>
+                      <div className={styles.columns}>
+                        {numberField(
+                          "overseasYears",
+                          "Overseas skilled experience",
+                        )}
+                        {numberField(
+                          "australianYears",
+                          "Australian skilled experience",
+                        )}
+                      </div>
+                      <Select
+                        label="Partner status"
+                        placeholder="Choose your situation"
+                        value={
+                          profile.partner === "unknown" ? null : profile.partner
+                        }
+                        onChange={(value) =>
+                          update(
+                            "partner",
+                            (value ?? "unknown") as Profile["partner"],
+                          )
+                        }
+                        data={[
+                          { value: "single", label: "Single · 10 points" },
+                          {
+                            value: "citizen",
+                            label:
+                              "Partner is an Australian citizen or PR · 10 points",
+                          },
+                          {
+                            value: "skilled",
+                            label:
+                              "Partner meets all skilled partner requirements · 10 points",
+                          },
+                          {
+                            value: "english",
+                            label:
+                              "Partner meets English-only requirements · 5 points",
+                          },
+                          {
+                            value: "none",
+                            label: "Partner meets neither category · 0 points",
+                          },
+                        ]}
+                        size="md"
+                        radius="md"
+                        aria-required
+                      />
+                      {["skilled", "english"].includes(profile.partner) && (
+                        <p className={styles.help}>
+                          Partner must apply for the same visa. Skilled points
+                          also require being under 45, Competent English, an
+                          eligible occupation on the same list and a suitable
+                          assessment. Your answer confirms these conditions.
+                        </p>
                       )}
-                      {numberField(
-                        "australianYears",
-                        "Australian skilled experience",
-                      )}
-                    </div>
-                    <Select
-                      label="Partner status"
-                      placeholder="Choose your situation"
-                      value={
-                        profile.partner === "unknown" ? null : profile.partner
-                      }
-                      onChange={(value) =>
-                        update(
-                          "partner",
-                          (value ?? "unknown") as Profile["partner"],
-                        )
-                      }
-                      data={[
-                        { value: "single", label: "Single · 10 points" },
-                        {
-                          value: "citizen",
-                          label:
-                            "Partner is an Australian citizen or PR · 10 points",
-                        },
-                        {
-                          value: "skilled",
-                          label:
-                            "Partner meets all skilled partner requirements · 10 points",
-                        },
-                        {
-                          value: "english",
-                          label:
-                            "Partner meets English-only requirements · 5 points",
-                        },
-                        {
-                          value: "none",
-                          label: "Partner meets neither category · 0 points",
-                        },
-                      ]}
-                      size="md"
-                      radius="md"
-                      aria-required
-                    />
-                    {["skilled", "english"].includes(profile.partner) && (
-                      <p className={styles.help}>
-                        Partner must apply for the same visa. Skilled points
-                        also require being under 45, Competent English, an
-                        eligible occupation on the same list and a suitable
-                        assessment. Your answer confirms these conditions.
-                      </p>
-                    )}
-                    <Checkbox
-                      label="I completed an approved Professional Year in my eligible occupation"
-                      checked={profile.professionalYear}
-                      onChange={(event) =>
-                        update("professionalYear", event.currentTarget.checked)
-                      }
-                      size="md"
-                    />
-                    {profile.professionalYear &&
-                      dateField(
-                        "professionalYearDate",
-                        "Professional Year completion date",
-                        undefined,
+                      <Checkbox
+                        label="I completed an approved Professional Year in my eligible occupation"
+                        checked={profile.professionalYear}
+                        onChange={(event) =>
+                          update(
+                            "professionalYear",
+                            event.currentTarget.checked,
+                          )
+                        }
+                        size="md"
+                      />
+                      {profile.professionalYear &&
+                        dateField(
+                          "professionalYearDate",
+                          "Professional Year completion date",
+                          undefined,
+                          true,
+                        )}
+                      <Checkbox
+                        label="I hold a recognised NAATI community language credential"
+                        checked={profile.communityLanguage}
+                        onChange={(event) =>
+                          update(
+                            "communityLanguage",
+                            event.currentTarget.checked,
+                          )
+                        }
+                        size="md"
+                      />
+                      {profile.communityLanguage &&
+                        dateField(
+                          "communityLanguageExpiry",
+                          "Community language expiry (optional)",
+                        )}
+                      <div className={styles.divider} />
+                      <h3 className={styles.sectionTitle}>
+                        <CalendarDays size={18} /> Dates for your timeline{" "}
+                        <Badge color="gray" variant="light" size="sm">
+                          Optional
+                        </Badge>
+                      </h3>
+                      <div className={styles.columns}>
+                        {dateField(
+                          "assessmentDate",
+                          "Skills assessment issue date",
+                          undefined,
+                          true,
+                        )}
+                        {dateField(
+                          "assessmentExpiry",
+                          "Assessment expiry on letter",
+                          "The earlier of this date and the three-year cap is used.",
+                        )}
+                      </div>
+                      {dateField(
+                        "eoiDate",
+                        "EOI submission date",
+                        "Submission date, not date of effect. Used for the two-year EOI validity window.",
                         true,
                       )}
-                    <Checkbox
-                      label="I hold a recognised NAATI community language credential"
-                      checked={profile.communityLanguage}
-                      onChange={(event) =>
-                        update("communityLanguage", event.currentTarget.checked)
+                    </>
+                  )}
+                  {step === 3 && (
+                    <CheckReviewStep
+                      profile={profile}
+                      result={result}
+                      asOf={asOf}
+                      occupationName={
+                        occupationIndex.find(
+                          (o) => o.code === profile.occupation,
+                        )?.name ?? "Other · points check only"
                       }
-                      size="md"
-                    />
-                    {profile.communityLanguage &&
-                      dateField(
-                        "communityLanguageExpiry",
-                        "Community language expiry (optional)",
-                      )}
-                    <div className={styles.divider} />
-                    <h3 className={styles.sectionTitle}>
-                      <CalendarDays size={18} /> Dates for your timeline{" "}
-                      <Badge color="gray" variant="light" size="sm">
-                        Optional
-                      </Badge>
-                    </h3>
-                    <div className={styles.columns}>
-                      {dateField(
-                        "assessmentDate",
-                        "Skills assessment issue date",
-                        undefined,
-                        true,
-                      )}
-                      {dateField(
-                        "assessmentExpiry",
-                        "Assessment expiry on letter",
-                        "The earlier of this date and the three-year cap is used.",
-                      )}
-                    </div>
-                    {dateField(
-                      "eoiDate",
-                      "EOI submission date",
-                      "Submission date, not date of effect. Used for the two-year EOI validity window.",
-                      true,
-                    )}
-                  </>
-                )}
-                {step === 3 && (
-                  <>
-                    <div className={styles.review}>
-                      {[
-                        ["Name", profile.name || "Not provided"],
-                        ["Date of birth", formatDate(profile.dob)],
-                        [
-                          "Occupation",
-                          occupationIndex.find(
-                            (o) => o.code === profile.occupation,
-                          )?.name ?? "Other · points check only",
-                        ],
-                        ["English", profile.english],
-                        ["Qualification", profile.qualification],
-                        [
-                          "Skilled experience",
-                          `${profile.overseasYears} overseas + ${profile.australianYears} Australian years`,
-                        ],
-                        ["Partner category", profile.partner],
-                        ["189 points", String(result.base)],
-                        ["Calculated on", formatDate(asOf)],
-                      ].map(([key, value]) => (
-                        <div key={key}>
-                          <span>{key}</span>
-                          <strong>{value}</strong>
-                        </div>
-                      ))}
-                    </div>
-                    <Alert
-                      icon={<ShieldCheck size={18} />}
-                      color="ink"
-                      radius="md"
+                      save={save}
+                      allowSave={!sampleRun}
+                      onSave={setSave}
                     >
-                      Your answers are self-reported. This overview explains
-                      points and published data; it does not establish visa
-                      eligibility or guarantee an invitation.
-                    </Alert>
-                    <Checkbox
-                      label="Save my progress on this device"
-                      description="Optional. Anyone using this browser may see saved answers. Clear them below at any time."
-                      checked={save}
-                      onChange={(event) => setSave(event.currentTarget.checked)}
-                      size="md"
-                    />
-                  </>
-                )}
-              </div>
-            </motion.div>
-          </AnimatePresence>
-          {error && (
-            <Alert role="alert" color="red" variant="light" radius="md" mt="lg">
-              {error}
-            </Alert>
-          )}
-          <div className={styles.actions}>
-            <Button
-              type="button"
-              variant="subtle"
-              color="dark"
-              leftSection={
-                step > 0 ? <ArrowLeft size={16} /> : <RotateCcw size={15} />
-              }
-              onClick={() => (step > 0 ? changeStep(step - 1) : clear())}
-            >
-              {step > 0 ? "Back" : START_OVER}
-            </Button>
-            <Button
-              type="submit"
-              size="md"
-              color="ink"
-              radius="md"
-              rightSection={<ArrowRight size={17} />}
-            >
-              {step === 3 ? OPEN_OVERVIEW : "Continue"}
-            </Button>
-          </div>
+                      {sampleRun ? (
+                        <Alert color="ink">
+                          You’re exploring sample answers. No email or
+                          calculation is saved. Use “Start a new check” below to
+                          calculate your own report.
+                        </Alert>
+                      ) : (
+                        <CalculationEmail
+                          email={email}
+                          onEmail={(value) => {
+                            setEmail(value);
+                            setEmailError("");
+                            capture.clearError();
+                          }}
+                          error={emailError}
+                          config={config}
+                          generation={verification}
+                          onToken={setToken}
+                        />
+                      )}
+                    </CheckReviewStep>
+                  )}
+                </div>
+              </motion.div>
+            </AnimatePresence>
+            {(error || capture.error) && (
+              <Alert
+                role="alert"
+                color="red"
+                variant="light"
+                radius="md"
+                mt="lg"
+              >
+                {error || capture.error}
+              </Alert>
+            )}
+            <div className={styles.actions}>
+              <Button
+                type="button"
+                variant="subtle"
+                color="dark"
+                leftSection={
+                  step > 0 ? <ArrowLeft size={16} /> : <RotateCcw size={15} />
+                }
+                onClick={() => (step > 0 ? changeStep(step - 1) : clear())}
+              >
+                {step > 0 ? "Back" : START_OVER}
+              </Button>
+              <Button
+                type="submit"
+                size="md"
+                color="ink"
+                radius="md"
+                rightSection={<ArrowRight size={17} />}
+              >
+                {capture.pending
+                  ? "Saving your calculation…"
+                  : step === 3
+                    ? sampleRun
+                      ? "View sample report"
+                      : "View my free report"
+                    : "Continue"}
+              </Button>
+            </div>
+          </fieldset>
         </form>
         <div className={styles.below}>
           <span>
-            <LockKeyhole size={13} /> No email or documents needed.
+            <LockKeyhole size={13} /> Email needed for your personal report. No
+            documents needed.
           </span>
           <Button
             variant="subtle"
             size="xs"
             color="ink"
+            disabled={capture.pending}
             onClick={() => {
+              setError("");
+              setSave(false);
+              setSampleRun(true);
+              setEmail("");
+              capture.clearError();
               setProfile({ ...sampleReportProfile });
               changeStep(0);
             }}
@@ -771,8 +843,11 @@ export function CheckFlow({ source }: { source: ReportSource }) {
           color="gray"
           size="xs"
           onClick={clear}
+          disabled={capture.pending}
         >
-          Clear my answers from this device
+          {sampleRun
+            ? "Start a new check"
+            : "Clear my answers from this device"}
         </Button>
       </div>
       <aside className={styles.aside} aria-label="Live points estimate">
@@ -824,9 +899,11 @@ export function CheckFlow({ source }: { source: ReportSource }) {
         <div className={styles.privacy}>
           <ShieldCheck size={18} />
           <p>
-            Your answers stay in this browser.
+            Your full profile stays in this browser.
             <br />
-            <span>Saving is optional. You’re in control.</span>
+            <span>
+              Your personal report saves your email and a limited summary.
+            </span>
           </p>
         </div>
       </aside>

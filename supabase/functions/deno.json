@@ -1,0 +1,8 @@
+{
+  "compilerOptions": { "strict": true, "lib": ["deno.window"] },
+  "tasks": {
+    "check": "deno check submit-calculation/index.ts submit-feedback/index.ts ../tests/submissions_test.ts",
+    "test": "deno test ../tests/submissions_test.ts"
+  },
+  "lock": false
+}

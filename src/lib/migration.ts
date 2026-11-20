@@ -132,6 +132,12 @@ function ageOn(dob: Date, today: Date): number {
   const years = today.getUTCFullYear() - dob.getUTCFullYear();
   return years - (today < addYears(dob, years) ? 1 : 0);
 }
+/** Uses the same leap-day and calendar rules as the points calculation. */
+export function ageOnDate(dob: string, asOf: string): number | null {
+  const birth = parseDate(dob);
+  const today = parseDate(asOf);
+  return birth && today && birth <= today ? ageOn(birth, today) : null;
+}
 function agePoints(age: number): number {
   return age < 18 || age >= 45
     ? 0

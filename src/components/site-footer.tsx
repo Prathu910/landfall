@@ -20,6 +20,8 @@ export function SiteFooter() {
             <Link href="/sample/">Sample report</Link>
             <Link href="/states/">States</Link>
             <Link href="/methodology/">Method and sources</Link>
+            <Link href="/feedback/">Feedback</Link>
+            <Link href="/methodology/#privacy">Privacy</Link>
             <a href="https://www.mara.gov.au/" target="_blank" rel="noreferrer">
               Find a registered agent <ArrowUpRight size={13} />
             </a>

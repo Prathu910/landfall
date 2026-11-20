@@ -1,0 +1,109 @@
+.list {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--rule);
+}
+.tab {
+  font: inherit;
+  font-weight: 600;
+  min-height: 44px;
+  padding: 8px 18px;
+  background: transparent;
+  color: var(--muted);
+  border: 0;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+}
+.tab[aria-selected="true"] {
+  color: var(--ink);
+  border-bottom-color: var(--slate);
+}
+.tab:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+.panel {
+  padding-top: 14px;
+}
+.panel[data-active="false"] {
+  display: none;
+}
+.printHeading {
+  display: none;
+  margin: 0 0 6px;
+  font-weight: 600;
+}
+.total {
+  margin: 0 0 12px;
+  font-size: 1rem;
+  color: var(--ink);
+}
+.empty {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--muted);
+}
+.bars {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+.row {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr) 5.5rem;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.875rem;
+}
+.score {
+  font-weight: 600;
+  color: var(--ink);
+  text-align: right;
+}
+.track {
+  display: block;
+  height: 14px;
+}
+.fill {
+  display: block;
+  height: 100%;
+  background: var(--slate);
+  border-radius: 3px;
+}
+.masked {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--rule) 0 4px,
+    var(--surface) 4px 8px
+  );
+  border: 1px solid var(--muted-soft);
+}
+.count {
+  color: var(--muted);
+}
+@media (max-width: 620px) {
+  .row {
+    font-size: 1rem;
+    grid-template-columns: 2.25rem minmax(0, 1fr) 5rem;
+  }
+}
+@media print {
+  .list {
+    display: none;
+  }
+  .panel[data-active="false"] {
+    display: block;
+  }
+  .printHeading {
+    display: block;
+  }
+  .panel {
+    break-inside: avoid;
+  }
+  .fill {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+}

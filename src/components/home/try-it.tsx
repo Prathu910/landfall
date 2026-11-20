@@ -11,7 +11,7 @@ import {
 } from "../../lib/home/try-it";
 import { occupationIndex } from "../data/occupation-index";
 import { useOccupationCore } from "../data/use-occupation-core";
-import { fullReportHref } from "./try-it-href";
+import { fullReportHref, occupationPageLink } from "./try-it-href";
 import styles from "./try-it.module.css";
 
 const OCCUPATION_OPTIONS = occupationIndex
@@ -22,11 +22,25 @@ const POINTS_OPTIONS = TRY_IT_POINTS.map((p) => ({
   label: String(p),
 }));
 
-/** Live published 189 figures for any occupation and points total. Nothing is saved or put in the URL. */
-export function TryIt({ defaultOccupation }: { defaultOccupation: string }) {
+/**
+ * Live published 189 figures for any occupation and points total. Nothing is
+ * saved or put in the URL. On an occupation page, `currentCode` hides the link
+ * back to that same page.
+ */
+export function TryIt({
+  defaultOccupation,
+  currentCode,
+}: {
+  defaultOccupation: string;
+  currentCode?: string;
+}) {
   const [code, setCode] = useState(defaultOccupation);
   const [points, setPoints] = useState(TRY_IT_DEFAULT);
   const load = useOccupationCore(code, occupationIndex);
+  const pageLink = occupationPageLink(
+    occupationIndex.find((o) => o.code === code),
+    currentCode,
+  );
   const view = useMemo(
     () => (load.status === "ready" ? buildTryIt(load.core, points) : null),
     [load, points],
@@ -98,6 +112,11 @@ export function TryIt({ defaultOccupation }: { defaultOccupation: string }) {
       <a className={styles.link} href={fullReportHref(code)}>
         Get the full report
       </a>
+      {pageLink && view?.kind === "data" ? (
+        <a className={styles.link} href={pageLink.href}>
+          {pageLink.text}
+        </a>
+      ) : null}
     </section>
   );
 }

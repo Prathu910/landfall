@@ -31,6 +31,8 @@ import { DataSaysRecap } from "./report/data-says";
 import { RealityScorecard } from "./report/scorecard";
 import { StateOutlookSection } from "./report/state-outlook-section";
 import { VisaPanels } from "./report/visa-panels";
+import { ReportFeedback } from "./feedback/report-feedback";
+import { calculationSummary } from "@/lib/submissions/summary";
 const preparations = [
   "Identity and passport details",
   "Skills assessment and validity dates",
@@ -189,6 +191,18 @@ export function Report({
             <RealityScorecard
               scorecard={view.scorecard}
               dataSays={view.dataSays}
+            />
+            <ReportFeedback
+              summary={
+                sample
+                  ? null
+                  : calculationSummary(
+                      profile,
+                      result,
+                      asOf,
+                      source.snapshotDate,
+                    )
+              }
             />
             <VisaPanels
               occupation={occupation}

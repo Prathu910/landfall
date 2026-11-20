@@ -20,6 +20,7 @@ src/data/state-rules/                State nomination rules and lists for the st
 - Only the importer writes `data/raw/` and `src/data/`. Never hand-edit them.
 - `npm run dev` and `npm run build` copy `src/data/occupations/` to `public/data/occupations/` (`scripts/copy-public-data.ts`, git-ignored output). The browser fetches one occupation at a time from `/data/occupations/<code>.json`, through `useOccupationCore`. Only codes in the index are ever fetched.
 - Server Components read files with `src/lib/data/load-server.ts`. Never import it, or any multi-occupation JSON other than the index, into a `"use client"` module.
+- The occupation pages (`/occupations/<slug>/`) read each occupation's core and detail files at build through `load-server.ts`; a missing detail file only drops the cohort section and the "EOIs like these" sentence.
 - A raw file stores the column header once, a dictionary of dimension values per column, and rows of dictionary indexes plus the displayed count text. It also records the selections used, `fetchedAt` and the source URL.
 
 ## Source
