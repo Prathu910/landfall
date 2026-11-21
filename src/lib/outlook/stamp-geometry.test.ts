@@ -1,7 +1,15 @@
 import { describe, expect, it } from "vitest";
 import {
   BIG_STAMP,
+  ARC_SQUEEZE,
+  bigArcWidths,
   bigWordLayout,
+  capArcText,
+  estimatedWidth,
+  fitStretch,
+  MIN_STRETCH,
+  STAMP_STRETCH,
+  stampStretch,
   longestLine,
   SHIFT_STAMP,
   VISA_STAMP,
@@ -31,9 +39,9 @@ describe("stampLines", () => {
 });
 
 describe("stampFontSize", () => {
-  it("fits the text to the width with the mockup's 0.56 ratio", () => {
-    // 250 / (11 × 0.56); the brief's hand-derived 36.2 disagrees (see report).
-    expect(stampFontSize("COMPETITIVE", 250, 56)).toBeCloseTo(40.58, 1);
+  it("fits the text to the width with Archivo's 0.628 ratio", () => {
+    // 250 / (11 × 0.628). R22 moved stamps to Archivo; see R23 in the report.
+    expect(stampFontSize("COMPETITIVE", 250, 56)).toBeCloseTo(36.2, 1);
   });
 
   it("never exceeds the maximum for short text", () => {
@@ -94,5 +102,84 @@ describe("bigWordLayout", () => {
 describe("longestLine", () => {
   it("returns the line that sets the fitted size", () => {
     expect(longestLine(["TOO FEW TO", "COUNT"])).toBe("TOO FEW TO");
+  });
+});
+
+describe("estimatedWidth", () => {
+  it("scales with size, stretch and letter spacing", () => {
+    expect(estimatedWidth("ABCD", 10, 100)).toBeCloseTo(25.12, 5);
+    expect(estimatedWidth("ABCD", 10, 50)).toBeCloseTo(12.56, 5);
+    expect(estimatedWidth("ABCD", 10, 100, 2)).toBeCloseTo(33.12, 5);
+  });
+});
+
+describe("stampStretch", () => {
+  it("keeps the wide default when the text has room", () => {
+    expect(stampStretch("STRONG", 30, 250)).toBe(STAMP_STRETCH);
+  });
+
+  it("narrows the width axis just enough to fit", () => {
+    const stretch = stampStretch("ON 3 STATE LISTS", 23.5, 168);
+    expect(stretch).toBeLessThan(STAMP_STRETCH);
+    expect(estimatedWidth("ON 3 STATE LISTS", 23.5, stretch)).toBeCloseTo(
+      168,
+      5,
+    );
+  });
+
+  it("never goes below the face's narrowest width", () => {
+    expect(stampStretch("A VERY LONG STAMP WORD INDEED", 30, 100)).toBe(
+      MIN_STRETCH,
+    );
+  });
+});
+
+describe("fitStretch", () => {
+  it("narrows in proportion to the overflow", () => {
+    expect(fitStretch(116, 300, 250)).toBeCloseTo(96.67, 2);
+  });
+
+  it("never widens text that already fits", () => {
+    expect(fitStretch(116, 200, 250)).toBe(116);
+  });
+
+  it("stops at the narrowest width", () => {
+    expect(fitStretch(80, 400, 100)).toBe(MIN_STRETCH);
+  });
+});
+
+describe("capArcText", () => {
+  it("keeps the bottom line whole around a two-line word box", () => {
+    const box = bigWordLayout(2, 24.88).boxHeight;
+    const line = "OCT 2026 • 75 POINTS";
+    expect(capArcText(line, 20, bigArcWidths(box).bottom, 2)).toBe(line);
+  });
+
+  it("leaves a ring line that fits unchanged", () => {
+    expect(capArcText("SUBCLASS 190 TAS", 22, 270, 2)).toBe("SUBCLASS 190 TAS");
+  });
+
+  it("cuts a line too long for the arc even at the narrowest width", () => {
+    const long = "OCT 2026 • 85 POINTS • A VERY LONG EXTRA NOTE THAT RUNS ON";
+    const capped = capArcText(long, 20, 240, 2);
+    expect(capped.endsWith("…")).toBe(true);
+    expect(capped.length).toBeLessThan(long.length);
+    const squeezed = estimatedWidth(capped, 20, MIN_STRETCH, 2) * ARC_SQUEEZE;
+    expect(squeezed).toBeLessThanOrEqual(240);
+  });
+});
+
+describe("bigArcWidths", () => {
+  it("leaves about 264 and 225 units of arc around a one-line box", () => {
+    const widths = bigArcWidths(bigWordLayout(1, 36).boxHeight);
+    expect(widths.ring).toBeCloseTo(263.85, 1);
+    expect(widths.bottom).toBeCloseTo(225.04, 1);
+  });
+
+  it("shortens both arcs when a second line makes the box taller", () => {
+    const one = bigArcWidths(bigWordLayout(1, 40).boxHeight);
+    const two = bigArcWidths(bigWordLayout(2, 40).boxHeight);
+    expect(two.ring).toBeLessThan(one.ring);
+    expect(two.bottom).toBeLessThan(one.bottom);
   });
 });

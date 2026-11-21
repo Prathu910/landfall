@@ -1,8 +1,19 @@
 // Pure layout for the ink stamps. Sizes are SVG user units; the stamp
 // components scale their viewBox to the width the layout gives them.
+import type { VisaCard } from "./visa-cards";
 
-/** The mockup's guess at a stencil capital's width, as a share of its size. */
-const FIT_RATIO = 0.56;
+/**
+ * Archivo 800 capitals at 100% stretch average 0.61–0.69 em each across the
+ * stamp words (measured in Chrome), so sizes assume about 0.628 em a character.
+ */
+const FIT_RATIO = 0.628;
+
+/** Stamps set Archivo wide, like the report headings (ruling R22)... */
+export const STAMP_STRETCH = 116;
+/** ...and narrow along its width axis, down to its narrowest cut, to fit. */
+export const MIN_STRETCH = 62;
+/** textLength may compress a ring line's narrowest cut to this share. */
+export const ARC_SQUEEZE = 0.8;
 
 /** Readable text never renders below this (ENGINEERING.md, 12px floor). */
 const MIN_RENDERED_PX = 12;
@@ -36,8 +47,8 @@ export const BIG_STAMP = {
 /**
  * Visa stamps sit in 116px rows on a phone (spec 8), so their text is larger
  * relative to the frame than the mockup's and the viewBox margin is tighter.
- * The word stays on one line: the stencil face is narrow enough for "ON 3
- * STATE LISTS" at the floor, and the fit hook squeezes anything wider.
+ * The word stays on one line and narrows along Archivo's width axis when it
+ * is long ("ON 3 STATE LISTS"), so the three lines keep their spacing.
  */
 const VISA_EDGE_SIZE = 23.5;
 export const VISA_STAMP = {
@@ -46,9 +57,15 @@ export const VISA_STAMP = {
   floor: VISA_EDGE_SIZE,
   /** The top and bottom lines. */
   edgeSize: VISA_EDGE_SIZE,
-  topWidth: 130,
-  bottomWidth: 110,
-  wordWidth: 168,
+  /** Room for each line inside each frame's inner rule. */
+  widths: {
+    rect: { top: 160, word: 168, bottom: 150 },
+    hex: { top: 160, word: 168, bottom: 120 },
+    oval: { top: 130, word: 156, bottom: 100 },
+  } satisfies Record<
+    VisaCard["shape"],
+    { top: number; word: number; bottom: number }
+  >,
   wordMax: 30,
   fixedSizes: [VISA_EDGE_SIZE],
 } as const;
@@ -94,6 +111,65 @@ export function stampFontSize(
   return Math.min(max, width / (text.length * FIT_RATIO));
 }
 
+/** Width in user units at a stretch (percent), letter spacing included. */
+export function estimatedWidth(
+  text: string,
+  size: number,
+  stretch: number,
+  letterSpacing = 0,
+): number {
+  const advance = (size * FIT_RATIO * stretch) / 100 + letterSpacing;
+  return text.length * advance;
+}
+
+function clampStretch(stretch: number): number {
+  return Math.min(STAMP_STRETCH, Math.max(MIN_STRETCH, stretch));
+}
+
+/**
+ * The stretch the server renders, so text fits before the fit hook runs (or
+ * where it can't measure, such as a tree that is hidden until printing).
+ */
+export function stampStretch(
+  text: string,
+  size: number,
+  width: number,
+  letterSpacing = 0,
+): number {
+  const perCharacter = width / text.length - letterSpacing;
+  return clampStretch((100 * perCharacter) / (size * FIT_RATIO));
+}
+
+/** The fit hook's next stretch after measuring; it only ever narrows. */
+export function fitStretch(
+  stretch: number,
+  measuredWidth: number,
+  maxWidth: number,
+): number {
+  if (measuredWidth <= maxWidth) return stretch;
+  return Math.max(MIN_STRETCH, (stretch * maxWidth) / measuredWidth);
+}
+
+/**
+ * A ring line that can't fit its arc even at the narrowest stretch and the
+ * fit hook's last-resort squeeze is cut with an ellipsis, so it never runs
+ * into the word box or off the ring.
+ */
+export function capArcText(
+  text: string,
+  size: number,
+  arcWidth: number,
+  letterSpacing = 0,
+): string {
+  const fits = (candidate: string) =>
+    estimatedWidth(candidate, size, MIN_STRETCH, letterSpacing) * ARC_SQUEEZE <=
+    arcWidth;
+  if (fits(text)) return text;
+  let kept = text.length - 1;
+  while (kept > 0 && !fits(`${text.slice(0, kept).trimEnd()}…`)) kept -= 1;
+  return `${text.slice(0, kept).trimEnd()}…`;
+}
+
 /** The user-unit size that renders at 12px when the stamp is minWidth wide. */
 export function floorUnits(viewBoxWidth: number, minWidth: number): number {
   return (MIN_RENDERED_PX * viewBoxWidth) / minWidth;
@@ -123,6 +199,34 @@ export type BigWordLayout = {
   boxY: number;
   boxHeight: number;
 };
+
+/** The ring line's baseline radius; its glyphs stand outside it. */
+const RING_RADIUS = 120;
+/** The bottom line hangs from this radius, its glyphs outside it. */
+const BOTTOM_RADIUS = 108;
+const BOX_STROKE = 5;
+const ARC_CLEARANCE = 10;
+
+/** The length of arc whose glyphs stay this far above or below the centre. */
+function clearArc(radius: number, distance: number): number {
+  const halfAngle = Math.PI / 2 - Math.asin(Math.min(1, distance / radius));
+  return 2 * radius * halfAngle;
+}
+
+/**
+ * Room on each ring arc clear of the word box, which grows with its lines.
+ * The arcs' inner edges are nearest the box, so they set the clearance.
+ */
+export function bigArcWidths(boxHeight: number): {
+  ring: number;
+  bottom: number;
+} {
+  const distance = boxHeight / 2 + BOX_STROKE / 2 + ARC_CLEARANCE;
+  return {
+    ring: clearArc(RING_RADIUS, distance),
+    bottom: clearArc(BOTTOM_RADIUS, distance),
+  };
+}
 
 /** The word's box grows by one line height per extra line, centred at 160. */
 export function bigWordLayout(lineCount: number, size: number): BigWordLayout {

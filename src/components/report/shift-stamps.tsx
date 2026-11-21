@@ -5,6 +5,7 @@ import { labelName, stampName } from "@/lib/outlook/labels";
 import type { Shift } from "@/lib/outlook/losses";
 import {
   SHIFT_STAMP,
+  stampStretch,
   stampTextSize,
   viewBoxAttr,
 } from "@/lib/outlook/stamp-geometry";
@@ -54,6 +55,7 @@ function ShiftBox({
         data-fit={SHIFT_STAMP.textWidth}
         fontWeight={900}
         fontSize={size}
+        fontStretch={`${stampStretch(text, size, SHIFT_STAMP.textWidth)}%`}
         fill="currentColor"
       >
         {text}

@@ -5,6 +5,7 @@ import { labelName, stampName } from "@/lib/outlook/labels";
 import type { OutlookLabel } from "@/lib/outlook/labels";
 import {
   VISA_STAMP,
+  stampStretch,
   stampTextSize,
   viewBoxAttr,
 } from "@/lib/outlook/stamp-geometry";
@@ -17,6 +18,7 @@ const TOP_BASELINE = 57;
 const BOTTOM_BASELINE = 129;
 /** A third of the size below this centres the capitals on the frame. */
 const WORD_CENTRE = 88;
+const TOP_SPACING = 1;
 
 /** 189 is a rectangle, 190 a hexagon and 491 an oval, as in the mockup. */
 function Frame({ shape }: { shape: VisaCard["shape"] }) {
@@ -97,18 +99,21 @@ export function VisaStamp({
   const filterId = `${useId()}ink`;
 
   const stampWord = word.toUpperCase();
+  const widths = VISA_STAMP.widths[shape];
   const size = stampTextSize(
     stampWord,
-    VISA_STAMP.wordWidth,
+    widths.word,
     VISA_STAMP.wordMax,
     VISA_STAMP.floor,
   );
+  const bottom = `${points} PTS`;
+  const edgeSize = VISA_STAMP.edgeSize;
   const edgeText = {
     className: styles.text,
     x: 110,
     textAnchor: "middle",
     fontWeight: 800,
-    fontSize: VISA_STAMP.edgeSize,
+    fontSize: edgeSize,
     fill: "currentColor",
   } as const;
 
@@ -129,8 +134,9 @@ export function VisaStamp({
         <text
           {...edgeText}
           y={TOP_BASELINE}
-          data-fit={VISA_STAMP.topWidth}
-          letterSpacing={1}
+          data-fit={widths.top}
+          fontStretch={`${stampStretch(top, edgeSize, widths.top, TOP_SPACING)}%`}
+          letterSpacing={TOP_SPACING}
         >
           {top}
         </text>
@@ -139,9 +145,10 @@ export function VisaStamp({
           x={110}
           y={WORD_CENTRE + size / 3}
           textAnchor="middle"
-          data-fit={VISA_STAMP.wordWidth}
+          data-fit={widths.word}
           fontWeight={900}
           fontSize={size}
+          fontStretch={`${stampStretch(stampWord, size, widths.word)}%`}
           fill="currentColor"
         >
           {stampWord}
@@ -149,9 +156,10 @@ export function VisaStamp({
         <text
           {...edgeText}
           y={BOTTOM_BASELINE}
-          data-fit={VISA_STAMP.bottomWidth}
+          data-fit={widths.bottom}
+          fontStretch={`${stampStretch(bottom, edgeSize, widths.bottom)}%`}
         >
-          {points} PTS
+          {bottom}
         </text>
       </g>
     </svg>

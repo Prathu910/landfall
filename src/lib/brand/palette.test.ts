@@ -100,7 +100,9 @@ describe("outlook label pairs", () => {
       expect(hasLabelToken(`${kebab(key)}-bg`, bg), key).toBe(true);
     }
     expect(globals).toMatch(/--font-report:[^;]*Archivo Variable/);
-    expect(globals).toMatch(/--font-stamp:[^;]*Big Shoulders Stencil Display/);
+    // Ruling R22: stamps use Archivo, as in the approved mockups.
+    expect(globals).toMatch(/--font-stamp:\s*"Archivo Variable"/);
+    expect(globals).not.toMatch(/Big Shoulders/);
   });
 });
 
