@@ -1,10 +1,16 @@
 import type { SubmissionConfig } from "./config";
+export type SubmissionReceipt = {
+  id: string;
+  /** Only a newly created calculation carries one; kept in memory by the caller. */
+  readToken: string | null;
+};
+
 export async function sendSubmission(
   kind: "calculation" | "feedback",
   submission: { id: string },
   token: string,
   config: SubmissionConfig,
-): Promise<string> {
+): Promise<SubmissionReceipt> {
   if (!token)
     throw new Error("Complete the spam verification before trying again.");
   const controller = new AbortController();
@@ -45,7 +51,11 @@ export async function sendSubmission(
       throw new Error(
         "We could not confirm your submission was saved. Please try again.",
       );
-    return submission.id;
+    const readToken =
+      "read_token" in receipt && typeof receipt.read_token === "string"
+        ? receipt.read_token
+        : null;
+    return { id: submission.id, readToken };
   } catch (error) {
     if (error instanceof Error && error.name === "AbortError")
       throw new Error(

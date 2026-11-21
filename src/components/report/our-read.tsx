@@ -1,13 +1,23 @@
 import styles from "./our-read.module.css";
 
-/** "Our read": the template paragraph built from the report's facts. */
-export function OurRead({ text }: { text: string }) {
+/** "Our read": the AI text when it passed the check, else the template paragraph. */
+export function OurRead({
+  text,
+  source = "template",
+  pending = false,
+}: {
+  text: string;
+  source?: "ai" | "template";
+  pending?: boolean;
+}) {
   return (
-    <div className={styles.read}>
+    <div className={styles.read} aria-busy={pending}>
       <b className={styles.title}>Our read</b>
-      <p className={styles.text}>{text}</p>
+      <p className={styles.text}>{pending ? "Writing our read…" : text}</p>
       <small className={styles.note}>
-        Written from the numbers in this report.
+        {source === "ai"
+          ? "Written by AI from the numbers in this report."
+          : "Written from the numbers in this report."}
       </small>
     </div>
   );

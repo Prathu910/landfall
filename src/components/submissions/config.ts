@@ -1,4 +1,4 @@
-import { validEmail } from "@/lib/submissions/contract";
+import { validEmail } from "../../lib/submissions/contract";
 export type SubmissionConfig = {
   url: string;
   siteKey: string;
@@ -26,3 +26,6 @@ export function configuredSubmissions(): SubmissionConfig | null {
     return null;
   }
 }
+
+/** Second of the two switches for the AI "Our read"; off unless exactly "true". */
+export const readEnabled = process.env.NEXT_PUBLIC_READ_ENABLED === "true";

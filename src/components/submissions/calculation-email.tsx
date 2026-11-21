@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { Alert, TextInput } from "@mantine/core";
 import { Turnstile } from "./turnstile";
+import { readEnabled } from "./config";
 import type { SubmissionConfig } from "./config";
 import styles from "./submissions.module.css";
 export function CalculationEmail({
@@ -26,6 +27,8 @@ export function CalculationEmail({
         Enter your email to view your report. We save your email, occupation,
         age band, whether you are in Australia, and points summary to understand
         how MigrateLens is used. Your full answers stay in your browser.
+        {readEnabled &&
+          " Your summary is written by AI from your results (not your answers)."}
       </p>
       <TextInput
         id="report-email"

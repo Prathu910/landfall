@@ -1,3 +1,4 @@
+import { readEnabled } from "@/components/submissions/config";
 import { PrivacyContact } from "@/components/submissions/privacy-contact";
 import { ArrowUpRight } from "lucide-react";
 import { Faq } from "@/components/faq";
@@ -199,6 +200,14 @@ export default function MethodologyPage() {
               ownership, create an account, subscribe you to updates or
               marketing, or send an emailed report.
             </p>
+            {readEnabled && (
+              <p>
+                When the AI-written summary is on, your computed results (not
+                your answers, name, email or date of birth) are sent to
+                Anthropic to write your summary. MigrateLens does not store
+                them.
+              </p>
+            )}
             <p>
               Feedback stores your message and category, plus an email and
               calculation summary only if you choose to include them. Please do

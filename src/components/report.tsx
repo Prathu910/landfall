@@ -11,8 +11,10 @@ import type { OccupationState, OutlookView } from "@/lib/outlook/view";
 import type { OccupationEvidence } from "@/lib/report-evidence";
 import { calculationSummary } from "@/lib/submissions/summary";
 import type { ReportOccupation } from "./data/report-occupation";
+import type { OurReadResult } from "./report/use-our-read";
 import type { DetailLoad } from "./data/use-occupation-core";
 import { stateRuleData } from "./data/state-rule-data";
+import { readEnabled } from "./submissions/config";
 import { ReportFeedback } from "./feedback/report-feedback";
 import { ChartsSection } from "./report/charts-section";
 import { EvidenceSection } from "./report/evidence-section";
@@ -26,6 +28,7 @@ import { ReportFooter } from "./report/report-footer";
 import { RouteSection } from "./report/route-section";
 import { SectionChips } from "./report/section-chips";
 import section from "./report/section.module.css";
+import { useOurRead } from "./report/use-our-read";
 import { VisaRow } from "./report/visa-row";
 import styles from "./report/report.module.css";
 
@@ -42,6 +45,8 @@ type Props = {
   /** Server-rendered evidence for the default comparison occupation. */
   initialComparison?: OccupationEvidence;
   source: ReportSource;
+  /** From the calculation receipt; memory only. Absent on the sample. */
+  readToken?: string | null;
 };
 
 /** The outlook reads only the core and a ready detail file. */
@@ -117,8 +122,8 @@ function SampleCta() {
   );
 }
 
-function ReportBody(props: Props & { view: OutlookView }) {
-  const { view, profile, asOf, sample, source } = props;
+function ReportBody(props: Props & { view: OutlookView; read: OurReadResult }) {
+  const { view, read, profile, asOf, sample, source } = props;
   if (view.kind === "loading") {
     return (
       <section id="outlook" className={section.band}>
@@ -147,7 +152,7 @@ function ReportBody(props: Props & { view: OutlookView }) {
   return (
     <>
       <SectionChips />
-      <OutlookHero view={view} />
+      <OutlookHero view={view} read={read} />
       <VisaRow visas={view.visas} />
       <ChartsSection view={view} />
       <RouteSection route={view.route} />
@@ -176,6 +181,13 @@ function ReportBody(props: Props & { view: OutlookView }) {
 /** The verdict-first report, shared by /check/ and /sample/ (spec 5), with its A4 print layout. */
 export function Report(props: Props) {
   const view = useOutlookView(props.profile, props.asOf, props.occupation);
+  const reportView = view.kind === "report" ? view : null;
+  const read = useOurRead(
+    reportView?.facts ?? null,
+    reportView?.templateRead ?? "",
+    props.readToken ?? null,
+    readEnabled,
+  );
   // Once the print layout exists it replaces the screen report on paper.
   const hasPrintLayout = view.kind !== "loading";
   return (
@@ -184,7 +196,7 @@ export function Report(props: Props) {
       <article
         className={`${styles.page} ${hasPrintLayout ? styles.screenOnly : ""}`}
       >
-        <ReportBody {...props} view={view} />
+        <ReportBody {...props} view={view} read={read} />
       </article>
       {props.sample && <SampleCta />}
       <PrintReport
@@ -192,6 +204,7 @@ export function Report(props: Props) {
         profile={props.profile}
         asOf={props.asOf}
         source={props.source}
+        read={read}
       />
     </>
   );

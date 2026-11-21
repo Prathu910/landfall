@@ -29,7 +29,7 @@ it("sends only the selected payload and token, without cookies", async () => {
   vi.stubGlobal("fetch", fetcher);
   await expect(
     sendSubmission("calculation", submission, "token", config),
-  ).resolves.toBe(submission.id);
+  ).resolves.toEqual({ id: submission.id, readToken: null });
   const [url, init] = fetcher.mock.calls[0];
   expect(url).toBe(
     "https://project.supabase.co/functions/v1/submit-calculation",
@@ -54,7 +54,7 @@ it("accepts an idempotent receipt and maps storage failures without exposing ser
   );
   await expect(
     sendSubmission("feedback", submission, "token", config),
-  ).resolves.toBe(submission.id);
+  ).resolves.toEqual({ id: submission.id, readToken: null });
   await expect(
     sendSubmission("feedback", submission, "token", config),
   ).rejects.toThrow("temporarily unavailable");
@@ -95,4 +95,31 @@ it("aborts a stalled save and leaves it retryable", async () => {
   } finally {
     vi.useRealTimers();
   }
+});
+it("returns the read token from a created receipt and tolerates its absence", async () => {
+  vi.stubGlobal(
+    "fetch",
+    vi
+      .fn()
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ ...submission, read_token: "abc.123" }), {
+          status: 201,
+        }),
+      )
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ ...submission, read_token: 42 }), {
+          status: 201,
+        }),
+      )
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify(submission), { status: 201 }),
+      ),
+  );
+  const send = () => sendSubmission("calculation", submission, "token", config);
+  await expect(send()).resolves.toEqual({
+    id: submission.id,
+    readToken: "abc.123",
+  });
+  await expect(send()).resolves.toEqual({ id: submission.id, readToken: null });
+  await expect(send()).resolves.toEqual({ id: submission.id, readToken: null });
 });

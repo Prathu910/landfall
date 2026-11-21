@@ -305,6 +305,7 @@ export function CheckFlow({ source }: { source: ReportSource }) {
         comparisonIndex={occupationIndex}
         source={source}
         onAnswer={updateMany}
+        readToken={sampleRun ? null : capture.readToken}
         onEdit={() => {
           setToken("");
           capture.reset();

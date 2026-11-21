@@ -1,5 +1,16 @@
 # Resume here
 
+## AI "Our read": enablement checklist (21 November 2026)
+
+The client code is merged but dark. `PRIVACY_VERSION` stays `2026-11-20` on purpose (ruling R31): the deployed Functions check it exactly, so bumping it before a coordinated Functions deploy would make every submission fail. The AI sentences (the email gate's "Your summary is written by AI from your results (not your answers)." and the privacy text's Anthropic sentence) appear only in a build with `NEXT_PUBLIC_READ_ENABLED=true`. To turn the feature on, in this order:
+
+1. Set the Function secrets: `ANTHROPIC_API_KEY`, `READ_MODEL`, `READ_ENABLED=true`, `READ_MAX_OUTPUT_TOKENS`, `READ_TOKEN_SECRET`.
+2. Bump `PRIVACY_VERSION` in `src/lib/submissions/contract.ts` and the "Collection notice version" date in `src/app/methodology/page.tsx`.
+3. Deploy the Functions (all three).
+4. Build the frontend with `NEXT_PUBLIC_READ_ENABLED=true` and deploy it.
+
+Until then every report shows the template read. The read token lives in memory only (never localStorage or the URL); the report allows at most 3 `write-read` calls per token.
+
 ## Search indexing launched (20 November 2026)
 
 The founder launched indexing: `SITE_INDEXABLE = true` in `src/lib/site.ts`, so `robots.txt` allows all crawlers, pages are indexable (occupation pages whose every count is "<20" stay `noindex`), and `sitemap.xml` lists the 5 site pages and 349 occupation pages. Robots rules are a pure function (`src/lib/robots-rules.ts`) tested in both states.

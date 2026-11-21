@@ -14,6 +14,7 @@ import { QueueSquares } from "./queue-squares";
 import { ReportFooter } from "./report-footer";
 import { RouteLine } from "./route-line";
 import section from "./section.module.css";
+import type { OurReadResult } from "./use-our-read";
 import { VisaRow } from "./visa-row";
 import styles from "./print-report.module.css";
 
@@ -22,12 +23,17 @@ type Props = {
   profile: Profile;
   asOf: string;
   source: ReportSource;
+  read: OurReadResult;
 };
 
 // Leaves room for the page margins on A4; the route keeps its text at 12px+.
 const ROUTE_PRINT_WIDTH = 700;
 
-function BrandLine({ profile, asOf, source }: Omit<Props, "view">) {
+function BrandLine({
+  profile,
+  asOf,
+  source,
+}: Pick<Props, "profile" | "asOf" | "source">) {
   return (
     <header className={styles.brandline}>
       <b>MigrateLens</b>
@@ -37,7 +43,13 @@ function BrandLine({ profile, asOf, source }: Omit<Props, "view">) {
 }
 
 /** Page 1's verdict: text, tiles and Our read on the left, the stamp on the right. */
-function PrintHero({ view }: { view: ReportOutlookView }) {
+function PrintHero({
+  view,
+  read,
+}: {
+  view: ReportOutlookView;
+  read: OurReadResult;
+}) {
   const { headline, stamp } = view;
   return (
     <section className={styles.hero}>
@@ -57,7 +69,8 @@ function PrintHero({ view }: { view: ReportOutlookView }) {
             <dd>{view.wait}</dd>
           </div>
         </dl>
-        <OurRead text={view.templateRead} />
+        {/* While pending, read.text is the template, so paper never says "Writing". */}
+        <OurRead text={read.text} source={read.source} />
         <p className={styles.why}>{headline.why}</p>
       </div>
       <div className={styles.stamp}>
@@ -150,10 +163,16 @@ function PrintProfile({
   );
 }
 
-function PrintPages({ view }: { view: ReportOutlookView }) {
+function PrintPages({
+  view,
+  read,
+}: {
+  view: ReportOutlookView;
+  read: OurReadResult;
+}) {
   return (
     <>
-      <PrintHero view={view} />
+      <PrintHero view={view} read={read} />
       <VisaRow visas={view.visas} anchor={false} />
       <PrintCharts view={view} />
       <PrintRoute view={view} />
@@ -171,7 +190,7 @@ function PrintPages({ view }: { view: ReportOutlookView }) {
  * print, so print never inherits phone styles. It stays laid out off screen
  * so the stamps can fit their words before the print dialog opens.
  */
-export function PrintReport({ view, profile, asOf, source }: Props) {
+export function PrintReport({ view, profile, asOf, source, read }: Props) {
   if (view.kind === "loading") return null;
   return (
     <div className={styles.root}>
@@ -183,7 +202,7 @@ export function PrintReport({ view, profile, asOf, source }: Props) {
       />
       <BrandLine profile={profile} asOf={asOf} source={source} />
       {view.kind === "report" ? (
-        <PrintPages view={view} />
+        <PrintPages view={view} read={read} />
       ) : (
         <section className={styles.pointsOnly}>
           <h1 className={styles.h1}>You have {view.points.base} points.</h1>
