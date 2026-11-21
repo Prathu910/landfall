@@ -171,7 +171,12 @@ export function estimatedWait(
     const result = lodgedPace(core, detail, base, profile.eoiDate, asOf);
     if (result.kind === "no-pace") return { text: NO_PACE_TEXT, pace: null };
     if (result.kind === "pace") {
-      const { kind: _kind, ...pace } = result;
+      const pace: LodgedPace = {
+        ahead: result.ahead,
+        pace: result.pace,
+        roundsPerYear: result.roundsPerYear,
+        roundsNeeded: result.roundsNeeded,
+      };
       return { text: paceText(pace, base), pace };
     }
   }
