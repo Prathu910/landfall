@@ -26,6 +26,7 @@ function visa(
           visa: visaCode,
           label,
           flag: null,
+          rules: "",
           confirmedAtOrBelow: 0,
           monthsAtOrBelow6: 0,
           latest: null,

@@ -1,0 +1,155 @@
+/* The A4 print layout (spec 11). Sizes keep the 12px floor at print scale. */
+
+/* On screen the tree stays laid out but invisible and off to the side, so the
+   stamps can measure and fit their words; visibility keeps it out of the
+   accessibility tree and the tab order. */
+@media screen {
+  .root {
+    position: absolute;
+    top: 0;
+    left: -10000px;
+    width: 182mm;
+    height: 0;
+    overflow: hidden;
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
+@media print {
+  /* The page heading above the report gives way to the brand line, and
+     the paper stays white whatever the browser's background setting. */
+  :global(main):has(.root) > :global(.page-head) {
+    display: none;
+  }
+
+  :global(body):has(.root) {
+    background: none;
+  }
+
+  .root,
+  .root * {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+}
+
+.root {
+  color: var(--ink);
+  font-family: var(--font-report);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.brandline {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--ink);
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.brandline b {
+  color: var(--ink);
+  font-size: 18px;
+  font-stretch: 116%;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 230px;
+  gap: 18px;
+  align-items: center;
+  padding-bottom: 12px;
+}
+
+.heroText {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.who {
+  margin: 0;
+  color: var(--muted);
+}
+
+.who b {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.h1 {
+  margin: 0;
+  font-family: var(--font-report);
+  font-size: 30px;
+  font-stretch: 116%;
+  font-weight: 750;
+  letter-spacing: -0.01em;
+  line-height: 1.08;
+}
+
+.fact {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.tiles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 0;
+}
+
+.tiles div {
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.tiles dt {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.tiles dd {
+  margin: 0;
+}
+
+.why {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.stamp {
+  position: relative;
+  min-width: 0;
+}
+
+/* Invisible ink over the stamp: present in the PDF text, never seen. */
+.stampText {
+  position: absolute;
+  inset: 40% 0 auto;
+  color: transparent;
+  font-size: 12px;
+  text-align: center;
+}
+
+.keep {
+  break-inside: avoid;
+}
+
+.pageBreak {
+  break-before: page;
+  border-top: 0;
+}

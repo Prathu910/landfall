@@ -61,3 +61,29 @@
 .youRow td {
   font-weight: 700;
 }
+
+/* Print: dense tables so the appendix fits one page. */
+@media print {
+  .wrap {
+    overflow: visible;
+  }
+
+  .table,
+  .table th,
+  .note {
+    font-size: 12px;
+  }
+
+  .table th {
+    padding: 1px 6px 1px 0;
+  }
+
+  .table td {
+    padding: 1px 6px 1px 0;
+    line-height: 1.2;
+  }
+
+  .bar {
+    height: 10px;
+  }
+}

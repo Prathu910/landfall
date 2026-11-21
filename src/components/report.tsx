@@ -21,6 +21,7 @@ import { LoadingData } from "./report/loading-data";
 import { MethodNote } from "./report/method-note";
 import { OutlookHero } from "./report/outlook-hero";
 import { PointsPage } from "./report/points-page";
+import { PrintReport } from "./report/print-report";
 import { ReportFooter } from "./report/report-footer";
 import { RouteSection } from "./report/route-section";
 import { SectionChips } from "./report/section-chips";
@@ -172,16 +173,24 @@ function ReportBody(props: Props & { view: OutlookView }) {
   );
 }
 
-/** The verdict-first report, shared by /check/ and /sample/ (spec 5). */
+/** The verdict-first report, shared by /check/ and /sample/ (spec 5), with its A4 print layout. */
 export function Report(props: Props) {
   const view = useOutlookView(props.profile, props.asOf, props.occupation);
+  // Once the print layout exists it replaces the screen report on paper.
+  const printed = view.kind !== "loading";
   return (
     <>
       <Toolbar sample={props.sample} onEdit={props.onEdit} />
-      <article className={styles.page}>
+      <article className={`${styles.page} ${printed ? styles.screenOnly : ""}`}>
         <ReportBody {...props} view={view} />
       </article>
       {props.sample && <SampleCta />}
+      <PrintReport
+        view={view}
+        profile={props.profile}
+        asOf={props.asOf}
+        source={props.source}
+      />
     </>
   );
 }

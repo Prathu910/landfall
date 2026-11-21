@@ -1,0 +1,18 @@
+/* The printed evidence appendix always starts on a new page (spec 11). */
+.appendix {
+  break-before: page;
+}
+
+.tag {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.states {
+  margin-top: 16px;
+}
+
+.appendix tr {
+  break-inside: avoid;
+}

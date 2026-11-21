@@ -377,6 +377,8 @@ describe("buildOutlookView states", () => {
     expect(view.footer).toMatch(
       /^This is our best reading of the data, not a guarantee\. It comes from published SkillSelect figures up to October 2026\./,
     );
+    // The printed page footers name the same month.
+    expect(view.dataMonth).toBe("October 2026");
   });
 
   it("carries the evidence and the points page with a report", () => {

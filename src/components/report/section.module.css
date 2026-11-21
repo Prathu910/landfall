@@ -72,3 +72,38 @@
     font-size: 16px;
   }
 }
+
+/* Print: compact bands for A4, never under 12px. */
+@media print {
+  .band {
+    padding: 12px 0;
+  }
+
+  .tint {
+    background: none;
+  }
+
+  .h2 {
+    font-size: 20px;
+    break-after: avoid;
+  }
+
+  .h3 {
+    font-size: 16px;
+    break-after: avoid;
+  }
+
+  .sub {
+    margin-bottom: 8px;
+    font-size: 12px;
+  }
+
+  .empty {
+    padding: 12px;
+    font-size: 13px;
+  }
+
+  .two {
+    gap: 24px;
+  }
+}

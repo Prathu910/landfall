@@ -82,7 +82,7 @@ The site must feel modern, premium, trustworthy and engaging.
 - **Lead with the user's own number,** then the context. Every section answers "what does this mean for me?" in its first sentence.
 - **Empty states never look broken.** If data is masked or missing, say so in a plain sentence and point to what _is_ known.
 - **Motion has a purpose:** orientation, feedback or progression. Every animation respects `prefers-reduced-motion`.
-- **Printing works.** Every report section, including collapsed content, is visible when printed.
+- **Printing works.** Every report section prints in the PDF; interactive controls and the detailed views inside "See the evidence" are screen only.
 
 ## Accessibility
 

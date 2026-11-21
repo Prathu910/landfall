@@ -55,7 +55,7 @@ These come from the docs and past reviews:
 - Do not invent data. That means no percentage chances, forecast wait times, exact same-score rankings, testimonials, user counts or claims of live services. Pool comparisons count EOIs, not people. You may show history-based counts (EOIs ahead of you, at your score, outcomes of similar EOIs) and historical waits, as defined in `docs/STRATEGY.md`.
 - The full personal Profile stays in the browser. The founder-approved email gate sends only email and the allowlisted calculation summary (occupation, age band, onshore/offshore, points, snapshot) to Supabase after disclosure. Feedback sends only its selected fields. Never put personal data in the URL; the only allowed query parameter is a pre-selected `?occupation=` code. Save the full profile locally only after explicit opt-in; exclude email and provide a way to clear it.
 - `eligible` in `PointsResult` covers only age, English and assessment validity. It never means full visa eligibility. State summaries must keep federal points separate from state scoring.
-- Every report section, including collapsed accordion/glossary content, must remain visible when printed.
+- Every report section prints in the PDF; interactive controls and the detailed views inside "See the evidence" are screen only.
 - Every animation must respect reduced motion.
 - `docs/original-references/` holds the original SPEC and HTML mockups. They must stay byte-for-byte unchanged. Treat them as historical context only; they are not current requirements.
 

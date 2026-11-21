@@ -35,6 +35,8 @@ export type StateRow = {
   months: string;
   label: OutlookLabel;
   flag: string | null;
+  /** The state's rules in one line (printed appendix). */
+  rules: string;
 };
 
 export type StateTable = {
@@ -167,6 +169,7 @@ function stateTable(input: OutlookInput, visa: VisaLabel): StateTable {
       months: `${state.monthsAtOrBelow6} of the last ${STATE_WINDOW} months`,
       label: state.label,
       flag: flagNote(state),
+      rules: state.rules,
     })),
   };
 }

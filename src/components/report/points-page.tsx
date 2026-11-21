@@ -20,13 +20,16 @@ function Photo() {
 export function PointsPage({
   page,
   warnings,
+  anchor = true,
 }: {
   page: Page;
   /** The points calculation's assumptions, for the reader to check. */
   warnings: string[];
+  /** False for the printed copy, so the page keeps one #points. */
+  anchor?: boolean;
 }) {
   return (
-    <section id="points" className={section.band}>
+    <section id={anchor ? "points" : undefined} className={section.band}>
       <h2 className={section.h2}>Your points, in full</h2>
       <p className={section.sub}>
         Your whole profile, so anyone you share this with sees exactly what you

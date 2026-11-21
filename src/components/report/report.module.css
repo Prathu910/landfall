@@ -63,3 +63,10 @@
     margin-inline: -21px;
   }
 }
+
+/* The print layout (print-report.tsx) replaces the screen report on paper. */
+@media print {
+  .screenOnly {
+    display: none;
+  }
+}

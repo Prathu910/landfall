@@ -100,3 +100,40 @@
     font-size: 16px;
   }
 }
+
+/* Print: tighter cards that never split across pages. */
+@media print {
+  .banner,
+  .deadline {
+    padding: 8px 12px;
+    font-size: 13px;
+    break-inside: avoid;
+  }
+
+  .moves {
+    gap: 8px;
+  }
+
+  .move {
+    grid-template-columns: minmax(0, 1fr) 250px;
+    padding: 8px 12px;
+    break-inside: avoid;
+  }
+
+  .tag {
+    font-size: 12px;
+  }
+
+  .title {
+    font-size: 15px;
+  }
+
+  .detail,
+  .why {
+    font-size: 13px;
+  }
+
+  .mark {
+    font-size: 20px;
+  }
+}

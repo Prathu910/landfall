@@ -20,6 +20,8 @@ export type StateLabel = {
   visa: StateVisa;
   label: OutlookLabel;
   flag: StateFlag;
+  /** One line on how the state's rules fit the reader, for the printed appendix. */
+  rules: string;
   confirmedAtOrBelow: number; // sum of mins, last 3 months
   monthsAtOrBelow6: number; // months with any invitation at/below, last 6
   latest: { month: MonthKey; count: Interval } | null; // latest month with invitations at/below
@@ -95,7 +97,7 @@ export function evidenceLabel(
   visa: StateVisa,
   state: StateCode,
   points: number,
-): Omit<StateLabel, "flag"> {
+): Omit<StateLabel, "flag" | "rules"> {
   const window = fetchedMonths(core, visa, state, normalizePoolScore(points));
   const recentStart = calendarMonths(core.asAt, RECENT_MONTHS)[0];
   const recent = window.filter((m) => m.month >= recentStart);
@@ -119,6 +121,27 @@ const FLAGS: Record<Group, StateFlag> = {
   "not-open": null,
 };
 
+const RULES_BEING_CHECKED = "Rules being checked.";
+
+/** Each question counts once, however many streams ask it. */
+function questionCount(outcome: StateOutcome): number {
+  const checks = outcome.deciding?.checks ?? [];
+  const asked = checks.filter((check) => check.outcome === "needs-answer");
+  return new Set(asked.map((check) => check.finding)).size;
+}
+
+/** The deciding rule in a line: why a state is closed, or what is still open. */
+function rulesNote(outcome: StateOutcome): string {
+  if (outcome.group === "unverified") return RULES_BEING_CHECKED;
+  if (outcome.group === "needs-answers") {
+    const count = questionCount(outcome);
+    return count === 1
+      ? "1 rule needs your answers."
+      : `${count} rules need your answers.`;
+  }
+  return `${outcome.reasonText}.`;
+}
+
 function stateLabel(
   outcome: StateOutcome,
   core: OccupationCore,
@@ -127,7 +150,12 @@ function stateLabel(
   const evidence = evidenceLabel(core, outcome.visa, outcome.state, points);
   // The rules decide first: a closed state keeps its evidence numbers only.
   const label = outcome.group === "not-open" ? "not-open" : evidence.label;
-  return { ...evidence, label, flag: FLAGS[outcome.group] };
+  return {
+    ...evidence,
+    label,
+    flag: FLAGS[outcome.group],
+    rules: rulesNote(outcome),
+  };
 }
 
 function rankOf(state: StateLabel): number {

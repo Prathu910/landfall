@@ -118,6 +118,35 @@ describe("buildEvidence states", () => {
   });
 });
 
+describe("buildEvidence state rules notes", () => {
+  function rulesOf(id: ScenarioId, visa: "190" | "491", state: string) {
+    const table = evidenceOf(id).states.find((t) => t.visa === visa);
+    return table?.rows.find((row) => row.state === state)?.rules;
+  }
+
+  it("names the stream whose verified rules the reader meets", () => {
+    expect(rulesOf("strong", "190", "NSW")).toBe(
+      "Meets every verified rule for Living in NSW.",
+    );
+  });
+
+  it("gives the rule that closes a state", () => {
+    expect(rulesOf("strong", "190", "QLD")).toBe(
+      "Not on the Queensland 2026–27 list for 190 under Building and construction workers.",
+    );
+    expect(rulesOf("none", "491", "NSW")).toBe("Closed for 491 in 2026–27.");
+  });
+
+  it("counts the rules that still need the reader's answers", () => {
+    expect(rulesOf("middle", "190", "NSW")).toBe("2 rules need your answers.");
+    expect(rulesOf("long", "491", "WA")).toBe("1 rule needs your answers.");
+  });
+
+  it("says when we are still checking a state's rules", () => {
+    expect(rulesOf("middle", "190", "VIC")).toBe("Rules being checked.");
+  });
+});
+
 describe("buildEvidence masked state counts", () => {
   it("says a summed masked count may be zero, as for Tasmania's 190", () => {
     const [s190] = evidenceOf("middle").states;

@@ -6,10 +6,22 @@ import styles from "./visa-row.module.css";
 // Each stamp tilts a little differently, as if pressed by hand.
 const TILTS = [-4, 5, -2];
 
-/** "Your three visas": one stamp and caption each for 189, 190 and 491. */
-export function VisaRow({ visas }: { visas: VisaCard[] }) {
+/**
+ * "Your three visas": one stamp and caption each for 189, 190 and 491.
+ * The printed copy sets `anchor` false so the page keeps one #visas.
+ */
+export function VisaRow({
+  visas,
+  anchor = true,
+}: {
+  visas: VisaCard[];
+  anchor?: boolean;
+}) {
   return (
-    <section id="visas" className={`${section.band} ${section.tint}`}>
+    <section
+      id={anchor ? "visas" : undefined}
+      className={`${section.band} ${section.tint}`}
+    >
       <h2 className={section.h2}>Your three visas</h2>
       <p className={section.sub}>
         Each stamp is your outlook for that visa today.

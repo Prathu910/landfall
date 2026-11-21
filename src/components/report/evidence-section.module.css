@@ -52,14 +52,10 @@
   gap: 22px;
 }
 
-.trendNote,
-.source {
-  color: var(--muted);
-  font-size: 14px;
-}
-
 .trendNote {
   margin-top: 10px;
+  color: var(--muted);
+  font-size: 14px;
 }
 
 @media screen and (max-width: 720px) {
@@ -72,8 +68,7 @@
     padding-left: 38px;
   }
 
-  .trendNote,
-  .source {
+  .trendNote {
     font-size: 15px;
   }
 }

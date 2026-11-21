@@ -73,13 +73,18 @@ function DeadlineCard({ loss, labels }: { loss: Loss; labels: boolean }) {
   );
 }
 
-/** "How to improve" (or "Protect your points"), with its banner and dated losses. */
+/**
+ * "How to improve" (or "Protect your points"), with its banner and dated
+ * losses. The printed copy sets `anchor` false so the page keeps one #improve.
+ */
 export function ImproveSection({
   improve,
   labels,
+  anchor = true,
 }: {
   improve: Improve;
   labels: boolean;
+  anchor?: boolean;
 }) {
   const { mode } = improve;
   const nothing =
@@ -87,7 +92,7 @@ export function ImproveSection({
     improve.plain.length === 0 &&
     mode !== "protect";
   return (
-    <section id="improve" className={section.band}>
+    <section id={anchor ? "improve" : undefined} className={section.band}>
       <h2 className={section.h2}>{TITLES[mode]}</h2>
       <p className={section.sub}>{SUBS[mode]}</p>
       {improve.banner && (

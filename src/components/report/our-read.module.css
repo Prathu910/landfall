@@ -21,3 +21,15 @@
   color: var(--muted);
   font-size: 13px;
 }
+
+@media print {
+  .read {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .note {
+    margin-top: 4px;
+    font-size: 12px;
+  }
+}

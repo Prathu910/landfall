@@ -1,9 +1,7 @@
 "use client";
 import { useMemo } from "react";
-import Link from "next/link";
 import type { ReportSource } from "@/lib/data/report-source";
 import type { OccupationIndexEntry } from "@/lib/data/types";
-import { formatDate } from "@/lib/migration";
 import type { PointsResult, Profile } from "@/lib/migration";
 import type { Evidence } from "@/lib/outlook/evidence";
 import type { OccupationEvidence } from "@/lib/report-evidence";
@@ -13,6 +11,7 @@ import { stateRuleData } from "../data/state-rule-data";
 import { CohortEvidence } from "./cohort-evidence";
 import { CompareSection } from "./compare-section";
 import { PoolBars } from "./pool-bars";
+import { ReportSources } from "./report-sources";
 import { RoundsTable } from "./rounds-table";
 import section from "./section.module.css";
 import { StateOutlookSection } from "./state-outlook-section";
@@ -59,48 +58,6 @@ function Pool189({ evidence }: { evidence: Evidence }) {
         <p className={section.empty}>{evidence.poolEmpty}</p>
       )}
     </div>
-  );
-}
-
-function Sources({ source }: { source: ReportSource }) {
-  return (
-    <p className={styles.source}>
-      Source:{" "}
-      <a
-        className="source-link"
-        href={source.dashboardUrl}
-        target="_blank"
-        rel="noreferrer"
-      >
-        Home Affairs SkillSelect dashboard
-      </a>{" "}
-      (snapshot {formatDate(source.snapshotDate)}, checked{" "}
-      {formatDate(source.checkedAt)}) and 189 invitation rounds (
-      <a
-        className="source-link"
-        href={source.roundsUrl}
-        target="_blank"
-        rel="noreferrer"
-      >
-        current
-      </a>{" "}
-      and{" "}
-      <a
-        className="source-link"
-        href={source.previousRoundsUrl}
-        target="_blank"
-        rel="noreferrer"
-      >
-        previous
-      </a>
-      ). Counts are EOIs, and one person can hold several. &quot;Under 20&quot;
-      is published as a range, never as a number. State 491 excludes family
-      sponsorship.{" "}
-      <Link className="source-link" href="/methodology/">
-        Methodology and limitations
-      </Link>
-      .
-    </p>
   );
 }
 
@@ -181,7 +138,7 @@ export function EvidenceSection(props: Props) {
               </p>
             </div>
           )}
-          <Sources source={props.source} />
+          <ReportSources source={props.source} />
         </div>
       </details>
     </section>

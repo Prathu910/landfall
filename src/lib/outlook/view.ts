@@ -42,6 +42,7 @@ export type OutlookView =
       line: string;
       pointsPage: PointsPage;
       footer: string;
+      dataMonth: string;
     }
   | {
       kind: "report";
@@ -202,6 +203,7 @@ export function buildOutlookView(input: OutlookViewInput): OutlookView {
       line: POINTS_ONLY_LINE,
       pointsPage,
       footer: footerText(dataMonth(noCore)),
+      dataMonth: dataMonth(noCore),
     };
   }
   if (occupation.status === "loading") return { kind: "loading" };

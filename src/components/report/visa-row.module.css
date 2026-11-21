@@ -65,3 +65,17 @@
     font-size: 15px;
   }
 }
+
+@media print {
+  .stamp {
+    max-width: 150px;
+  }
+
+  .caption {
+    font-size: 13px;
+  }
+
+  .line {
+    font-size: 12px;
+  }
+}

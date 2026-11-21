@@ -161,3 +161,63 @@
     font-size: 12px;
   }
 }
+
+/* Print: no photo, the profile three across, a compact table. */
+@media print {
+  .page {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .photo {
+    display: none;
+  }
+
+  .fields {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px 14px;
+    font-size: 13px;
+  }
+
+  .fields dt {
+    font-size: 12px;
+  }
+
+  .table {
+    margin-top: 10px;
+    font-size: 13px;
+  }
+
+  .table td,
+  .table th {
+    padding: 4px 0;
+  }
+
+  .detail {
+    padding-left: 14px;
+  }
+
+  .totals {
+    margin-top: 10px;
+  }
+
+  .total {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .total b {
+    font-size: 22px;
+  }
+
+  .warnings {
+    margin-top: 8px;
+    font-size: 12px;
+  }
+
+  .mrz {
+    margin-top: 10px;
+    padding: 6px 10px;
+    overflow: visible;
+    font-size: 12px;
+  }
+}
