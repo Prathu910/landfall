@@ -12,7 +12,6 @@ import { cutoffColumns } from "./charts";
 import { evaluateProfile } from "./evaluate-profile";
 import type { OutlookInput } from "./evaluate-profile";
 import { buildImprove } from "./improve";
-import { queueView } from "./queue-view";
 
 const AS_OF = "2026-11-21";
 const RULES = {
@@ -39,11 +38,6 @@ function setup(id: ScenarioId) {
   const improve = buildImprove(input, outlook);
   const closed = outlook.v189.label === "not-invited";
   return { core, detail, profile, points, improve, closed };
-}
-
-function queue(id: ScenarioId) {
-  const s = setup(id);
-  return queueView(s.core, s.detail, s.points, s.profile.eoiDate, s.closed);
 }
 
 describe("cutoffColumns", () => {

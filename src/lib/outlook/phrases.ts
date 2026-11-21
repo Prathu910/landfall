@@ -134,14 +134,20 @@ export function stateVisaOf(
 
 const FLAG_NOTES = {
   "rules-being-checked": (name: string) =>
-    ` We're still checking ${name}'s rules.`,
-  "needs-answers": () => " Answer the state questions to confirm it.",
+    `We're still checking ${name}'s rules.`,
+  "needs-answers": () => "Answer the state questions to confirm it.",
 };
+
+/** Why a state's label may still change; null when nothing is pending. */
+export function flagNote(state: StateLabel): string | null {
+  return state.flag ? FLAG_NOTES[state.flag](theState(state.state)) : null;
+}
 
 /** "Tasmania is Competitive: …. We're still checking Tasmania's rules." */
 export function stateSentence(state: StateLabel): string {
   const name = theState(state.state);
-  const flag = state.flag ? FLAG_NOTES[state.flag](name) : "";
+  const note = flagNote(state);
+  const flag = note ? ` ${note}` : "";
   const subject = name[0].toUpperCase() + name.slice(1);
   return `${subject} is ${labelName(state.label)}: ${stateWhy(state)}.${flag}`;
 }
