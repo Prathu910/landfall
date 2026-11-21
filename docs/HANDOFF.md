@@ -6,7 +6,13 @@ Branch `roadmap/report-redesign` (spec `docs/superpowers/specs/2026-11-21-report
 
 **Both AI switches stay off.** `NEXT_PUBLIC_READ_ENABLED` is unset and `READ_ENABLED` is not `true`, so every report shows the template read. `PRIVACY_VERSION` stays `2026-11-20` on purpose (ruling R31): the deployed Functions check it exactly. The AI sentences (the email gate's "Your summary is written by AI from your results (not your answers)." and the privacy text's Anthropic sentence) show only in a build with `NEXT_PUBLIC_READ_ENABLED=true`.
 
-**Enablement checklist.** Merging the branch changes nothing visible about the AI. To turn it on:
+**Enablement checklist.** Merging the branch changes nothing visible about the AI. Before step 1, three things must be done (final review, ruling R32):
+
+- Set a monthly spend limit on the Anthropic workspace that holds `ANTHROPIC_API_KEY`, so a leaked token or a flood of reads has a hard cost ceiling.
+- Build a Postgres-backed use counter per submission id (ids only, never facts or text) and have `write-read` check it. Today's per-token count lives in memory per Function instance, so a cold start or a second instance resets it. Do not set `READ_ENABLED=true` until this exists.
+- Confirm on the hosted project that Supabase sets the first `X-Forwarded-For` entry to the real client address (the rate limit keys on it, and requests without it share one bucket), and that a hosted deploy resolves the `npm:@anthropic-ai/sdk` import.
+
+Then, to turn it on:
 
 1. Set the Function secrets: `ANTHROPIC_API_KEY`, `READ_MODEL`, `READ_MAX_OUTPUT_TOKENS`, `READ_TOKEN_SECRET`. Leave `READ_ENABLED` unset for now.
 2. In code, bump `PRIVACY_VERSION` in `src/lib/submissions/contract.ts` and the "Collection notice version" date in `src/app/methodology/page.tsx`. Build the frontend with `NEXT_PUBLIC_READ_ENABLED=true`.

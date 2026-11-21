@@ -327,11 +327,43 @@ Deno.test(
         throw new Error("private upstream detail");
       },
     });
-    const response = await request({ token: await token(), facts });
+    const issued = await token();
+    const response = await silenced(() => request({ token: issued, facts }));
     equal(response.status, 503);
     equal((await response.text()).includes("private"), false);
   },
 );
+Deno.test(
+  "a 503 logs the error class and HTTP status, never the message",
+  async () => {
+    class OverloadedError extends Error {
+      status = 529;
+    }
+    const { request } = setup({
+      complete: async () => {
+        throw new OverloadedError("private upstream detail");
+      },
+    });
+    const logged = await silenced(async (lines) => {
+      const response = await request({ token: await token(), facts });
+      equal(response.status, 503);
+      return lines;
+    });
+    equal(logged, ["write-read failed: OverloadedError (HTTP 529)"]);
+  },
+);
+Deno.test("a 503 without an HTTP status logs the class only", async () => {
+  const { request } = setup({
+    complete: async () => {
+      throw new TypeError("private upstream detail");
+    },
+  });
+  const logged = await silenced(async (lines) => {
+    await request({ token: await token(), facts });
+    return lines;
+  });
+  equal(logged, ["write-read failed: TypeError"]);
+});
 Deno.test("rejects invalid facts before calling the model", async () => {
   const issued = await token();
   const withoutStamp: Record<string, unknown> = { ...facts };

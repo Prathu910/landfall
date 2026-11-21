@@ -162,6 +162,18 @@ function clientIp(request: Request): string {
   return forwarded.split(",")[0].trim() || "unknown";
 }
 
+/**
+ * What an unexpected failure may log: the error's class and, for an API
+ * error, its HTTP status. Never the message, which can echo request content.
+ */
+export function failureLine(error: unknown): string {
+  const name = error instanceof Error ? error.constructor.name : typeof error;
+  const status =
+    error instanceof Error ? (error as { status?: unknown }).status : null;
+  const http = typeof status === "number" ? ` (HTTP ${status})` : "";
+  return `write-read failed: ${name}${http}`;
+}
+
 function noRead(reason: string, origin: string): Response {
   return response(200, { read: null, reason }, origin);
 }
@@ -242,6 +254,7 @@ export function createReadHandler(deps: {
     } catch (error) {
       if (error instanceof RequestError)
         return response(error.status, { error: error.message }, allowedOrigin);
+      console.error(failureLine(error));
       return response(
         503,
         { error: "The read service is unavailable." },
