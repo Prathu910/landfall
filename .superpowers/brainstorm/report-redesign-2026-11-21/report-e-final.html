@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Option E scenarios</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..800&family=Big+Shoulders+Stencil+Display:wght@800;900&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #FFFFFF; --wash: #EEF2F0; --ink: #12202C; --muted: #52606B; --rule: #D8DFDB; --cobalt: #2446D6;
+    --vs: #0F6B3C; --vs-bg: #D6EFE0; --st: #1E7A4C; --st-bg: #E5F3EA; --co: #A06400; --co-bg: #FBEFD6;
+    --lw: #C2410C; --lw-bg: #FDE8DB; --ni: #B42318; --ni-bg: #FCE5E3; --ne: #5B3F9E; --ne-bg: #ECE6F8; --nd: #586470; --nd-bg: #E8ECEF;
+    --r: 14px;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--wash); color: var(--ink); font: 400 17px/1.55 "Archivo", system-ui, sans-serif; }
+  h1, h2, h3 { font-stretch: 116%; font-weight: 750; letter-spacing: -0.01em; margin: 0; }
+  .switch { position: sticky; top: 0; z-index: 50; background: var(--ink); color: #fff; padding: 10px 12px; display: flex; gap: 6px; align-items: center; justify-content: center; flex-wrap: wrap; font-size: 14px; }
+  .switch button { font: inherit; font-weight: 500; border: 1px solid #ffffff4d; background: transparent; color: #fff; padding: 7px 12px; border-radius: 999px; cursor: pointer; }
+  .switch button.on { background: #fff; color: var(--ink); }
+  .switch button:focus-visible { outline: 3px solid #8FB0FF; outline-offset: 2px; }
+  .brief { max-width: 900px; margin: 18px auto 0; padding: 0 16px; font-size: 15px; color: var(--muted); }
+  .brief b { color: var(--ink); }
+  .page { max-width: 900px; margin: 16px auto 64px; background: var(--paper); border-radius: var(--r); overflow: hidden; }
+  .pad { padding: 40px 52px; }
+  @media screen and (max-width: 720px) { .page { margin: 8px 0 40px; border-radius: 0; } .pad { padding: 26px 18px; } }
+  .who { font-size: 15px; color: var(--muted); }
+  .who b { color: var(--ink); font-weight: 600; }
+
+  /* hero */
+  .hero { position: relative; display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 28px; align-items: center; overflow: hidden; }
+  .hero > * { position: relative; }
+  .hero .guill { position: absolute; inset: -40px; opacity: .5; pointer-events: none; }
+  .hero h1 { font-size: clamp(30px, 4.4vw, 42px); line-height: 1.08; margin: 10px 0 12px; }
+  .hero .fact { font-size: 19px; line-height: 1.45; margin: 0 0 16px; }
+  .read { background: #ffffffd9; border: 1px solid var(--rule); border-radius: 12px; padding: 14px 16px; }
+  .read b { display: block; margin-bottom: 3px; }
+  .read small { display: block; color: var(--muted); font-size: 13px; margin-top: 6px; }
+  .meta { display: grid; gap: 4px; margin-top: 14px; font-size: 15px; }
+  .meta div b { font-weight: 600; }
+  .why { font-size: 14px; color: var(--muted); }
+  .stampwrap svg { width: 100%; }
+  @media screen and (max-width: 760px) { .hero { grid-template-columns: 1fr; } .hero .stampwrap { max-width: 280px; margin: 0 auto; order: -1; } }
+
+  /* visa row */
+  .visas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .visas figure { margin: 0; text-align: center; }
+  .visas figcaption { margin-top: 6px; font-size: 15px; }
+  .visas figcaption b { display: block; font-weight: 600; }
+  .visas figcaption span { color: var(--muted); font-size: 14px; }
+  .visas svg { max-width: 220px; margin: 0 auto; display: block; }
+  @media screen and (max-width: 720px) { .visas { grid-template-columns: 1fr; } }
+
+  .band { border-top: 1px solid var(--rule); }
+  .band.tint { background: #F7F9F8; }
+  .sec-h { margin-bottom: 4px; font-size: 24px; }
+  .sub { margin: 0 0 16px; color: var(--muted); font-size: 15px; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+  .two h3 { font-size: 19px; }
+  @media screen and (max-width: 760px) { .two { grid-template-columns: 1fr; } }
+  .empty { border: 1.5px dashed var(--rule); border-radius: 12px; padding: 22px; color: var(--muted); font-size: 15px; background: #fff; }
+  svg { display: block; max-width: 100%; height: auto; }
+  svg text { font-family: "Archivo", sans-serif; }
+
+  /* improve */
+  .banner { border-radius: 12px; padding: 14px 18px; margin-bottom: 14px; font-size: 16px; }
+  .moves { display: grid; gap: 12px; }
+  .move { display: grid; grid-template-columns: 1fr 270px; gap: 16px; align-items: center; border: 1px solid var(--rule); border-radius: 12px; padding: 14px 18px; background: #fff; }
+  .move.best { border: 2px solid var(--vs); }
+  .move h3 { font-size: 18px; font-stretch: 105%; }
+  .move p { margin: 3px 0 0; color: var(--muted); font-size: 15px; }
+  .move .tag { font-size: 13px; font-weight: 600; color: var(--vs); }
+  @media screen and (max-width: 720px) { .move { grid-template-columns: 1fr; } }
+  .deadline { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: baseline; border-radius: 12px; padding: 14px 18px; background: var(--ni-bg); margin-top: 12px; font-size: 16px; }
+  .deadline .n { font-weight: 800; font-size: 24px; font-stretch: 116%; color: var(--ni); }
+  .plain { margin: 0; padding-left: 20px; }
+  .plain li { margin: 6px 0; }
+
+  details.ev summary { cursor: pointer; font-stretch: 116%; font-weight: 750; font-size: 21px; list-style: none; display: flex; align-items: center; gap: 10px; }
+  details.ev summary::before { content: "+"; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--ink); font-weight: 600; }
+  details.ev[open] summary::before { content: "−"; }
+  details.ev summary span { font-weight: 400; font-size: 15px; color: var(--muted); font-stretch: 100%; }
+  .evgrid { display: grid; gap: 28px; margin-top: 22px; }
+  table.t { width: 100%; border-collapse: collapse; font-size: 15px; font-variant-numeric: tabular-nums; }
+  table.t th { text-align: left; font-weight: 600; color: var(--muted); padding: 6px 8px 6px 0; border-bottom: 1.5px solid var(--ink); font-size: 14px; }
+  table.t td { padding: 8px 8px 8px 0; border-top: 1px solid var(--rule); vertical-align: top; }
+  .tablewrap { overflow-x: auto; }
+
+  /* data page */
+  .dp { display: grid; grid-template-columns: 130px 1fr; gap: 22px; }
+  .photo { width: 130px; height: 164px; border-radius: 8px; background: #E9EEEA; border: 1px solid var(--rule); overflow: hidden; }
+  .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 22px; font-size: 15px; }
+  .fields span { display: block; font-size: 13px; color: var(--muted); }
+  table.pts { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 15px; font-variant-numeric: tabular-nums; }
+  table.pts td { padding: 8px 0; border-top: 1px solid var(--rule); vertical-align: top; }
+  table.pts td.d { color: var(--muted); padding-left: 14px; }
+  table.pts td.n { text-align: right; font-weight: 700; width: 48px; }
+  table.pts tr.z td { color: #8A949C; }
+  .totals { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px; }
+  .totals div { background: var(--wash); border-radius: 10px; padding: 10px 12px; font-size: 14px; color: var(--muted); }
+  .totals b { display: block; font-size: 28px; font-stretch: 116%; font-weight: 800; color: var(--ink); line-height: 1.1; }
+  .mrz { margin-top: 18px; font: 500 14px/1.6 "IBM Plex Mono", monospace; letter-spacing: .1em; background: var(--wash); padding: 10px 12px; border-radius: 8px; overflow-x: auto; white-space: pre; color: #34414D; }
+  @media screen and (max-width: 720px) { .dp { grid-template-columns: 1fr; } .fields { grid-template-columns: 1fr; } .totals { grid-template-columns: 1fr; } }
+
+  footer.g { background: var(--ink); color: #CBD3DA; padding: 20px 52px; font-size: 14px; }
+  footer.g b { color: #fff; }
+  @media screen and (max-width: 720px) { footer.g { padding: 18px; } }
+
+  .chip { display: inline-block; font-size: 13px; font-weight: 600; padding: 2px 9px; border-radius: 999px; white-space: nowrap; }
+
+  /* rules */
+  .rules table.t td:first-child { width: 190px; }
+  .callout { background: #F7F9F8; border: 1px solid var(--rule); border-radius: 12px; padding: 14px 18px; font-size: 15px; }
+  .callout + .callout { margin-top: 10px; }
+
+  /* ===== mobile + tablet ===== */
+  .narrow { display: none; }
+  .rnav { display: none; }
+  .meta .tile b { font-weight: 600; }
+  .method { font-size: 15px; color: var(--muted); }
+  .method ul { margin: 8px 0 0; padding-left: 18px; }
+  .method li { margin: 4px 0; }
+  .method b { color: var(--ink); font-weight: 600; }
+  ol.vroute { list-style: none; margin: 0; padding: 0; position: relative; }
+  ol.vroute::before { content: ""; position: absolute; left: 21px; top: 22px; bottom: 22px; width: 3px; background: repeating-linear-gradient(#2446D6 0 3px, transparent 3px 9px); }
+  ol.vroute li { position: relative; display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: center; padding: 8px 0; }
+  ol.vroute .dot { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 15px; color: #fff; position: relative; z-index: 1; }
+  ol.vroute .dot.hollow { background: #fff; border: 4px solid var(--ink); width: 26px; height: 26px; margin: 9px; }
+  ol.vroute b { display: block; font-size: 17px; }
+  ol.vroute span { color: var(--muted); font-size: 15px; }
+  ol.vroute li.dl { grid-template-columns: 44px 1fr; }
+  ol.vroute li.dl .flag { background: var(--ni-bg); color: var(--ni); border-radius: 10px; padding: 8px 12px; font-size: 15px; }
+  ol.vroute li.dl .flag b { font-size: 15px; display: inline; }
+  ol.vroute li.dl .pin { width: 14px; height: 14px; border-radius: 50%; background: var(--ni); margin-left: 15px; position: relative; z-index: 1; }
+
+  @media screen and (max-width: 1023px) {
+    .rnav { display: flex; gap: 6px; overflow-x: auto; position: sticky; top: var(--navtop, 44px); z-index: 20; background: #fffffff2; backdrop-filter: blur(6px); padding: 10px 16px; border-bottom: 1px solid var(--rule); scrollbar-width: none; }
+    .rnav::-webkit-scrollbar { display: none; }
+    .rnav a { flex: none; font-size: 14px; font-weight: 500; color: var(--ink); text-decoration: none; padding: 7px 12px; border-radius: 999px; background: var(--wash); }
+    .rnav a:focus-visible { outline: 3px solid var(--cobalt); outline-offset: 1px; }
+    .two { grid-template-columns: 1fr; }
+    [id] { scroll-margin-top: 110px; }
+  }
+  @media screen and (max-width: 720px) {
+    .wide { display: none; }
+    .narrow { display: block; }
+    body { font-size: 16px; }
+    .hero { gap: 14px; }
+    .hero .stampwrap { width: 100%; max-width: 230px; }
+    .hero > div:first-of-type { display: flex; flex-direction: column; }
+    .hero h1 { font-size: 29px; margin-top: 8px; }
+    .hero .fact { font-size: 17px; }
+    .hero .meta { order: 4; margin: 0 0 14px; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .hero .meta > div:not(.why) { background: var(--wash); border-radius: 10px; padding: 10px 12px; font-size: 15px; }
+    .hero .meta > div:not(.why) b { display: block; font-size: 13px; color: var(--muted); font-weight: 600; }
+    .hero .meta .why { grid-column: 1 / -1; }
+    .hero .read { order: 5; }
+    .visas { gap: 4px; }
+    .visas figure { display: grid; grid-template-columns: 116px 1fr; gap: 12px; align-items: center; text-align: left; padding: 6px 0; border-top: 1px solid var(--rule); }
+    .visas figure:first-child { border-top: 0; }
+    .visas svg { max-width: 116px; margin: 0; }
+    .visas figcaption { margin: 0; }
+    .sec-h { font-size: 22px; }
+    .move { padding: 14px; }
+    .move svg { max-width: 300px; }
+    table.pts tr { display: grid; grid-template-columns: 1fr auto; }
+    table.pts td.d { grid-row: 2; grid-column: 1 / -1; padding: 0 0 8px; border-top: 0; font-size: 14px; }
+    table.pts td.n { grid-row: 1; grid-column: 2; }
+    .totals { grid-template-columns: repeat(3, 1fr); }
+    .totals div { padding: 8px 10px; font-size: 13px; }
+    .totals b { font-size: 24px; }
+    .dp { grid-template-columns: 1fr; }
+    .fields { grid-template-columns: 1fr 1fr; gap: 10px 14px; }
+    .photo { display: none; }
+    .mrz { font-size: 12px; }
+    .deadline { font-size: 15px; }
+    .banner { font-size: 15px; }
+    details.ev summary { font-size: 19px; flex-wrap: wrap; }
+    details.ev summary span { flex-basis: 100%; padding-left: 38px; }
+  }
+  body.embed .switch, body.embed .brief { display: none; }
+  body.embed { --navtop: 0px; }
+  body.embed .page { margin-top: 0; }
+
+  .print-only, .runfoot { display: none; }
+  .dl-btn { display: inline-flex; align-items: center; gap: 8px; margin-top: 14px; font: inherit; font-weight: 600; font-size: 15px; color: #fff; background: var(--ink); border: 0; border-radius: 999px; padding: 10px 16px; cursor: pointer; }
+  .dl-btn:focus-visible { outline: 3px solid var(--cobalt); outline-offset: 2px; }
+  @page { size: A4; margin: 14mm 14mm 18mm; }
+  @media print {
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    html, body { background: #fff; font-size: 10.5pt; }
+    .switch, .brief, .screen-only { display: none !important; }
+    .print-only { display: block; }
+    .page { margin: 0; max-width: none; border-radius: 0; overflow: visible; }
+    .pr h1 { font-size: 24pt; line-height: 1.08; margin: 4pt 0 8pt; }
+    .pr h2 { font-size: 15pt; margin: 0 0 2pt; }
+    .pr h3 { font-size: 11.5pt; }
+    .pr .sub { font-size: 9.5pt; margin: 0 0 8pt; }
+    .pr section { padding: 10pt 0; border-top: 1px solid var(--rule); }
+    .pr .keep { break-inside: avoid; }
+    .pr .phero > *:not(.guill) { position: relative; }
+    .pr .phero .guill { position: absolute; inset: -10pt -10pt -10pt 40%; width: auto; height: auto; opacity: .45; }
+    .pr section.first { border-top: 0; padding-top: 0; }
+    .pr .brandline { display: flex; justify-content: space-between; align-items: baseline; font-size: 9pt; color: var(--muted); padding-bottom: 8pt; border-bottom: 2px solid var(--ink); margin-bottom: 12pt; }
+    .pr .brandline b { font-size: 13pt; color: var(--ink); font-stretch: 116%; font-weight: 800; letter-spacing: -0.01em; }
+    .pr .phero { display: grid; grid-template-columns: 1.25fr 0.75fr; gap: 16pt; align-items: center; position: relative; }
+    .pr .phero .fact { font-size: 12pt; line-height: 1.4; margin: 0 0 10pt; }
+    .pr .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 6pt; margin-bottom: 8pt; }
+    .pr .tiles div { background: var(--wash); border-radius: 8px; padding: 6pt 8pt; font-size: 10pt; }
+    .pr .tiles b { display: block; font-size: 8.5pt; color: var(--muted); font-weight: 600; }
+    .pr .read { font-size: 10pt; padding: 8pt 10pt; }
+    .pr .read small { font-size: 8pt; }
+    .pr .why { font-size: 8.5pt; margin-top: 6pt; }
+    .pr .visas { grid-template-columns: repeat(3, 1fr); gap: 10pt; }
+    .pr .visas svg { max-width: 150pt; }
+    .pr .visas figcaption { font-size: 9.5pt; }
+    .pr .visas figcaption span { font-size: 9pt; }
+    .pr .two { grid-template-columns: 1fr 1fr; gap: 18pt; }
+    .pr ol.vroute b { font-size: 11pt; } .pr ol.vroute span { font-size: 9.5pt; }
+    .pr ol.vroute li { padding: 4pt 0; }
+    .pr .moves { gap: 6pt; }
+    .pr .move { grid-template-columns: 1fr 190pt; padding: 8pt 10pt; break-inside: avoid; }
+    .pr .move h3 { font-size: 11pt; } .pr .move p { font-size: 9.5pt; }
+    .pr .deadline, .pr .banner { font-size: 10pt; padding: 8pt 10pt; break-inside: avoid; }
+    .pr .deadline .n { font-size: 16pt; }
+    .pr .plain { font-size: 10pt; }
+    .pr .fields { grid-template-columns: repeat(3, 1fr); font-size: 9.5pt; gap: 6pt 14pt; }
+    .pr .fields span { font-size: 8pt; }
+    .pr table.pts { font-size: 9.5pt; margin-top: 8pt; } .pr table.pts td { padding: 4pt 0; }
+    .pr .totals div { font-size: 8.5pt; padding: 6pt 8pt; } .pr .totals b { font-size: 16pt; }
+    .pr .mrz { font-size: 8.5pt; margin-top: 8pt; }
+    .pr .method { font-size: 9pt; padding: 0; } .pr .method h2 { font-size: 12pt; }
+    .pr .gbox { background: var(--ink); color: #CBD3DA; border-radius: 8px; padding: 9pt 12pt; font-size: 9pt; margin-top: 10pt; break-inside: avoid; }
+    .pr .gbox b { color: #fff; }
+    .pr .appendix { break-before: page; }
+    .pr .appendix .tag { font-size: 9pt; color: var(--muted); }
+    .pr table.t { font-size: 8.5pt; } .pr table.t td, .pr table.t th { padding: 2pt 6pt 2pt 0; }
+    .pr .appendix h3 { margin-bottom: 4pt; } .pr .appendix .why { font-size: 8pt; }
+    .pr .chip { font-size: 8.5pt; padding: 1pt 6pt; }
+    .pr .pbreak { break-before: page; }
+    .runfoot { display: block; position: fixed; bottom: -12mm; left: 0; right: 0; font-size: 8pt; color: var(--muted); border-top: 1px solid var(--rule); padding-top: 3pt; }
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <filter id="ink" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.6"/><feComponentTransfer><feFuncA type="discrete" tableValues="0 1 1 1 0.8 1"/></feComponentTransfer></filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#12202C"/></marker>
+  </defs>
+</svg>
+
+<style id="pagestyle"></style>
+<nav class="switch" id="tabs" aria-label="Scenarios"></nav>
+<p class="brief" id="brief"></p>
+<main class="page" id="page"></main>
+
+<script>
+/* ---------- verdict palette ---------- */
+const V = {
+  vs: { label: "Very strong", c: "var(--vs)", bg: "var(--vs-bg)", hex: "#0F6B3C" },
+  st: { label: "Strong", c: "var(--st)", bg: "var(--st-bg)", hex: "#1E7A4C" },
+  co: { label: "Competitive", c: "var(--co)", bg: "var(--co-bg)", hex: "#A06400" },
+  lw: { label: "Long wait", c: "var(--lw)", bg: "var(--lw-bg)", hex: "#C2410C" },
+  ni: { label: "Not currently invited", c: "var(--ni)", bg: "var(--ni-bg)", hex: "#B42318" },
+  ne: { label: "Not eligible yet", c: "var(--ne)", bg: "var(--ne-bg)", hex: "#5B3F9E" },
+  nd: { label: "Not enough data", c: "var(--nd)", bg: "var(--nd-bg)", hex: "#586470" },
+};
+const SHORT = { ni: "Not invited", ne: "Not eligible", nd: "No data" };
+const short = k => SHORT[k] || V[k].label;
+const fit = (text, width, max, f) => Math.min(max, width / (text.length * (f || 0.6)));
+const chip = (k, text) => `<span class="chip" style="background:${V[k].bg};color:${V[k].c}">${text || V[k].label}</span>`;
+const esc = s => String(s);
+
+/* ---------- graphics ---------- */
+function bigStamp(k, ring, bottom, word) {
+  const hex = V[k].hex; const w = (word || V[k].label).toUpperCase();
+  const lines = w.length > 12 ? w.split(" ").reduce((a, x) => { const l = a[a.length - 1]; (l && (l + " " + x).length <= 12) ? a[a.length - 1] = l + " " + x : a.push(x); return a; }, []) : [w];
+  const fs = fit(lines.reduce((m, l) => l.length > m.length ? l : m, ""), 250, 56, 0.56);
+  const y0 = 172 - (lines.length - 1) * fs * 0.5;
+  return `<svg viewBox="-24 -24 368 368" role="img" aria-label="Stamp: ${ring}, ${V[k].label}">
+    <defs><path id="rt${k}" d="M40 160 A120 120 0 0 1 280 160"/><path id="rb${k}" d="M52 160 A108 108 0 0 0 268 160"/></defs>
+    <g filter="url(#ink)" transform="rotate(-7 160 160)">
+      <circle cx="160" cy="160" r="150" fill="none" stroke="${hex}" stroke-width="7"/>
+      <circle cx="160" cy="160" r="136" fill="none" stroke="${hex}" stroke-width="2.5"/>
+      <text font-family="'Big Shoulders Stencil Display'" font-weight="800" font-size="22" fill="${hex}" letter-spacing="2"><textPath href="#rt${k}" startOffset="50%" text-anchor="middle">${ring}</textPath></text>
+      <text font-family="'Big Shoulders Stencil Display'" font-weight="800" font-size="19" fill="${hex}" letter-spacing="2"><textPath href="#rb${k}" startOffset="50%" text-anchor="middle" dominant-baseline="hanging">${bottom}</textPath></text>
+      <rect x="22" y="${118 - (lines.length - 1) * fs * 0.5}" width="276" height="${84 + (lines.length - 1) * fs}" fill="#fff" stroke="${hex}" stroke-width="5"/>
+      ${lines.map((l, i) => `<text x="160" y="${y0 + i * fs}" text-anchor="middle" data-fit="250" font-family="'Big Shoulders Stencil Display'" font-weight="900" font-size="${fs}" fill="${hex}" letter-spacing="1.5">${l}</text>`).join("")}
+    </g></svg>`;
+}
+function visaStamp(shape, k, top, word, bottom, rot) {
+  const hex = V[k].hex; const W = word.toUpperCase(); const fs = fit(W, 168, 30, 0.56); const ts = fit(top, 150, 22, 0.62);
+  const frame = shape === "rect"
+    ? `<rect x="10" y="10" width="200" height="140" rx="16" fill="none" stroke="${hex}" stroke-width="5"/><rect x="20" y="20" width="180" height="120" rx="10" fill="none" stroke="${hex}" stroke-width="2"/>`
+    : shape === "hex"
+    ? `<polygon points="110,6 206,40 206,120 110,154 14,120 14,40" fill="none" stroke="${hex}" stroke-width="5"/>`
+    : `<ellipse cx="110" cy="80" rx="102" ry="72" fill="none" stroke="${hex}" stroke-width="5"/><ellipse cx="110" cy="80" rx="90" ry="60" fill="none" stroke="${hex}" stroke-width="2" stroke-dasharray="3 4"/>`;
+  return `<svg viewBox="-12 -12 244 184" role="img" aria-label="${top}: ${word}"><g filter="url(#ink)" transform="rotate(${rot} 110 80)">${frame}
+    <text x="110" y="58" text-anchor="middle" data-fit="150" font-family="'Big Shoulders Stencil Display'" font-weight="800" font-size="${ts}" fill="${hex}" letter-spacing="1">${top}</text>
+    <text x="110" y="${88 + fs / 3}" text-anchor="middle" data-fit="168" font-family="'Big Shoulders Stencil Display'" font-weight="900" font-size="${fs}" fill="${hex}">${W}</text>
+    <text x="110" y="128" text-anchor="middle" font-family="'Big Shoulders Stencil Display'" font-weight="800" font-size="17" fill="${hex}">${bottom}</text></g></svg>`;
+}
+function shiftStamps(from, to) {
+  const box = (x, s, rot) => { const hex = V[s.k].hex; const t = `${s.p} ${short(s.k)}`.toUpperCase(); const fs = fit(t, 104, 17, 0.55);
+    return `<g transform="rotate(${rot} ${x + 56} 35)"><rect x="${x}" y="10" width="118" height="50" rx="8" fill="none" stroke="${hex}" stroke-width="3"/><text x="${x + 59}" y="${35 + fs * 0.36}" text-anchor="middle" data-fit="104" font-family="'Big Shoulders Stencil Display'" font-weight="900" font-size="${fs}" fill="${hex}">${t}</text></g>`; };
+  return `<svg viewBox="-6 -4 286 78" role="img" aria-label="From ${from.p} ${V[from.k].label} to ${to.p} ${V[to.k].label}"><g filter="url(#ink)">${box(0, from, -4)}${box(158, to, 3)}</g><path d="M124 35 H150" stroke="#12202C" stroke-width="2.5" marker-end="url(#arrow)"/></svg>`;
+}
+function cutoffChart(c, narrow) {
+  const vals = c.rounds.map(r => r.c).filter(v => v != null).concat([c.you, c.target?.pts || c.you, c.pass || c.you]);
+  const lo = Math.floor((Math.min(...vals) - 10) / 5) * 5, hi = Math.ceil((Math.max(...vals) + 5) / 5) * 5;
+  const W = narrow ? 340 : 400, F = narrow ? 1.18 : 1, R = W - 8;
+  const H = 230, top = 34, base = 196, y = v => base - (v - lo) / (hi - lo) * (base - top);
+  const n = c.rounds.length, bw = narrow ? 36 : 38, gap = (R - 20 - n * bw) / (n - 1 || 1);
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${c.aria}">`;
+  c.rounds.forEach((r, i) => { const x = 20 + i * (bw + gap);
+    if (r.c == null) s += `<rect x="${x}" y="${base - 46}" width="${bw}" height="46" rx="4" fill="none" stroke="#9AA4AD" stroke-width="1.5" stroke-dasharray="4 3"/><text x="${x + bw / 2}" y="${base - 26}" text-anchor="middle" font-size="${10.5 * F}" fill="#6B7680">Not</text><text x="${x + bw / 2}" y="${base - 12}" text-anchor="middle" font-size="${10.5 * F}" fill="#6B7680">listed</text>`;
+    else s += `<rect x="${x}" y="${y(r.c)}" width="${bw}" height="${base - y(r.c)}" rx="4" fill="#12202C"/><text x="${x + bw / 2}" y="${y(r.c) + 18}" text-anchor="middle" font-size="${13 * F}" font-weight="700" fill="#fff">${r.c}</text>`;
+    s += `<text x="${x + bw / 2}" y="${H - 14}" text-anchor="middle" font-size="${12 * F}" fill="#52606B">${r.m}</text>`; });
+  const line = (v, col, label, dash, anchorY, left) => `<line x1="14" x2="${R}" y1="${y(v)}" y2="${y(v)}" stroke="${col}" stroke-width="${dash ? 2 : 3}" ${dash ? 'stroke-dasharray="5 4"' : ""}/><text x="${left ? 16 : R}" y="${y(v) - 6 + (anchorY || 0)}" text-anchor="${left ? "start" : "end"}" font-size="${13 * F}" font-weight="700" fill="${col}">${label}</text>`;
+  if (c.pass) s += line(c.pass, "#5B3F9E", "Pass mark, 65", true, 0, true);
+  if (c.target) s += line(c.target.pts, "#0F6B3C", c.target.label, true);
+  s += line(c.you, c.youColor || "#A06400", `You, ${c.you}`, false);
+  return s + "</svg>";
+}
+function queueSquares(q, narrow) {
+  const cols = narrow ? 20 : 27, size = narrow ? 13 : 11, g = 3, F = narrow ? 1.12 : 1, W = narrow ? 340 : 400; let i = 0, rects = "";
+  q.groups.forEach(gr => { for (let k = 0; k < gr.n; k++, i++) rects += `<rect x="${(i % cols) * (size + g)}" y="${30 + Math.floor(i / cols) * (size + g)}" width="${size}" height="${size}" rx="2" fill="${gr.fill}"/>`; });
+  const rows = Math.ceil(i / cols), ly = 30 + rows * (size + g) + 16;
+  const per = narrow ? 1 : 2, lh = narrow ? 26 : 22;
+  const legend = q.groups.map((gr, j) => `<g transform="translate(${(j % per) * 200} ${ly + Math.floor(j / per) * lh})"><rect width="13" height="13" rx="2" fill="${gr.fill}"/><text x="20" y="12" font-size="${13.5 * F}" font-weight="${gr.bold ? 700 : 500}" fill="#12202C">${gr.label}</text></g>`).join("");
+  const H = ly + Math.ceil(q.groups.length / per) * lh + 4;
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${q.aria}"><text x="0" y="16" font-size="${13 * F}" fill="#52606B">Each square is about ${q.unit} EOIs. Front of the queue first.</text>${rects}${legend}</svg>`;
+}
+function routeLine(r, W = 860) {
+  const n = r.steps.length, m = W < 800 ? 70 : 90, x = i => m + i * ((W - 2 * m) / (n - 1)), y = 96;
+  let s = `<svg viewBox="0 0 ${W} 210" role="img" aria-label="${r.aria}"><line x1="${x(0)}" x2="${x(n - 1)}" y1="${y}" y2="${y}" stroke="#D8DFDB" stroke-width="8" stroke-linecap="round"/>`;
+  s += `<line x1="${x(0)}" x2="${x(n - 1)}" y1="${y}" y2="${y}" stroke="#2446D6" stroke-width="3" stroke-dasharray="2 8" stroke-linecap="round"/>`;
+  (r.deadlines || []).forEach(d => { const dx = x(d.at); s += `<line x1="${dx}" x2="${dx}" y1="34" y2="${y + 10}" stroke="#B42318" stroke-width="2" stroke-dasharray="4 4"/><rect x="${dx - 82}" y="10" width="164" height="40" rx="8" fill="#FCE5E3"/><text x="${dx}" y="27" text-anchor="middle" font-size="13" font-weight="700" fill="#B42318">${d.label}</text><text x="${dx}" y="43" text-anchor="middle" font-size="12" fill="#B42318">${d.date}</text>`; });
+  r.steps.forEach((st, i) => { const cx = x(i), col = st.k ? V[st.k].hex : "#12202C";
+    s += st.pts != null ? `<circle cx="${cx}" cy="${y}" r="19" fill="${col}"/><text x="${cx}" y="${y + 5}" text-anchor="middle" font-size="14" font-weight="800" fill="#fff">${st.pts}</text>`
+                        : `<circle cx="${cx}" cy="${y}" r="10" fill="#fff" stroke="${col}" stroke-width="4"/>`;
+    s += `<text x="${cx}" y="${y + 44}" text-anchor="middle" font-size="15" font-weight="700" fill="${col}">${st.label}</text><text x="${cx}" y="${y + 63}" text-anchor="middle" font-size="13" fill="#52606B">${st.sub}</text>`; });
+  return s + "</svg>";
+}
+function routeList(r) {
+  let items = "";
+  r.steps.forEach((st, i) => {
+    const col = st.k ? V[st.k].hex : "#12202C";
+    items += `<li><span class="dot${st.pts == null ? " hollow" : ""}" style="${st.pts == null ? `border-color:${col}` : `background:${col}`}">${st.pts ?? ""}</span><div><b style="color:${col}">${st.label}</b><span>${st.sub}</span></div></li>`;
+    (r.deadlines || []).filter(d => d.at > i && d.at < i + 1).forEach(d => items += `<li class="dl"><span class="pin"></span><div class="flag"><b>${d.label}</b>, ${d.date}</div></li>`);
+  });
+  return `<ol class="vroute" aria-label="${r.aria}">${items}</ol>`;
+}
+function histogram(h, narrow) {
+  const F = narrow ? 1.2 : 1;
+  const max = Math.max(...h.bars.map(b => b.v)), bw = 360 / h.bars.length;
+  let s = `<svg viewBox="0 0 400 200" role="img" aria-label="${h.aria}">`;
+  h.bars.forEach((b, i) => { const hgt = Math.max(2, b.v / max * 140), x = 20 + i * bw;
+    s += `<rect x="${x + 3}" y="${160 - hgt}" width="${bw - 6}" height="${hgt}" rx="3" fill="${b.s === h.you ? "#A06400" : b.s > h.you ? "#12202C" : "#C3CBD1"}"/>`;
+    s += `<text x="${x + bw / 2}" y="${154 - hgt}" text-anchor="middle" font-size="${10.5 * F}" fill="#52606B">${b.t}</text><text x="${x + bw / 2}" y="180" text-anchor="middle" font-size="${12 * F}" fill="#52606B">${b.s}</text>`; });
+  return s + `<text x="20" y="198" font-size="${12 * F}" fill="#52606B">Points</text></svg>`;
+}
+function stackBar(parts, aria, narrow) {
+  const W = narrow ? 340 : 400, per = narrow ? 1 : 2, lh = narrow ? 26 : 22, F = narrow ? 1.12 : 1;
+  const tot = parts.reduce((a, p) => a + p.v, 0); let x = 0, s = `<svg viewBox="0 0 ${W} ${42 + Math.ceil(parts.length / per) * lh}" role="img" aria-label="${aria}">`;
+  parts.forEach(p => { const w = p.v / tot * W; s += `<rect x="${x}" y="0" width="${w}" height="26" fill="${p.fill}"/>`; x += w; });
+  parts.forEach((p, i) => s += `<g transform="translate(${(i % per) * 200} ${42 + Math.floor(i / per) * lh})"><rect width="13" height="13" rx="2" fill="${p.fill}"/><text x="20" y="12" font-size="${13.5 * F}" fill="#12202C">${p.label}</text></g>`);
+  return s + "</svg>";
+}
+function guilloche() {
+  const W = 900, H = 520; let p = "", q = "";
+  const curve = (cx, cy, R, r, d, turns) => { let o = ""; for (let t = 0; t <= Math.PI * 2 * turns; t += 0.025) { const X = cx + (R - r) * Math.cos(t) + d * Math.cos(((R - r) / r) * t), Y = cy + (R - r) * Math.sin(t) - d * Math.sin(((R - r) / r) * t); o += (o ? "L" : "M") + X.toFixed(1) + " " + Y.toFixed(1); } return o; };
+  p = curve(W * 0.8, H * 0.48, 230, 37, 72, 37); q = curve(W * 0.8, H * 0.48, 150, 29, 54, 29);
+  let waves = ""; for (let y = 0; y < H; y += 16) { let d = ""; for (let x = 0; x <= W; x += 12) d += (x ? "L" : "M") + x + " " + (y + Math.sin(x / 40 + y / 30) * 4).toFixed(1); waves += `<path d="${d}" fill="none" stroke="#D3DED7" stroke-width="0.6"/>`; }
+  return `<svg class="guill" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${waves}<path d="${p}" fill="none" stroke="#B5CABF" stroke-width="0.6"/><path d="${q}" fill="none" stroke="#C7C0E0" stroke-width="0.5"/></svg>`;
+}
+
+/* ---------- shared data ---------- */
+const nurseRounds = [{ m: "Sep 24", c: 75 }, { m: "Nov 24", c: 70 }, { m: "Aug 25", c: 80 }, { m: "Nov 25", c: 75 }, { m: "Jun 26", c: 75 }, { m: "Oct 26", c: 70 }];
+const footer = `<footer class="g"><b>This is our best reading of the data, not a guarantee.</b> It comes from published SkillSelect figures up to October 2026. Home Affairs and the states can change round sizes, cut-offs and rules at any time, so your real result may be different. MigrateLens isn't a registered migration agent; for advice on your own case, talk to one.</footer>`;
+const methodNote = `<div class="band pad method" id="method"><h2 class="sec-h" style="color:var(--ink)">How we label your outlook</h2>
+  <ul>
+    <li><b>Very strong:</b> your points are above every 189 cut-off in your occupation's last 3 listed rounds, and fewer than 20 EOIs score higher.</li>
+    <li><b>Strong:</b> your points meet every cut-off in those 3 rounds.</li>
+    <li><b>Competitive:</b> your points meet the lowest of those 3 cut-offs, but not all of them.</li>
+    <li><b>Long wait:</b> your occupation is still listed, but your points are below all 3 cut-offs.</li>
+    <li><b>Not currently invited:</b> your occupation wasn't listed in any of the last 4 rounds.</li>
+    <li><b>Not eligible yet:</b> under 65 points, or a basic requirement isn't met.</li>
+    <li><b>190 and 491:</b> each state is labelled from its invitations at or below your points (with nomination) over the last 3 to 6 months, and its rules. The visa takes its best state.</li>
+    <li><b>The stamp</b> shows your best visa. If none is Competitive or better, it covers all three.</li>
+  </ul></div>`;
+const zeroRow = (t) => `<tr class="z"><td>${t}</td><td class="d">None</td><td class="n">0</td></tr>`;
+
+/* ---------- scenarios ---------- */
+const S = [
+{ id: "strong", tab: "1. Strong", brief: "<b>Positive report.</b> Aarav, nurse, 90 points, living in NSW. Nothing to fix, so \"How to improve\" becomes \"Protect your points\".",
+  who: "<b>Aarav's report.</b> Registered Nurse (nec), 90 points, living in NSW. Data to October 2026.",
+  k: "vs", ring: "SUBCLASS 189", bottom: "OCT 2026 • 90 POINTS",
+  h1: "You're at the front of the queue.",
+  fact: "No nurse EOIs score higher than your 90, and the last 6 rounds all invited nurses at 80 points or less.",
+  read: "You don't need more points. Submit your EOI now and get your documents ready: once you're invited, you have 60 days to lodge. Watch your English test, which expires on 2 Feb 2028.",
+  best: "189 Independent, with NSW 190 as a strong backup.", wait: "The next 189 round.",
+  why: "Very strong: 90 is above every cut-off in your occupation's last 3 listed rounds (70, 75, 75), and fewer than 20 EOIs score higher.",
+  visas: [["rect", "vs", "189 ANY STATE", "Very strong", "90 PTS", "189 Independent", "No EOIs ahead of you."],
+          ["hex", "st", "190 NSW", "Strong", "95 PTS", "190 Nominated", "NSW invited at least 327 nurses at 95 or less in October."],
+          ["oval", "st", "491 WA", "Strong", "105 PTS", "491 Regional", "Every WA nurse invitation in October was at 105 or less."]],
+  cut: { rounds: nurseRounds, you: 90, youColor: "#0F6B3C", aria: "Last six nurse cut-offs between 70 and 80. You are at 90, above all of them." },
+  queue: { unit: 40, aria: "No EOIs ahead or tied. All 4,280 nurse EOIs score lower.", groups: [{ n: 0, fill: "#12202C", label: "Ahead: 0" }, { n: 0, fill: "#A06400", label: "Tied with you: 0" }, { n: 1, fill: "#0F6B3C", label: "You: first in line", bold: true }, { n: 107, fill: "#C3CBD1", label: "Behind: 4,280" }] },
+  queueTitle: "Who's in the queue",
+  route: { aria: "Today at 90, submit EOI, gather documents, invitation with 60 days to lodge. Turning 33 on 9 Aug 2027 costs 5 points; the English test expires 2 Feb 2028.",
+    steps: [{ label: "Today", sub: "21 Nov 2026", pts: 90, k: "vs" }, { label: "Submit EOI", sub: "189 + NSW 190, now" }, { label: "Gather documents", sub: "police checks, medicals" }, { label: "Invitation", sub: "60 days to lodge", k: "vs" }],
+    deadlines: [{ at: 1.9, label: "Turns 33: −5", date: "9 Aug 2027" }, { at: 2.75, label: "English test expires", date: "2 Feb 2028" }] },
+  improve: { title: "Protect your points", sub: "You don't need more points. These dates could cost you some.",
+    banner: ["vs", "You're already at the top. The only risk is waiting too long."],
+    moves: [{ t: "Your 33rd birthday, 9 Aug 2027: −5", d: "Age points drop from 30 to 25.", from: { p: 90, k: "vs" }, to: { p: 85, k: "vs" }, why: "Still very strong: fewer than 20 nurse EOIs score 85 or more." },
+            { t: "English test expires, 2 Feb 2028", d: "If you aren't invited by then and don't retake it.", from: { p: 85, k: "vs" }, to: { p: 65, k: "ne" }, why: "Without a valid English test you can't be invited at all. Retake it before February 2028 if you're still waiting." }] },
+  points: { name: "Aarav (sample)", dob: "9 Aug 1994, age 32", where: "Onshore, NSW (30 months)", assess: "ANMAC, 20 Feb 2026", eng: "PTE Superior, to 2 Feb 2028",
+    rows: [["Age", "32", 30], ["English", "Superior, PTE 2 Feb 2025", 20], ["Qualification", "Bachelor of Nursing", 15], ["Overseas skilled work", "3 years", 5], ["Australian skilled work", "1 year", 5], ["Australian study", "2 years, NSW", 5], ["Partner", "Single", 10]],
+    zero: "Specialist education, regional study, Professional Year, community language", totals: [90, 95, 105], mrz: ["P<MLNAARAV<<SAMPLE<<<<<<<<<<<<<<<<<<<<<<<<<<<", "254499<189<90<190<95<491<105<<OCT2026<<<<<<<<"] } },
+
+{ id: "middle", tab: "2. In the middle", brief: "<b>Middle report.</b> Priya, nurse, 70 points, offshore. The one you've seen, with the corrected labels (80 is now \"Very strong\" under the rules tab).",
+  who: "<b>Priya's report.</b> Registered Nurse (nec), 70 points, offshore. Data to October 2026.",
+  k: "co", ring: "SUBCLASS 189", bottom: "OCT 2026 • 70 POINTS",
+  h1: "You're on the edge for 189.",
+  fact: "70 points was enough in 2 of the last 6 rounds, but 1,841 other nurse EOIs are tied with you at 70.",
+  read: "Your fastest win is English. A Superior score adds 10 points and puts you at 80, enough for every one of the last 6 rounds. It also lifts your NSW 190 score to 85. In October, NSW invited 168 nurses at just 80.",
+  best: "189, with NSW 190 alongside.", wait: "Uncertain. Possible in a round that goes down to 70, like October's.",
+  why: "Competitive: 70 meets the lowest of your occupation's last 3 listed cut-offs (70) but not the other two (75, 75).",
+  visas: [["rect", "co", "189 ANY STATE", "Competitive", "70 PTS", "189 Independent", "107 to 126 EOIs ahead of you."],
+          ["hex", "co", "190 NSW", "Competitive", "75 PTS", "190 Nominated", "NSW invited 26 nurses at 75 in October; most were at 80 or more."],
+          ["oval", "co", "491 WA", "Competitive", "85 PTS", "491 Regional", "WA invited nurses at 85 in each of the last 3 months (under 20 a month)."]],
+  cut: { rounds: nurseRounds, you: 70, target: { pts: 80, label: "With English, 80" }, aria: "Last six nurse cut-offs: 75, 70, 80, 75, 75, 70. You are at 70." },
+  queue: { unit: 40, aria: "107 to 126 ahead, 1,841 tied, about 2,320 behind.", groups: [{ n: 3, fill: "#12202C", label: "Ahead: 107–126" }, { n: 46, fill: "#A06400", label: "Tied with you: 1,841", bold: true }, { n: 58, fill: "#C3CBD1", label: "Behind: about 2,320" }] },
+  queueTitle: "Who's in the queue",
+  route: { aria: "Today at 70, submit EOI, Superior English by Feb 2027 at 80, update EOI. Turning 33 on 14 Mar 2027 costs 5 points.",
+    steps: [{ label: "Today", sub: "21 Nov 2026", pts: 70, k: "co" }, { label: "Submit EOI", sub: "189 + NSW 190, now" }, { label: "Superior English", sub: "result by Feb 2027", pts: 80, k: "vs" }, { label: "Update your EOI", sub: "the day results arrive" }],
+    deadlines: [{ at: 2.5, label: "Turns 33: −5", date: "14 Mar 2027" }] },
+  improve: { title: "How to improve", sub: "Each step, and what your outlook becomes after it.",
+    moves: [{ best: 1, t: "Superior English, +10", d: "About 2 to 3 months to prepare and get results.", from: { p: 70, k: "co" }, to: { p: 80, k: "vs" }, why: "80 is above all 3 recent cut-offs, and fewer than 20 nurse EOIs score higher." },
+            { t: "NAATI CCL test, +5", d: "One test, about 1 to 2 months.", from: { p: 70, k: "co" }, to: { p: 75, k: "st" }, why: "75 meets all 3 recent cut-offs. 27 to 46 EOIs would still score higher." },
+            { t: "Both together, +15", d: "", from: { p: 70, k: "co" }, to: { p: 85, k: "vs" }, why: "Fewer than 20 nurse EOIs score 85 or more." }],
+    deadline: ["−5", "<b>You turn 33 on 14 March 2027.</b> Age points drop from 30 to 25, taking you to 65, where your outlook becomes " + chip("lw") + ". Get your English done before then."] },
+  points: { name: "Priya (sample)", dob: "14 Mar 1994, age 32", where: "Offshore, India", assess: "ANMAC, to 10 Jun 2028", eng: "PTE Proficient, to 2 Feb 2028",
+    rows: [["Age", "32", 30], ["English", "Proficient, PTE 2 Feb 2025", 10], ["Qualification", "Bachelor of Nursing", 15], ["Overseas skilled work", "4 years", 5], ["Partner", "Single", 10]],
+    zero: "Australian work and study, regional study, specialist education, Professional Year, community language", totals: [70, 75, 85], mrz: ["P<MLNPRIYA<<SAMPLE<<<<<<<<<<<<<<<<<<<<<<<<<<<", "254499<189<70<190<75<491<85<<OCT2026<<<<<<<<<"] } },
+
+{ id: "long", tab: "3. Long wait", brief: "<b>Negative report.</b> Meera, early childhood teacher, 80 points, offshore. Behind the cut-offs, and the cheap points are already used.",
+  who: "<b>Meera's report.</b> Early Childhood (Pre-primary School) Teacher, 80 points, offshore. Data to October 2026.",
+  k: "co", ring: "SUBCLASS 190 TAS", bottom: "OCT 2026 • 85 POINTS",
+  h1: "Your best chance is Tasmania, not 189.",
+  fact: "At 80 you're behind every recent 189 cut-off (85 to 90), with 2,444 to 2,463 EOIs ahead of you. With nomination your 85 points are above what Tasmania has been inviting teachers at.",
+  read: "Your cheapest points are already used. The next 10 come from a NAATI test and from reaching 5 years' experience in July 2027, which takes you to 90, October's cut-off. Until then, state nomination is worth trying: Tasmania has invited small numbers of early childhood teachers at 80 or less every month since August.",
+  best: "190 or 491 in Tasmania (we're still checking Tasmania's rules).", wait: "Unlikely without more points.",
+  why: "Stamp shows your best visa. 190 Tasmania is Competitive: under-20 invitations at or below your points in each of the last 3 months. 189 is Long wait: 80 is below every cut-off in its last 3 listed rounds (90, 85, 85).",
+  visas: [["rect", "lw", "189 ANY STATE", "Long wait", "80 PTS", "189 Independent", "2,444 to 2,463 EOIs ahead of you."],
+          ["hex", "co", "190 TAS", "Competitive", "85 PTS", "190 Nominated", "Tasmania invited teachers at 75 or less in October (under 20)."],
+          ["oval", "co", "491 TAS", "Competitive", "95 PTS", "491 Regional", "Tasmania has invited teachers every month since August (under 20 a month)."]],
+  cut: { rounds: [{ m: "Sep 24", c: 75 }, { m: "Nov 24", c: 70 }, { m: "Aug 25", c: 85 }, { m: "Nov 25", c: 85 }, { m: "Jun 26", c: null }, { m: "Oct 26", c: 90 }], you: 80, youColor: "#C2410C", target: { pts: 90, label: "With NAATI + experience, 90" }, aria: "Cut-offs rising from 70 to 90; June 2026 did not list the occupation. You are at 80." },
+  queue: { unit: 100, aria: "2,444 to 2,463 ahead, 2,138 tied, about 9,100 behind.", groups: [{ n: 24, fill: "#12202C", label: "Ahead: 2,444–2,463", bold: true }, { n: 21, fill: "#A06400", label: "Tied with you: 2,138" }, { n: 91, fill: "#C3CBD1", label: "Behind: about 9,100" }] },
+  queueTitle: "Who's in the queue",
+  route: { aria: "Today at 80, submit EOI including Tasmania, NAATI by March 2027 at 85, five years' experience on 1 July 2027 at 90.",
+    steps: [{ label: "Today", sub: "21 Nov 2026", pts: 80, k: "lw" }, { label: "Submit EOI", sub: "189 + TAS 190/491" }, { label: "NAATI CCL test", sub: "by Mar 2027", pts: 85, k: "co" }, { label: "5 years' experience", sub: "1 Jul 2027", pts: 90, k: "st" }],
+    deadlines: [] },
+  improve: { title: "How to improve", sub: "Each step, and what your outlook becomes after it.",
+    moves: [{ t: "NAATI CCL test, +5", d: "One test, about 1 to 2 months.", from: { p: 80, k: "lw" }, to: { p: 85, k: "co" }, why: "85 met 2 of the last 3 listed cut-offs. 222 to 241 EOIs would still score higher." },
+            { t: "5 years' overseas experience, +5", d: "Happens on its own on 1 Jul 2027. Update your EOI that day.", from: { p: 80, k: "lw" }, to: { p: 85, k: "co" }, why: "Same as above, with no cost." },
+            { best: 1, t: "Both, +10", d: "From July 2027.", from: { p: 80, k: "lw" }, to: { p: 90, k: "st" }, why: "90 met October's cut-off, and fewer than 20 EOIs score higher." }],
+    deadline: ["!", "<b>Your English test expires on 10 Jan 2028.</b> Without a new test you can't be invited for any visa until you retake it. Book a retake for late 2027."] },
+  points: { name: "Meera (sample)", dob: "2 May 1998, age 28", where: "Offshore, India", assess: "AITSL, to 3 Apr 2028", eng: "PTE Superior, to 10 Jan 2028",
+    rows: [["Age", "28", 30], ["English", "Superior, PTE 10 Jan 2025", 20], ["Qualification", "Bachelor of Education (Early Childhood)", 15], ["Overseas skilled work", "4 years (5 on 1 Jul 2027)", 5], ["Partner", "Single", 10]],
+    zero: "Australian work and study, regional study, specialist education, Professional Year, community language", totals: [80, 85, 95], mrz: ["P<MLNMEERA<<SAMPLE<<<<<<<<<<<<<<<<<<<<<<<<<<<", "241111<189<80<190<85<491<95<<OCT2026<<<<<<<<<"] } },
+
+{ id: "notinv", tab: "4. 189 closed", brief: "<b>189 closed, state route open.</b> Rahul, software engineer, 85 points, offshore. 189 hasn't listed the occupation in 4 rounds, so the stamp shows his best visa (190 NT) and the report says more points won't help 189.",
+  who: "<b>Rahul's report.</b> Software Engineer, 85 points, offshore. Data to October 2026.",
+  k: "co", ring: "SUBCLASS 190 NT", bottom: "OCT 2026 • 90 POINTS",
+  h1: "Your way in is state nomination, not 189.",
+  fact: "189 hasn't listed software engineers in any of the last 4 rounds, since November 2024. The Northern Territory has invited a few every month since August, at points below your 90 with nomination.",
+  read: "More points won't fix this while 189 isn't inviting your occupation. Your realistic routes are state nomination: the Northern Territory and Tasmania have invited small numbers of software engineers this year, at points below yours. Their rules, like living or working in the state, matter more than your score.",
+  best: "190 or 491 in the Northern Territory or Tasmania (we're still checking their rules).", wait: "No 189 invitations to measure.",
+  why: "Stamp shows your best visa. 190 NT is Competitive: under-20 invitations at or below your points in each of the last 3 months. 189 is Not currently invited: not listed in any of the last 4 rounds.",
+  visas: [["rect", "ni", "189 ANY STATE", "Not invited", "85 PTS", "189 Independent", "Not listed since Nov 2024. 2,004 to 2,023 EOIs score higher."],
+          ["hex", "co", "190 NT", "Competitive", "90 PTS", "190 Nominated", "NT invited software engineers at 75 or less in each of the last 3 months (under 20 a month)."],
+          ["oval", "co", "491 NT / TAS", "Competitive", "100 PTS", "491 Regional", "NT and Tasmania both invited in October, at 80 or less (under 20)."]],
+  cut: { rounds: [{ m: "Sep 24", c: 100 }, { m: "Nov 24", c: 95 }, { m: "Aug 25", c: null }, { m: "Nov 25", c: null }, { m: "Jun 26", c: null }, { m: "Oct 26", c: null }], you: 85, youColor: "#B42318", aria: "Cut-offs 100 and 95 in 2024, then not listed in the last four rounds. You are at 85." },
+  queue: { unit: 50, aria: "2,004 to 2,023 ahead, 1,213 tied, about 6,240 behind, in a pool that isn't being invited.", groups: [{ n: 40, fill: "#12202C", label: "Ahead: 2,004–2,023", bold: true }, { n: 24, fill: "#A06400", label: "Tied with you: 1,213" }, { n: 125, fill: "#C3CBD1", label: "Behind: about 6,240" }] },
+  queueTitle: "A queue that isn't moving",
+  route: { aria: "Today at 85, check NT and Tasmania rules, submit EOI for 190 and 491 there, keep 189 selected. English expires 5 June 2027.",
+    steps: [{ label: "Today", sub: "21 Nov 2026", pts: 85, k: "ni" }, { label: "Check state rules", sub: "NT and Tasmania" }, { label: "Submit EOI", sub: "190 + 491, NT / TAS" }, { label: "Keep 189 ticked", sub: "it costs nothing" }],
+    deadlines: [{ at: 1.5, label: "English test expires", date: "5 Jun 2027" }] },
+  improve: { title: "How to improve", sub: "What extra points would and wouldn't change.",
+    banner: ["ni", "Points aren't what's holding you back. 189 needs to start listing your occupation again."],
+    moves: [{ t: "Professional Year (ICT), +5", d: "About 12 months.", from: { p: 85, k: "ni" }, to: { p: 90, k: "ni" }, why: "189 still isn't inviting software engineers, and 90 would be below the last cut-offs (95, 100). Not worth it for 189 alone." }],
+    deadline: ["!", "<b>Your English test expires on 5 Jun 2027.</b> Without a retake you can't be invited for any of the three visas, because a valid English test is a basic requirement. This matters more than any new points."] },
+  points: { name: "Rahul (sample)", dob: "18 Jan 1996, age 30", where: "Offshore, India", assess: "ACS, to 14 Aug 2028", eng: "PTE Superior, to 5 Jun 2027",
+    rows: [["Age", "30", 30], ["English", "Superior, PTE 5 Jun 2024", 20], ["Qualification", "Bachelor of Engineering (Software)", 15], ["Overseas skilled work", "6 years", 10], ["Partner", "Single", 10]],
+    zero: "Australian work and study, regional study, specialist education, Professional Year, community language", totals: [85, 90, 100], mrz: ["P<MLNRAHUL<<SAMPLE<<<<<<<<<<<<<<<<<<<<<<<<<<<", "261313<189<85<190<90<491<100<<OCT2026<<<<<<<<"] } },
+
+{ id: "below", tab: "5. Below 65", brief: "<b>Can't apply for 189 yet.</b> Arjun, nurse, 60 points, offshore. 189 is closed to him, but nomination points make 190 and 491 possible today.",
+  who: "<b>Arjun's report.</b> Registered Nurse (nec), 60 points, offshore. Data to October 2026.",
+  k: "co", ring: "SUBCLASS 190 TAS", bottom: "OCT 2026 • 65 POINTS",
+  h1: "190 in Tasmania is open to you now. 189 isn't, yet.",
+  fact: "189 needs at least 65 points and you have 60. State nomination adds 5 (190) or 15 (491), which takes you to 65 and 75.",
+  read: "English is your fastest way up. Proficient adds 10 points, which makes you Competitive for 189 at 70; Superior adds 20, which makes you Very strong at 80. Meanwhile, submit for 190: Tasmania has invited nurses at 65 in each of the last 3 months.",
+  best: "190 in Tasmania now; 189 after your English retake.", wait: "189: not possible until you reach 65.",
+  why: "Stamp shows your best visa. 190 Tasmania is Competitive: under-20 invitations at your points in each of the last 3 months. 189 is Not eligible yet: under 65 points.",
+  visas: [["rect", "ne", "189 ANY STATE", "Not eligible", "60 PTS", "189 Independent", "You need 5 more points."],
+          ["hex", "co", "190 TAS", "Competitive", "65 PTS", "190 Nominated", "Tasmania invited nurses at 65 in each of the last 3 months (under 20 a month)."],
+          ["oval", "lw", "491 TAS", "Long wait", "75 PTS", "491 Regional", "Only Tasmania invited nurses at 75 or less, once, in October (under 20)."]],
+  cut: { rounds: nurseRounds, you: 60, youColor: "#5B3F9E", pass: 65, target: { pts: 80, label: "With Superior English, 80" }, aria: "Nurse cut-offs 70 to 80, pass mark 65, you at 60." },
+  queue: { unit: 40, aria: "3,480 to 3,499 EOIs score higher than 60.", groups: [{ n: 87, fill: "#12202C", label: "Ahead: 3,480–3,499", bold: true }, { n: 12, fill: "#A06400", label: "Tied with you: 496" }, { n: 8, fill: "#C3CBD1", label: "Behind: about 300" }] },
+  queueTitle: "Who's in the queue",
+  route: { aria: "Today at 60, submit EOI for 190 and 491, English retake by March 2027 to reach 80, update EOI and 189 opens.",
+    steps: [{ label: "Today", sub: "21 Nov 2026", pts: 60, k: "ne" }, { label: "Submit EOI", sub: "190 + 491, Tasmania" }, { label: "English retake", sub: "Superior, by Mar 2027", pts: 80, k: "vs" }, { label: "Update your EOI", sub: "189 opens to you" }], deadlines: [] },
+  improve: { title: "How to improve", sub: "Each step, and what your 189 outlook becomes after it.",
+    moves: [{ best: 1, t: "Superior English, +20", d: "PTE 79 in every band. About 3 months.", from: { p: 60, k: "ne" }, to: { p: 80, k: "vs" }, why: "80 is above all 3 recent cut-offs, and fewer than 20 nurse EOIs score higher." },
+            { t: "Proficient English, +10", d: "PTE 65 in every band.", from: { p: 60, k: "ne" }, to: { p: 70, k: "co" }, why: "70 met October's cut-off. 1,841 others are tied at 70." },
+            { t: "NAATI CCL test, +5", d: "One test.", from: { p: 60, k: "ne" }, to: { p: 65, k: "lw" }, why: "Enough to be eligible for 189, but 65 is below all 3 recent cut-offs." }] },
+  points: { name: "Arjun (sample)", dob: "22 Jul 1996, age 30", where: "Offshore, India", assess: "ANMAC, to 1 Dec 2028", eng: "IELTS Competent, to 9 Sep 2027",
+    rows: [["Age", "30", 30], ["English", "Competent, IELTS 6 (no points)", 0], ["Qualification", "Bachelor of Nursing", 15], ["Overseas skilled work", "3 years", 5], ["Partner", "Single", 10]],
+    zero: "Australian work and study, regional study, specialist education, Professional Year, community language", totals: [60, 65, 75], mrz: ["P<MLNARJUN<<SAMPLE<<<<<<<<<<<<<<<<<<<<<<<<<<<", "254499<189<60<190<65<491<75<<OCT2026<<<<<<<<<"] } },
+
+{ id: "nodata", tab: "6. No data", brief: "<b>No published data.</b> Sana, greenkeeper, 75 points. SkillSelect publishes no EOI counts, rounds or state invitations for this occupation (8 of 493 are like this). The report says so plainly and falls back on what we do know.",
+  who: "<b>Sana's report.</b> Greenkeeper, 75 points, offshore. Data to October 2026.",
+  k: "nd", ring: "189 • 190 • 491", bottom: "OCT 2026 • 75 POINTS", word: "No data",
+  h1: "There isn't enough published data to judge your occupation.",
+  fact: "SkillSelect hasn't published any EOI counts, 189 rounds or state invitations for greenkeepers, so there's nothing to compare you with.",
+  read: "Your 75 points are above the 65 pass mark, and greenkeepers are on the federal list for 190 and 491, plus Western Australia's list. With so few EOIs, whether a state wants your skills may matter more than your score. Submit your EOI and look at Western Australia's program first.",
+  best: "190 or 491 in Western Australia (your occupation is on its list).", wait: "We can't estimate one without data.",
+  why: "No visa has enough data for a label, so the stamp covers all three. Not enough data: no published EOIs, rounds or state invitations for this occupation.",
+  visas: [["rect", "nd", "189 ANY STATE", "No data", "75 PTS", "189 Independent", "No published pool or rounds."],
+          ["hex", "nd", "190 WA", "On WA list", "80 PTS", "190 Nominated", "Listed by Western Australia."],
+          ["oval", "nd", "491 WA", "On WA list", "90 PTS", "491 Regional", "Check Western Australia's regional program."]],
+  cut: null, cutEmpty: "No 189 round in the published results lists greenkeepers, so there are no cut-offs to show.",
+  queue: null, queueEmpty: "SkillSelect hasn't published any EOI counts for greenkeepers. Very small occupations show \"Too few to count\" instead; there, we'd show the masked counts as ranges.",
+  route: { aria: "Today at 75, check Western Australia's program, submit EOI for 190, 491 and 189, wait for a state or a round.",
+    steps: [{ label: "Today", sub: "21 Nov 2026", pts: 75, k: "nd" }, { label: "Check WA's program", sub: "190 and 491" }, { label: "Submit EOI", sub: "189 + 190 + 491" }, { label: "Wait for a state", sub: "or a 189 round" }],
+    deadlines: [] },
+  improve: { title: "How to improve", sub: "Extra points still help, but without data we can't show how much.",
+    plain: ["<b>Superior English, +10.</b> Takes you to 85.", "<b>NAATI CCL test, +5.</b> Takes you to 80.", "<b>Australian study or a Professional Year</b> would add points only if you study or train in Australia."] },
+  points: { name: "Sana (sample)", dob: "12 Apr 1997, age 29", where: "Offshore, India", assess: "TRA, to 19 Jul 2028", eng: "PTE Proficient, to 30 Jan 2029",
+    rows: [["Age", "29", 30], ["English", "Proficient, PTE 30 Jan 2026", 10], ["Qualification", "Trade qualification (Certificate III level)", 10], ["Overseas skilled work", "8 years", 15], ["Partner", "Single", 10]],
+    zero: "Australian work and study, regional study, specialist education, Professional Year, community language", totals: [75, 80, 90], mrz: ["P<MLNSANA<<SAMPLE<<<<<<<<<<<<<<<<<<<<<<<<<<<<", "362311<189<75<190<80<491<90<<OCT2026<<<<<<<<<"] } },
+
+{ id: "lodged", tab: "8. Already lodged", brief: "<b>Already in the queue.</b> Kavya, nurse, 70 points, EOI submitted 12 Mar 2026. The report adds where she sits among people at her score, an estimated wait, and her EOI expiry date.",
+  who: "<b>Kavya's report.</b> Registered Nurse (nec), 70 points, offshore. EOI submitted 12 Mar 2026. Data to October 2026.",
+  k: "co", ring: "SUBCLASS 189", bottom: "254 DAYS • 70 POINTS",
+  h1: "You're in the queue, right at the cut-off.",
+  fact: "October's round invited nurses down to 70 points, earliest dates first. Roughly 870 to 990 EOIs are ahead of you: 107 to 126 with higher scores, and about 760 to 860 at 70 submitted before March 2026.",
+  read: "October invited 262 nurses at 70. At that pace you'd need 3 or 4 rounds like it, so plan for 1 to 2 years. A Superior English score would put you at 80 straight away, ahead of everyone at 70, even though your date of effect resets on the day you update.",
+  best: "Stay in the 189 queue; Superior English moves you to the front.", wait: "1 to 2 years at 70 (estimate).",
+  why: "Competitive: 70 meets the lowest of your occupation's last 3 listed cut-offs (70) but not the other two (75, 75).",
+  visas: [["rect", "co", "189 ANY STATE", "Competitive", "70 PTS", "189 Independent", "Waiting 254 days. Roughly 870 to 990 EOIs ahead."],
+          ["hex", "co", "190 NSW", "Competitive", "75 PTS", "190 Nominated", "NSW invited 26 nurses at 75 in October."],
+          ["oval", "co", "491 WA", "Competitive", "85 PTS", "491 Regional", "WA invited nurses at 85 in each of the last 3 months (under 20 a month)."]],
+  cut: { rounds: nurseRounds, you: 70, target: { pts: 80, label: "With English, 80" }, aria: "Last six nurse cut-offs: 75, 70, 80, 75, 75, 70. You are at 70." },
+  queue: { unit: 40, aria: "Your place among nurse EOIs: about 110 to 126 with higher scores, about 760 to 860 at 70 submitted earlier, 128 in your month, about 900 at 70 submitted later.", groups: [{ n: 3, fill: "#12202C", label: "Higher score: 107–126" }, { n: 20, fill: "#56636E", label: "At 70, earlier: ~760–860" }, { n: 3, fill: "#A06400", label: "Your month: 128", bold: true }, { n: 23, fill: "#C3CBD1", label: "At 70, later: ~910" }] },
+  queueTitle: "Your place at 70",
+  route: { aria: "Submitted 12 March 2026 at 70, today after 254 days, Superior English to 80, invitation. EOI expires 12 March 2028.",
+    steps: [{ label: "EOI submitted", sub: "12 Mar 2026", pts: 70, k: "co" }, { label: "Today", sub: "254 days waiting" }, { label: "Superior English", sub: "update EOI", pts: 80, k: "vs" }, { label: "Invitation", sub: "60 days to lodge", k: "vs" }],
+    deadlines: [{ at: 2.75, label: "EOI expires", date: "12 Mar 2028" }] },
+  improve: { title: "How to improve", sub: "Each step, and what your outlook becomes after it.",
+    moves: [{ best: 1, t: "Superior English, +10", d: "Your date of effect resets to the day you update.", from: { p: 70, k: "co" }, to: { p: 80, k: "vs" }, why: "80 puts you ahead of all 1,841 nurse EOIs at 70, whatever their dates." },
+            { t: "Partner skills assessment, +5", d: "Partner points go from 5 to 10.", from: { p: 70, k: "co" }, to: { p: 75, k: "st" }, why: "75 meets all 3 recent cut-offs. 27 to 46 EOIs score higher." }],
+    deadline: ["!", "<b>Your EOI expires on 12 Mar 2028</b> if you aren't invited. You'd have to submit a new one, with a new date of effect."] },
+  points: { name: "Kavya (sample)", dob: "25 Jun 1992, age 34", where: "Offshore, India", assess: "ANMAC, to 6 May 2028", eng: "PTE Proficient, to 4 Jan 2029",
+    rows: [["Age", "34", 25], ["English", "Proficient, PTE 4 Jan 2026", 10], ["Qualification", "Bachelor of Nursing", 15], ["Overseas skilled work", "6 years", 10], ["Partner", "Competent English", 5], ["Community language", "NAATI CCL, Hindi", 5]],
+    zero: "Australian work and study, regional study, specialist education, Professional Year", totals: [70, 75, 85], extra: ["EOI submitted", "12 Mar 2026 (expires 12 Mar 2028)"], mrz: ["P<MLNKAVYA<<SAMPLE<<<<<<<<<<<<<<<<<<<<<<<<<<<", "254499<189<70<190<75<491<85<<EOI120326<<<<<<"] } },
+
+{ id: "none", tab: "7. Nothing suits", brief: "<b>No visa suits right now.</b> Dev, internal auditor, 75 points, offshore. 189 hasn't listed the occupation since Nov 2024 and no state has invited one in 6 months, so the stamp covers all three visas.",
+  who: "<b>Dev's report.</b> Internal Auditor, 75 points, offshore. Data to October 2026.",
+  k: "ni", ring: "189 • 190 • 491", bottom: "OCT 2026 • 75 POINTS", word: "Not invited",
+  h1: "None of the three visas is inviting internal auditors right now.",
+  fact: "189 hasn't listed internal auditors since November 2024, and no state has invited one for 190 or 491 in the last 6 months.",
+  read: "Your points aren't the problem: the trouble is that nobody is inviting your occupation. Keep your EOI in, because it costs nothing and rounds can change. Check whether another occupation you could be assessed in is being invited, and watch SA and WA, which still list internal auditors.",
+  best: "None right now. Stay in the pool and watch SA and WA.", wait: "No recent invitations to measure.",
+  why: "No visa is Competitive or better, so the stamp covers all three. 189: not listed in any of the last 4 rounds. 190 and 491: no state invitations in the last 6 months.",
+  visas: [["rect", "ni", "189 ANY STATE", "Not invited", "75 PTS", "189 Independent", "Not listed since Nov 2024. 154 to 192 EOIs score higher."],
+          ["hex", "ni", "190 ANY STATE", "Not invited", "80 PTS", "190 Nominated", "No state invited internal auditors in the last 6 months."],
+          ["oval", "ni", "491 ANY STATE", "Not invited", "90 PTS", "491 Regional", "No state invited internal auditors in the last 6 months."]],
+  cut: { rounds: [{ m: "Sep 24", c: 95 }, { m: "Nov 24", c: 90 }, { m: "Aug 25", c: null }, { m: "Nov 25", c: null }, { m: "Jun 26", c: null }, { m: "Oct 26", c: null }], you: 75, youColor: "#B42318", aria: "Cut-offs 95 and 90 in 2024, then not listed in the last four rounds. You are at 75." },
+  queue: { unit: 10, aria: "154 to 192 ahead, 86 tied, about 320 behind, in a pool that isn't being invited.", groups: [{ n: 17, fill: "#12202C", label: "Ahead: 154–192", bold: true }, { n: 9, fill: "#A06400", label: "Tied with you: 86" }, { n: 32, fill: "#C3CBD1", label: "Behind: about 320" }] },
+  queueTitle: "A queue that isn't moving",
+  route: { aria: "Today at 75, keep EOI in, check other occupations, watch SA and WA. English expires 1 August 2027.",
+    steps: [{ label: "Today", sub: "21 Nov 2026", pts: 75, k: "ni" }, { label: "Keep your EOI in", sub: "189 + 190 + 491" }, { label: "Check other occupations", sub: "you could be assessed in" }, { label: "Watch SA and WA", sub: "they still list you" }],
+    deadlines: [{ at: 2.5, label: "English test expires", date: "1 Aug 2027" }] },
+  improve: { title: "How to improve", sub: "What extra points would and wouldn't change.",
+    banner: ["ni", "Points won't change this. No visa is inviting your occupation right now."],
+    plain: ["<b>If 189 lists internal auditors again:</b> the last cut-offs were 90 and 95, so you'd need 15 to 20 more points.", "<b>Superior English, +10.</b> Takes you to 85, and keeps you eligible past 1 Aug 2027, when your current test expires.", "<b>Professional Year (accounting), +5.</b> About 12 months."] },
+  points: { name: "Dev (sample)", dob: "9 Sep 1991, age 35", where: "Offshore, India", assess: "CPA Australia, to 2 Mar 2028", eng: "PTE Proficient, to 1 Aug 2027",
+    rows: [["Age", "35", 25], ["English", "Proficient, PTE 1 Aug 2024", 10], ["Qualification", "Bachelor of Commerce", 15], ["Overseas skilled work", "9 years", 15], ["Partner", "Competent English", 5], ["Community language", "NAATI CCL, Gujarati", 5]],
+    zero: "Australian work and study, regional study, specialist education, Professional Year", totals: [75, 80, 90], mrz: ["P<MLNDEV<<SAMPLE<<<<<<<<<<<<<<<<<<<<<<<<<<<<<", "221214<189<75<190<80<491<90<<OCT2026<<<<<<<<<"] } },
+];
+/* keep tab order: move "none" before "lodged" */
+S.splice(S.findIndex(x => x.id === "lodged"), 0, S.splice(S.findIndex(x => x.id === "none"), 1)[0]);
+/* ---------- appendix data (print) ---------- */
+const nurseAll = [["15 Oct 2026", 70], ["4 Jun 2026", 75], ["13 Nov 2025", 75], ["21 Aug 2025", 80], ["7 Nov 2024", 70], ["5 Sep 2024", 75], ["13 Jun 2024", 85], ["18 Dec 2023", 65], ["25 May 2023", 65], ["8 Dec 2022", 65], ["22 Aug 2022", 65], ["21 Apr 2022", 85], ["21 Jan 2022", null]];
+const nursePool = [[45, 24, "24"], [50, 68, "68"], [55, 197, "197"], [60, 496, "496"], [65, 1532, "1,532"], [70, 1841, "1,841"], [75, 80, "80"], [80, 27, "27"], [85, 10, "<20"]];
+const APP = {
+  strong: { rounds: nurseAll, pool: nursePool, poolNote: "4,280 nurse EOIs waiting. None at 90 or above.",
+    st190: { pts: 95, rows: [["NSW", "Oct 2026: at least 327", 4, "st"], ["VIC", "Oct 2026: at least 337", 4, "st"], ["QLD", "Oct 2026: at least 260", 4, "st"], ["WA", "Oct 2026: at least 253", 6, "st"], ["SA", "Oct 2026: at least 124", 4, "st"], ["ACT", "Oct 2026: at least 28", 4, "st"], ["TAS", "Oct 2026: at least 28", 6, "st"], ["NT", "Oct 2026: at least 24", 6, "st"]] },
+    st491: { pts: 105, rows: [["NSW", "Oct 2026: at least 91", 4, "st"], ["VIC", "Oct 2026: at least 98", 4, "st"], ["WA", "Oct 2026: at least 85", 6, "st"], ["QLD", "Oct 2026: at least 45", 4, "st"], ["SA", "Oct 2026: at least 43", 4, "st"], ["ACT", "Oct 2026: under 20", 4, "co"], ["NT", "Oct 2026: under 20", 6, "co"], ["TAS", "Oct 2026: under 20", 4, "co"]] } },
+  notinv: { rounds: [["15 Oct 2026", null], ["4 Jun 2026", null], ["13 Nov 2025", null], ["21 Aug 2025", null], ["7 Nov 2024", 95], ["5 Sep 2024", 100], ["13 Jun 2024", 100], ["18 Dec 2023", null], ["25 May 2023", null], ["8 Dec 2022", 85], ["22 Aug 2022", null], ["21 Apr 2022", null], ["21 Jan 2022", null]],
+    pool: [[45, 30, "30"], [50, 83, "83"], [55, 206, "206"], [60, 406, "406"], [65, 1219, "1,219"], [70, 1393, "1,393"], [75, 1552, "1,552"], [80, 1338, "1,338"], [85, 1213, "1,213"], [90, 1132, "1,132"], [95, 608, "608"], [100, 229, "229"], [105, 35, "35"], [110, 10, "<20"]], poolNote: "9,464 software engineer EOIs waiting.",
+    st190: { pts: 90, rows: [["NT", "Oct 2026: under 20", 6, "co"], ["TAS", "Oct 2026: under 20", 4, "co"], ["ACT", "Jul 2026: under 20", 3, "lw"], ["QLD", "Jun 2026: under 20", 2, "lw"], ["SA", "Jun 2026: under 20", 2, "lw"], ["VIC", "Jun 2026: under 20", 2, "lw"], ["WA", "Jun 2026: under 20", 2, "lw"], ["NSW", "None in 6 months", 0, "ni"]] },
+    st491: { pts: 100, rows: [["NT", "Oct 2026: under 20", 5, "co"], ["TAS", "Oct 2026: under 20", 4, "co"], ["ACT", "Sep 2026: under 20", 2, "lw"], ["QLD", "Sep 2026: under 20", 1, "lw"], ["SA", "Jun 2026: under 20", 2, "lw"], ["VIC", "Jun 2026: under 20", 2, "lw"], ["WA", "Jun 2026: under 20", 2, "lw"], ["NSW", "None in 6 months", 0, "ni"]] } },
+  none: { rounds: [["15 Oct 2026", null], ["4 Jun 2026", null], ["13 Nov 2025", null], ["21 Aug 2025", null], ["7 Nov 2024", 90], ["5 Sep 2024", 95], ["13 Jun 2024", 95], ["18 Dec 2023", null], ["25 May 2023", null], ["8 Dec 2022", 65], ["22 Aug 2022", null], ["21 Apr 2022", null], ["21 Jan 2022", null]],
+    pool: [[55, 30, "30"], [60, 30, "30"], [65, 141, "141"], [70, 115, "115"], [75, 86, "86"], [80, 63, "63"], [85, 61, "61"], [90, 30, "30"], [95, 10, "<20"], [100, 10, "<20"]], poolNote: "582 internal auditor EOIs waiting.",
+    st190: { pts: 80, rows: [["All 8 states and territories", "None in 6 months", 0, "ni"]] },
+    st491: { pts: 90, rows: [["All 8 states and territories", "None in 6 months", 0, "ni"]] } },
+};
+APP.middle = { rounds: nurseAll, pool: nursePool, poolNote: "4,280 nurse EOIs waiting, October 2026.",
+  st190: { pts: 75, rows: [["NSW", "Oct 2026: 26", 4, "co"], ["VIC", "Oct 2026: 36", 4, "co"], ["QLD", "Oct 2026: 25", 4, "co"], ["WA", "Oct 2026: 26", 6, "co"], ["SA", "Oct 2026: 20", 4, "co"], ["ACT", "Oct 2026: under 20", 4, "co"], ["TAS", "Oct 2026: under 20", 6, "co"], ["NT", "Oct 2026: under 20", 6, "co"]] } };
+S.forEach(x => { if (APP[x.id]) x.app = APP[x.id]; });
+/* evidence-opened variant of Priya */
+S.push(Object.assign({}, S[1], { id: "evidence", tab: "9. Evidence opened", evOpen: true,
+  brief: "<b>More info.</b> Priya's report with \"See the evidence\" opened: everything behind the verdict, for people (and agents) who want to check the numbers. It stays folded by default." }));
+S.push({ id: "rules", tab: "Label rules", rules: true, brief: "<b>How each label is decided.</b> Code decides these from the data; the AI only writes the wording around them. Tell me what to change." });
+
+/* ---------- render ---------- */
+function evidence(s) {
+  if (!s.evOpen) return `<div class="band pad" id="evidence"><details class="ev"><summary>See the evidence <span>every round, the pools, EOIs like yours, every state</span></summary></details></div>`;
+  const rounds = [["15 Oct 2026", 70], ["4 Jun 2026", 75], ["13 Nov 2025", 75], ["21 Aug 2025", 80], ["7 Nov 2024", 70], ["5 Sep 2024", 75], ["13 Jun 2024", 85], ["18 Dec 2023", 65], ["25 May 2023", 65], ["8 Dec 2022", 65], ["22 Aug 2022", 65], ["21 Apr 2022", 85], ["21 Jan 2022", null]];
+  const st190 = [["NSW", "26", "co", "Checked against your answers"], ["VIC", "36", "co", "Rules being checked"], ["QLD", "25", "co", "Checked against your answers"], ["WA", "26", "co", "Checked against your answers"], ["SA", "20", "co", "Checked against your answers"], ["ACT", "under 20", "co", "Rules being checked"], ["TAS", "under 20", "co", "Rules being checked"], ["NT", "under 20", "co", "Rules being checked"]];
+  return `<div class="band pad" id="evidence"><details class="ev" open><summary>See the evidence <span>every round, the pools, EOIs like yours, every state</span></summary>
+  <div class="evgrid">
+    <div class="two">
+      <div><h3>Every 189 round since 2022</h3><p class="sub">Cut-off for Registered Nurses nec.</p><div class="tablewrap"><table class="t"><tr><th>Round</th><th>Cut-off</th><th>Your 70</th></tr>${rounds.map(r => `<tr><td>${r[0]}</td><td>${r[1] ?? "Not listed"}</td><td>${r[1] == null ? "" : 70 >= r[1] ? "Enough" : "Short by " + (r[1] - 70)}</td></tr>`).join("")}</table></div></div>
+      <div><h3>The 189 pool by points</h3><p class="sub">4,280 nurse EOIs waiting, October 2026.</p>${[false, true].map(nw => `<div class="${nw ? "narrow" : "wide"}">${histogram({ you: 70, aria: "Nurse 189 pool by points: most EOIs at 65 and 70; 80 at 75, 27 at 80, under 20 at 85.", bars: [{ s: 45, v: 24, t: "24" }, { s: 50, v: 68, t: "68" }, { s: 55, v: 197, t: "197" }, { s: 60, v: 496, t: "496" }, { s: 65, v: 1532, t: "1,532" }, { s: 70, v: 1841, t: "1,841" }, { s: 75, v: 80, t: "80" }, { s: 80, v: 27, t: "27" }, { s: 85, v: 10, t: "<20" }] }, nw)}</div>`).join("")}
+        <h3 style="margin-top:22px">What happened to EOIs from a year ago</h3><p class="sub">Nurse EOIs submitted in November 2025 (all scores), as at October 2026.</p>
+        ${[false, true].map(nw => `<div class="${nw ? "narrow" : "wide"}">${stackBar([{ v: 130, fill: "#0F6B3C", label: "Invited: 130" }, { v: 45, fill: "#56636E", label: "Lodged a visa: 45" }, { v: 125, fill: "#A06400", label: "Still waiting: 125" }, { v: 123, fill: "#C3CBD1", label: "Closed: 123" }], "Of 423 to 442 nurse EOIs from November 2025: 130 invited, 45 lodged, 125 waiting, 123 closed, under 20 on hold.", nw)}</div>`).join("")}
+      </div>
+    </div>
+    <div><h3>190 by state, at your 75 points</h3><p class="sub">Nurses invited at 75 or less in October 2026, and whether each state's rules fit you.</p>
+      <div class="tablewrap"><table class="t"><tr><th>State</th><th>Invited at 75 or less</th><th>Outlook</th><th>Rules</th></tr>${st190.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${chip(r[2])}</td><td>${r[3]}</td></tr>`).join("")}</table></div>
+      <p class="why" style="margin-top:8px">The same table follows for 491 at 85 points. Mockup note: the Rules column would run each state's rules against your answers.</p></div>
+    <p class="why">Source: SkillSelect EOI data and invitation rounds, Department of Home Affairs, snapshot 31 Oct 2026. Counts are EOIs, and one person can hold several. "Under 20" is published as a range, never as a number.</p>
+  </div></details></div>`;
+}
+function renderScenario(s) {
+  const vs = s.visas.map((v, i) => `<figure>${visaStamp(v[0], v[1], v[2], v[3], v[4], [-4, 5, -2][i])}<figcaption><b>${v[5]}</b><span>${v[6]}</span></figcaption></figure>`).join("");
+  const imp = s.improve;
+  const moves = imp.plain ? `<ul class="plain">${imp.plain.map(x => `<li>${x}</li>`).join("")}</ul>`
+    : `<div class="moves">${imp.moves.map(m => `<div class="move${m.best ? " best" : ""}"><div>${m.best ? '<span class="tag">Biggest jump</span>' : ""}<h3>${m.t}</h3>${m.d ? `<p>${m.d}</p>` : ""}<p style="color:var(--ink)">${m.why}</p></div>${shiftStamps(m.from, m.to)}</div>`).join("")}</div>`;
+  const p = s.points;
+  return `
+  <nav class="rnav" aria-label="Report sections"><a href="#outlook">Outlook</a><a href="#visas">Visas</a><a href="#charts">Cut-offs</a><a href="#route">Route</a><a href="#improve">Improve</a><a href="#evidence">Evidence</a><a href="#points">Points</a></nav>
+  <div class="pad hero" id="outlook">${guilloche()}
+    <div><div class="who">${s.who}</div><h1>${s.h1}</h1><p class="fact">${s.fact}</p>
+      <div class="read"><b>Our read</b>${s.read}<small>Written by AI from the numbers in this report. Every figure is checked against the data.</small></div>
+      <div class="meta"><div><b>Best route:</b> ${s.best}</div><div><b>Estimated wait:</b> ${s.wait}</div><div class="why">${s.why}</div></div>
+      <div><button class="dl-btn" type="button" onclick="window.print()">Download PDF</button></div></div>
+    <div class="stampwrap">${bigStamp(s.k, s.ring, s.bottom, s.word)}</div>
+  </div>
+  <div class="band pad tint" id="visas"><h2 class="sec-h">Your three visas</h2><p class="sub">Each stamp is your outlook for that visa today.</p><div class="visas">${vs}</div></div>
+  <div class="band pad" id="charts"><div class="two">
+    <div><h3>Last 6 cut-offs</h3><p class="sub">189 rounds for your occupation.</p>${s.cut ? `<div class="wide">${cutoffChart(s.cut)}</div><div class="narrow">${cutoffChart(s.cut, true)}</div>` : `<div class="empty">${s.cutEmpty}</div>`}</div>
+    <div><h3>${s.queueTitle || "Who's in the queue"}</h3><p class="sub">EOIs in the 189 pool, by points.</p>${s.queue ? `<div class="wide">${queueSquares(s.queue)}</div><div class="narrow">${queueSquares(s.queue, true)}</div>` : `<div class="empty">${s.queueEmpty}</div>`}</div>
+  </div></div>
+  <div class="band pad" id="route"><h2 class="sec-h">Your best route</h2><p class="sub">What we'd do with your profile, in order, and the dates that work against you.</p><div class="wide">${routeLine(s.route)}</div><div class="narrow">${routeList(s.route)}</div></div>
+  <div class="band pad" id="improve"><h2 class="sec-h">${imp.title}</h2><p class="sub">${imp.sub}</p>
+    ${imp.banner ? `<div class="banner" style="background:${V[imp.banner[0]].bg};color:${V[imp.banner[0]].c}"><b>${imp.banner[1]}</b></div>` : ""}
+    ${moves}${imp.deadline ? `<div class="deadline"><span class="n">${imp.deadline[0]}</span><div>${imp.deadline[1]}</div></div>` : ""}</div>
+  ${evidence(s)}
+  <div class="band pad" id="points"><h2 class="sec-h">Your points, in full</h2><p class="sub">Your whole profile, so anyone you share this with sees exactly what you told us.</p>
+    <div class="dp"><div class="photo" aria-hidden="true"><svg viewBox="0 0 130 164"><circle cx="65" cy="66" r="29" fill="#CDD6D0"/><path d="M12 164 C 18 112, 112 112, 118 164 Z" fill="#CDD6D0"/></svg></div>
+      <div><div class="fields"><div><span>Name</span>${p.name}</div><div><span>Occupation</span>${s.who.split("</b> ")[1].split(",")[0]}</div><div><span>Date of birth</span>${p.dob}</div><div><span>Where you are</span>${p.where}</div><div><span>Skills assessment</span>${p.assess}</div><div><span>English test</span>${p.eng}</div>${p.extra ? `<div><span>${p.extra[0]}</span>${p.extra[1]}</div>` : ""}</div>
+        <table class="pts">${p.rows.map(r => `<tr><td>${r[0]}</td><td class="d">${r[1]}</td><td class="n">${r[2]}</td></tr>`).join("")}${zeroRow(p.zero)}</table>
+        <div class="totals"><div><b>${p.totals[0]}</b>189 Independent</div><div><b>${p.totals[1]}</b>190 with nomination (+5)</div><div><b>${p.totals[2]}</b>491 with nomination (+15)</div></div></div></div>
+    <div class="mrz" aria-hidden="true">${p.mrz.join("\n").replace(/</g, "&lt;")}</div>
+  </div>
+  ${methodNote}
+  ${footer}`;
+}
+function appendix(s) {
+  const a = s.app, you = s.points.totals[0];
+  const rounds = a ? a.rounds : s.cut ? s.cut.rounds.map(r => [r.m, r.c]) : [];
+  const rtable = rounds.length ? `<table class="t"><tr><th>Round</th><th>Cut-off</th><th>Your ${you}</th></tr>${rounds.map(r => `<tr><td>${r[0]}</td><td>${r[1] ?? "Not listed"}</td><td>${r[1] == null ? "" : you >= r[1] ? "Enough" : "Short by " + (r[1] - you)}</td></tr>`).join("")}</table>` : `<p class="why">No 189 round in the published results lists this occupation.</p>`;
+  const hist = a && a.pool ? histogram({ you, aria: "189 pool by points", bars: a.pool.map(b => ({ s: b[0], v: b[1], t: b[2] })) }, true) : `<p class="why">No pool counts are published for this occupation.</p>`;
+  const stt = (t, title) => t ? `<div><h3>${title} by state, at your ${t.pts} points</h3><table class="t"><tr><th>State</th><th>Latest invited at or below your points</th><th>Outlook</th></tr>${t.rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}${r[2] ? `<br><span class="why">${r[2]} of the last 6 months</span>` : ""}</td><td>${chip(r[3], r[3] === "ni" ? "Not invited" : undefined)}</td></tr>`).join("")}</table></div>` : "";
+  return `<div class="appendix"><p class="tag">Appendix</p><h2>The evidence behind your report</h2><p class="sub">Everything the labels and estimates above are built from.</p>
+    <div class="two"><div><h3>Every 189 round since 2022</h3>${rtable}</div><div><h3>The 189 pool by points</h3><p class="sub">${a && a.poolNote ? a.poolNote : ""}</p>${hist}</div></div>
+    ${a ? `<div class="two" style="margin-top:12pt">${stt(a.st190, "190")}${stt(a.st491, "491")}</div>` : ""}
+    <p class="why" style="margin-top:10pt">Source: SkillSelect EOI data and invitation rounds, Department of Home Affairs, snapshot 31 Oct 2026. Counts are EOIs, and one person can hold several. "Under 20" is published as a range, never a number. State outlooks also depend on each state's rules; ACT, VIC, TAS and NT rules are still being checked.</p></div>`;
+}
+function renderPrint(s) {
+  const p = s.points, imp = s.improve, name = p.name.replace(" (sample)", "");
+  const vs = s.visas.map((v, i) => `<figure>${visaStamp(v[0], v[1], v[2], v[3], v[4], [-4, 5, -2][i])}<figcaption><b>${v[5]}</b><span>${v[6]}</span></figcaption></figure>`).join("");
+  const moves = imp.plain ? `<ul class="plain">${imp.plain.map(x => `<li>${x}</li>`).join("")}</ul>`
+    : `<div class="moves">${imp.moves.map(m => `<div class="move${m.best ? " best" : ""}"><div>${m.best ? '<span class="tag">Biggest jump</span>' : ""}<h3>${m.t}</h3>${m.d ? `<p>${m.d}</p>` : ""}<p style="color:var(--ink)">${m.why}</p></div>${shiftStamps(m.from, m.to)}</div>`).join("")}</div>`;
+  return `<div class="pr print-only">
+    <div class="brandline"><b>MigrateLens</b><span>Report for ${name}, calculated 21 Nov 2026. SkillSelect data to 31 Oct 2026.</span></div>
+    <section class="first"><div class="phero">${guilloche()}<div><div class="who">${s.who}</div><h1>${s.h1}</h1><p class="fact">${s.fact}</p>
+      <div class="tiles"><div><b>Best route</b>${s.best}</div><div><b>Estimated wait</b>${s.wait}</div></div>
+      <div class="read"><b>Our read</b>${s.read}<small>Written by AI from the numbers in this report. Every figure is checked against the data.</small></div><div class="why">${s.why}</div></div>
+      <div class="stampwrap">${bigStamp(s.k, s.ring, s.bottom, s.word)}</div></div></section>
+    <section><h2>Your three visas</h2><p class="sub">Each stamp is your outlook for that visa today.</p><div class="visas">${vs}</div></section>
+    <section class="pbreak first keep"><div class="two">
+      <div><h3>Last 6 cut-offs</h3><p class="sub">189 rounds for your occupation.</p>${s.cut ? cutoffChart(s.cut, true) : `<div class="empty">${s.cutEmpty}</div>`}</div>
+      <div><h3>${s.queueTitle || "Who's in the queue"}</h3><p class="sub">EOIs in the 189 pool, by points.</p>${s.queue ? queueSquares(s.queue, true) : `<div class="empty">${s.queueEmpty}</div>`}</div></div></section>
+    <section class="keep"><h2>Your best route</h2><p class="sub">What we'd do with your profile, in order, and the dates that work against you.</p>${routeLine(s.route, 700)}</section>
+    <section><h2>${imp.title}</h2><p class="sub">${imp.sub}</p>${imp.banner ? `<div class="banner" style="background:${V[imp.banner[0]].bg};color:${V[imp.banner[0]].c}"><b>${imp.banner[1]}</b></div>` : ""}${moves}${imp.deadline ? `<div class="deadline"><span class="n">${imp.deadline[0]}</span><div>${imp.deadline[1]}</div></div>` : ""}</section>
+    <section class="keep"><h2>Your points, in full</h2><p class="sub">Your whole profile, so anyone you share this with sees exactly what you told us.</p>
+      <div class="fields"><div><span>Name</span>${p.name}</div><div><span>Occupation</span>${s.who.split("</b> ")[1].split(",")[0]}</div><div><span>Date of birth</span>${p.dob}</div><div><span>Where you are</span>${p.where}</div><div><span>Skills assessment</span>${p.assess}</div><div><span>English test</span>${p.eng}</div>${p.extra ? `<div><span>${p.extra[0]}</span>${p.extra[1]}</div>` : ""}</div>
+      <table class="pts">${p.rows.map(r => `<tr><td>${r[0]}</td><td class="d">${r[1]}</td><td class="n">${r[2]}</td></tr>`).join("")}${zeroRow(p.zero)}</table>
+      <div class="totals"><div><b>${p.totals[0]}</b>189 Independent</div><div><b>${p.totals[1]}</b>190 with nomination (+5)</div><div><b>${p.totals[2]}</b>491 with nomination (+15)</div></div>
+      <div class="mrz" aria-hidden="true">${p.mrz.join("\n").replace(/</g, "&lt;")}</div></section>
+    <section class="keep">${methodNote.replace('class="band pad method" id="method"', 'class="method"')}</section>
+    <div class="gbox"><b>This is our best reading of the data, not a guarantee.</b> It comes from published SkillSelect figures up to October 2026. Home Affairs and the states can change round sizes, cut-offs and rules at any time, so your real result may be different. MigrateLens isn't a registered migration agent; for advice on your own case, talk to one.</div>
+    ${appendix(s)}
+  </div>`;
+}
+function renderRules() {
+  const rows = [
+    ["vs", "Your points are above every cut-off in your occupation's last 3 listed 189 rounds, and fewer than 20 EOIs score higher.", "Aarav, 90"],
+    ["st", "Your points meet every cut-off in the last 3 listed rounds.", "A nurse at 75"],
+    ["co", "Your points meet the lowest cut-off in the last 3 listed rounds, but not all of them.", "Priya, 70"],
+    ["lw", "Your occupation is still being listed, but your points are below every cut-off in its last 3 listed rounds.", "Meera, 80"],
+    ["ni", "Your occupation wasn't listed in any of the last 4 189 rounds.", "Rahul, 85"],
+    ["ne", "Under 65 points, or a basic requirement fails (age 45 or over, English expired, no valid skills assessment).", "Arjun, 60"],
+    ["nd", "No published pool, rounds or state invitations for the occupation. If every count is \"under 20\", the wording becomes \"Too few to count\".", "Sana"],
+  ];
+  return `<div class="pad rules">
+    <h2 class="sec-h">How each label is decided</h2><p class="sub">The big stamp shows your best visa (189 first, then 190, then 491 when labels tie). If none is Competitive or better, one combined stamp covers all three with the best of their labels.</p>
+    <div class="tablewrap"><table class="t"><tr><th>Label</th><th>Rule for 189</th><th>Example</th></tr>${rows.map(r => `<tr><td>${chip(r[0])}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("")}</table></div>
+    <h2 class="sec-h" style="margin-top:34px">190 and 491, state by state</h2><p class="sub">Each state gets a label at your points with nomination (+5 or +15). The visa's label is its best state.</p>
+    <div class="tablewrap"><table class="t"><tr><th>Label</th><th>Rule</th></tr>
+      <tr><td>${chip("st")}</td><td>At least 20 confirmed invitations at or below your points in the last 3 months, and at least half of that state's invitations were at or below your points.</td></tr>
+      <tr><td>${chip("co")}</td><td>Confirmed invitations at or below your points, but most were above; or "under 20" invitations at or below your points in at least 2 of the last 3 months.</td></tr>
+      <tr><td>${chip("lw")}</td><td>The state invited your occupation only above your points, or only once at or below them, in the last 6 months.</td></tr>
+      <tr><td>${chip("ni", "Not open to you")}</td><td>Not on the state's list, or its rules (onshore/offshore, residence, work experience) rule you out.</td></tr>
+      <tr><td>${chip("nd", "Rules being checked")}</td><td>We haven't verified that state's rules yet (ACT, VIC, TAS, NT today). Evidence is still shown.</td></tr></table></div>
+    <h2 class="sec-h" style="margin-top:34px">Other rules the report follows</h2>
+    <div class="callout"><b>Estimated wait</b> comes from code, not AI: the next round for Very strong; "possible in a round that goes to your score" for Competitive; rounds-needed at the latest round's pace for people already in the queue; "unlikely without more points" for Long wait; nothing for Not currently invited or Not enough data.</div>
+    <div class="callout"><b>How to improve</b> re-runs these same rules on your profile with each change, so the new label is always consistent with the headline. Changes come from your answers: English band, NAATI, Professional Year (for eligible occupations), partner skills, the next experience band, and dated losses (birthdays, English and EOI expiry).</div>
+    <div class="callout"><b>"Under 20"</b> is never shown as a number. When a range decides a label, we take the cautious reading.</div>
+    <div class="callout"><b>The AI summary</b> ("Our read") gets the computed facts only. Any number it writes is checked against those facts before the report is shown; if a check fails, we show a plain template sentence instead.</div>
+    <div class="callout"><b>Footer:</b> every report ends with the not-a-guarantee note.</div>
+  </div>`;
+}
+const tabs = document.getElementById("tabs"), page = document.getElementById("page"), brief = document.getElementById("brief");
+S.forEach((s, i) => { const b = document.createElement("button"); b.textContent = s.tab; b.dataset.choice = "scenario-" + s.id; b.onclick = () => show(i); tabs.appendChild(b); });
+function show(i) {
+  const s = S[i];
+  [...tabs.children].forEach((b, j) => b.classList.toggle("on", i === j));
+  brief.innerHTML = s.brief; page.innerHTML = s.rules ? renderRules() : `<div class="screen-only">${renderScenario(s)}</div>${renderPrint(s)}`; window.scrollTo({ top: 0 });
+  const nm = s.points ? s.points.name.replace(" (sample)", "") : "";
+  document.getElementById("pagestyle").textContent = `@page { @bottom-left { content: "MigrateLens report for ${nm}. Our best reading of SkillSelect data to Oct 2026, not a guarantee."; font: 8pt Archivo, sans-serif; color: #52606B; } @bottom-right { content: "Page " counter(page) " of " counter(pages); font: 8pt Archivo, sans-serif; color: #52606B; } }`;
+  fitStamps(); document.fonts && document.fonts.ready.then(fitStamps);
+}
+function fitStamps() {
+  document.querySelectorAll("text[data-fit]").forEach(t => {
+    t.removeAttribute("textLength"); t.removeAttribute("lengthAdjust");
+    const max = +t.dataset.fit; if (t.getComputedTextLength() > max) { t.setAttribute("textLength", max); t.setAttribute("lengthAdjust", "spacingAndGlyphs"); }
+  });
+}
+const qs = new URLSearchParams(location.search);
+if (qs.get("embed")) document.body.classList.add("embed");
+const start = Math.max(0, S.findIndex(x => x.id === qs.get("s")));
+show(start);
+if (document.fonts) Promise.all(["800 20px 'Big Shoulders Stencil Display'", "900 20px 'Big Shoulders Stencil Display'"].map(f => document.fonts.load(f))).then(fitStamps);
+</script>
+</body>
+</html>

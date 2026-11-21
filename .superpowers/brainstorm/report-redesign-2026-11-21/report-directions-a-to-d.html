@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Report directions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..800&family=Inter:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Overpass:wght@400;600;800;900&family=Overpass+Mono:wght@500;700&family=Libre+Caslon+Text:wght@400;700&family=Big+Shoulders+Stencil+Display:wght@700;800;900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-size: 17px; line-height: 1.55; }
+  .switch { position: sticky; top: 0; z-index: 50; background: #12202C; color: #fff; padding: 10px 16px; display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; font: 500 14px/1.3 Inter, sans-serif; }
+  .switch button { font: inherit; border: 1px solid #ffffff55; background: transparent; color: #fff; padding: 8px 14px; border-radius: 999px; cursor: pointer; }
+  .switch button.on { background: #fff; color: #12202C; }
+  .note { max-width: 880px; margin: 18px auto 0; padding: 0 16px; font: 14px/1.5 Inter, sans-serif; color: #52606B; }
+  main.view { display: none; }
+  body[data-v="a"] main.ab, body[data-v="b"] main.ab, body[data-v="c"] main.c, body[data-v="d"] main.d { display: block; }
+  svg { max-width: 100%; height: auto; display: block; }
+
+  /* =========================================================
+     A + B (shared markup, two token sets)
+     ========================================================= */
+  body[data-v="a"] {
+    --paper: #FFFFFF; --wash: #F1F4F2; --ink: #12202C; --muted: #52606B; --rule: #D9DFDC;
+    --strong: #1E7A4C; --strong-bg: #E3F2E9; --edge: #A86A00; --edge-bg: #FBF0D9; --long: #B42318; --long-bg: #FCE7E5;
+    --ladder: #12202C; --display: "Archivo", system-ui, sans-serif; --body: "Archivo", system-ui, sans-serif;
+    --stretch: 118%; --dweight: 750; --radius: 14px;
+  }
+  body[data-v="b"] {
+    --paper: #FAF7F0; --wash: #F1ECE1; --ink: #1D1B17; --muted: #5E584D; --rule: #E2DACB;
+    --strong: #2F6B47; --strong-bg: #DCEADF; --edge: #8A5A00; --edge-bg: #F5E6C8; --long: #A8321E; --long-bg: #F6DDD6;
+    --ladder: #D9822B; --display: "Newsreader", Georgia, serif; --body: "Inter", system-ui, sans-serif;
+    --stretch: 100%; --dweight: 600; --radius: 10px;
+  }
+  body[data-v="a"], body[data-v="b"] { background: var(--wash); color: var(--ink); font-family: var(--body); }
+  .ab .page { max-width: 860px; margin: 24px auto 64px; background: var(--paper); border-radius: var(--radius); padding: 48px 56px; }
+  @media (max-width: 700px) { .ab .page { margin: 0; border-radius: 0; padding: 28px 18px; } }
+  .ab h2, .ab h3, .ab .verdict-word { font-family: var(--display); font-stretch: var(--stretch); font-weight: var(--dweight); letter-spacing: -0.01em; margin: 0; }
+  .ab .who { color: var(--muted); font-size: 15px; margin-bottom: 28px; }
+  .ab .who strong { color: var(--ink); }
+  .ab .verdict { border-radius: var(--radius); padding: 28px 30px; background: var(--edge-bg); }
+  .ab .verdict-label { font-size: 15px; color: var(--muted); }
+  .ab .verdict-word { font-size: clamp(44px, 7vw, 68px); line-height: 1; color: var(--edge); }
+  .ab .verdict-line { font-size: 21px; line-height: 1.4; margin: 14px 0 0; max-width: 34em; }
+  .ab .read { margin-top: 22px; padding-top: 18px; border-top: 1px solid color-mix(in srgb, var(--edge) 25%, transparent); }
+  .ab .read h3 { font-size: 17px; margin-bottom: 6px; }
+  .ab .read p { margin: 0; max-width: 40em; }
+  .ab .read small { display: block; color: var(--muted); font-size: 13px; margin-top: 8px; }
+  .ab .ladder { margin: 34px 0 8px; }
+  .ab .ladder h2 { font-size: 22px; }
+  .ab .sub { margin: 4px 0 18px; color: var(--muted); font-size: 15px; }
+  .ab .visas { display: grid; grid-template-columns: repeat(3, 1fr); margin: 36px 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+  .ab .visa { padding: 18px 18px 18px 0; }
+  .ab .visa + .visa { padding-left: 18px; border-left: 1px solid var(--rule); }
+  .ab .visa h3 { font-size: 17px; }
+  .ab .visa p { margin: 0; font-size: 15px; color: var(--muted); }
+  @media (max-width: 700px) { .ab .visas { grid-template-columns: 1fr; } .ab .visa + .visa { padding-left: 0; border-left: 0; border-top: 1px solid var(--rule); } }
+  .chip { display: inline-block; font-size: 14px; font-weight: 600; padding: 3px 10px; border-radius: 999px; margin: 8px 0 6px; white-space: nowrap; }
+  .chip.strong { background: var(--strong-bg); color: var(--strong); }
+  .chip.edge { background: var(--edge-bg); color: var(--edge); }
+  .chip.long { background: var(--long-bg); color: var(--long); }
+  .ab section { margin-top: 44px; }
+  .ab section > h2 { font-size: 26px; }
+  .ab ol.route { list-style: none; padding: 0; margin: 0; counter-reset: s; }
+  .ab ol.route li { counter-increment: s; display: grid; grid-template-columns: 40px 1fr; gap: 14px; padding: 14px 0; border-top: 1px solid var(--rule); }
+  .ab ol.route li::before { content: counter(s); font-family: var(--display); font-stretch: var(--stretch); font-weight: 700; font-size: 20px; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--ink); color: var(--paper); }
+  .ab ol.route b { display: block; }
+  .ab ol.route span { color: var(--muted); font-size: 15px; }
+  .ab .moves { display: grid; gap: 12px; }
+  .ab .move { display: grid; grid-template-columns: 1fr auto; gap: 6px 18px; align-items: center; padding: 16px 18px; border: 1px solid var(--rule); border-radius: var(--radius); }
+  .ab .move.best { border: 2px solid var(--strong); }
+  .ab .move .what b { font-size: 18px; }
+  .ab .move .what span { display: block; color: var(--muted); font-size: 14px; }
+  .ab .shift { display: flex; align-items: center; gap: 8px; font-size: 15px; white-space: nowrap; }
+  .ab .shift .pts { font-family: var(--display); font-stretch: var(--stretch); font-weight: 700; font-size: 22px; }
+  .ab .move .why { grid-column: 1 / -1; font-size: 15px; margin: 0; }
+  .ab .tag { font-size: 13px; font-weight: 600; color: var(--strong); }
+  @media (max-width: 700px) { .ab .move { grid-template-columns: 1fr; } .ab .shift { flex-wrap: wrap; } }
+  .ab .deadline { display: flex; gap: 16px; align-items: baseline; padding: 16px 18px; border-radius: var(--radius); background: var(--long-bg); margin-top: 14px; }
+  .ab .deadline .pts { font-family: var(--display); font-stretch: var(--stretch); font-weight: 700; font-size: 22px; color: var(--long); }
+  .ab details.evidence { margin-top: 44px; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); padding: 16px 0; }
+  .ab details.evidence summary { cursor: pointer; font-family: var(--display); font-stretch: var(--stretch); font-weight: var(--dweight); font-size: 20px; }
+  .ab details.evidence ul { color: var(--muted); font-size: 15px; }
+  .ab table.points { width: 100%; border-collapse: collapse; font-size: 16px; font-variant-numeric: tabular-nums; }
+  .ab table.points td { padding: 10px 0; border-top: 1px solid var(--rule); vertical-align: top; }
+  .ab table.points td.d { color: var(--muted); font-size: 15px; padding-left: 12px; }
+  .ab table.points td.n { text-align: right; font-weight: 600; width: 64px; }
+  .ab table.points tr.zero td { color: var(--muted); }
+  .ab table.points tr.total td { border-top: 2px solid var(--ink); font-family: var(--display); font-stretch: var(--stretch); font-weight: 700; font-size: 20px; padding-top: 14px; }
+  .ab .totals { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+  .ab .totals div { flex: 1 1 160px; background: var(--wash); border-radius: var(--radius); padding: 12px 14px; font-size: 14px; color: var(--muted); }
+  .ab .totals b { display: block; font-family: var(--display); font-stretch: var(--stretch); font-weight: 700; font-size: 26px; color: var(--ink); }
+  .ab dl.facts { display: grid; grid-template-columns: max-content 1fr; gap: 6px 18px; font-size: 15px; margin: 18px 0 0; }
+  .ab dl.facts dt { color: var(--muted); }
+  .ab dl.facts dd { margin: 0; }
+  .ab footer.guarantee { margin-top: 40px; padding: 18px 20px; border-radius: var(--radius); background: var(--wash); font-size: 14px; color: var(--muted); }
+  .ab footer.guarantee b { color: var(--ink); }
+
+  /* =========================================================
+     C — Departures (airport board)
+     ========================================================= */
+  body[data-v="c"] { background: #E6E9ED; color: #1A1D21; font-family: "Overpass", system-ui, sans-serif; }
+  .c { --board: #1A1D21; --flap: #2A2E35; --flaptext: #F4EFE2; --go: #36D27E; --hold: #FFB21E; --stop: #FF5C4D; --cobalt: #2446D6; --muted: #59616B; --rule: #C9CED5; --card: #FFFFFF; }
+  .c .page { max-width: 920px; margin: 24px auto 64px; padding: 0 16px; }
+  .c .top { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 14px; }
+  .c .top h1 { font-weight: 900; font-size: 34px; letter-spacing: -0.02em; margin: 0; line-height: 1.05; }
+  .c .top p { margin: 0; color: var(--muted); font-size: 15px; }
+  .c .board { background: var(--board); border-radius: 16px; padding: 20px 20px 22px; color: var(--flaptext); box-shadow: inset 0 0 0 1px #000, 0 18px 40px -24px #1A1D21; overflow-x: auto; }
+  .c .board-head, .c .row { display: grid; grid-template-columns: 1.5fr 0.6fr 0.9fr 1.6fr; gap: 14px; align-items: center; min-width: 620px; }
+  .c .board-head { font: 600 13px/1 "Overpass", sans-serif; color: #9AA3AD; padding: 0 2px 10px; letter-spacing: 0.04em; }
+  .c .row { padding: 8px 0; border-top: 1px solid #000; }
+  .c .flaps { display: flex; gap: 3px; }
+  .c .flaps span { font: 700 21px/1 "Overpass Mono", monospace; background: linear-gradient(#30353D 0 49%, #000 49% 51%, #2A2E35 51%); color: var(--flaptext); width: 1.15em; height: 1.55em; display: grid; place-items: center; border-radius: 3px; }
+  .c .flaps.hold span { color: var(--hold); } .c .flaps.go span { color: var(--go); } .c .flaps.stop span { color: var(--stop); }
+  .c .flaps.sm span { font-size: 17px; }
+  .c .flaps span.flip { animation: flip .5s cubic-bezier(.3,.7,.4,1) both; }
+  @keyframes flip { 0% { transform: rotateX(90deg); filter: brightness(1.8);} 100% { transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .c .flaps span.flip { animation: none; } }
+  .c .say { background: var(--card); border-radius: 16px; padding: 26px 28px; margin-top: 16px; display: grid; grid-template-columns: 1.3fr 1fr; gap: 28px; }
+  .c .say h2 { font-weight: 900; font-size: 30px; line-height: 1.15; margin: 0 0 10px; letter-spacing: -0.02em; }
+  .c .say h2 em { font-style: normal; color: #B57900; }
+  .c .say p { margin: 0; }
+  .c .say .read { border-left: 4px solid var(--cobalt); padding-left: 18px; }
+  .c .say .read b { display: block; margin-bottom: 4px; color: var(--cobalt); }
+  .c .say small { display: block; color: var(--muted); font-size: 13px; margin-top: 8px; }
+  @media (max-width: 760px) { .c .say { grid-template-columns: 1fr; } }
+  .c section { margin-top: 30px; }
+  .c section > h2 { font-weight: 900; font-size: 26px; letter-spacing: -0.02em; margin: 0; }
+  .c section > p.sub { margin: 2px 0 14px; color: var(--muted); }
+  .c .panel { background: var(--card); border-radius: 16px; padding: 22px 24px; }
+  .c .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 760px) { .c .two { grid-template-columns: 1fr; } }
+  .c .tickets { display: grid; gap: 14px; }
+  .c .ticket { display: grid; grid-template-columns: 120px 1fr; background: var(--card); border-radius: 14px; position: relative; overflow: hidden; }
+  .c .ticket .stub { background: var(--cobalt); color: #fff; display: grid; place-items: center; text-align: center; padding: 14px 8px; border-right: 2px dashed #ffffffaa; }
+  .c .ticket .stub b { display: block; font-weight: 900; font-size: 34px; line-height: 1; }
+  .c .ticket .stub span { font-size: 13px; }
+  .c .ticket.best .stub { background: #127A47; }
+  .c .ticket .body { padding: 16px 20px; display: grid; gap: 6px; }
+  .c .ticket .body h3 { margin: 0; font-weight: 800; font-size: 19px; }
+  .c .ticket .body p { margin: 0; color: var(--muted); font-size: 15px; }
+  .c .ticket .moveline { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .c .ticket::before, .c .ticket::after { content: ""; position: absolute; left: 111px; width: 18px; height: 18px; background: #E6E9ED; border-radius: 50%; }
+  .c .ticket::before { top: -9px; } .c .ticket::after { bottom: -9px; }
+  .c .pass { background: var(--card); border-radius: 16px; overflow: hidden; display: grid; grid-template-columns: 1fr 230px; }
+  .c .pass .main { padding: 22px 24px; }
+  .c .pass .side { background: #F2F4F7; border-left: 2px dashed var(--rule); padding: 22px 20px; }
+  .c .pass .fields { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px 18px; margin-bottom: 16px; }
+  .c .pass .fields div span { display: block; font-size: 12px; color: var(--muted); letter-spacing: 0.04em; }
+  .c .pass .fields div b { font-weight: 700; font-size: 15px; }
+  .c .pass table { width: 100%; border-collapse: collapse; font-size: 15px; font-variant-numeric: tabular-nums; }
+  .c .pass td { padding: 7px 0; border-top: 1px solid #E3E6EA; }
+  .c .pass td.n { text-align: right; font-weight: 800; }
+  .c .pass tr.zero td { color: #9AA1A9; }
+  .c .pass .side .big { font-weight: 900; font-size: 64px; line-height: 0.9; letter-spacing: -0.03em; }
+  .c .pass .side .lbl { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+  .c .pass .side .alt { display: flex; justify-content: space-between; border-top: 1px solid var(--rule); padding: 8px 0; font-size: 15px; }
+  .c .barcode { height: 46px; margin-top: 16px; background: repeating-linear-gradient(90deg, #1A1D21 0 2px, transparent 2px 4px, #1A1D21 4px 7px, transparent 7px 9px, #1A1D21 9px 10px, transparent 10px 13px); border-radius: 2px; }
+  @media (max-width: 760px) { .c .pass { grid-template-columns: 1fr; } .c .pass .side { border-left: 0; border-top: 2px dashed var(--rule); } .c .pass .fields { grid-template-columns: 1fr 1fr; } }
+  .c .chip { --strong-bg: #DDF5E7; --strong: #0F6B3C; --edge-bg: #FFF0CF; --edge: #8F5F00; --long-bg: #FFE1DD; --long: #B42318; }
+  .c footer { margin-top: 30px; background: var(--board); color: #C9CED5; border-radius: 16px; padding: 18px 22px; font-size: 14px; }
+  .c footer b { color: #fff; }
+  .c details { margin-top: 30px; background: var(--card); border-radius: 16px; padding: 16px 22px; }
+  .c details summary { cursor: pointer; font-weight: 800; font-size: 19px; }
+
+  /* =========================================================
+     D — Passport (stamps, security paper)
+     ========================================================= */
+  body[data-v="d"] { background: #DCE3DD; color: #1E2A44; font-family: "IBM Plex Sans", system-ui, sans-serif; }
+  .d { --paper: #F3F5EE; --guill: #9FB8AC; --ink: #1E2A44; --muted: #56627A; --violet: #5B3F9E; --red: #B8322A; --green: #23704A; --amber: #A3650A; --rule: #CBD3C9; }
+  .d .book { max-width: 900px; margin: 24px auto 64px; background: var(--paper); border-radius: 18px; overflow: hidden; box-shadow: 0 30px 60px -40px #1E2A44, 0 0 0 1px #C3CCC1; }
+  .d .spread { position: relative; padding: 40px 48px; }
+  @media (max-width: 700px) { .d .book { margin: 0; border-radius: 0; } .d .spread { padding: 26px 18px; } }
+  .d .spread + .spread { border-top: 1px dashed var(--rule); }
+  .d .guilloche { position: absolute; inset: 0; opacity: 0.55; pointer-events: none; }
+  .d .spread > *:not(.guilloche):not(.pageno) { position: relative; }
+  .d h1, .d h2, .d h3 { font-family: "Libre Caslon Text", Georgia, serif; font-weight: 700; margin: 0; letter-spacing: -0.005em; }
+  .d .pageno { position: absolute; right: 22px; top: 18px; font: 500 13px "IBM Plex Mono", monospace; color: var(--muted); }
+  .d .hero { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 24px; align-items: center; }
+  .d .hero .who { font-size: 15px; color: var(--muted); }
+  .d .hero h1 { font-size: 40px; line-height: 1.1; margin: 6px 0 14px; }
+  .d .hero p { margin: 0 0 14px; font-size: 18px; }
+  .d .hero .read { background: #ffffffb3; border: 1px solid var(--rule); border-radius: 12px; padding: 14px 16px; font-size: 16px; }
+  .d .hero .read b { font-family: "Libre Caslon Text", serif; display: block; margin-bottom: 4px; }
+  .d .hero .read small { display: block; color: var(--muted); font-size: 13px; margin-top: 6px; }
+  @media (max-width: 760px) { .d .hero { grid-template-columns: 1fr; } }
+  .d .stamp-big { transform: rotate(-7deg); }
+  .d .stamps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 18px; }
+  .d .stamps figure { margin: 0; text-align: center; }
+  .d .stamps figcaption { font-size: 15px; color: var(--ink); margin-top: 8px; }
+  .d .stamps figcaption span { display: block; color: var(--muted); font-size: 14px; }
+  @media (max-width: 700px) { .d .stamps { grid-template-columns: 1fr; } .d .stamps svg { max-width: 220px; margin: 0 auto; } }
+  .d .sub { color: var(--muted); margin: 4px 0 16px; }
+  .d .moves { display: grid; gap: 14px; }
+  .d .move { display: grid; grid-template-columns: 1fr 260px; gap: 18px; align-items: center; background: #ffffffb3; border: 1px solid var(--rule); border-radius: 12px; padding: 14px 18px; }
+  .d .move h3 { font-size: 19px; }
+  .d .move p { margin: 4px 0 0; color: var(--muted); font-size: 15px; }
+  .d .move.best { border: 2px solid var(--green); }
+  @media (max-width: 700px) { .d .move { grid-template-columns: 1fr; } }
+  .d .datapage { display: grid; grid-template-columns: 150px 1fr; gap: 22px; }
+  .d .photo { width: 150px; height: 190px; border-radius: 8px; background: #E4E9E1; border: 1px solid var(--rule); display: grid; place-items: end center; overflow: hidden; }
+  .d .dp-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 22px; font-size: 15px; }
+  .d .dp-fields span { display: block; font-size: 12px; color: var(--muted); }
+  .d table.points { width: 100%; border-collapse: collapse; font-size: 15px; margin-top: 18px; font-variant-numeric: tabular-nums; }
+  .d table.points td { padding: 7px 0; border-top: 1px solid var(--rule); }
+  .d table.points td.n { text-align: right; font-weight: 600; }
+  .d table.points tr.zero td { color: #8A93A6; }
+  .d table.points tr.total td { border-top: 2px solid var(--ink); font-family: "Libre Caslon Text", serif; font-weight: 700; font-size: 19px; }
+  .d .mrz { margin-top: 22px; font: 500 15px/1.6 "IBM Plex Mono", monospace; letter-spacing: 0.12em; background: #fff; padding: 12px 14px; border-radius: 8px; overflow-x: auto; white-space: pre; color: #2A3550; }
+  @media (max-width: 700px) { .d .datapage { grid-template-columns: 1fr; } .d .dp-fields { grid-template-columns: 1fr; } }
+  .d details summary { cursor: pointer; font-family: "Libre Caslon Text", serif; font-weight: 700; font-size: 19px; }
+  .d footer { background: var(--ink); color: #D7DCE6; padding: 20px 48px; font-size: 14px; }
+  .d footer b { color: #fff; }
+  .d .chip { --strong-bg: #DCEFE3; --strong: var(--green); --edge-bg: #F6E8CC; --edge: var(--amber); --long-bg: #F5DCD8; --long: var(--red); }
+</style>
+</head>
+<body data-v="a">
+<div class="switch">
+  <span>Look:</span>
+  <button class="on" data-choice="direction-a" onclick="setV('a', this)">A. Signal</button>
+  <button data-choice="direction-b" onclick="setV('b', this)">B. Current brand</button>
+  <button data-choice="direction-c" onclick="setV('c', this)">C. Departures</button>
+  <button data-choice="direction-d" onclick="setV('d', this)">D. Passport</button>
+</div>
+<p class="note">Same fictional applicant (Priya) and the same real SkillSelect data (Registered Nurses nec, Oct 2026) in all four. "Our read" stands in for the AI summary. New in every look: the full points breakdown and profile at the end.</p>
+
+<!-- ===================================================== A + B -->
+<main class="view ab"><div class="page">
+  <div class="who"><strong>Priya's report</strong>, Registered Nurse (nec), 70 points, offshore. Data to October 2026.</div>
+  <div class="verdict">
+    <div class="verdict-label">Your 189 outlook</div>
+    <div class="verdict-word">Competitive</div>
+    <p class="verdict-line">You're on the edge. 70 points was enough in 2 of the last 6 rounds, but 1,841 other nurse EOIs are tied with you at 70.</p>
+    <div class="read">
+      <h3>Our read</h3>
+      <p>Your fastest win is English. A Superior score adds 10 points and puts you at 80, enough for every one of the last 6 rounds. It also lifts your NSW 190 score to 85. In October, NSW invited 168 nurses at just 80.</p>
+      <small>Written by AI from the numbers in this report. Every figure is checked against the data.</small>
+    </div>
+  </div>
+  <div class="ladder">
+    <h2>Where 70 points sits</h2>
+    <p class="sub">The last 6 189 cut-offs for your occupation, with you and your next step.</p>
+    <svg viewBox="0 0 760 150" role="img" aria-label="Points scale from 60 to 90. Recent cut-offs fall between 70 and 80. You are at 70. Adding English takes you to 80.">
+      <defs><marker id="arA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--strong)"/></marker></defs>
+      <rect x="153" y="58" width="453" height="34" rx="6" fill="var(--edge-bg)"/>
+      <text x="380" y="50" text-anchor="middle" font-size="13" fill="var(--muted)">Recent cut-offs: 70 to 80</text>
+      <line x1="40" y1="75" x2="720" y2="75" stroke="var(--rule)" stroke-width="2"/>
+      <circle cx="267" cy="75" r="7" fill="var(--ladder)"/><circle cx="380" cy="75" r="7" fill="var(--ladder)"/><circle cx="493" cy="75" r="7" fill="var(--ladder)"/>
+      <g font-size="12" fill="var(--muted)" text-anchor="middle"><text x="267" y="112">×2</text><text x="380" y="112">×3</text><text x="493" y="112">×1</text></g>
+      <g font-size="13" fill="var(--muted)" text-anchor="middle"><text x="40" y="140">60</text><text x="153" y="140">65</text><text x="267" y="140">70</text><text x="380" y="140">75</text><text x="493" y="140">80</text><text x="607" y="140">85</text><text x="720" y="140">90</text></g>
+      <line x1="267" y1="20" x2="267" y2="92" stroke="var(--edge)" stroke-width="3"/>
+      <text x="267" y="14" text-anchor="middle" font-size="14" font-weight="700" fill="var(--edge)">You, 70</text>
+      <line x1="493" y1="20" x2="493" y2="92" stroke="var(--strong)" stroke-width="3" stroke-dasharray="5 4"/>
+      <text x="493" y="14" text-anchor="middle" font-size="14" font-weight="700" fill="var(--strong)">With English, 80</text>
+      <path d="M282 30 C 360 24, 420 24, 478 30" fill="none" stroke="var(--strong)" stroke-width="2" marker-end="url(#arA)"/>
+    </svg>
+  </div>
+  <div class="visas">
+    <div class="visa"><h3>189 Independent</h3><span class="chip edge">Competitive</span><p>70 points. 107 to 126 EOIs ahead of you.</p></div>
+    <div class="visa"><h3>190 Nominated</h3><span class="chip edge">Competitive in NSW</span><p>75 points with nomination. NSW invited 26 nurses at 75 in October.</p></div>
+    <div class="visa"><h3>491 Regional</h3><span class="chip edge">Competitive in WA</span><p>85 points with nomination. WA has invited nurses at 85 every month since August.</p></div>
+  </div>
+  <section>
+    <h2>Your best route</h2>
+    <p class="sub">What we'd do with your profile, in order.</p>
+    <ol class="route">
+      <li><div><b>Retake English and aim for Superior</b><span>PTE 79 in every band, or the IELTS/TOEFL equal. Book before February 2027.</span></div></li>
+      <li><div><b>Submit your EOI for 189 and NSW 190 now</b><span>Being in the pool early means you're ready when a round comes.</span></div></li>
+      <li><div><b>Update your EOI the day your new score arrives</b><span>Your points rise to 80 straight away; your date of effect resets to that day.</span></div></li>
+    </ol>
+  </section>
+  <section>
+    <h2>How to improve</h2>
+    <p class="sub">Each step, and what your outlook becomes after it.</p>
+    <div class="moves">
+      <div class="move best"><div class="what"><span class="tag">Biggest jump</span><b>Superior English</b><span>+10 points. About 2 to 3 months to prepare and get results.</span></div>
+        <div class="shift"><span class="pts">70</span><span class="chip edge">Competitive</span><span>to</span><span class="pts">80</span><span class="chip strong">Strong</span></div>
+        <p class="why">80 was enough for all 6 recent rounds, and under 20 nurse EOIs score higher.</p></div>
+      <div class="move"><div class="what"><b>NAATI CCL test (community language)</b><span>+5 points. One test, about 1 to 2 months.</span></div>
+        <div class="shift"><span class="pts">70</span><span class="chip edge">Competitive</span><span>to</span><span class="pts">75</span><span class="chip strong">Strong</span></div>
+        <p class="why">75 met 5 of the last 6 cut-offs. 27 to 46 EOIs would still score higher.</p></div>
+      <div class="move"><div class="what"><b>Both together</b><span>+15 points.</span></div>
+        <div class="shift"><span class="pts">70</span><span class="chip edge">Competitive</span><span>to</span><span class="pts">85</span><span class="chip strong">Very strong</span></div>
+        <p class="why">Fewer than 20 nurse EOIs score 85 or more. You'd be near the front of the queue.</p></div>
+    </div>
+    <div class="deadline"><span class="pts">−5</span><div><b>You turn 33 on 14 March 2027.</b> Your age points drop from 30 to 25, taking you to 65, where your outlook becomes <span class="chip long">Long wait</span>. Get your English done before then.</div></div>
+  </section>
+  <details class="evidence"><summary>See the evidence</summary><ul><li>Every 189 round since 2022, with cut-offs</li><li>The 189, 190 and 491 pools by points</li><li>What happened to nurse EOIs submitted in your month</li><li>State-by-state rules and invitations</li></ul></details>
+  <section>
+    <h2>Your points, in full</h2>
+    <p class="sub">Everything you told us, so anyone you share this with sees the whole profile.</p>
+    <table class="points">
+      <tr><td>Age</td><td class="d">32 (born 14 Mar 1994)</td><td class="n">30</td></tr>
+      <tr><td>English</td><td class="d">Proficient, PTE taken 2 Feb 2025, valid to 2 Feb 2028</td><td class="n">10</td></tr>
+      <tr><td>Qualification</td><td class="d">Bachelor of Nursing</td><td class="n">15</td></tr>
+      <tr><td>Overseas skilled work</td><td class="d">4 years as a registered nurse, India</td><td class="n">5</td></tr>
+      <tr><td>Partner</td><td class="d">Single</td><td class="n">10</td></tr>
+      <tr class="zero"><td>Australian skilled work</td><td class="d">None</td><td class="n">0</td></tr>
+      <tr class="zero"><td>Australian study, regional study, specialist education</td><td class="d">None</td><td class="n">0</td></tr>
+      <tr class="zero"><td>Professional Year, community language</td><td class="d">None</td><td class="n">0</td></tr>
+      <tr class="total"><td colspan="2">Total for 189</td><td class="n">70</td></tr>
+    </table>
+    <div class="totals"><div><b>70</b>189 Independent</div><div><b>75</b>190 with state nomination (+5)</div><div><b>85</b>491 with nomination (+15)</div></div>
+    <dl class="facts"><dt>Occupation</dt><dd>Registered Nurses nec (254499)</dd><dt>Skills assessment</dt><dd>ANMAC, positive, valid to 10 Jun 2028</dd><dt>Where you are</dt><dd>Offshore (India)</dd><dt>Calculated</dt><dd>21 Nov 2026, SkillSelect data to 31 Oct 2026</dd></dl>
+  </section>
+  <footer class="guarantee"><b>This is our best reading of the data, not a guarantee.</b> It comes from published SkillSelect figures up to October 2026. Home Affairs and the states can change round sizes, cut-offs and rules at any time, so your real result may be different. MigrateLens isn't a registered migration agent; for advice on your own case, talk to one.</footer>
+</div></main>
+
+<!-- ===================================================== C: Departures -->
+<main class="view c"><div class="page">
+  <div class="top">
+    <div><p>Priya's report. Registered Nurse (nec), offshore.</p><h1>Your visa departures board</h1></div>
+    <p>Data to 31 October 2026</p>
+  </div>
+  <div class="board" role="table" aria-label="Your three visa options and their outlook">
+    <div class="board-head" role="row"><span>VISA</span><span>POINTS</span><span>STATE</span><span>OUTLOOK</span></div>
+    <div class="row" role="row"><div class="flaps sm" data-text="189 INDEP"></div><div class="flaps sm" data-text="70"></div><div class="flaps sm" data-text="ANY"></div><div class="flaps hold" data-text="COMPETITIVE"></div></div>
+    <div class="row" role="row"><div class="flaps sm" data-text="190 NOMIN"></div><div class="flaps sm" data-text="75"></div><div class="flaps sm" data-text="NSW"></div><div class="flaps hold" data-text="COMPETITIVE"></div></div>
+    <div class="row" role="row"><div class="flaps sm" data-text="491 REGNL"></div><div class="flaps sm" data-text="85"></div><div class="flaps sm" data-text="WA"></div><div class="flaps hold" data-text="COMPETITIVE"></div></div>
+  </div>
+  <div class="say">
+    <div><h2>You're <em>on the edge</em> for 189.</h2><p>70 points was enough in 2 of the last 6 rounds, but 1,841 other nurse EOIs are tied with you at 70.</p></div>
+    <div class="read"><b>Our read</b>Your fastest win is English. Superior adds 10 points: 80 was enough for every one of the last 6 rounds, and it lifts NSW 190 to 85.<small>Written by AI from the numbers in this report. Every figure is checked.</small></div>
+  </div>
+
+  <section>
+    <h2>Your route to an invitation</h2>
+    <p class="sub">The steps in order, with the date that works against you.</p>
+    <div class="panel">
+      <svg viewBox="0 0 860 210" role="img" aria-label="Timeline: today at 70 points, submit EOI now, English result by February 2027 at 80 points, 33rd birthday 14 March 2027, ready for the next round at 80 points.">
+        <defs>
+          <linearGradient id="routeC" x1="0" x2="1"><stop offset="0" stop-color="#FFB21E"/><stop offset="0.5" stop-color="#36D27E"/><stop offset="1" stop-color="#127A47"/></linearGradient>
+        </defs>
+        <path d="M40 120 C 220 120, 300 60, 450 60 S 700 90, 800 70" fill="none" stroke="#C9CED5" stroke-width="10" stroke-linecap="round"/>
+        <path d="M40 120 C 220 120, 300 60, 450 60 S 700 90, 800 70" fill="none" stroke="url(#routeC)" stroke-width="10" stroke-linecap="round" stroke-dasharray="1 0"/>
+        <!-- stops -->
+        <g font-family="Overpass, sans-serif">
+          <circle cx="40" cy="120" r="14" fill="#1A1D21"/><text x="40" y="125" text-anchor="middle" fill="#fff" font-weight="800" font-size="13">70</text>
+          <text x="40" y="160" text-anchor="middle" font-weight="800" font-size="15" fill="#1A1D21">Today</text><text x="40" y="178" text-anchor="middle" font-size="13" fill="#59616B">21 Nov 2026</text>
+          <circle cx="200" cy="112" r="10" fill="#fff" stroke="#1A1D21" stroke-width="4"/>
+          <text x="200" y="150" text-anchor="middle" font-weight="800" font-size="15" fill="#1A1D21">Submit EOI</text><text x="200" y="168" text-anchor="middle" font-size="13" fill="#59616B">189 + NSW 190, now</text>
+          <circle cx="450" cy="60" r="16" fill="#127A47"/><text x="450" y="65" text-anchor="middle" fill="#fff" font-weight="800" font-size="13">80</text>
+          <text x="450" y="28" text-anchor="middle" font-weight="800" font-size="15" fill="#127A47">Superior English</text><text x="450" y="98" text-anchor="middle" font-size="13" fill="#59616B">result by Feb 2027</text>
+          <!-- deadline -->
+          <line x1="560" y1="40" x2="560" y2="150" stroke="#FF5C4D" stroke-width="2" stroke-dasharray="4 4"/>
+          <rect x="492" y="150" width="136" height="44" rx="8" fill="#FFE1DD"/>
+          <text x="560" y="168" text-anchor="middle" font-weight="800" font-size="13" fill="#B42318">Turns 33: −5</text><text x="560" y="185" text-anchor="middle" font-size="12" fill="#B42318">14 Mar 2027</text>
+          <!-- plane -->
+          <g transform="translate(800 70) rotate(-12)"><path d="M-22 0 L10 -4 L22 0 L10 4 Z M-4 -2 L-12 -18 L-4 -18 L8 -3 Z M-4 2 L-12 18 L-4 18 L8 3 Z M-20 -1 L-26 -9 L-21 -9 L-15 -2 Z M-20 1 L-26 9 L-21 9 L-15 2 Z" fill="#1A1D21"/></g>
+          <text x="790" y="120" text-anchor="middle" font-weight="800" font-size="15" fill="#1A1D21">Strong at 80</text><text x="790" y="138" text-anchor="middle" font-size="13" fill="#59616B">ready for the next round</text>
+        </g>
+      </svg>
+    </div>
+  </section>
+
+  <section class="two">
+    <div>
+      <h2 style="font-weight:900;font-size:26px;letter-spacing:-.02em;margin:0">Last 6 cut-offs</h2>
+      <p class="sub" style="margin:2px 0 14px;color:#59616B">189 rounds for nurses, against your 70.</p>
+      <div class="panel">
+        <svg viewBox="0 0 400 230" role="img" aria-label="Column chart of the last six 189 cut-offs: Sep 2024 75, Nov 2024 70, Aug 2025 80, Nov 2025 75, Jun 2026 75, Oct 2026 70. Your 70 points line meets two of them.">
+          <g font-family="Overpass, sans-serif">
+            <!-- y: 60 at 200, 85 at 20 => 7.2px per pt -->
+            <line x1="20" y1="128" x2="390" y2="128" stroke="#FFB21E" stroke-width="3"/>
+            <text x="390" y="120" text-anchor="end" font-size="13" font-weight="800" fill="#8F5F00">You, 70</text>
+            <line x1="20" y1="56" x2="390" y2="56" stroke="#127A47" stroke-width="2" stroke-dasharray="5 4"/>
+            <text x="390" y="48" text-anchor="end" font-size="13" font-weight="800" fill="#127A47">With English, 80</text>
+            <g fill="#1A1D21">
+              <rect x="30" y="92" width="38" height="108" rx="4"/><rect x="92" y="128" width="38" height="72" rx="4"/><rect x="154" y="56" width="38" height="144" rx="4"/>
+              <rect x="216" y="92" width="38" height="108" rx="4"/><rect x="278" y="92" width="38" height="108" rx="4"/><rect x="340" y="128" width="38" height="72" rx="4"/>
+            </g>
+            <g font-size="13" font-weight="800" fill="#fff" text-anchor="middle"><text x="49" y="112">75</text><text x="111" y="148">70</text><text x="173" y="76">80</text><text x="235" y="112">75</text><text x="297" y="112">75</text><text x="359" y="148">70</text></g>
+            <g font-size="12" fill="#59616B" text-anchor="middle"><text x="49" y="218">Sep 24</text><text x="111" y="218">Nov 24</text><text x="173" y="218">Aug 25</text><text x="235" y="218">Nov 25</text><text x="297" y="218">Jun 26</text><text x="359" y="218">Oct 26</text></g>
+          </g>
+        </svg>
+      </div>
+    </div>
+    <div>
+      <h2 style="font-weight:900;font-size:26px;letter-spacing:-.02em;margin:0">Who's in the queue</h2>
+      <p class="sub" style="margin:2px 0 14px;color:#59616B">Nurse EOIs in the 189 pool, by points.</p>
+      <div class="panel">
+        <svg viewBox="0 0 400 230" role="img" aria-label="Queue: 107 to 126 EOIs score higher than you, 1,841 are tied at 70, and about 2,320 score lower.">
+          <g font-family="Overpass, sans-serif">
+            <text x="0" y="22" font-size="13" fill="#59616B">Each square is about 40 EOIs. Front of the queue on the left.</text>
+            <g id="qdots"></g>
+            <g font-size="14" font-weight="800">
+              <rect x="0" y="182" width="12" height="12" rx="2" fill="#1A1D21"/><text x="18" y="193" fill="#1A1D21">Ahead: 107–126</text>
+              <rect x="150" y="182" width="12" height="12" rx="2" fill="#FFB21E"/><text x="168" y="193" fill="#1A1D21">Tied with you: 1,841</text>
+              <rect x="0" y="206" width="12" height="12" rx="2" fill="#C9CED5"/><text x="18" y="217" fill="#59616B">Behind: about 2,320</text>
+            </g>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Upgrades</h2>
+    <p class="sub">Ways to add points, and where each one puts you.</p>
+    <div class="tickets">
+      <div class="ticket best"><div class="stub"><div><b>+10</b><span>points</span></div></div><div class="body"><h3>Superior English, the biggest jump</h3><div class="moveline"><span class="chip edge">70 Competitive</span><span>to</span><span class="chip strong">80 Strong</span></div><p>About 2 to 3 months. 80 was enough for all 6 recent rounds, and under 20 nurse EOIs score higher.</p></div></div>
+      <div class="ticket"><div class="stub"><div><b>+5</b><span>points</span></div></div><div class="body"><h3>NAATI CCL test</h3><div class="moveline"><span class="chip edge">70 Competitive</span><span>to</span><span class="chip strong">75 Strong</span></div><p>One test, about 1 to 2 months. 75 met 5 of the last 6 cut-offs.</p></div></div>
+      <div class="ticket"><div class="stub"><div><b>+15</b><span>points</span></div></div><div class="body"><h3>Both together</h3><div class="moveline"><span class="chip edge">70 Competitive</span><span>to</span><span class="chip strong">85 Very strong</span></div><p>Fewer than 20 nurse EOIs score 85 or more.</p></div></div>
+    </div>
+  </section>
+
+  <details><summary>See the evidence</summary><p style="color:#59616B">Every round since 2022, the pools by points, what happened to EOIs from your month, and state rules.</p></details>
+
+  <section>
+    <h2>Your boarding pass</h2>
+    <p class="sub">Your full points and profile, ready to share.</p>
+    <div class="pass">
+      <div class="main">
+        <div class="fields">
+          <div><span>PASSENGER</span><b>Priya (sample)</b></div><div><span>OCCUPATION</span><b>Registered Nurse nec, 254499</b></div><div><span>FROM</span><b>India (offshore)</b></div>
+          <div><span>BORN</span><b>14 Mar 1994, age 32</b></div><div><span>SKILLS ASSESSMENT</span><b>ANMAC, to 10 Jun 2028</b></div><div><span>ENGLISH TEST</span><b>PTE, to 2 Feb 2028</b></div>
+        </div>
+        <table>
+          <tr><td>Age, 32</td><td class="n">30</td></tr>
+          <tr><td>English, Proficient</td><td class="n">10</td></tr>
+          <tr><td>Bachelor of Nursing</td><td class="n">15</td></tr>
+          <tr><td>Overseas skilled work, 4 years</td><td class="n">5</td></tr>
+          <tr><td>Single</td><td class="n">10</td></tr>
+          <tr class="zero"><td>Australian work, Australian study, regional study, specialist education, Professional Year, community language</td><td class="n">0</td></tr>
+        </table>
+      </div>
+      <div class="side">
+        <div class="lbl">189 points</div><div class="big">70</div>
+        <div style="height:14px"></div>
+        <div class="alt"><span>190 with nomination</span><b>75</b></div>
+        <div class="alt"><span>491 with nomination</span><b>85</b></div>
+        <div class="barcode" aria-hidden="true"></div>
+      </div>
+    </div>
+  </section>
+
+  <footer><b>This is our best reading of the data, not a guarantee.</b> It comes from published SkillSelect figures up to October 2026. Home Affairs and the states can change round sizes, cut-offs and rules at any time, so your real result may be different. MigrateLens isn't a registered migration agent; for advice on your own case, talk to one.</footer>
+</div></main>
+
+<!-- ===================================================== D: Passport -->
+<main class="view d"><div class="book">
+  <div class="spread">
+    <svg class="guilloche" data-guilloche viewBox="0 0 900 520" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
+    <span class="pageno">Page 1</span>
+    <div class="hero">
+      <div>
+        <div class="who">Priya's report. Registered Nurse (nec), 70 points, offshore. Data to October 2026.</div>
+        <h1>You're on the edge for 189.</h1>
+        <p>70 points was enough in 2 of the last 6 rounds, but 1,841 other nurse EOIs are tied with you at 70.</p>
+        <div class="read"><b>Our read</b>Your fastest win is English. Superior adds 10 points: 80 was enough for every one of the last 6 rounds, and it lifts NSW 190 to 85.<small>Written by AI from the numbers in this report. Every figure is checked.</small></div>
+      </div>
+      <div class="stamp-big">
+        <svg viewBox="0 0 320 320" role="img" aria-label="Stamp: Subclass 189, Competitive, October 2026">
+          <defs>
+            <filter id="ink" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3"/><feComponentTransfer><feFuncA type="discrete" tableValues="0 1 1 1 0.85 1"/></feComponentTransfer></filter>
+            <path id="ringTop" d="M40 160 A120 120 0 0 1 280 160"/>
+            <path id="ringBot" d="M55 160 A105 105 0 0 0 265 160"/>
+          </defs>
+          <g filter="url(#ink)" fill="none" stroke="#A3650A">
+            <circle cx="160" cy="160" r="150" stroke-width="7"/>
+            <circle cx="160" cy="160" r="136" stroke-width="2.5"/>
+            <circle cx="160" cy="160" r="86" stroke-width="2.5"/>
+            <text font-family="'Big Shoulders Stencil Display', sans-serif" font-weight="800" font-size="25" fill="#A3650A" stroke="none" letter-spacing="3"><textPath href="#ringTop" startOffset="50%" text-anchor="middle">SUBCLASS 189 INDEPENDENT</textPath></text>
+            <text font-family="'Big Shoulders Stencil Display', sans-serif" font-weight="800" font-size="22" fill="#A3650A" stroke="none" letter-spacing="3"><textPath href="#ringBot" startOffset="50%" text-anchor="middle" dominant-baseline="hanging">OCT 2026 • 70 POINTS</textPath></text>
+            <rect x="18" y="128" width="284" height="64" fill="#F3F5EE" stroke-width="5"/>
+            <text x="160" y="178" text-anchor="middle" font-family="'Big Shoulders Stencil Display', sans-serif" font-weight="900" font-size="52" fill="#A3650A" stroke="none" letter-spacing="2">COMPETITIVE</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="spread">
+    <svg class="guilloche" data-guilloche viewBox="0 0 900 420" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
+    <span class="pageno">Page 2</span>
+    <h2>Your three visas</h2>
+    <p class="sub">Each stamp is your outlook for that visa today.</p>
+    <div class="stamps">
+      <figure>
+        <svg viewBox="0 0 220 160" role="img" aria-label="189: Competitive at 70"><g filter="url(#ink)" transform="rotate(-4 110 80)"><rect x="10" y="10" width="200" height="140" rx="16" fill="none" stroke="#A3650A" stroke-width="5"/><rect x="20" y="20" width="180" height="120" rx="10" fill="none" stroke="#A3650A" stroke-width="2"/><text x="110" y="58" text-anchor="middle" font-family="'Big Shoulders Stencil Display'" font-weight="800" font-size="24" fill="#A3650A" letter-spacing="2">189 ANY STATE</text><text x="110" y="102" text-anchor="middle" font-family="'Big Shoulders Stencil Display'" font-weight="900" font-size="34" fill="#A3650A">COMPETITIVE</text><text x="110" y="128" text-anchor="middle" font-family="'Big Shoulders Stencil Display'" font-weight="800" font-size="18" fill="#A3650A">70 PTS</text></g></svg>
+        <figcaption>189 Independent<span>107 to 126 EOIs ahead of you.</span></figcaption>
+      </figure>
+      <figure>
+        <svg viewBox="0 0 220 160" role="img" aria-label="190 NSW: Competitive at 75"><g filter="url(#ink)" transform="rotate(5 110 80)"><polygon points="110,6 205,40 205,120 110,154 15,120 15,40" fill="none" stroke="#A3650A" stroke-width="5"/><text x="110" y="58" text-anchor="middle" font-family="'Big Shoulders Stencil Display'" font-weight="800" font-size="24" fill="#A3650A" letter-spacing="2">190 NSW</text><text x="110" y="100" text-anchor="middle" font-family="'Big Shoulders Stencil Display'" font-weight="900" font-size="32" fill="#A3650A">COMPETITIVE</text><text x="110" y="126" text-anchor="middle" font-family="'Big Shoulders Stencil Display'" font-weight="800" font-size="18" fill="#A3650A">75 PTS</text></g></svg>
+        <figcaption>190 Nominated<span>NSW invited 26 nurses at 75 in October.</span></figcaption>
+      </figure>
+      <figure>
+        <svg viewBox="0 0 220 160" role="img" aria-label="491 WA: Competitive at 85"><g filter="url(#ink)" transform="rotate(-2 110 80)"><ellipse cx="110" cy="80" rx="100" ry="72" fill="none" stroke="#A3650A" stroke-width="5"/><ellipse cx="110" cy="80" rx="88" ry="60" fill="none" stroke="#A3650A" stroke-width="2" stroke-dasharray="3 4"/><text x="110" y="60" text-anchor="middle" font-family="'Big Shoulders Stencil Display'" font-weight="800" font-size="24" fill="#A3650A" letter-spacing="2">491 WA</text><text x="110" y="98" text-anchor="middle" font-family="'Big Shoulders Stencil Display'" font-weight="900" font-size="32" fill="#A3650A">COMPETITIVE</text><text x="110" y="122" text-anchor="middle" font-family="'Big Shoulders Stencil Display'" font-weight="800" font-size="18" fill="#A3650A">85 PTS</text></g></svg>
+        <figcaption>491 Regional<span>WA has invited nurses at 85 every month since August.</span></figcaption>
+      </figure>
+    </div>
+  </div>
+
+  <div class="spread">
+    <span class="pageno">Page 3</span>
+    <h2>Your journey from here</h2>
+    <p class="sub">The route we'd take with your profile, and how each step changes your stamp.</p>
+    <svg viewBox="0 0 820 200" role="img" aria-label="Flight path from India to Australia with three stops: submit EOI now, Superior English by February 2027 for 80 points, ready for the next round. Warning: 33rd birthday on 14 March 2027 costs 5 points.">
+      <g font-family="IBM Plex Sans, sans-serif">
+        <path d="M50 160 Q 410 -20 770 150" fill="none" stroke="#1E2A44" stroke-width="2.5" stroke-dasharray="2 9" stroke-linecap="round"/>
+        <circle cx="50" cy="160" r="9" fill="#1E2A44"/><text x="50" y="190" text-anchor="middle" font-size="14" font-weight="600" fill="#1E2A44">India, today, 70</text>
+        <circle cx="770" cy="150" r="9" fill="#23704A"/><text x="770" y="185" text-anchor="middle" font-size="14" font-weight="600" fill="#23704A">Invitation</text>
+        <g transform="translate(210 82)"><circle r="22" fill="#F3F5EE" stroke="#1E2A44" stroke-width="2.5"/><text y="6" text-anchor="middle" font-family="'Libre Caslon Text'" font-weight="700" font-size="18" fill="#1E2A44">1</text></g>
+        <text x="210" y="130" text-anchor="middle" font-size="14" font-weight="600" fill="#1E2A44">Submit EOI now</text><text x="210" y="148" text-anchor="middle" font-size="13" fill="#56627A">189 + NSW 190</text>
+        <g transform="translate(410 52)"><circle r="22" fill="#F3F5EE" stroke="#23704A" stroke-width="2.5"/><text y="6" text-anchor="middle" font-family="'Libre Caslon Text'" font-weight="700" font-size="18" fill="#23704A">2</text></g>
+        <text x="410" y="100" text-anchor="middle" font-size="14" font-weight="600" fill="#23704A">Superior English, 80</text><text x="410" y="118" text-anchor="middle" font-size="13" fill="#56627A">result by Feb 2027</text>
+        <g transform="translate(610 82)"><circle r="22" fill="#F3F5EE" stroke="#1E2A44" stroke-width="2.5"/><text y="6" text-anchor="middle" font-family="'Libre Caslon Text'" font-weight="700" font-size="18" fill="#1E2A44">3</text></g>
+        <text x="610" y="130" text-anchor="middle" font-size="14" font-weight="600" fill="#1E2A44">Update your EOI</text><text x="610" y="148" text-anchor="middle" font-size="13" fill="#56627A">the day results arrive</text>
+        <g transform="translate(505 20)"><rect x="-70" y="-14" width="140" height="28" rx="14" fill="#F5DCD8"/><text y="5" text-anchor="middle" font-size="13" font-weight="600" fill="#B8322A">Turns 33, 14 Mar: −5</text></g>
+      </g>
+    </svg>
+    <div class="moves" style="margin-top:18px">
+      <div class="move best"><div><h3>Superior English, +10</h3><p>About 2 to 3 months. 80 was enough for all 6 recent rounds, and under 20 nurse EOIs score higher.</p></div>
+        <svg viewBox="0 0 260 70" role="img" aria-label="From Competitive at 70 to Strong at 80"><g filter="url(#ink)"><rect x="4" y="10" width="104" height="50" rx="8" fill="none" stroke="#A3650A" stroke-width="3" transform="rotate(-4 56 35)"/><text x="56" y="42" text-anchor="middle" font-family="'Big Shoulders Stencil Display'" font-weight="900" font-size="14" fill="#A3650A" transform="rotate(-4 56 35)">70 COMPETITIVE</text><rect x="150" y="10" width="104" height="50" rx="8" fill="none" stroke="#23704A" stroke-width="3" transform="rotate(3 202 35)"/><text x="202" y="42" text-anchor="middle" font-family="'Big Shoulders Stencil Display'" font-weight="900" font-size="20" fill="#23704A" transform="rotate(3 202 35)">80 STRONG</text></g><path d="M116 35 H140 M132 28 L141 35 L132 42" stroke="#1E2A44" stroke-width="2.5" fill="none"/></svg></div>
+      <div class="move"><div><h3>NAATI CCL test, +5</h3><p>One test, about 1 to 2 months. 75 met 5 of the last 6 cut-offs.</p></div>
+        <svg viewBox="0 0 260 70" role="img" aria-label="From Competitive at 70 to Strong at 75"><g filter="url(#ink)"><rect x="4" y="10" width="104" height="50" rx="8" fill="none" stroke="#A3650A" stroke-width="3" transform="rotate(-3 56 35)"/><text x="56" y="42" text-anchor="middle" font-family="'Big Shoulders Stencil Display'" font-weight="900" font-size="14" fill="#A3650A" transform="rotate(-3 56 35)">70 COMPETITIVE</text><rect x="150" y="10" width="104" height="50" rx="8" fill="none" stroke="#23704A" stroke-width="3" transform="rotate(4 202 35)"/><text x="202" y="42" text-anchor="middle" font-family="'Big Shoulders Stencil Display'" font-weight="900" font-size="20" fill="#23704A" transform="rotate(4 202 35)">75 STRONG</text></g><path d="M116 35 H140 M132 28 L141 35 L132 42" stroke="#1E2A44" stroke-width="2.5" fill="none"/></svg></div>
+      <div class="move"><div><h3>Both together, +15</h3><p>Fewer than 20 nurse EOIs score 85 or more.</p></div>
+        <svg viewBox="0 0 260 70" role="img" aria-label="From Competitive at 70 to Very strong at 85"><g filter="url(#ink)"><rect x="4" y="10" width="104" height="50" rx="8" fill="none" stroke="#A3650A" stroke-width="3" transform="rotate(-5 56 35)"/><text x="56" y="42" text-anchor="middle" font-family="'Big Shoulders Stencil Display'" font-weight="900" font-size="14" fill="#A3650A" transform="rotate(-5 56 35)">70 COMPETITIVE</text><rect x="150" y="10" width="104" height="50" rx="8" fill="none" stroke="#23704A" stroke-width="3" transform="rotate(2 202 35)"/><text x="202" y="42" text-anchor="middle" font-family="'Big Shoulders Stencil Display'" font-weight="900" font-size="14" fill="#23704A" transform="rotate(2 202 35)">85 VERY STRONG</text></g><path d="M116 35 H140 M132 28 L141 35 L132 42" stroke="#1E2A44" stroke-width="2.5" fill="none"/></svg></div>
+    </div>
+  </div>
+
+  <div class="spread"><details><summary>See the evidence</summary><p style="color:#56627A">Every round since 2022, the pools by points, what happened to EOIs from your month, and state rules.</p></details></div>
+
+  <div class="spread">
+    <svg class="guilloche" data-guilloche viewBox="0 0 900 640" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
+    <span class="pageno">Data page</span>
+    <h2>Your points, in full</h2>
+    <p class="sub">Your whole profile, so anyone you share this with sees exactly what you told us.</p>
+    <div class="datapage">
+      <div class="photo" aria-hidden="true"><svg viewBox="0 0 150 190" width="150" height="190"><circle cx="75" cy="78" r="34" fill="#C9D2C6"/><path d="M15 190 C 20 130, 130 130, 135 190 Z" fill="#C9D2C6"/></svg></div>
+      <div>
+        <div class="dp-fields">
+          <div><span>Name</span>Priya (sample)</div><div><span>Occupation</span>Registered Nurses nec, 254499</div>
+          <div><span>Date of birth</span>14 Mar 1994, age 32</div><div><span>Where you are</span>Offshore, India</div>
+          <div><span>Skills assessment</span>ANMAC, valid to 10 Jun 2028</div><div><span>English test</span>PTE Proficient, valid to 2 Feb 2028</div>
+        </div>
+        <table class="points">
+          <tr><td>Age</td><td class="n">30</td></tr><tr><td>English, Proficient</td><td class="n">10</td></tr><tr><td>Bachelor of Nursing</td><td class="n">15</td></tr>
+          <tr><td>Overseas skilled work, 4 years</td><td class="n">5</td></tr><tr><td>Single</td><td class="n">10</td></tr>
+          <tr class="zero"><td>Australian work, Australian study, regional study, specialist education, Professional Year, community language</td><td class="n">0</td></tr>
+          <tr class="total"><td>189 total (190: 75, 491: 85)</td><td class="n">70</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="mrz" aria-label="Decorative summary line">P&lt;MLNPRIYA&lt;&lt;SAMPLE&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;
+254499&lt;189&lt;70&lt;190&lt;75&lt;491&lt;85&lt;&lt;OCT2026&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;</div>
+  </div>
+  <footer><b>This is our best reading of the data, not a guarantee.</b> It comes from published SkillSelect figures up to October 2026. Home Affairs and the states can change round sizes, cut-offs and rules at any time, so your real result may be different. MigrateLens isn't a registered migration agent; for advice on your own case, talk to one.</footer>
+</div></main>
+
+<script>
+function setV(v, btn) {
+  document.body.dataset.v = v;
+  document.querySelectorAll('.switch button').forEach(b => b.classList.toggle('on', b === btn));
+  if (v === 'c') flipBoard();
+  window.scrollTo({ top: 0 });
+}
+// Split-flap board
+function flipBoard() {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll('.c .flaps').forEach((el, r) => {
+    el.innerHTML = '';
+    [...el.dataset.text].forEach((ch, i) => {
+      const s = document.createElement('span');
+      s.textContent = ch === ' ' ? ' ' : ch;
+      if (!reduce) { s.className = 'flip'; s.style.animationDelay = (r * 40 + i * 45) + 'ms'; }
+      el.appendChild(s);
+    });
+  });
+}
+flipBoard();
+// Queue squares (C)
+(function () {
+  const g = document.getElementById('qdots'); if (!g) return;
+  const ahead = 3, tied = 46, behind = 58; // each square ~40 EOIs
+  const cols = 27, size = 11, gap = 3;
+  let i = 0;
+  const add = (n, fill) => { for (let k = 0; k < n; k++, i++) {
+    const r = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    r.setAttribute('x', (i % cols) * (size + gap)); r.setAttribute('y', 38 + Math.floor(i / cols) * (size + gap));
+    r.setAttribute('width', size); r.setAttribute('height', size); r.setAttribute('rx', 2); r.setAttribute('fill', fill); g.appendChild(r); } };
+  add(ahead, '#1A1D21'); add(tied, '#FFB21E'); add(behind, '#C9CED5');
+})();
+// Guilloche security pattern (D)
+document.querySelectorAll('[data-guilloche]').forEach((svg, n) => {
+  const [,, w, h] = svg.getAttribute('viewBox').split(' ').map(Number);
+  const ns = 'http://www.w3.org/2000/svg';
+  const draw = (cx, cy, R, r, d, turns, color, sw) => {
+    let p = '';
+    for (let t = 0; t <= Math.PI * 2 * turns; t += 0.02) {
+      const x = cx + (R - r) * Math.cos(t) + d * Math.cos(((R - r) / r) * t);
+      const y = cy + (R - r) * Math.sin(t) - d * Math.sin(((R - r) / r) * t);
+      p += (p ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1);
+    }
+    const path = document.createElementNS(ns, 'path');
+    path.setAttribute('d', p); path.setAttribute('fill', 'none'); path.setAttribute('stroke', color); path.setAttribute('stroke-width', sw);
+    svg.appendChild(path);
+  };
+  draw(w * 0.82, h * 0.5, 220, 37, 70, 37, '#A9C1B5', 0.6);
+  draw(w * 0.82, h * 0.5, 150, 29, 52, 29, '#B9B0D6', 0.5);
+  for (let y = 0; y < h; y += 14) {
+    const wave = document.createElementNS(ns, 'path'); let d = '';
+    for (let x = 0; x <= w; x += 10) d += (x ? 'L' : 'M') + x + ' ' + (y + Math.sin(x / 38 + y / 30 + n) * 4).toFixed(1);
+    wave.setAttribute('d', d); wave.setAttribute('fill', 'none'); wave.setAttribute('stroke', '#C7D4CC'); wave.setAttribute('stroke-width', '0.5'); svg.appendChild(wave);
+  }
+});
+</script>
+</body>
+</html>
