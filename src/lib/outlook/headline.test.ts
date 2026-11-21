@@ -120,8 +120,18 @@ describe("buildHeadline", () => {
       "189 hasn't listed Internal Auditor since November 2024, and no state has invited it for 190 or 491 in the last 6 months.",
     );
     expect(h.best).toBe(
-      "None right now. Stay in the pool and watch SA and WA.",
+      "None right now. Stay in the pool and watch SA and WA, which still list your occupation.",
     );
+  });
+
+  it("very strong with no published pool claims no count of EOIs", () => {
+    const input = scenarioInput("strong");
+    const core = input.core ? { ...input.core, pool: {} } : null;
+    const h = headlineOf({ ...input, core });
+    expect(h.fact).toBe(
+      "Your 90 is above every cut-off in your occupation's last 3 listed rounds (75 or less), and no 189 pool is published for Registered Nurses nec.",
+    );
+    expect(h.why).not.toContain("fewer than 20");
   });
 
   it("Kavya: the fact counts EOIs ahead of a lodged EOI", () => {

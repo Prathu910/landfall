@@ -8,12 +8,14 @@ import { MIN_POINTS } from "./label-189";
 import { labelName } from "./labels";
 import {
   dataMonth,
+  isLodged,
   longMonth,
   lowerFirst,
   moveName,
   namedState,
   occupationName,
   stateSentence,
+  situationOf,
   stateVisaOf,
   withoutConfirm,
 } from "./phrases";
@@ -31,6 +33,17 @@ export const DEADLINE = "Deadline: ";
 // months), plus the 60 days to lodge after an invitation.
 const WINDOW_NUMBERS = [3, 4, 6, 60];
 const EXACT_DATE = /\b\d{1,2} (\w{3}) (\d{4})\b/g;
+const DAYS_WAITING = /\b(\d+) days waiting\b/g;
+const DAYS_PER_MONTH = 30.44;
+
+/** "254 days waiting" becomes "about 8 months waiting", so the EOI date can't be worked back. */
+function monthsWaiting(text: string): string {
+  return text.replace(DAYS_WAITING, (_whole, days: string) => {
+    const months = Math.max(1, Math.round(Number(days) / DAYS_PER_MONTH));
+    return `about ${months} ${months === 1 ? "month" : "months"} waiting`;
+  });
+}
+
 /** "9 Aug 2027" becomes "August 2027": the facts hold no exact dates. */
 function monthOnly(text: string): string {
   return text.replace(EXACT_DATE, (whole, mon: string, year: string) => {
@@ -168,7 +181,7 @@ function route(r: Route): string[] {
       step.points === null
         ? ""
         : `, ${step.points} points${step.label ? `, ${labelName(step.label)}` : ""}`;
-    return monthOnly(`${step.title} (${step.sub}${at})`);
+    return monthsWaiting(monthOnly(`${step.title} (${step.sub}${at})`));
   });
   // Insert from the last deadline so earlier indexes stay valid.
   for (const deadline of [...r.deadlines].reverse()) {
@@ -243,6 +256,8 @@ export function buildFacts(
   return {
     occupation: occupationName(input),
     dataMonth: dataMonth(input),
+    situation: situationOf(o),
+    lodged: isLodged(input),
     stamp: stamp(o),
     visas: visas(input, o),
     counts: counts(input, o),

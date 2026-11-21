@@ -1,17 +1,13 @@
 import { DEADLINE } from "./facts";
 import { MIN_POINTS } from "./label-189";
 import { lowerFirst, theStateName } from "./phrases";
+import { MAX_WORDS, wordCount } from "./read-contract";
 import type { ReportFacts } from "./read-contract";
 
 type Visa = ReportFacts["visas"][number];
 type Change = ReportFacts["changes"][number];
 
-const MAX_WORDS = 110;
 const SUITS = ["Very strong", "Strong", "Competitive"];
-
-function wordCount(text: string): number {
-  return text.split(/\s+/).filter((word) => word.length > 0).length;
-}
 
 function gains(facts: ReportFacts): Change[] {
   return facts.changes.filter((c) => c.toPoints > c.fromPoints);
@@ -49,27 +45,35 @@ function lossSentence(change: Change): string {
 
 /** For combined stamps, whose route steps are short actions. */
 function nextSteps(facts: ReportFacts): string | null {
-  if (facts.stamp.state !== null || facts.stamp.visa === "189") return null;
+  if (facts.situation !== "combined") return null;
+  // The first step is where the reader stands today, not a step to take.
   const steps = facts.route
+    .slice(1)
     .filter((s) => !s.startsWith(DEADLINE))
-    .filter((s) => !s.startsWith("Today") && !s.startsWith("EOI submitted"))
     .map(lowerFirst);
   if (steps.length === 0) return null;
   return `Next steps: ${steps.slice(0, -1).join(", ")}${steps.length > 1 ? " and " : ""}${steps[steps.length - 1]}.`;
 }
 
-function lead189(facts: ReportFacts, lodged: boolean): string[] {
+function lead189(facts: ReportFacts): string[] {
+  const { lodged } = facts;
   const v189 = facts.visas[0];
   const first = gains(facts)[0];
   const backup = stateBackup(facts);
   const sentences: string[] = [];
-  if (v189.label === "Very strong") {
-    sentences.push(
-      "You don't need more points. Submit your EOI now and get your documents ready: once you're invited, you have 60 days to lodge.",
-    );
-  } else if (lodged) {
+  // Lodged first: a reader who has submitted is never told to submit.
+  if (lodged) {
     sentences.push(
       `Your EOI is already in the 189 queue at ${v189.points} points, which reads as ${v189.label}.`,
+    );
+    if (v189.label === "Very strong") {
+      sentences.push(
+        "Get your documents ready: once you're invited, you have 60 days to lodge.",
+      );
+    }
+  } else if (v189.label === "Very strong") {
+    sentences.push(
+      "You don't need more points. Submit your EOI now and get your documents ready: once you're invited, you have 60 days to lodge.",
     );
   } else {
     sentences.push(`At ${v189.points} points you're ${v189.label} for 189.`);
@@ -135,9 +139,8 @@ function leadCombined(facts: ReportFacts): string[] {
 }
 
 function leadSentences(facts: ReportFacts): string[] {
-  const lodged = facts.route[0]?.startsWith("EOI submitted") ?? false;
-  if (facts.stamp.visa === "189") return lead189(facts, lodged);
-  if (facts.stamp.state !== null) return leadState(facts);
+  if (facts.situation === "189") return lead189(facts);
+  if (facts.situation === "state") return leadState(facts);
   return leadCombined(facts);
 }
 

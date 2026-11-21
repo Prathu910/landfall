@@ -57,9 +57,10 @@ function bestCombined(ctx: HeadlineCtx): string {
   const { o } = ctx;
   const { states, federal190, federal491 } = o.listMembership;
   if (o.stamp.label !== "no-data") {
-    return states.length > 0
-      ? `None right now. Stay in the pool and watch ${joinAnd(states)}.`
-      : "None right now. Stay in the pool.";
+    if (states.length === 0) return "None right now. Stay in the pool.";
+    // Named from list membership (ruling R16), not invitation evidence.
+    const list = states.length === 1 ? "lists" : "list";
+    return `None right now. Stay in the pool and watch ${joinAnd(states)}, which still ${list} your occupation.`;
   }
   const visas = [federal190 ? "190" : "", federal491 ? "491" : ""]
     .filter(Boolean)

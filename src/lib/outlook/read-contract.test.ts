@@ -6,6 +6,8 @@ import type { ReportFacts } from "./read-contract";
 const PRIYA: ReportFacts = {
   occupation: "Registered Nurses nec",
   dataMonth: "October 2026",
+  situation: "189",
+  lodged: false,
   stamp: { visa: "189", state: null, label: "Competitive" },
   visas: [
     {
@@ -88,6 +90,23 @@ describe("checkRead", () => {
     expect(checkRead(text, PRIYA)).toEqual({ ok: false, reason: "banned" });
   });
 
+  it.each([
+    "That was on 12 March 2026.",
+    "Your test expires on 2 Feb.",
+    "The round on October 15 invited nurses.",
+    "Since Mar 4, nothing changed.",
+  ])("rejects a day-precise date: %s", (date) => {
+    // The day numbers are allowed here, so only the date shape can fail it.
+    const facts = {
+      ...PRIYA,
+      extraNumbers: [...PRIYA.extraNumbers, 2, 4, 12, 15],
+    };
+    expect(checkRead(`${PRIYA_READ} ${date}`, facts)).toEqual({
+      ok: false,
+      reason: "number",
+    });
+  });
+
   it("rejects a read of 30 words", () => {
     expect(checkRead(words(30), PRIYA)).toEqual({
       ok: false,
@@ -117,6 +136,9 @@ describe("allowedNumbers", () => {
 describe("READ_BANNED", () => {
   it.each([
     "This is guaranteed.",
+    "Nothing guarantees it.",
+    "Ten per cent of EOIs.",
+    "Ten percent of EOIs.",
     "A Guarantee.",
     "You'll definitely get one.",
     "You will be invited.",
@@ -134,6 +156,7 @@ describe("READ_BANNED", () => {
     "Your best chance is Tasmania, not 189.",
     "Fewer than 20 EOIs score higher.",
     "Small numbers of invitations.",
+    "You may update your EOI in March 2027.",
   ])("allows %s", (text) => {
     expect(text).not.toMatch(READ_BANNED);
   });

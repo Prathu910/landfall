@@ -4,6 +4,7 @@ import { SCENARIOS } from "./__fixtures__/scenarios";
 import type { ScenarioId } from "./__fixtures__/scenarios";
 import { scenarioInput } from "./__fixtures__/scenario-input";
 import { evaluateProfile } from "./evaluate-profile";
+import type { OutlookInput } from "./evaluate-profile";
 import { buildFacts } from "./facts";
 import { buildImprove } from "./improve";
 import { checkRead } from "./read-contract";
@@ -15,7 +16,10 @@ import { estimatedWait } from "./wait";
 const IDS = Object.keys(SCENARIOS) as ScenarioId[];
 
 function factsFor(id: ScenarioId): ReportFacts {
-  const input = scenarioInput(id);
+  return factsOf(scenarioInput(id));
+}
+
+function factsOf(input: OutlookInput): ReportFacts {
   const outlook = evaluateProfile(input);
   const improve = buildImprove(input, outlook);
   const route = buildRoute(input, outlook, improve);
@@ -46,6 +50,24 @@ describe("readTemplate", () => {
     const read = readTemplate(factsFor("notinv"));
     expect(read).toContain("More points won't fix this");
     expect(read).toContain("Northern Territory");
+  });
+
+  it("Kavya: leads with her lodged EOI", () => {
+    const read = readTemplate(factsFor("lodged"));
+    expect(read).toMatch(
+      /^Your EOI is already in the 189 queue at 70 points, which reads as Competitive\./,
+    );
+  });
+
+  it("a lodged very strong reader isn't told to submit an EOI", () => {
+    const input = scenarioInput("strong");
+    const profile = { ...input.profile, eoiDate: "2026-03-12" };
+    const facts = factsOf({ ...input, profile });
+    const read = readTemplate(facts);
+    expect(facts.lodged).toBe(true);
+    expect(read).not.toContain("Submit your EOI");
+    expect(read).toMatch(/^Your EOI is already in the 189 queue at 90 points/);
+    expect(checkRead(read, facts)).toEqual({ ok: true });
   });
 
   it("Dev: names no state as a route", () => {
@@ -82,6 +104,27 @@ describe("buildFacts", () => {
       toLabel: "Very strong",
       month: null,
     });
+  });
+
+  it.each([
+    ["strong", "189", false],
+    ["middle", "189", false],
+    ["long", "state", false],
+    ["notinv", "state", false],
+    ["below", "state", false],
+    ["nodata", "combined", false],
+    ["none", "combined", false],
+    ["lodged", "189", true],
+  ] as const)("%s: situation %s, lodged %s", (id, situation, lodged) => {
+    const facts = factsFor(id);
+    expect(facts.situation).toBe(situation);
+    expect(facts.lodged).toBe(lodged);
+  });
+
+  it("Kavya: days waiting become months, so the EOI date can't be worked back", () => {
+    const route = factsFor("lodged").route;
+    expect(route.join(" ")).not.toMatch(/days waiting/);
+    expect(route).toContain("Today (about 8 months waiting)");
   });
 
   it("holds no exact dates: only months and years", () => {

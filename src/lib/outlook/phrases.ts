@@ -40,6 +40,18 @@ export function dataMonth(input: OutlookInput): string {
   return longMonth(input.core?.asAt ?? manifest.asAt);
 }
 
+/** One source for "lodged", so the headline and the facts always agree. */
+export function isLodged(input: OutlookInput): boolean {
+  return input.profile.eoiDate !== "";
+}
+
+/** A state stamp always names its state; anything else reads as 189 or combined. */
+export function situationOf(o: ProfileOutlook): "189" | "state" | "combined" {
+  const { stamp } = o;
+  if (stamp.kind === "combined") return "combined";
+  return stamp.visa !== "189" && stamp.state ? "state" : "189";
+}
+
 /** Lower-cases a leading capital, except in an acronym ("EOI", "WA's") or "English". */
 export function lowerFirst(text: string): string {
   const [first, second] = text;

@@ -10,6 +10,7 @@ import type { Improve } from "./improve";
 import { CONFIRM, MIN_POINTS } from "./label-189";
 import { isAtLeast, labelName } from "./labels";
 import {
+  isLodged,
   longMonth,
   lowerFirst,
   namedState,
@@ -89,8 +90,12 @@ function frontFact(ctx: HeadlineCtx): string {
   const { o, name } = ctx;
   const { ahead, lastThree } = o.v189;
   const points = o.points.base;
-  const who = (ahead?.max ?? 0) === 0 ? "No" : "Fewer than 20";
   const top = Math.max(...lastThree);
+  if (!ahead) {
+    // No published pool: there is no count of higher scores to quote.
+    return `Your ${points} is above every cut-off in your occupation's last ${lastThree.length} listed rounds (${top} or less), and no 189 pool is published for ${name}.`;
+  }
+  const who = ahead.max === 0 ? "No" : "Fewer than 20";
   const rounds =
     lastThree.length === 1
       ? `your occupation's last listed round had a cut-off of ${top} or less`
@@ -237,7 +242,7 @@ export function buildHeadline(
     o,
     improve,
     name: occupationName(input),
-    lodged: input.profile.eoiDate !== "",
+    lodged: isLodged(input),
     stamped: stampedState(o),
   };
   return {

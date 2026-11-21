@@ -150,9 +150,13 @@ export function label189(input: {
   const low = Math.min(...l3);
   const cutoffs = list(l3);
   if (points > high && (ahead?.max ?? 0) <= 19) {
+    // Without a pool there is no count of higher scores to quote.
+    const higher = ahead
+      ? ", and fewer than 20 EOIs score higher."
+      : ". No 189 pool is published for it.";
     return finish(
       "very-strong",
-      `${points} is above your occupation's ${cutoffPhrase(l3.length)} (${cutoffs}), and fewer than 20 EOIs score higher.`,
+      `${points} is above your occupation's ${cutoffPhrase(l3.length)} (${cutoffs})${higher}`,
       eligible,
       rest,
     );

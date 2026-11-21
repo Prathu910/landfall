@@ -156,6 +156,10 @@ describe("label189 edge cases", () => {
     const r = label189({ points: 80, eligible: true, core: c });
     expect(r.label).toBe("very-strong");
     expect(r.ahead).toBeNull();
+    // No pool means no count of higher scores, so the why line can't claim one.
+    expect(r.why).toBe(
+      "80 is above your occupation's last 3 listed cut-offs (70, 75, 75). No 189 pool is published for it.",
+    );
   });
   it("names met and unmet cut-offs truthfully", () => {
     const r = label189({

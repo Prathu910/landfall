@@ -9,6 +9,10 @@
 export type ReportFacts = {
   occupation: string;
   dataMonth: string;
+  /** Which visa the stamp covers: 189, one state visa, or all three combined. */
+  situation: "189" | "state" | "combined";
+  /** The reader has already submitted an EOI. */
+  lodged: boolean;
   stamp: { visa: string; state: string | null; label: string };
   visas: {
     visa: string;
@@ -32,11 +36,15 @@ export type ReportFacts = {
 
 /** Wording the report's new sections and "Our read" must never use (spec 10). */
 export const READ_BANNED =
-  /\b(guaranteed?|definitely|will be invited|chances? of|likely to be invited|some invitations|a few)\b|%/i;
+  /\b(guarantee\w*|definitely|will be invited|chances? of|likely to be invited|some invitations|a few|per ?cent)\b|%/i;
 
-const MIN_WORDS = 40;
-const MAX_WORDS = 110;
+export const MIN_WORDS = 40;
+export const MAX_WORDS = 110;
 const NUMBER_TOKEN = /\d[\d,]*(\.\d+)?/g;
+// A day next to a month ("12 March", "Oct 15") is more precise than the
+// facts, which hold months only. Case-sensitive so "may 5" isn't a date.
+const MONTH = "(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*";
+const DAY_DATE = new RegExp(`\\b\\d{1,2} ${MONTH}\\b|\\b${MONTH} \\d{1,2}\\b`);
 
 function numbersIn(text: string): number[] {
   return (text.match(NUMBER_TOKEN) ?? []).map((token) =>
@@ -75,7 +83,7 @@ export function allowedNumbers(facts: ReportFacts): Set<number> {
   ]);
 }
 
-function wordCount(text: string): number {
+export function wordCount(text: string): number {
   return text.split(/\s+/).filter((word) => word.length > 0).length;
 }
 
@@ -85,6 +93,8 @@ export function checkRead(
   facts: ReportFacts,
 ): { ok: true } | { ok: false; reason: "number" | "banned" | "length" } {
   if (READ_BANNED.test(text)) return { ok: false, reason: "banned" };
+  // An exact date is a number the facts never hold.
+  if (DAY_DATE.test(text)) return { ok: false, reason: "number" };
   const allowed = allowedNumbers(facts);
   if (numbersIn(text).some((n) => !allowed.has(n))) {
     return { ok: false, reason: "number" };

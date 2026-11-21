@@ -36,6 +36,7 @@ export function suitedStates(o: ProfileOutlook): StateLabel[] {
 
 export function stampedState(o: ProfileOutlook): Stamped | null {
   const { stamp } = o;
+  // Same test as situationOf, spelled out so TypeScript narrows the stamp.
   if (stamp.kind !== "single" || stamp.visa === "189" || !stamp.state) {
     return null;
   }
