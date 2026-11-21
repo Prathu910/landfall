@@ -139,6 +139,7 @@ function ReportBody(props: Props & { view: OutlookView }) {
         <div className={`${section.band} no-print`}>
           <ReportFeedback summary={summary} />
         </div>
+        <ReportFooter text={view.footer} />
       </>
     );
   }

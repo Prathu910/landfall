@@ -307,14 +307,17 @@ describe("buildOutlookView scenarios", () => {
     expect(view.dataMonth).toBe("October 2026");
   });
 
-  it("has the eight method lines and the footer", () => {
+  it("has the nine method lines and the footer", () => {
     const view = reportOf("strong");
-    expect(view.methodLines).toHaveLength(8);
+    expect(view.methodLines).toHaveLength(9);
     expect(view.methodLines[0]).toBe(
       "Very strong: your points are above every 189 cut-off in your occupation's last 3 listed rounds, and fewer than 20 EOIs score higher.",
     );
     expect(view.methodLines[7]).toBe(
       "The stamp shows your best visa. If none is Competitive or better, it covers all three.",
+    );
+    expect(view.methodLines[8]).toBe(
+      "Future points assume today's points test; the announced reforms could change them.",
     );
     expect(view.footer).toBe(
       "This is our best reading of the data, not a guarantee. It comes from published SkillSelect figures up to October 2026. Home Affairs and the states can change round sizes, cut-offs and rules at any time, so your real result may be different. MigrateLens isn't a registered migration agent; for advice on your own case, talk to one.",
@@ -371,6 +374,9 @@ describe("buildOutlookView states", () => {
       label: "Occupation",
       value: "No occupation chosen",
     });
+    expect(view.footer).toMatch(
+      /^This is our best reading of the data, not a guarantee\. It comes from published SkillSelect figures up to October 2026\./,
+    );
   });
 
   it("carries the evidence and the points page with a report", () => {

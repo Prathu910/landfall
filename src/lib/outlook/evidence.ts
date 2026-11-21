@@ -21,6 +21,8 @@ export type RoundRow = {
 
 export type PoolBar = {
   score: number;
+  /** "70", "70 (you)", or "70 (your band)" when the reader's score falls inside it. */
+  label: string;
   count: string;
   /** Bar length against the tallest bar, 0 to 1 (interval midpoints). */
   share: number;
@@ -80,7 +82,16 @@ function middle(count: Interval): number {
   return (count.min + count.max) / 2;
 }
 
-function poolBars(byScore: Record<string, string>, you: number): PoolBar[] {
+function barLabel(score: number, at: number, you: number): string {
+  if (score !== at) return String(score);
+  return score === you ? `${score} (you)` : `${score} (your band)`;
+}
+
+/** One bar per published score band, in score order. */
+export function poolBars(
+  byScore: Record<string, string>,
+  you: number,
+): PoolBar[] {
   const scored = Object.entries(byScore)
     .map(([score, text]) => ({
       score: Number(score),
@@ -91,6 +102,7 @@ function poolBars(byScore: Record<string, string>, you: number): PoolBar[] {
   const at = normalizePoolScore(you);
   return scored.map(({ score, count }) => ({
     score,
+    label: barLabel(score, at, you),
     count: formatCount(count),
     share: middle(count) / tallest,
     side: score > at ? "higher" : score === at ? "you" : "lower",
@@ -135,16 +147,22 @@ function cohortOf(input: OutlookInput, core: OccupationCore): CohortEvidence {
   };
 }
 
+/** A masked (or summed masked) count may hide zero invitations, so it says so. */
+function latestText(month: MonthKey, count: Interval): string {
+  const mayBeZero = count.min === 0 ? " (may be zero)" : "";
+  return `${formatMonth(month)}: ${formatSummed(count)}${mayBeZero}`;
+}
+
 function stateTable(input: OutlookInput, visa: VisaLabel): StateTable {
   const { points } = visa;
   return {
     visa: visa.visa,
     title: `${visa.visa} by state, at your ${points} points`,
-    sub: `The latest month each state invited ${occupationName(input)} EOIs at or below ${points} points, and in how many of the last ${STATE_WINDOW} months it did.`,
+    sub: `${occupationName(input)} invitations issued each month, at or below your ${points} points, over the last ${STATE_WINDOW} months: the latest month with any, and how many months had some.`,
     rows: visa.states.map((state) => ({
       state: state.state,
       latest: state.latest
-        ? `${formatMonth(state.latest.month)}: ${formatSummed(state.latest.count)}`
+        ? latestText(state.latest.month, state.latest.count)
         : `None in the last ${STATE_WINDOW} months`,
       months: `${state.monthsAtOrBelow6} of the last ${STATE_WINDOW} months`,
       label: state.label,

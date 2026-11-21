@@ -41,6 +41,7 @@ export type OutlookView =
       points: PointsResult;
       line: string;
       pointsPage: PointsPage;
+      footer: string;
     }
   | {
       kind: "report";
@@ -91,6 +92,7 @@ export const METHOD_LINES: readonly string[] = [
   "Not eligible yet: under 65 points, or a basic requirement isn't met.",
   "190 and 491: each state is labelled from its invitations at or below your points (with nomination) over the last 3 to 6 months, and its rules. The visa takes its best state.",
   "The stamp shows your best visa. If none is Competitive or better, it covers all three.",
+  "Future points assume today's points test; the announced reforms could change them.",
 ];
 
 function footerText(month: string): string {
@@ -185,14 +187,22 @@ export function buildOutlookView(input: OutlookViewInput): OutlookView {
   const { occupation, ...rest } = input;
   if (rest.profile.occupation === "") {
     const points = calculatePoints(rest.profile, rest.asOf);
+    // No occupation means no core: the checked-in snapshot sets the month.
+    const noCore = { ...rest, core: null, detail: null };
     const pointsPage = buildPointsPage({
       profile: rest.profile,
       points,
       occupation: NO_OCCUPATION,
       asOf: rest.asOf,
-      month: dataMonthKey({ ...rest, core: null, detail: null }),
+      month: dataMonthKey(noCore),
     });
-    return { kind: "points-only", points, line: POINTS_ONLY_LINE, pointsPage };
+    return {
+      kind: "points-only",
+      points,
+      line: POINTS_ONLY_LINE,
+      pointsPage,
+      footer: footerText(dataMonth(noCore)),
+    };
   }
   if (occupation.status === "loading") return { kind: "loading" };
   // A failed load takes the no-core path, like an occupation with no data.

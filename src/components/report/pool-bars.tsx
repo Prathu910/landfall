@@ -21,7 +21,7 @@ export function PoolBars({ bars, aria }: { bars: PoolBar[]; aria: string }) {
               key={bar.score}
               className={bar.side === "you" ? styles.youRow : undefined}
             >
-              <td>{bar.side === "you" ? `${bar.score} (you)` : bar.score}</td>
+              <td>{bar.label}</td>
               <td className={styles.barCell} aria-hidden="true">
                 <span
                   className={`${styles.bar} ${styles[bar.side]}`}

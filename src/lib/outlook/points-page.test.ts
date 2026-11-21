@@ -50,6 +50,32 @@ describe("buildPointsPage fields", () => {
   });
 });
 
+describe("buildPointsPage expiry", () => {
+  const value = (profile: Profile, label: string) =>
+    pageOf(profile).fields.find((f) => f.label === label)?.value;
+
+  it("says expired for a skills assessment past its 3-year cap", () => {
+    const profile = {
+      ...SCENARIOS.middle,
+      assessmentDate: "2023-05-01",
+      assessmentExpiry: "",
+    };
+    expect(value(profile, "Skills assessment")).toBe("Expired 1 May 2026");
+  });
+
+  it("uses the earlier of the letter expiry and the 3-year cap", () => {
+    const profile = { ...SCENARIOS.middle, assessmentDate: "2025-01-10" };
+    expect(value(profile, "Skills assessment")).toBe("Valid to 10 Jan 2028");
+  });
+
+  it("says expired for an English test older than 3 years", () => {
+    const profile = { ...SCENARIOS.middle, englishDate: "2023-02-02" };
+    expect(value(profile, "English test")).toBe(
+      "Proficient, expired 2 Feb 2026",
+    );
+  });
+});
+
 describe("buildPointsPage rows", () => {
   it("shows each scoring category with its detail, then every zero category", () => {
     const page = pageOf(SCENARIOS.middle);

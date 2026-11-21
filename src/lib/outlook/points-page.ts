@@ -1,5 +1,11 @@
 import type { MonthKey } from "../data/types";
-import { MONTH_NAMES, ageOnDate, formatDate } from "../migration";
+import {
+  MONTH_NAMES,
+  addYearsToDate,
+  ageOnDate,
+  assessmentEndDate,
+  formatDate,
+} from "../migration";
 import type { PointCategory, PointsResult, Profile } from "../migration";
 
 export type PointsField = { label: string; value: string };
@@ -28,7 +34,8 @@ export type PointsPageInput = {
 
 const NOT_GIVEN = "Not given";
 const MRZ_LENGTH = 44;
-const VALID_YEARS = 3;
+// The points test treats an English result as valid for 3 years.
+const ENGLISH_VALID_YEARS = 3;
 // Every reader answers these, so they show even at zero points.
 const ALWAYS_SHOWN = new Set([
   "age",
@@ -68,16 +75,6 @@ const BONUS: Record<string, string> = {
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
-/** Same calendar day `years` later; 29 Feb falls back to 28 Feb. */
-function yearsLater(date: string, years: number): string {
-  const [year, month, day] = date.split("-").map(Number);
-  const lastDay = new Date(Date.UTC(year + years, month, 0)).getUTCDate();
-  const shifted = new Date(
-    Date.UTC(year + years, month - 1, Math.min(day, lastDay)),
-  );
-  return shifted.toISOString().slice(0, 10);
-}
-
 function plural(count: number, unit: string): string {
   return `${count} ${count === 1 ? unit : `${unit}s`}`;
 }
@@ -92,22 +89,20 @@ function whereField(profile: Profile): string {
   return profile.state ? `Onshore, ${profile.state}` : "Onshore";
 }
 
-/** Valid to the letter's expiry or 3 years from issue, whichever is earlier. */
-function assessmentField(profile: Profile): string {
-  const ends = [profile.assessmentExpiry];
-  if (ISO_DATE.test(profile.assessmentDate)) {
-    ends.push(yearsLater(profile.assessmentDate, VALID_YEARS));
-  }
-  const valid = ends.filter((end) => ISO_DATE.test(end)).sort();
-  return valid.length ? `Valid to ${formatDate(valid[0])}` : NOT_GIVEN;
+/** The points test's own end date: the letter's expiry or 3 years from issue. */
+function assessmentField(profile: Profile, asOf: string): string {
+  const end = assessmentEndDate(profile);
+  if (!end) return NOT_GIVEN;
+  return end <= asOf
+    ? `Expired ${formatDate(end)}`
+    : `Valid to ${formatDate(end)}`;
 }
 
 function englishField(profile: Profile, asOf: string): string {
   const level = ENGLISH[profile.english];
   if (profile.english === "unknown") return level;
-  if (!ISO_DATE.test(profile.englishDate))
-    return `${level}, no test date given`;
-  const end = yearsLater(profile.englishDate, VALID_YEARS);
+  const end = addYearsToDate(profile.englishDate, ENGLISH_VALID_YEARS);
+  if (!end) return `${level}, no test date given`;
   const verb = end <= asOf ? "expired" : "valid to";
   return `${level}, ${verb} ${formatDate(end)}`;
 }
@@ -120,7 +115,7 @@ function fieldsOf(input: PointsPageInput): PointsField[] {
     { label: "Occupation", value: `${occupation}${code}` },
     { label: "Date of birth", value: dobField(profile, asOf) },
     { label: "Where you are", value: whereField(profile) },
-    { label: "Skills assessment", value: assessmentField(profile) },
+    { label: "Skills assessment", value: assessmentField(profile, asOf) },
     { label: "English test", value: englishField(profile, asOf) },
   ];
   if (ISO_DATE.test(profile.eoiDate)) {

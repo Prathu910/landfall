@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { scenarioInput } from "./__fixtures__/scenario-input";
 import type { ScenarioId } from "./__fixtures__/scenarios";
 import { evaluateProfile } from "./evaluate-profile";
-import { buildEvidence } from "./evidence";
+import { buildEvidence, poolBars } from "./evidence";
 
 function evidenceOf(id: ScenarioId, detail = true) {
   const input = scenarioInput(id);
@@ -115,5 +115,34 @@ describe("buildEvidence states", () => {
     expect(evidence.statesEmpty).toBe(
       "No state invitations are published for Greenkeeper.",
     );
+  });
+});
+
+describe("buildEvidence masked state counts", () => {
+  it("says a summed masked count may be zero, as for Tasmania's 190", () => {
+    const [s190] = evidenceOf("middle").states;
+    const tas = s190.rows.find((row) => row.state === "TAS");
+    expect(tas?.latest).toBe("Oct 2026: under 58 (may be zero)");
+    const vic = s190.rows.find((row) => row.state === "VIC");
+    expect(vic?.latest).toBe("Oct 2026: 36");
+  });
+
+  it("names the series each state table counts", () => {
+    const [s190] = evidenceOf("middle").states;
+    expect(s190.sub).toBe(
+      "Registered Nurses nec invitations issued each month, at or below your 75 points, over the last 6 months: the latest month with any, and how many months had some.",
+    );
+  });
+});
+
+describe("poolBars", () => {
+  it("labels the reader's own score as you", () => {
+    const bars = poolBars({ "65": "30", "70": "40" }, 70);
+    expect(bars.map((bar) => bar.label)).toEqual(["65", "70 (you)"]);
+  });
+
+  it("labels the band as yours when the reader's score sits inside it", () => {
+    const bars = poolBars({ "70": "40", "75": "<20" }, 72);
+    expect(bars.map((bar) => bar.label)).toEqual(["70 (your band)", "75"]);
   });
 });
