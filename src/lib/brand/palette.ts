@@ -23,6 +23,19 @@ export const STATUS = {
   notOpen: { fg: "#8A2E22", bg: "#F5DEDA" },
 } as const;
 
+/** Outlook label ink and tint pairs (report redesign). Each also shows its label text. */
+// Competitive and long wait are darkened from the mockup (#A06400, #C2410C) to reach 4.5:1 on their tints.
+export const LABEL_PAIRS = {
+  veryStrong: { ink: "#0F6B3C", bg: "#D6EFE0" },
+  strong: { ink: "#1E7A4C", bg: "#E5F3EA" },
+  competitive: { ink: "#996000", bg: "#FBEFD6" },
+  longWait: { ink: "#BE3F0B", bg: "#FDE8DB" },
+  notInvited: { ink: "#B42318", bg: "#FCE5E3" },
+  notEligible: { ink: "#5B3F9E", bg: "#ECE6F8" },
+  notOpen: { ink: "#B42318", bg: "#FCE5E3" },
+  noData: { ink: "#586470", bg: "#E8ECEF" },
+} as const;
+
 /** The warm tint behind a "?" line. Distinct from brand saffron. */
 export const QUESTION_LINE = { fg: "#1B1A17", bg: "#F6DDB5" } as const;
 

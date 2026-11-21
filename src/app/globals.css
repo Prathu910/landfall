@@ -21,6 +21,25 @@
   --status-not-open-bg: #f5deda;
   --question-fg: #1b1a17;
   --question-bg: #f6ddb5;
+  --label-very-strong-ink: #0f6b3c;
+  --label-very-strong-bg: #d6efe0;
+  --label-strong-ink: #1e7a4c;
+  --label-strong-bg: #e5f3ea;
+  --label-competitive-ink: #996000;
+  --label-competitive-bg: #fbefd6;
+  --label-long-wait-ink: #be3f0b;
+  --label-long-wait-bg: #fde8db;
+  --label-not-invited-ink: #b42318;
+  --label-not-invited-bg: #fce5e3;
+  --label-not-eligible-ink: #5b3f9e;
+  --label-not-eligible-bg: #ece6f8;
+  --label-not-open-ink: #b42318;
+  --label-not-open-bg: #fce5e3;
+  --label-no-data-ink: #586470;
+  --label-no-data-bg: #e8ecef;
+  --font-report: "Archivo Variable", "Inter", Arial, sans-serif;
+  --font-stamp:
+    "Big Shoulders Stencil Display", "Archivo Variable", Impact, sans-serif;
   --focus-ring: #2e4a7d;
   --focus-ring-on-dark: #f3eee3;
   --muted-on-dark: #d6cfbf;

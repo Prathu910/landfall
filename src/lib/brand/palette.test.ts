@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import { contrastRatio } from "./contrast";
 import {
   FOCUS_RING,
+  LABEL_PAIRS,
   PALETTE,
   QUESTION_LINE,
   STATUS,
@@ -22,6 +23,8 @@ function cssFiles(dir: string): string[] {
 }
 
 const globals = readFileSync("src/app/globals.css", "utf8");
+const hasLabelToken = (name: string, value: string) =>
+  new RegExp(`--label-${name}:\\s*${value}\\b`, "i").test(globals);
 
 describe("contrastRatio", () => {
   it("measures black on white as 21", () => {
@@ -76,6 +79,28 @@ describe("globals.css", () => {
     for (const file of cssFiles("src")) {
       expect(readFileSync(file, "utf8"), file).not.toMatch(old);
     }
+  });
+});
+
+describe("outlook label pairs", () => {
+  it("every ink passes AA on its tint and on white", () => {
+    for (const [key, { ink, bg }] of Object.entries(LABEL_PAIRS)) {
+      expect(contrastRatio(ink, bg), `${key} on bg`).toBeGreaterThanOrEqual(
+        4.5,
+      );
+      expect(
+        contrastRatio(ink, "#FFFFFF"),
+        `${key} on white`,
+      ).toBeGreaterThanOrEqual(4.5);
+    }
+  });
+  it("mirrors the label tokens and fonts in globals.css", () => {
+    for (const [key, { ink, bg }] of Object.entries(LABEL_PAIRS)) {
+      expect(hasLabelToken(`${kebab(key)}-ink`, ink), key).toBe(true);
+      expect(hasLabelToken(`${kebab(key)}-bg`, bg), key).toBe(true);
+    }
+    expect(globals).toMatch(/--font-report:[^;]*Archivo Variable/);
+    expect(globals).toMatch(/--font-stamp:[^;]*Big Shoulders Stencil Display/);
   });
 });
 
