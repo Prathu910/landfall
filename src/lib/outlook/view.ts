@@ -33,7 +33,9 @@ export type { VisaCard } from "./visa-cards";
 export type OccupationState =
   | { status: "loading" }
   | { status: "ready"; core: OccupationCore; detail: OccupationDetail | null }
-  | { status: "unavailable" }; // report.tsx converts ReportOccupation to this
+  | { status: "unavailable" } // no published data: the no-core report
+  /** The published file failed to load: a network fact, never a data fact. */
+  | { status: "load-failed" }; // report.tsx converts ReportOccupation to this
 
 export type OutlookView =
   | { kind: "loading" }
@@ -81,6 +83,8 @@ export type OutlookViewInput = Omit<OutlookInput, "core" | "detail"> & {
 };
 
 const POINTS_ONLY_LINE = "Choose an occupation to see how your points compare.";
+const LOAD_FAILED_LINE =
+  "We couldn't load the published data. Reload to try again.";
 const NO_OCCUPATION = "No occupation chosen";
 const COMBINED_RING = "189 • 190 • 491";
 
@@ -172,31 +176,44 @@ function reportView(input: OutlookInput): OutlookView {
   };
 }
 
+/** Points and the points page only: no stamp, no labels. */
+function pointsOnly(
+  input: Omit<OutlookInput, "core" | "detail">,
+  line: string,
+  occupation: string,
+): OutlookView {
+  const points = calculatePoints(input.profile, input.asOf);
+  // Without a core the checked-in snapshot sets the month.
+  const noCore = { ...input, core: null, detail: null };
+  const month = dataMonth(noCore);
+  const pointsPage = buildPointsPage({
+    profile: input.profile,
+    points,
+    occupation,
+    asOf: input.asOf,
+    month: dataMonthKey(noCore),
+  });
+  return {
+    kind: "points-only",
+    points,
+    line,
+    pointsPage,
+    footer: footerText(month),
+    dataMonth: month,
+  };
+}
+
 export function buildOutlookView(input: OutlookViewInput): OutlookView {
   const { occupation, ...rest } = input;
   if (rest.profile.occupation === "") {
-    const points = calculatePoints(rest.profile, rest.asOf);
-    // No occupation means no core: the checked-in snapshot sets the month.
-    const noCore = { ...rest, core: null, detail: null };
-    const month = dataMonth(noCore);
-    const pointsPage = buildPointsPage({
-      profile: rest.profile,
-      points,
-      occupation: NO_OCCUPATION,
-      asOf: rest.asOf,
-      month: dataMonthKey(noCore),
-    });
-    return {
-      kind: "points-only",
-      points,
-      line: POINTS_ONLY_LINE,
-      pointsPage,
-      footer: footerText(month),
-      dataMonth: month,
-    };
+    return pointsOnly(rest, POINTS_ONLY_LINE, NO_OCCUPATION);
   }
   if (occupation.status === "loading") return { kind: "loading" };
-  // A failed load takes the no-core path, like an occupation with no data.
+  if (occupation.status === "load-failed") {
+    const name = occupationName({ ...rest, core: null, detail: null });
+    return pointsOnly(rest, LOAD_FAILED_LINE, name);
+  }
+  // An occupation with no published data takes the no-core path.
   const ready = occupation.status === "ready";
   return reportView({
     ...rest,

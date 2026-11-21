@@ -10,6 +10,8 @@ import { buildOutlookView } from "@/lib/outlook/view";
 import type { OccupationState, OutlookView } from "@/lib/outlook/view";
 import type { OccupationEvidence } from "@/lib/report-evidence";
 import { calculationSummary } from "@/lib/submissions/summary";
+import { occupationIndex } from "./data/occupation-index";
+import { unavailableReason } from "./data/report-occupation";
 import type { ReportOccupation } from "./data/report-occupation";
 import type { OurReadResult } from "./report/use-our-read";
 import type { DetailLoad } from "./data/use-occupation-core";
@@ -51,12 +53,17 @@ type Props = {
 
 /** The outlook reads only the core and a ready detail file. */
 function occupationState(
+  code: string,
   status: ReportOccupation["status"],
   core: OccupationCore | null,
   detail: DetailLoad | null,
 ): OccupationState {
   if (status === "loading") return { status: "loading" };
-  if (status !== "ready" || !core) return { status: "unavailable" };
+  if (status !== "ready" || !core) {
+    // A fetch that failed must not read as "SkillSelect published nothing".
+    const failed = unavailableReason(code, occupationIndex) === "loadFailed";
+    return failed ? { status: "load-failed" } : { status: "unavailable" };
+  }
   return {
     status: "ready",
     core,
@@ -80,7 +87,7 @@ function useOutlookView(
         profile,
         asOf,
         rules: stateRuleData,
-        occupation: occupationState(status, core, detail),
+        occupation: occupationState(profile.occupation, status, core, detail),
       }),
     [profile, asOf, status, core, detail],
   );

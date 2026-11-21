@@ -173,6 +173,7 @@ describe("buildOutlookView scenarios", () => {
         title: "189 Independent",
         caption: "No EOIs ahead of you.",
         flagText: null,
+        flagHref: null,
       },
       {
         visa: "190",
@@ -185,6 +186,7 @@ describe("buildOutlookView scenarios", () => {
         caption:
           "New South Wales invited 327–346 EOIs at or below your points in October 2026.",
         flagText: null,
+        flagHref: null,
       },
       {
         visa: "491",
@@ -197,6 +199,7 @@ describe("buildOutlookView scenarios", () => {
         caption:
           "Victoria invited 98–136 EOIs at or below your points in October 2026.",
         flagText: "We're still checking Victoria's rules.",
+        flagHref: null,
       },
     ]);
   });
@@ -395,5 +398,22 @@ describe("buildOutlookView states", () => {
     const profile = { ...scenarioInput("strong").profile, occupation: "" };
     const view = viewOf("strong", { status: "loading" }, profile);
     expect(view.kind).toBe("points-only");
+  });
+
+  it("shows points only, no stamp, when the published data failed to load", () => {
+    const view = viewOf("middle", { status: "load-failed" });
+    expect(view).toMatchObject({
+      kind: "points-only",
+      line: "We couldn't load the published data. Reload to try again.",
+    });
+    if (view.kind !== "points-only") return;
+    expect(view.points.base).toBe(70);
+    expect(view.line).not.toMatch(REPORT_BANNED_COPY);
+    // A network failure is never reported as a SkillSelect fact.
+    expect(JSON.stringify(view)).not.toMatch(/hasn't published|No data/);
+    expect(view.pointsPage.fields[1]).toEqual({
+      label: "Occupation",
+      value: "Registered Nurses nec (254499)",
+    });
   });
 });
