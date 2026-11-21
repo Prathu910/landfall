@@ -8,10 +8,11 @@ import {
 } from "../state-outlook/__fixtures__/real-data";
 import { SCENARIOS } from "./__fixtures__/scenarios";
 import type { ScenarioId } from "./__fixtures__/scenarios";
-import { cutoffColumns, queueView } from "./charts";
+import { cutoffColumns } from "./charts";
 import { evaluateProfile } from "./evaluate-profile";
 import type { OutlookInput } from "./evaluate-profile";
 import { buildImprove } from "./improve";
+import { queueView } from "./queue-view";
 
 const AS_OF = "2026-11-21";
 const RULES = {
@@ -94,66 +95,5 @@ describe("cutoffColumns", () => {
     expect(cutoffColumns(null, s.points, s.improve)).toBeNull();
     const none = setup("nodata");
     expect(cutoffColumns(none.core, none.points, none.improve)).toBeNull();
-  });
-});
-
-describe("queueView", () => {
-  it("shows Priya's pool at 40 EOIs a square", () => {
-    const view = queue("middle");
-    expect(view?.kind).toBe("pool");
-    expect(view?.unit).toBe(40);
-    expect(view?.title).toBe("Who's in the queue");
-    expect(view?.groups.map((g) => g.squares)).toEqual([3, 46, 58]);
-    expect(view?.groups.map((g) => g.label)).toEqual([
-      "Ahead: 107–126",
-      "Tied with you: 1,841",
-      "Behind: about 2,320",
-    ]);
-    expect(view?.groups.map((g) => g.emphasis)).toEqual([false, true, false]);
-    expect(view?.aria).toBe(
-      "107 to 126 ahead, 1,841 tied, about 2,320 behind.",
-    );
-  });
-
-  it("puts Aarav first in line", () => {
-    const view = queue("strong");
-    expect(view?.groups.map((g) => [g.key, g.squares])).toEqual([
-      ["ahead", 0],
-      ["tied", 0],
-      ["you", 1],
-      ["behind", 107],
-    ]);
-    expect(view?.groups[3].label).toBe("Behind: 4,280");
-  });
-
-  it("uses 100 EOIs a square for Meera", () => {
-    expect(queue("long")?.unit).toBe(100);
-  });
-
-  it("calls Rahul's queue one that isn't moving", () => {
-    const view = queue("notinv");
-    expect(view?.title).toBe("A queue that isn't moving");
-    expect(view?.aria).toContain("isn't being invited");
-  });
-
-  it("splits Kavya's lodged place into four groups", () => {
-    const view = queue("lodged");
-    expect(view?.kind).toBe("lodged");
-    expect(view?.title).toMatch(/^Your place at \d+$/);
-    expect(view?.groups.map((g) => g.key)).toEqual([
-      "higher",
-      "earlier",
-      "month",
-      "later",
-    ]);
-    expect(view?.groups[2].emphasis).toBe(true);
-    expect(view?.groups[1].label).toMatch(/^At \d+, earlier: about /);
-    expect(JSON.stringify(view)).not.toMatch(BANNED);
-  });
-
-  it("returns null without a core or a 189 pool", () => {
-    const s = setup("middle");
-    expect(queueView(null, null, s.points, "", false)).toBeNull();
-    expect(queue("nodata")).toBeNull();
   });
 });
