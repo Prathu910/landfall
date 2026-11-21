@@ -87,7 +87,8 @@ function range(min: number, max: number, unit: string): string {
   return min === max ? `${min} ${unit}` : `${min} to ${max} ${unit}s`;
 }
 
-function roughly(ahead: Interval): string {
+/** An estimate to the nearest ten: "870 to 970". */
+export function roughly(ahead: Interval): string {
   const low = Math.round(ahead.min / 10) * 10;
   const high = Math.round(ahead.max / 10) * 10;
   return low === high ? `${low}` : `${low} to ${high}`;

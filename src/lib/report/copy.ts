@@ -1,10 +1,18 @@
 import type { Interval, MonthKey } from "../data/types";
 import { MONTH_NAMES } from "../migration";
+import { READ_BANNED } from "../outlook/read-contract";
 import { formatInterval } from "../pool";
 
 /** Wording the report must never use (spec section 7). */
 export const BANNED_COPY =
   /\b(should|apply to|best|likely to be invited|people|applicants|some invitations|a few)\b/i;
+
+/**
+ * Wording the redesigned report must never use (spec 10). It allows "best"
+ * and "should"; the footer's "guarantee" is fixed text checked on its own.
+ * The old BANNED_COPY stays for modules the homepage and occupation pages use.
+ */
+export const REPORT_BANNED_COPY = READ_BANNED;
 
 /** A caveat with a link to the methodology section that explains it. */
 export type LinkedNote = { text: string; link: { href: string; text: string } };
