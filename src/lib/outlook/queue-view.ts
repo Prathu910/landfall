@@ -1,7 +1,7 @@
 import { calendarMonths } from "../data/months";
 import { parseCountText, sumIntervals } from "../data/published-count";
 import type { Interval, OccupationCore, OccupationDetail } from "../data/types";
-import { formatCount, isMasked, submissionMonth } from "../report/copy";
+import { formatSummed, submissionMonth } from "../report/copy";
 import { higherScoreCount } from "./label-189";
 import { submittedBefore } from "./wait";
 
@@ -56,11 +56,11 @@ function roundTo10(value: number): number {
  * (one number for a single value such as "behind", a range for the rest).
  */
 function about(i: Interval, single = false): string {
-  // A masked count stays "under 20"; rounding it would invent a figure.
-  if (isExact(i) || isMasked(i)) return formatCount(i);
+  // A count from zero reads "under N"; rounding it would invent a figure.
+  if (isExact(i) || i.min === 0) return formatSummed(i);
   const low = roundTo10(single ? middle(i) : i.min);
   const high = roundTo10(single ? middle(i) : i.max);
-  return `about ${formatCount({ min: low, max: high })}`;
+  return `about ${formatSummed({ min: low, max: high })}`;
 }
 
 const spoken = (text: string): string => text.replace("–", " to ");
@@ -93,7 +93,7 @@ function toGroups(slices: Slice[], unit: number): QueueGroup[] {
 }
 
 function plainRange(i: Interval): string {
-  return spoken(formatCount(i));
+  return spoken(formatSummed(i));
 }
 
 function buildView(
@@ -127,13 +127,13 @@ function poolView(
   const slices: Slice[] = [
     {
       key: "ahead",
-      label: `Ahead: ${formatCount(ahead)}`,
+      label: `Ahead: ${formatSummed(ahead)}`,
       count: ahead,
       emphasis: !first && aheadLarger,
     },
     {
       key: "tied",
-      label: `Tied with you: ${formatCount(tied)}`,
+      label: `Tied with you: ${formatSummed(tied)}`,
       count: tied,
       emphasis: !first && !aheadLarger,
     },
@@ -153,7 +153,7 @@ function poolView(
   });
   const idle = stampedClosed ? ", in a pool that isn't being invited" : "";
   const aria = first
-    ? `No EOIs ahead or tied. All ${formatCount(total)} EOIs score lower${idle}.`
+    ? `No EOIs ahead or tied. All ${formatSummed(total)} EOIs score lower${idle}.`
     : `${plainRange(ahead)} ahead, ${plainRange(tied)} tied, ${about(behind, true)} behind${idle}.`;
   const title = stampedClosed
     ? "A queue that isn't moving"
@@ -194,7 +194,7 @@ function lodgedView(
   const slices: Slice[] = [
     {
       key: "higher",
-      label: `Higher score: ${formatCount(higher)}`,
+      label: `Higher score: ${formatSummed(higher)}`,
       count: higher,
     },
     {
@@ -204,7 +204,7 @@ function lodgedView(
     },
     {
       key: "month",
-      label: `Your month: ${formatCount(month)}`,
+      label: `Your month: ${formatSummed(month)}`,
       count: month,
       emphasis: true,
     },
@@ -216,7 +216,7 @@ function lodgedView(
   ];
   const aria =
     `Your place among EOIs: ${plainRange(higher)} with higher scores, ` +
-    `${spoken(about(earlier))} at ${points} submitted earlier, ${formatCount(month)} in your month, ` +
+    `${spoken(about(earlier))} at ${points} submitted earlier, ${formatSummed(month)} in your month, ` +
     `${spoken(about(later))} at ${points} submitted later.`;
   const title = stampedClosed
     ? "A queue that isn't moving"

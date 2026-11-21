@@ -32,6 +32,15 @@ export function formatCount(i: Interval): string {
   return isMasked(i) ? "under 20" : formatInterval(i);
 }
 
+/**
+ * A count that may be a sum of masked counts: {0, 38} reads "under 39",
+ * never "0–38". A single masked count stays "under 20"; above zero it is a range.
+ */
+export function formatSummed(i: Interval): string {
+  if (i.min === 0 && i.max > 0) return `under ${i.max + 1}`;
+  return formatCount(i);
+}
+
 /** A count mid-sentence: "1,132", or "under 20 (so may be zero)" when masked. */
 export function countInSentence(i: Interval): string {
   return isMasked(i) ? "under 20 (so may be zero)" : formatInterval(i);

@@ -1,10 +1,10 @@
 import { parseCountText, sumIntervals } from "../data/published-count";
 import type { Interval, OccupationCore, OccupationDetail } from "../data/types";
 import { formatMonth, isMasked, submissionMonth } from "../report/copy";
-import { STATE_NAMES } from "../state-outlook/context";
 import type { OutlookInput, ProfileOutlook } from "./evaluate-profile";
 import { higherScoreCount } from "./label-189";
 import type { OutlookLabel } from "./labels";
+import { capital, theState } from "./phrases";
 
 export type LodgedPace = {
   ahead: Interval;
@@ -149,7 +149,7 @@ function stateText(o: ProfileOutlook): string | null {
   }
   const best = (stamp.visa === "190" ? o.v190 : o.v491)?.best;
   if (!best) return null;
-  return `States don't publish a queue. ${STATE_NAMES[stamp.state]} invited at or below your points in ${best.monthsAtOrBelow6} of the last 6 months.`;
+  return `States don't publish a queue. ${capital(theState(stamp.state))} invited at or below your points in ${best.monthsAtOrBelow6} of the last 6 months.`;
 }
 
 export function estimatedWait(

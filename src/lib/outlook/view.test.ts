@@ -85,7 +85,7 @@ const ROWS: Row[] = [
     stamp: { kind: "single", visa: "190", state: "NT" },
     stampLabel: "competitive",
     cards: ["not-invited", "competitive", "competitive"],
-    wait: "States don't publish a queue. Northern Territory invited at or below your points in 6 of the last 6 months.",
+    wait: "States don't publish a queue. The Northern Territory invited at or below your points in 6 of the last 6 months.",
     bestMove: null,
   },
   {
@@ -271,6 +271,22 @@ describe("buildOutlookView scenarios", () => {
     );
   });
 
+  it("reads a summed under-20 count as under, in the card and the facts", () => {
+    const view = reportOf("long");
+    const card = view.visas[2];
+    expect(card.caption).toBe(
+      "Tasmania invited under 39 EOIs at or below your points in October 2026.",
+    );
+    const count = view.facts.counts.find((c) => c.name.startsWith("491 "));
+    expect(count).toEqual({
+      name: "491 Tasmania invitations at or below your points in October 2026",
+      text: "under 39",
+      numbers: [39],
+    });
+    expect(card.caption).toContain(count?.text);
+    expect(JSON.stringify(view)).not.toContain("0–");
+  });
+
   it("uses the not-moving queue when 189 isn't inviting", () => {
     expect(reportOf("none").queue?.aria).toContain("isn't being invited");
   });
@@ -335,6 +351,10 @@ describe("buildOutlookView states", () => {
     expect(view.cutoffs).toBeNull();
     expect(view.queue).toBeNull();
     expect(view.dataMonth).toBe("October 2026");
+    expect(view.stampBottom).toBe("OCT 2026 • 90 POINTS");
+    expect(view.whoDetail).toBe(
+      "Registered Nurses nec, 90 points, onshore in NSW. Data to October 2026.",
+    );
   });
 
   it("is points-only without an occupation (review focus 2)", () => {
@@ -346,5 +366,12 @@ describe("buildOutlookView states", () => {
     });
     if (view.kind !== "points-only") return;
     expect(view.points.base).toBe(90);
+    expect(view.line).not.toMatch(REPORT_BANNED_COPY);
+  });
+
+  it("is points-only without an occupation even while loading", () => {
+    const profile = { ...scenarioInput("strong").profile, occupation: "" };
+    const view = viewOf("strong", { status: "loading" }, profile);
+    expect(view.kind).toBe("points-only");
   });
 });

@@ -4,12 +4,13 @@ import { STATE_NAMES } from "../state-outlook/context";
 import type { OutlookInput, ProfileOutlook } from "./evaluate-profile";
 import { lastListedMonth } from "./facts";
 import { bestLine } from "./headline-best";
-import { capital, stampedState } from "./headline-context";
+import { stampedState } from "./headline-context";
 import type { HeadlineCtx, Stamped } from "./headline-context";
 import type { Improve } from "./improve";
 import { CONFIRM, MIN_POINTS } from "./label-189";
 import { isAtLeast, labelName } from "./labels";
 import {
+  capital,
   isLodged,
   longMonth,
   lowerFirst,

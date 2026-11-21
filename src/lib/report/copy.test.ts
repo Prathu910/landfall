@@ -4,6 +4,7 @@ import {
   countClause,
   countInSentence,
   formatCount,
+  formatSummed,
   formatMonth,
   submissionMonth,
 } from "./copy";
@@ -17,6 +18,20 @@ describe("formatCount", () => {
   });
   it("writes ranges with an en dash", () => {
     expect(formatCount({ min: 872, max: 891 })).toBe("872–891");
+  });
+});
+
+describe("formatSummed", () => {
+  it("writes a sum of masked counts as under one more than its top", () => {
+    expect(formatSummed({ min: 0, max: 38 })).toBe("under 39");
+  });
+  it("keeps a single masked count as under 20", () => {
+    expect(formatSummed({ min: 0, max: 19 })).toBe("under 20");
+  });
+  it("keeps zero, exact counts and ranges above zero", () => {
+    expect(formatSummed({ min: 0, max: 0 })).toBe("0");
+    expect(formatSummed({ min: 1132, max: 1132 })).toBe("1,132");
+    expect(formatSummed({ min: 98, max: 136 })).toBe("98–136");
   });
 });
 

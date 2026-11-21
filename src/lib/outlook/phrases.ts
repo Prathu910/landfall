@@ -35,9 +35,13 @@ export function occupationName(input: OutlookInput): string {
   return index.find((entry) => entry.code === code)?.name ?? "your occupation";
 }
 
-/** The snapshot month; a missing core still belongs to the checked-in snapshot. */
+/** The snapshot month key; a missing core still belongs to the checked-in snapshot. */
+export function dataMonthKey(input: OutlookInput): MonthKey {
+  return input.core?.asAt ?? manifest.asAt;
+}
+
 export function dataMonth(input: OutlookInput): string {
-  return longMonth(input.core?.asAt ?? manifest.asAt);
+  return longMonth(dataMonthKey(input));
 }
 
 /** One source for "lodged", so the headline and the facts always agree. */
@@ -50,6 +54,10 @@ export function situationOf(o: ProfileOutlook): "189" | "state" | "combined" {
   const { stamp } = o;
   if (stamp.kind === "combined") return "combined";
   return stamp.visa !== "189" && stamp.state ? "state" : "189";
+}
+
+export function capital(text: string): string {
+  return text[0].toUpperCase() + text.slice(1);
 }
 
 /** Lower-cases a leading capital, except in an acronym ("EOI", "WA's") or "English". */
@@ -148,6 +156,5 @@ export function stateSentence(state: StateLabel): string {
   const name = theState(state.state);
   const note = flagNote(state);
   const flag = note ? ` ${note}` : "";
-  const subject = name[0].toUpperCase() + name.slice(1);
-  return `${subject} is ${labelName(state.label)}: ${stateWhy(state)}.${flag}`;
+  return `${capital(name)} is ${labelName(state.label)}: ${stateWhy(state)}.${flag}`;
 }

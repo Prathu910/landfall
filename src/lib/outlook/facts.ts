@@ -1,6 +1,6 @@
 import type { Interval, StateVisa } from "../data/types";
 import { MONTH_NAMES } from "../migration";
-import { formatCount, isMasked } from "../report/copy";
+import { formatSummed } from "../report/copy";
 import { STATE_NAMES } from "../state-outlook/context";
 import type { OutlookInput, ProfileOutlook } from "./evaluate-profile";
 import type { Improve, Loss, Move } from "./improve";
@@ -126,14 +126,14 @@ function stamp(o: ProfileOutlook): Facts["stamp"] {
   };
 }
 
-/** A masked count is read as "under 20", so 20 is the number it may quote. */
+/** A count from zero reads "under {max + 1}", so that is the number it may quote. */
 function intervalNumbers(count: Interval): number[] {
-  if (isMasked(count)) return [20];
+  if (count.min === 0 && count.max > 0) return [count.max + 1];
   return count.min === count.max ? [count.min] : [count.min, count.max];
 }
 
 function countOf(name: string, count: Interval): Count {
-  return { name, text: formatCount(count), numbers: intervalNumbers(count) };
+  return { name, text: formatSummed(count), numbers: intervalNumbers(count) };
 }
 
 function counts(input: OutlookInput, o: ProfileOutlook): Count[] {

@@ -20,10 +20,6 @@ export type HeadlineCtx = {
 
 const VISAS: StateVisa[] = ["190", "491"];
 
-export function capital(text: string): string {
-  return text[0].toUpperCase() + text.slice(1);
-}
-
 /** State visas that name a state and are competitive or better, best first; 190 wins a tie. */
 export function suitedStates(o: ProfileOutlook): StateLabel[] {
   const suited = VISAS.flatMap((visa) => {

@@ -121,6 +121,19 @@ describe("queueView edge cases", () => {
     expect(JSON.stringify(view)).not.toMatch(/about (under|0|<)/);
   });
 
+  it("reads summed masked earlier months as under, never 0–", () => {
+    const s = setup("lodged");
+    const detail = structuredClone(s.detail);
+    if (!detail) throw new Error("no detail");
+    detail.cohortsByScore["189"] = {
+      [String(s.points)]: { "2025-12": "<20", "2026-01": "<20" },
+    };
+    const view = queueView(s.core, detail, s.points, s.profile.eoiDate, false);
+    const earlier = view?.groups.find((g) => g.key === "earlier");
+    expect(earlier?.label).toBe(`At ${s.points}, earlier: under 39`);
+    expect(JSON.stringify(view)).not.toContain("0–");
+  });
+
   it("keeps the not-moving wording when you are first in line", () => {
     const s = setup("strong");
     const view = queueView(s.core, s.detail, s.points, "", true);

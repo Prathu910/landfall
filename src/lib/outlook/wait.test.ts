@@ -75,7 +75,7 @@ describe("estimatedWait", () => {
 
   it("rahul names the Northern Territory", () => {
     expect(wait("notinv").text).toMatch(
-      /^States don't publish a queue\. Northern Territory invited/,
+      /^States don't publish a queue\. The Northern Territory invited/,
     );
   });
 
