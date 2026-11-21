@@ -115,7 +115,7 @@ Inputs: the reader's 189 points; the points-test basics (`eligible` in `PointsRe
 Checked in this order:
 
 1. **Not eligible yet**: under 65 points, or `eligible === false`.
-2. **Not enough data**: no published 189 pool **and** no round lists the occupation. If every published count is "<20", the display name is "Too few to count". An occupation that rounds list but that has no published pool (some medical specialists, for example Endocrinologist 253315) is labelled from its rounds as below, with zero EOIs ahead.
+2. **Not enough data**: no published 189 pool **and** no round lists the occupation. If every published count is "<20", the display name is "Too few to count". An occupation that rounds list but that has no published pool (some medical specialists, for example Endocrinologist 253315) is labelled from its rounds as below, with zero EOIs ahead, when a core is supplied. The client never fetches `hasData: false` occupations (`docs/DATA.md`), so in the product these show No data; fetching them is out of scope.
 3. **Not currently invited**: the occupation's cutoff is `null` in each of the last 4 rounds (the last 4 rounds overall, not the last 4 listings).
 4. Let *L3* be the cutoffs of the occupation's last 3 **listed** rounds (fewer if fewer exist).
 5. **Very strong**: points > max(L3) **and** EOIs with a higher score ≤ 19 (cautious reading: the interval's max ≤ 19).
@@ -135,7 +135,7 @@ For each state (and `ANY` excluded from ranking), at the reader's points with no
   4. **Long wait**: any invitation (masked or confirmed) at or below the reader's points in the last 6 months; **or** invitations only above the reader's points in the last 6 months.
   5. **Not currently invited**: no invitations for the occupation in that state in the last 6 months.
 - **Rules being checked** (ACT, VIC, TAS, NT today) and **Needs your answers** keep the evidence label and carry a flag shown next to it ("we're still checking Tasmania's rules", "answer 2 questions to confirm").
-- The visa's label is its best state's label; ties break by confirmed invitations at or below the reader's points, then state code.
+- The visa's label is its best state's label; ties break by states without a flag first, then confirmed invitations at or below the reader's points, then months with such invitations in the last 6, then state code.
 
 Months come from `calendarMonths` back from `asAt`, never from the keys a record holds. A fetched month with no row is zero; an unfetched month is left out and never counted as zero.
 
