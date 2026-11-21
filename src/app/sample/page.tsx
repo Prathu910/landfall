@@ -1,5 +1,6 @@
-import { occupationIndex } from "@/components/data/occupation-index";
-import { Report } from "@/components/report";
+import { SampleTabs } from "@/components/report/sample-tabs";
+import type { SampleExample } from "@/components/report/sample-tabs";
+import styles from "@/components/report/sample-tabs.module.css";
 import { toOccupationEvidence } from "@/lib/data/legacy";
 import {
   loadManifest,
@@ -8,11 +9,8 @@ import {
 } from "@/lib/data/load-server";
 import { reportSource } from "@/lib/data/report-source";
 import type { OccupationCore, OccupationDetail } from "@/lib/data/types";
-import {
-  SAMPLE_AS_OF,
-  SAMPLE_COMPARISON,
-  sampleReportProfile,
-} from "@/lib/sample";
+import { EXAMPLES } from "@/lib/outlook/examples";
+import { SAMPLE_AS_OF, SAMPLE_COMPARISON } from "@/lib/sample";
 export const metadata = { title: "Explore the sample report" };
 
 function requireCore(code: string): OccupationCore {
@@ -30,31 +28,38 @@ function requireDetail(code: string): OccupationDetail {
 }
 
 export default function SamplePage() {
-  const nominated = requireCore(sampleReportProfile.occupation);
-  const nominatedDetail = requireDetail(sampleReportProfile.occupation);
-  const comparison = requireCore(SAMPLE_COMPARISON);
+  const examples: SampleExample[] = EXAMPLES.map(({ id, tab, profile }) => {
+    const core = requireCore(profile.occupation);
+    return {
+      id,
+      tab,
+      profile,
+      occupation: {
+        status: "ready",
+        evidence: toOccupationEvidence(core),
+        core,
+        detail: {
+          status: "ready",
+          detail: requireDetail(profile.occupation),
+        },
+      },
+    };
+  });
+  const first = examples[0].occupation;
+  if (first.status !== "ready") throw new Error("Sample needs a core");
   return (
     <main id="main" className="container">
-      <div className="page-head">
-        <h1>A sample report for one fictional profile</h1>
-        <p>
-          Aarav is fictional. The points calculations and official occupation
-          snapshot are real. Your own overview uses your answers.
-        </p>
-      </div>
-      <Report
-        profile={sampleReportProfile}
+      {/* The report's own headline is the page's one h1. */}
+      <p className={styles.intro}>
+        Four fictional people, one for each kind of result. The points
+        calculations and official occupation snapshot are real. Your own report
+        uses your answers.
+      </p>
+      <SampleTabs
+        examples={examples}
         asOf={SAMPLE_AS_OF}
-        sample
-        occupation={{
-          status: "ready",
-          evidence: toOccupationEvidence(nominated),
-          core: nominated,
-          detail: { status: "ready", detail: nominatedDetail },
-        }}
-        comparisonIndex={occupationIndex}
-        initialComparison={toOccupationEvidence(comparison)}
-        source={reportSource(nominated.asAt, loadManifest())}
+        initialComparison={toOccupationEvidence(requireCore(SAMPLE_COMPARISON))}
+        source={reportSource(first.core.asAt, loadManifest())}
       />
     </main>
   );
