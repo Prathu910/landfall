@@ -177,11 +177,13 @@ function ReportBody(props: Props & { view: OutlookView }) {
 export function Report(props: Props) {
   const view = useOutlookView(props.profile, props.asOf, props.occupation);
   // Once the print layout exists it replaces the screen report on paper.
-  const printed = view.kind !== "loading";
+  const hasPrintLayout = view.kind !== "loading";
   return (
     <>
       <Toolbar sample={props.sample} onEdit={props.onEdit} />
-      <article className={`${styles.page} ${printed ? styles.screenOnly : ""}`}>
+      <article
+        className={`${styles.page} ${hasPrintLayout ? styles.screenOnly : ""}`}
+      >
         <ReportBody {...props} view={view} />
       </article>
       {props.sample && <SampleCta />}

@@ -69,6 +69,14 @@
   padding-bottom: 12px;
 }
 
+/* No stamp without an occupation: the points headline runs full width. */
+.pointsOnly {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 12px;
+}
+
 .heroText {
   display: flex;
   flex-direction: column;

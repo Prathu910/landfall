@@ -71,6 +71,7 @@ function PrintHero({ view }: { view: ReportOutlookView }) {
           ring={view.stampRing}
           bottom={view.stampBottom}
           tooFew={stamp.tooFew}
+          decorative
         />
       </div>
     </section>
@@ -184,7 +185,7 @@ export function PrintReport({ view, profile, asOf, source }: Props) {
       {view.kind === "report" ? (
         <PrintPages view={view} />
       ) : (
-        <section className={styles.hero}>
+        <section className={styles.pointsOnly}>
           <h1 className={styles.h1}>You have {view.points.base} points.</h1>
           <p className={styles.fact}>{view.line}</p>
         </section>

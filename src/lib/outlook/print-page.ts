@@ -7,7 +7,8 @@ import { formatDate } from "../migration";
 // Letters, digits and plain punctuation pass through; anything else becomes
 // a CSS hex escape, so a reader's name can't end the string or the <style>.
 const SAFE = /[\p{L}\p{N} .,'’()/-]/u;
-const MARGIN_FONT = `font: 12px "Archivo Variable", sans-serif; color: var(--muted);`;
+// Chrome resolves :root custom properties inside @page margin boxes.
+const MARGIN_FONT = "font: 12px var(--font-report); color: var(--muted);";
 
 /** "MigrateLens report for Priya. Our best reading … to October 2026, not a guarantee." */
 export function printFooterText(name: string, month: string): string {

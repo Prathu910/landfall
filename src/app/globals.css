@@ -823,7 +823,7 @@ svg {
 .report-accordion .mantine-Accordion-content {
   font-size: 12px;
 }
-@media (max-width: 1100px) {
+@media screen and (max-width: 1100px) {
   .container {
     padding-inline: 30px;
   }
@@ -835,7 +835,7 @@ svg {
     font-size: 12px;
   }
 }
-@media (max-width: 800px) {
+@media screen and (max-width: 800px) {
   :root {
     --site-header-height: 74px;
   }
@@ -911,7 +911,7 @@ svg {
     font-size: 29px;
   }
 }
-@media (max-width: 480px) {
+@media screen and (max-width: 480px) {
   .container,
   .header-inner {
     padding-inline: 21px;
@@ -1112,17 +1112,17 @@ svg {
 }
 /* Phones: the header CTA keeps its full label, so the arrow goes first, then
    the gutter narrows, and below 370px the menu drawer holds the CTA. */
-@media (max-width: 480px) {
+@media screen and (max-width: 480px) {
   .header-cta .mantine-Button-section {
     display: none;
   }
 }
-@media (max-width: 400px) {
+@media screen and (max-width: 400px) {
   .header-inner {
     padding-inline: 16px;
   }
 }
-@media (max-width: 369px) {
+@media screen and (max-width: 369px) {
   .header-cta {
     display: none;
   }
@@ -1130,7 +1130,7 @@ svg {
 .site-header .mantine-Burger-root {
   display: none;
 }
-@media (max-width: 800px) {
+@media screen and (max-width: 800px) {
   .site-header .mantine-Burger-root {
     display: block;
   }
@@ -1146,7 +1146,7 @@ svg {
 }
 
 /* Readable body text on phones: running copy is at least 16px. */
-@media (max-width: 720px) {
+@media screen and (max-width: 720px) {
   body,
   .page-head > p,
   .final-cta p,

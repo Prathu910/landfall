@@ -190,6 +190,7 @@ export function buildOutlookView(input: OutlookViewInput): OutlookView {
     const points = calculatePoints(rest.profile, rest.asOf);
     // No occupation means no core: the checked-in snapshot sets the month.
     const noCore = { ...rest, core: null, detail: null };
+    const month = dataMonth(noCore);
     const pointsPage = buildPointsPage({
       profile: rest.profile,
       points,
@@ -202,8 +203,8 @@ export function buildOutlookView(input: OutlookViewInput): OutlookView {
       points,
       line: POINTS_ONLY_LINE,
       pointsPage,
-      footer: footerText(dataMonth(noCore)),
-      dataMonth: dataMonth(noCore),
+      footer: footerText(month),
+      dataMonth: month,
     };
   }
   if (occupation.status === "loading") return { kind: "loading" };

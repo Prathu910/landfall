@@ -68,11 +68,14 @@ export function BigStamp({
   ring,
   bottom,
   tooFew,
+  decorative = false,
 }: {
   label: OutlookLabel;
   ring: string;
   bottom: string;
   tooFew: boolean;
+  /** True when nearby text already names the stamp (the print copy), so it isn't read twice. */
+  decorative?: boolean;
 }) {
   const ref = useRef<SVGSVGElement>(null);
   useFitStampText(ref);
@@ -96,8 +99,11 @@ export function BigStamp({
     <svg
       ref={ref}
       viewBox={viewBoxAttr(viewBox)}
-      role="img"
-      aria-label={`Stamp: ${ring}, ${labelName(label, tooFew)}`}
+      role={decorative ? undefined : "img"}
+      aria-label={
+        decorative ? undefined : `Stamp: ${ring}, ${labelName(label, tooFew)}`
+      }
+      aria-hidden={decorative || undefined}
       className={`${styles.stamp} ${styles[label]}`}
       style={{ minWidth: BIG_STAMP.minWidth }}
     >

@@ -25,6 +25,8 @@ describe("printPageStyle", () => {
     expect(css).toContain(
       '@bottom-right { content: "Page " counter(page) " of " counter(pages);',
     );
+    // The report's own type token, which Chrome resolves in margin boxes.
+    expect(css).toContain("font: 12px var(--font-report);");
   });
 
   it("escapes a name that could end the string or the style element", () => {
