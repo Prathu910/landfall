@@ -1,0 +1,76 @@
+.chart {
+  display: block;
+  width: 100%;
+  max-width: 560px;
+  height: auto;
+}
+
+.wide {
+  display: block;
+}
+
+.narrow {
+  display: none;
+}
+
+@media screen and (max-width: 720px) {
+  .wide {
+    display: none;
+  }
+
+  .narrow {
+    display: block;
+  }
+}
+
+.bar {
+  fill: var(--ink);
+}
+
+.value {
+  fill: var(--card);
+}
+
+.month {
+  fill: var(--muted);
+}
+
+.unlisted rect {
+  fill: none;
+  stroke: var(--muted-soft);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 3;
+}
+
+.unlisted text {
+  fill: var(--muted);
+}
+
+.pass {
+  color: var(--label-not-eligible-ink);
+}
+
+.target {
+  color: var(--label-very-strong-ink);
+}
+
+.you {
+  color: var(--label-competitive-ink);
+}
+
+.pass line,
+.target line,
+.you line {
+  stroke: currentcolor;
+}
+
+.pass text,
+.target text,
+.you text {
+  fill: currentcolor;
+  /* A light halo keeps a guide label readable where it crosses a dark bar. */
+  paint-order: stroke;
+  stroke: var(--newsprint);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}
