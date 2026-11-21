@@ -307,16 +307,16 @@ describe("buildOutlookView scenarios", () => {
     expect(view.dataMonth).toBe("October 2026");
   });
 
-  it("has the nine method lines and the footer", () => {
+  it("has the ten method lines and the footer", () => {
     const view = reportOf("strong");
-    expect(view.methodLines).toHaveLength(9);
+    expect(view.methodLines).toHaveLength(10);
     expect(view.methodLines[0]).toBe(
       "Very strong: your points are above every 189 cut-off in your occupation's last 3 listed rounds, and fewer than 20 EOIs score higher.",
     );
     expect(view.methodLines[7]).toBe(
       "The stamp shows your best visa. If none is Competitive or better, it covers all three.",
     );
-    expect(view.methodLines[8]).toBe(
+    expect(view.methodLines[9]).toBe(
       "Future points assume today's points test; the announced reforms could change them.",
     );
     expect(view.footer).toBe(

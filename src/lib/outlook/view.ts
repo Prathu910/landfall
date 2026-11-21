@@ -13,6 +13,7 @@ import { buildHeadline } from "./headline";
 import type { Headline } from "./headline";
 import { buildImprove } from "./improve";
 import type { Improve } from "./improve";
+import { METHOD_LINES } from "./method";
 import { dataMonth, dataMonthKey, isLodged, occupationName } from "./phrases";
 import { buildPointsPage } from "./points-page";
 import type { PointsPage } from "./points-page";
@@ -82,19 +83,6 @@ export type OutlookViewInput = Omit<OutlookInput, "core" | "detail"> & {
 const POINTS_ONLY_LINE = "Choose an occupation to see how your points compare.";
 const NO_OCCUPATION = "No occupation chosen";
 const COMBINED_RING = "189 • 190 • 491";
-
-// The mockup's "How we label your outlook" bullets (spec 6.2 to 6.4).
-export const METHOD_LINES: readonly string[] = [
-  "Very strong: your points are above every 189 cut-off in your occupation's last 3 listed rounds, and fewer than 20 EOIs score higher.",
-  "Strong: your points meet every cut-off in those 3 rounds.",
-  "Competitive: your points meet the lowest of those 3 cut-offs, but not all of them.",
-  "Long wait: your occupation is still listed, but your points are below all 3 cut-offs.",
-  "Not currently invited: your occupation wasn't listed in any of the last 4 rounds.",
-  "Not eligible yet: under 65 points, or a basic requirement isn't met.",
-  "190 and 491: each state is labelled from its invitations at or below your points (with nomination) over the last 3 to 6 months, and its rules. The visa takes its best state.",
-  "The stamp shows your best visa. If none is Competitive or better, it covers all three.",
-  "Future points assume today's points test; the announced reforms could change them.",
-];
 
 function footerText(month: string): string {
   return (

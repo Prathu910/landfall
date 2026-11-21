@@ -3,6 +3,7 @@ import { PrivacyContact } from "@/components/submissions/privacy-contact";
 import { ArrowUpRight } from "lucide-react";
 import { Faq } from "@/components/faq";
 import { loadManifest } from "@/lib/data/load-server";
+import { METHOD_LIMITS, METHOD_LINES } from "@/lib/outlook/method";
 const manifest = loadManifest();
 export const metadata = { title: "Our methodology and sources" };
 const sources = [
@@ -182,12 +183,15 @@ export default function MethodologyPage() {
           </section>
           <section id="limitations">
             <h2>What we can’t tell you</h2>
-            <p>
-              This overview does not establish full visa eligibility, advise
-              which visa to apply for, or predict an invitation. Age, English
-              and assessment checks cover only a subset of the requirements, and
-              exceptions can apply.
-            </p>
+            {METHOD_LIMITS.map((line) => (
+              <p key={line}>{line}</p>
+            ))}
+            <p>How the report labels your outlook:</p>
+            <ul>
+              {METHOD_LINES.map((line) => (
+                <li key={line}>{line}</li>
+              ))}
+            </ul>
             <p>
               State summaries describe published systems. They are not a
               complete personal state-eligibility engine. WA and NT current
