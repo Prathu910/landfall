@@ -4,7 +4,6 @@ import styles from "./queue-squares.module.css";
 type Props = { data: QueueView; narrow?: boolean };
 
 const GAP = 3;
-const TOP = 30;
 
 function QueueChart({ data, narrow = false }: Props) {
   const columns = narrow ? 20 : 27;
@@ -13,6 +12,8 @@ function QueueChart({ data, narrow = false }: Props) {
   const textSize = narrow ? 14.5 : 13.5;
   const perRow = narrow ? 1 : 2;
   const rowHeight = narrow ? 26 : 22;
+  // The narrow note is two lines so it fits the 340-unit drawing.
+  const TOP = narrow ? 48 : 30;
 
   const squares: { group: QueueGroup; index: number }[] = [];
   for (const group of data.groups) {
@@ -33,7 +34,16 @@ function QueueChart({ data, narrow = false }: Props) {
       aria-label={data.aria}
     >
       <text className={styles.note} x={0} y={16} fontSize={textSize}>
-        {`Each square is about ${data.unit} EOIs. Front of the queue first.`}
+        {narrow ? (
+          <>
+            <tspan x={0}>{`Each square is about ${data.unit} EOIs.`}</tspan>
+            <tspan x={0} dy={20}>
+              Front of the queue first.
+            </tspan>
+          </>
+        ) : (
+          `Each square is about ${data.unit} EOIs. Front of the queue first.`
+        )}
       </text>
       {squares.map(({ group, index }) => (
         <rect

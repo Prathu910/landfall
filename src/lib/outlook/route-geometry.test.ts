@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   deadlineLines,
+  deadlineTiers,
   deadlinePosition,
   routeAria,
   stepX,
@@ -58,5 +59,10 @@ describe("route geometry", () => {
     const aria = routeAria(route);
     expect(aria).toContain("1. Book test; 2. Lodge EOI, 85 points, Strong.");
     expect(aria).toContain("Your 33rd birthday");
+  });
+
+  it("staggers flags that would overlap and reuses a clear tier", () => {
+    expect(deadlineTiers([100, 200, 500], 180)).toEqual([0, 1, 0]);
+    expect(deadlineTiers([100, 400], 180)).toEqual([0, 0]);
   });
 });

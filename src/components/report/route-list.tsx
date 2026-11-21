@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import { labelName } from "@/lib/outlook/labels";
 import { routeAria } from "@/lib/outlook/route-geometry";
 import type { Route } from "@/lib/outlook/route";
 import { labelInk } from "./label-ink";
@@ -23,6 +24,12 @@ export function RouteList({ route }: { route: Route }) {
             </span>
             <div>
               <b className={styles.title}>{step.title}</b>
+              {step.points !== null && (
+                <span className={styles.hidden}>{step.points} points. </span>
+              )}
+              {step.label && (
+                <span className={styles.chip}>{labelName(step.label)}</span>
+              )}
               <span className={styles.sub}>{step.sub}</span>
             </div>
           </li>,

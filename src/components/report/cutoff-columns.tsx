@@ -35,6 +35,9 @@ function CutoffChart({ data, narrow = false }: Props) {
   const { low, high } = scaleOf(data);
   const y = (value: number) =>
     BASE - ((value - low) / (high - low)) * (BASE - TOP);
+  // Labels within 5 points would overprint, so the lower line labels below.
+  const close =
+    data.target !== null && Math.abs(data.target.points - data.you) <= 5;
   const count = data.columns.length;
   const barWidth = narrow ? 36 : 38;
   const gap = (right - 20 - count * barWidth) / (count - 1 || 1);
@@ -45,6 +48,7 @@ function CutoffChart({ data, narrow = false }: Props) {
     className: string,
     dashed: boolean,
     side: "start" | "end",
+    below = false,
   ) => (
     <g className={className}>
       <line
@@ -57,7 +61,7 @@ function CutoffChart({ data, narrow = false }: Props) {
       />
       <text
         x={side === "start" ? 16 : right}
-        y={y(value) - 6}
+        y={below ? y(value) + 17 : y(value) - 6}
         textAnchor={side}
         fontSize={big}
         fontWeight={700}
@@ -148,8 +152,16 @@ function CutoffChart({ data, narrow = false }: Props) {
           styles.target,
           true,
           "end",
+          close && data.target.points < data.you,
         )}
-      {guide(data.you, `You, ${data.you}`, styles.you, false, "end")}
+      {guide(
+        data.you,
+        `You, ${data.you}`,
+        styles.you,
+        false,
+        "end",
+        close && data.you <= (data.target?.points ?? 0),
+      )}
     </svg>
   );
 }

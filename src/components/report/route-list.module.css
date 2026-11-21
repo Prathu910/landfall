@@ -82,3 +82,23 @@
   padding: 8px 12px;
   font-size: 15px;
 }
+
+.hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.chip {
+  display: inline-block;
+  margin: 2px 0;
+  padding: 1px 8px;
+  border: 1px solid var(--step-ink);
+  border-radius: 999px;
+  color: var(--step-ink);
+  font-size: 13px;
+  font-weight: 600;
+}

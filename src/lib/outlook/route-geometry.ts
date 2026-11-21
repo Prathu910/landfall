@@ -55,3 +55,22 @@ export function routeAria(route: Route): string {
   }
   return parts.join(" ");
 }
+
+/**
+ * Stacks deadline flags that would overlap: each flag takes the first tier
+ * whose previous flag ends clear of its left edge. `positions` are x values.
+ */
+export function deadlineTiers(
+  positions: number[],
+  flagWidth: number,
+  gap = 8,
+): number[] {
+  const tierEnds: number[] = [];
+  return positions.map((x) => {
+    const left = x - flagWidth / 2;
+    let tier = tierEnds.findIndex((end) => left >= end + gap);
+    if (tier < 0) tier = tierEnds.length;
+    tierEnds[tier] = x + flagWidth / 2;
+    return tier;
+  });
+}

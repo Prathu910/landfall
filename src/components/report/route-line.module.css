@@ -17,7 +17,7 @@
   stroke-linecap: round;
 }
 
-.deadline line {
+.stem {
   stroke: var(--label-not-invited-ink);
   stroke-width: 2;
   stroke-dasharray: 4 4;
