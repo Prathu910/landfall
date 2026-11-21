@@ -1,0 +1,58 @@
+/* Shapes and text draw in currentColor; the label class sets it. */
+.stamp {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.text {
+  font-family: var(--font-stamp);
+}
+
+.arrow {
+  fill: none;
+  stroke: var(--ink);
+}
+
+.arrowHead {
+  fill: var(--ink);
+}
+
+.very-strong {
+  color: var(--label-very-strong-ink);
+}
+
+.strong {
+  color: var(--label-strong-ink);
+}
+
+.competitive {
+  color: var(--label-competitive-ink);
+}
+
+.long-wait {
+  color: var(--label-long-wait-ink);
+}
+
+.not-eligible {
+  color: var(--label-not-eligible-ink);
+}
+
+.not-open {
+  color: var(--label-not-open-ink);
+}
+
+.not-invited {
+  color: var(--label-not-invited-ink);
+}
+
+.no-data {
+  color: var(--label-no-data-ink);
+}
+
+@media print {
+  .stamp {
+    print-color-adjust: exact;
+  }
+}
