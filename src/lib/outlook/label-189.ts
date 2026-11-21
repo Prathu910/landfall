@@ -12,7 +12,7 @@ export type Label189 = {
 };
 
 const MIN_POINTS = 65;
-const CONFIRM = " Confirm your English and skills assessment dates.";
+export const CONFIRM = " Confirm your English and skills assessment dates.";
 
 /** EOIs in the pool with a score above `points`. Null when there is no pool. */
 export function higherScoreCount(
