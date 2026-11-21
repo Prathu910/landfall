@@ -20,3 +20,7 @@ entrypoint = "./functions/submit-calculation/index.ts"
 [functions.submit-feedback]
 verify_jwt = false
 entrypoint = "./functions/submit-feedback/index.ts"
+
+[functions.write-read]
+verify_jwt = false
+entrypoint = "./functions/write-read/index.ts"

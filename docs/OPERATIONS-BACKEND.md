@@ -1,23 +1,24 @@
 # Submission backend operations
 
-Calculation capture and feedback use two public Supabase Edge Functions. Tables and submission RPCs are private to `service_role`; there is no browser read/list/export route. Email addresses are unverified, and neither flow creates an account, sends email, or subscribes anyone to marketing. See the [design](superpowers/specs/2026-11-20-calculation-capture-and-feedback-design.md).
+Calculation capture and feedback use two public Supabase Edge Functions; a third, `write-read`, writes the report's optional AI "Our read" (see [AI "Our read"](#ai-our-read-write-read)). Tables and submission RPCs are private to `service_role`; there is no browser read/list/export route. Email addresses are unverified, and neither flow creates an account, sends email, or subscribes anyone to marketing. See the [design](superpowers/specs/2026-11-20-calculation-capture-and-feedback-design.md).
 
 ## Prerequisites and local checks
 
-Use Node 22.12+, the repository's exact Supabase CLI **3.2.0**, Deno **2.9.6**, Python 3, and PostgreSQL binaries (`initdb`, `pg_ctl`, `psql`, `pg_config`). Deno Functions use web APIs without third-party runtime packages, so no Deno dependency lockfile is needed. The CLI's complete local stack additionally requires a running Docker-compatible engine; `next dev` and a static `out/` server do not start it.
+Use Node 22.12+, the repository's exact Supabase CLI **3.2.0**, Deno **2.9.6**, Python 3, and PostgreSQL binaries (`initdb`, `pg_ctl`, `psql`, `pg_config`). The submission Functions use web APIs only. `write-read` imports one third-party package, the official Anthropic SDK pinned to an exact version (`npm:@anthropic-ai/sdk@1.12.0`), which Deno downloads into its own cache on the first check; no Deno dependency lockfile is kept. `supabase/functions/deno.json` sets `"nodeModulesDir": "none"` because the repository's root `package.json` would otherwise make Deno look for the SDK in `node_modules/`. The CLI's complete local stack additionally requires a running Docker-compatible engine; `next dev` and a static `out/` server do not start it.
 
 From the repository root:
 
 ```sh
 npm ci
-npx deno check --config supabase/functions/deno.json supabase/functions/submit-calculation/index.ts supabase/functions/submit-feedback/index.ts
-npx deno test --config supabase/functions/deno.json supabase/tests/submissions_test.ts
+npm run backend:check   # deno check of all three Functions and both test files
+npm run backend:test    # supabase/tests/submissions_test.ts and write_read_test.ts
 python3 supabase/tests/postgres_test.py
 npx deno bundle --config supabase/functions/deno.json --platform deno --output /tmp/migratelens-submit-calculation.js supabase/functions/submit-calculation/index.ts
 npx deno bundle --config supabase/functions/deno.json --platform deno --output /tmp/migratelens-submit-feedback.js supabase/functions/submit-feedback/index.ts
+npx deno bundle --config supabase/functions/deno.json --platform deno --output /tmp/migratelens-write-read.js supabase/functions/write-read/index.ts
 ```
 
-The SQL test starts its own ephemeral PostgreSQL cluster and Unix socket in `/tmp`, creates test-only roles there, applies migrations, checks actual role denials and concurrent idempotency, exercises retention, then stops and removes that cluster. It never connects to an existing database. Set `POSTGRES_BINDIR` if `pg_config --bindir` does not point to runnable binaries. Run it as an ordinary user, not root. HTTP tests use real Request/Response objects and replace only the external storage/Turnstile transports. Deno bundle verifies imports of the canonical contract and dataset JSON outside `supabase/functions`; it does not establish that a cloud deployment succeeded.
+The SQL test starts its own ephemeral PostgreSQL cluster and Unix socket in `/tmp`, creates test-only roles there, applies migrations, checks actual role denials and concurrent idempotency, exercises retention, then stops and removes that cluster. It never connects to an existing database. Set `POSTGRES_BINDIR` if `pg_config --bindir` does not point to runnable binaries. Run it as an ordinary user, not root. HTTP tests use real Request/Response objects and replace only the external storage/Turnstile transports and, for `write-read`, the model call (a fake `complete`; the tests never call the Anthropic API). Deno bundle verifies imports of the canonical contract and dataset JSON outside `supabase/functions`; it does not establish that a cloud deployment succeeded.
 
 For the complete local stack:
 
@@ -54,9 +55,10 @@ npx supabase db push --remote
 npx supabase secrets set --env-file supabase/.env.staging
 npx supabase functions deploy submit-calculation --use-api
 npx supabase functions deploy submit-feedback --use-api
+npx supabase functions deploy write-read --use-api
 ```
 
-Check the linked project before each mutation. In the pinned CLI 3.2.0, `db push` defaults to the local database; `--remote` explicitly selects the linked hosted project. `--use-api` lets the pinned CLI bundle and deploy without local Docker. Always deploy from the repository root so the canonical contract and generated occupation index/manifest remain available. `verify_jwt = false` is scoped to these two Functions in `supabase/config.toml`; future account endpoints retain authentication. Functions still independently require the configured Origin, strict JSON payload, and successful server-side Turnstile action/hostname validation.
+Check the linked project before each mutation. In the pinned CLI 3.2.0, `db push` defaults to the local database; `--remote` explicitly selects the linked hosted project. `--use-api` lets the pinned CLI bundle and deploy without local Docker. Always deploy from the repository root so the canonical contract and generated occupation index/manifest remain available. `verify_jwt = false` is scoped to these three Functions in `supabase/config.toml`; future account endpoints retain authentication. Functions still independently require the configured Origin, strict JSON payload, and successful server-side Turnstile action/hostname validation.
 
 Apply backward-compatible migrations and deploy the backend before the frontend. Repeat with a separately reviewed production project and its own secret file/widget. No live project, credentials, paid plan, or deployment is created by adding these files. Backend handlers accept only known occupation codes (or `points-only`) and the bundled manifest snapshot. Coordinate dataset/backend/frontend releases: an old open tab must refresh after the accepted snapshot changes.
 
@@ -79,6 +81,53 @@ Only `OPTIONS` preflight and `POST` are supported. Allowed-origin responses incl
 An existing UUID is checked against every saved payload field before returning a retry receipt. The read-only probe does not write, and a confirmed retry does not consume a second single-use token. A missing submission must pass Turnstile before the atomic insert-and-compare RPC. Concurrent requests cannot overwrite a record or inflate one UUID into multiple rows. Retrying a new, unsaved submission after failed verification/storage requires a fresh widget token. Feedback status edits do not change idempotency comparisons.
 
 If submissions fail, inspect Function invocation status, project/database availability, secrets, allowed origins and Turnstile widget configuration. Do not add request-body logging to debug. Preserve form content and do not tell a visitor that a save succeeded before a persistence receipt. A paused/free project can prevent reports from opening; review project availability before launch.
+
+## AI "Our read" (write-read)
+
+`POST /functions/v1/write-read` writes the 60–90 word "Our read" summary from the report's computed `ReportFacts` (`src/lib/outlook/read-contract.ts`). It shares the submission Functions' origin allowlist, CORS headers, preflight handling and 16 KiB streamed body cap. Code: `supabase/functions/write-read/index.ts`, `supabase/functions/_shared/read.ts` (configuration, system prompt, handler), `read-token.ts`, `read-facts.ts` and `anthropic-complete.ts` (the SDK call). Design: spec section 7 of [the report redesign](superpowers/specs/2026-11-21-report-redesign-design.md).
+
+**Two switches.** The frontend calls `write-read` only when its public build setting `NEXT_PUBLIC_READ_ENABLED` is `true`, and the Function serves reads only when `READ_ENABLED=true`. Both are off by default. Turn them on only after the privacy text and the coordinated `PRIVACY_VERSION` deploy are live. With either off, every report shows the deterministic template read.
+
+**Authorization.** When `READ_TOKEN_SECRET` is set, a successful `submit-calculation` response (201 or the 200 retry receipt) also carries `read_token`: an HMAC-SHA256 (Web Crypto) over `{submission id}.{expiry}`, valid for 10 minutes. Without the secret the field is omitted and the submission still succeeds. `write-read` accepts each token for up to 3 reads.
+
+Server-only environment values (Supabase secrets; never put them in the frontend build):
+
+| Variable                 | Purpose                                                                                                                                  | Default if unset                                          |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| `ANTHROPIC_API_KEY`      | Anthropic API key used by `write-read`.                                                                                                  | None: the Function answers `disabled`.                    |
+| `READ_MODEL`             | Model ID. Must be in `READ_MODELS` in `_shared/read.ts`: `claude-opus-5-5`, `claude-sonnet-5-5`, `claude-haiku-5-5`, `claude-fable-5-2`. | `claude-opus-5-5`                                         |
+| `READ_ENABLED`           | Server kill switch. Only the exact value `true` turns reads on.                                                                          | Off: the Function answers `disabled`.                     |
+| `READ_MAX_OUTPUT_TOKENS` | Cost cap per read, a whole number from 1 to 16000. Opus 5.5 can't turn thinking off and thinking counts toward this cap.                 | `2000`                                                    |
+| `READ_TOKEN_SECRET`      | HMAC secret for read tokens; set the same value for `submit-calculation` and `write-read` (secrets are project-wide).                    | None: no `read_token` is issued and reads are `disabled`. |
+
+Generate the secret locally and set the values on the linked project (staging first; never reuse a production key or secret in staging):
+
+```sh
+npx supabase secrets set READ_TOKEN_SECRET="$(openssl rand -base64 32)"
+npx supabase secrets set ANTHROPIC_API_KEY=YOUR_ANTHROPIC_API_KEY
+npx supabase secrets set READ_MODEL=claude-opus-5-5 READ_MAX_OUTPUT_TOKENS=2000
+npx supabase secrets set READ_ENABLED=true    # only once the privacy deploy is live
+npx supabase secrets set READ_ENABLED=false   # kill switch
+npx supabase secrets list                     # shows names and digests, not values
+```
+
+Or add the lines to the private `supabase/.env.staging` file used above and run `npx supabase secrets set --env-file supabase/.env.staging`. Do not commit key values or put them in shell history on shared machines. A secret change applies to the next request; no frontend or Function redeploy is needed. Adding a model to the allowlist is a one-line code change in `READ_MODELS` with its test in `supabase/tests/write_read_test.ts`, then a `write-read` deploy.
+
+**Request and responses.** The body is exactly `{ "token": "<read_token>", "facts": <ReportFacts> }`. The facts are checked key by key; an unknown key (for example a name, email or date of birth) is rejected.
+
+| Status          | Meaning / response                                                                                                                                            |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 200             | `{ "read": "…" }`: the model's text passed `checkRead` (only numbers from the facts, no banned wording, no day-of-month dates, 40–110 words).                 |
+| 200             | `{ "read": null, "reason": "disabled" \| "check-failed" \| "timeout" \| "refused" }`: show the template. `disabled` covers every configuration problem above. |
+| 400             | Malformed JSON, an unknown envelope field, or invalid facts. An invalid request does not use up one of the token's reads.                                     |
+| 403             | Origin not allowed, or a token that is missing, tampered, expired, from another secret, or already used 3 times.                                              |
+| 405 / 413 / 415 | Unsupported method / body over 16 KiB / wrong content type.                                                                                                   |
+| 429             | More than 10 requests from one IP (`X-Forwarded-For`) in a minute.                                                                                            |
+| 503             | Invalid `ALLOWED_ORIGINS`, or the API failed in a way other than a timeout or refusal. Show the template.                                                     |
+
+**Model call.** `anthropic-complete.ts` calls `client.beta.messages.create` with the fixed system prompt in `_shared/read.ts`, the facts as the JSON user message, `output_config: { effort: "low" }`, `max_tokens` from `READ_MAX_OUTPUT_TOKENS`, and server-side refusal fallback (`betas: ["server-side-fallback-2026-07-01"]`, `fallbacks: "default"`). The SDK timeout is 8 seconds with no retries; the reader's page stops waiting after 6. A final `stop_reason` of `refusal` answers `refused`; a reply cut off before `end_turn` fails the check.
+
+**No storage, no content logs.** Facts and generated text are never written to the database or logs. A configuration problem logs one line, `write-read disabled: <reason>` (for example `READ_MODEL is not an allowed model ID`), and never the facts, text, key or token; `READ_ENABLED` being off is not logged. Token use counts and the rate limit live in memory per Function instance, so they are best effort: a cold start or a second instance starts fresh, and each token still expires after 10 minutes.
 
 ## REST restrictions smoke check
 
