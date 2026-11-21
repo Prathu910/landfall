@@ -122,6 +122,75 @@ describe("lodged pace", () => {
   it("lodgedPace is null for an invalid date", () => {
     const core = loadOccupationCore("254499")!;
     const detail = loadOccupationDetail("254499")!;
-    expect(lodgedPace(core, detail, 70, "nope", AS_OF)).toBeNull();
+    expect(lodgedPace(core, detail, 70, "nope", AS_OF)).toEqual({
+      kind: "unknown",
+    });
+  });
+});
+
+describe("lodged pace edge cases", () => {
+  const core = loadOccupationCore("254499")!;
+  const detail = loadOccupationDetail("254499")!;
+  const scoreKey = "70";
+
+  function withInvited(counts: Record<string, string> | undefined) {
+    const invited = { ...core.invitedByScore["189"] };
+    if (counts) invited[core.asAt] = counts;
+    else delete invited[core.asAt];
+    return {
+      ...core,
+      invitedByScore: { ...core.invitedByScore, "189": invited },
+    };
+  }
+
+  it("a masked pace says there is nothing to measure", () => {
+    const i = input("lodged", { core: withInvited({ [scoreKey]: "<20" }) });
+    expect(estimatedWait(evaluateProfile(i), i)).toEqual({
+      text: "No recent invitations at your score to measure a pace.",
+      pace: null,
+    });
+  });
+
+  it("a zero pace says there is nothing to measure", () => {
+    const i = input("lodged", { core: withInvited({}) });
+    expect(estimatedWait(evaluateProfile(i), i).text).toBe(
+      "No recent invitations at your score to measure a pace.",
+    );
+  });
+
+  it("a month that was not fetched falls back to the planner text", () => {
+    const i = input("lodged", { core: withInvited(undefined) });
+    const result = estimatedWait(evaluateProfile(i), i);
+    expect(result.pace).toBeNull();
+    expect(result.text).toMatch(/^Uncertain\./);
+    expect(
+      lodgedPace(withInvited(undefined), detail, 70, "2026-03-12", AS_OF),
+    ).toEqual({ kind: "unknown" });
+  });
+
+  it("never shows fewer than 1 round", () => {
+    const emptyPool = {
+      ...core,
+      pool: { ...core.pool, "189": { total: "0", byScore: {} } },
+    };
+    const emptyDetail = { ...detail, cohortsByScore: {} };
+    const i = input("lodged", { core: emptyPool, detail: emptyDetail });
+    const result = estimatedWait(evaluateProfile(i), i);
+    expect(result.pace?.roundsNeeded).toEqual({ min: 0, max: 0 });
+    expect(result.text).toContain("about 1 round, so plan for 1 year");
+  });
+
+  it("names the latest round at the reader's points, not a later lower one", () => {
+    const rounds189 = [
+      { date: "2026-10-14", cutoff: 65 },
+      { date: "2026-09-10", cutoff: 70 },
+      { date: "2026-08-10", cutoff: 75 },
+    ];
+    const i = input("middle", { core: { ...core, rounds189 } });
+    const o = evaluateProfile(i);
+    expect(o.stamp).toMatchObject({ label: "competitive" });
+    expect(estimatedWait(o, i).text).toBe(
+      "Uncertain. Possible in a round that goes down to 70, like Sep 2026.",
+    );
   });
 });

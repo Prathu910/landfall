@@ -2,8 +2,7 @@ import { parseCountText, sumIntervals } from "../data/published-count";
 import type { Interval, OccupationCore, OccupationDetail } from "../data/types";
 import { formatMonth, isMasked, submissionMonth } from "../report/copy";
 import { STATE_NAMES } from "../state-outlook/context";
-import type { ProfileOutlook } from "./evaluate-profile";
-import type { OutlookInput } from "./evaluate-profile";
+import type { OutlookInput, ProfileOutlook } from "./evaluate-profile";
 import { higherScoreCount } from "./label-189";
 import type { OutlookLabel } from "./labels";
 
@@ -41,30 +40,39 @@ function submittedBefore(
   );
 }
 
+export type LodgedPaceResult =
+  | ({ kind: "pace" } & LodgedPace)
+  | { kind: "no-pace" } // measured: masked or zero pace, or no rounds this year
+  | { kind: "unknown" }; // not measurable: not fetched, no pool, bad date
+
 /**
  * Spec 6.5. The reader's month stands in for the unpublished date of effect,
- * so the result is an estimate. Null when it cannot be measured.
+ * so the result is an estimate. A month missing from invitedByScore was not
+ * fetched, so it is "unknown", never a zero pace.
  */
 export function lodgedPace(
   core: OccupationCore,
   detail: OccupationDetail,
   points: number,
   eoiDate: string,
-  asOf: string = `${core.asAt}-28`,
-): LodgedPace | null {
+  asOf: string,
+): LodgedPaceResult {
   const readerMonth = submissionMonth(eoiDate);
-  if (!readerMonth || readerMonth > core.asAt) return null;
+  if (!readerMonth || readerMonth > core.asAt) return { kind: "unknown" };
   const higher = higherScoreCount(core, "189", points);
   const invitedLatest = core.invitedByScore["189"]?.[core.asAt];
-  if (!higher || !invitedLatest) return null;
+  if (!higher || !invitedLatest) return { kind: "unknown" };
   const pace = parseCountText(invitedLatest[String(points)] ?? "0");
   const roundsPerYear = roundsInLastYear(core, asOf);
-  if (pace.max === 0 || isMasked(pace) || roundsPerYear === 0) return null;
+  if (pace.max === 0 || isMasked(pace) || roundsPerYear === 0) {
+    return { kind: "no-pace" };
+  }
   const ahead = sumIntervals([
     higher,
     submittedBefore(detail, points, readerMonth),
   ]);
   return {
+    kind: "pace",
     ahead,
     pace,
     roundsPerYear,
@@ -86,7 +94,12 @@ function roughly(ahead: Interval): string {
 }
 
 function paceText(pace: LodgedPace, points: number): string {
-  const { roundsNeeded: rounds, roundsPerYear } = pace;
+  const { roundsPerYear } = pace;
+  // At least one round: the reader still waits for the next one.
+  const rounds = {
+    min: Math.max(1, pace.roundsNeeded.min),
+    max: Math.max(1, pace.roundsNeeded.max),
+  };
   const years = {
     min: Math.max(1, Math.floor(rounds.min / roundsPerYear)),
     max: Math.max(1, Math.ceil(rounds.max / roundsPerYear)),
@@ -109,9 +122,10 @@ function plannerText(
     case "strong":
       return "The next 1 to 2 rounds.";
     case "competitive": {
-      const round = core?.rounds189.find(
-        (r) => r.cutoff !== null && r.cutoff <= points,
-      );
+      const listed = core?.rounds189.filter((r) => r.cutoff !== null) ?? [];
+      const round =
+        listed.find((r) => r.cutoff === points) ??
+        listed.find((r) => (r.cutoff as number) <= points);
       return round
         ? `Uncertain. Possible in a round that goes down to ${points}, like ${formatMonth(round.date.slice(0, 7))}.`
         : `Uncertain. Possible in a round that goes down to ${points}.`;
@@ -154,11 +168,11 @@ export function estimatedWait(
     stamp.kind === "single" &&
     (stamp.label === "strong" || stamp.label === "competitive");
   if (lodgeable && core && detail && profile.eoiDate) {
-    const pace = lodgedPace(core, detail, base, profile.eoiDate, asOf);
-    if (pace) return { text: paceText(pace, base), pace };
-    const month = submissionMonth(profile.eoiDate);
-    if (month !== null && month <= core.asAt) {
-      return { text: NO_PACE_TEXT, pace: null };
+    const result = lodgedPace(core, detail, base, profile.eoiDate, asOf);
+    if (result.kind === "no-pace") return { text: NO_PACE_TEXT, pace: null };
+    if (result.kind === "pace") {
+      const { kind: _kind, ...pace } = result;
+      return { text: paceText(pace, base), pace };
     }
   }
   return { text: plannerText(stamp.label, core, base), pace: null };
