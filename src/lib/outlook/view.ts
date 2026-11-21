@@ -6,12 +6,16 @@ import { cutoffColumns } from "./charts";
 import type { CutoffColumns } from "./charts";
 import { evaluateProfile } from "./evaluate-profile";
 import type { OutlookInput, ProfileOutlook } from "./evaluate-profile";
+import { buildEvidence } from "./evidence";
+import type { Evidence } from "./evidence";
 import { buildFacts } from "./facts";
 import { buildHeadline } from "./headline";
 import type { Headline } from "./headline";
 import { buildImprove } from "./improve";
 import type { Improve } from "./improve";
 import { dataMonth, dataMonthKey, isLodged, occupationName } from "./phrases";
+import { buildPointsPage } from "./points-page";
+import type { PointsPage } from "./points-page";
 import { queueView } from "./queue-view";
 import type { QueueView } from "./queue-view";
 import type { ReportFacts } from "./read-contract";
@@ -32,7 +36,12 @@ export type OccupationState =
 
 export type OutlookView =
   | { kind: "loading" }
-  | { kind: "points-only"; points: PointsResult; line: string }
+  | {
+      kind: "points-only";
+      points: PointsResult;
+      line: string;
+      pointsPage: PointsPage;
+    }
   | {
       kind: "report";
       headline: Headline;
@@ -54,16 +63,22 @@ export type OutlookView =
       facts: ReportFacts;
       templateRead: string;
       points: PointsResult;
+      pointsPage: PointsPage;
+      evidence: Evidence;
       methodLines: string[];
       footer: string;
       dataMonth: string;
     };
+
+/** The full report, once the occupation has loaded (or has no data). */
+export type ReportOutlookView = Extract<OutlookView, { kind: "report" }>;
 
 export type OutlookViewInput = Omit<OutlookInput, "core" | "detail"> & {
   occupation: OccupationState;
 };
 
 const POINTS_ONLY_LINE = "Choose an occupation to see how your points compare.";
+const NO_OCCUPATION = "No occupation chosen";
 const COMBINED_RING = "189 • 190 • 491";
 
 // The mockup's "How we label your outlook" bullets (spec 6.2 to 6.4).
@@ -152,6 +167,14 @@ function reportView(input: OutlookInput): OutlookView {
     facts,
     templateRead: readTemplate(facts),
     points: o.points,
+    pointsPage: buildPointsPage({
+      profile: input.profile,
+      points: o.points,
+      occupation: name,
+      asOf: input.asOf,
+      month: dataMonthKey(input),
+    }),
+    evidence: buildEvidence(input, o),
     methodLines: [...METHOD_LINES],
     footer: footerText(month),
     dataMonth: month,
@@ -162,7 +185,14 @@ export function buildOutlookView(input: OutlookViewInput): OutlookView {
   const { occupation, ...rest } = input;
   if (rest.profile.occupation === "") {
     const points = calculatePoints(rest.profile, rest.asOf);
-    return { kind: "points-only", points, line: POINTS_ONLY_LINE };
+    const pointsPage = buildPointsPage({
+      profile: rest.profile,
+      points,
+      occupation: NO_OCCUPATION,
+      asOf: rest.asOf,
+      month: dataMonthKey({ ...rest, core: null, detail: null }),
+    });
+    return { kind: "points-only", points, line: POINTS_ONLY_LINE, pointsPage };
   }
   if (occupation.status === "loading") return { kind: "loading" };
   // A failed load takes the no-core path, like an occupation with no data.

@@ -1,0 +1,17 @@
+.footer {
+  padding: 20px 52px;
+  background: var(--ink);
+  color: var(--muted-on-dark);
+  font-size: 14px;
+}
+
+.footer b {
+  color: var(--card);
+}
+
+@media screen and (max-width: 720px) {
+  .footer {
+    padding: 18px;
+    font-size: 15px;
+  }
+}

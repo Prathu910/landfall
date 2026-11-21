@@ -45,6 +45,8 @@
   --saffron-on-dark: #f0a35e;
   --serif: "Newsreader", Georgia, serif;
   --sans: "Inter", Arial, sans-serif;
+  /* Sticky report chips sit just under the sticky site header. */
+  --site-header-height: 88px;
 }
 * {
   box-sizing: border-box;
@@ -155,7 +157,7 @@ svg {
   white-space: nowrap;
 }
 .site-header {
-  height: 88px;
+  height: var(--site-header-height);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -1095,8 +1097,8 @@ svg {
   }
 }
 @media (max-width: 800px) {
-  .site-header {
-    height: 74px;
+  :root {
+    --site-header-height: 74px;
   }
   .main-nav {
     display: none;

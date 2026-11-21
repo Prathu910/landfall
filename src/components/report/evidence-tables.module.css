@@ -1,0 +1,63 @@
+.wrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+
+.table th {
+  padding: 6px 8px 6px 0;
+  border-bottom: 1.5px solid var(--ink);
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+}
+
+.table td {
+  padding: 8px 8px 8px 0;
+  border-top: 1px solid var(--rule);
+  vertical-align: top;
+}
+
+.note {
+  display: block;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.short {
+  color: var(--label-long-wait-ink);
+}
+
+/* Pool by points: one bar per score, the reader's own in a mark colour. */
+.barCell {
+  width: 60%;
+}
+
+.bar {
+  display: block;
+  height: 14px;
+  min-width: 2px;
+  border-radius: 3px;
+}
+
+.higher {
+  background: var(--ink);
+}
+
+.you {
+  background: var(--label-competitive-ink);
+}
+
+.lower {
+  background: color-mix(in srgb, var(--muted-soft) 40%, var(--newsprint));
+}
+
+.youRow td {
+  font-weight: 700;
+}

@@ -1,0 +1,65 @@
+/* The report sheet: white on the site background, as in the mockup. */
+.page {
+  max-width: 900px;
+  margin: 16px auto 64px;
+  border-radius: 14px;
+  /* clip, not hidden: hidden would make the sheet a scroll box and break the sticky chips. */
+  overflow: clip;
+  background: var(--card);
+  color: var(--ink);
+  font-family: var(--font-report);
+  font-size: 17px;
+  line-height: 1.55;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  max-width: 900px;
+  margin: 16px auto 0;
+}
+
+.note {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.h1 {
+  font-family: var(--font-report);
+  font-size: clamp(30px, 4.4vw, 42px);
+  font-stretch: 116%;
+  font-weight: 750;
+  line-height: 1.08;
+}
+
+.line {
+  margin-top: 10px;
+  font-size: 19px;
+}
+
+/* The page already pads anchors for the site header (globals.css); below
+   1024px the sticky chips need a little more room. */
+@media screen and (max-width: 1023px) {
+  .page [id] {
+    scroll-margin-top: 32px;
+  }
+}
+
+/* Phones: the sheet runs edge to edge, cancelling the .container padding
+   from globals.css (30px, then 21px at 480px and below). */
+@media screen and (max-width: 720px) {
+  .page {
+    margin: 8px -30px 40px;
+    border-radius: 0;
+    font-size: 16px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .page {
+    margin-inline: -21px;
+  }
+}

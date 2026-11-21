@@ -367,6 +367,20 @@ describe("buildOutlookView states", () => {
     if (view.kind !== "points-only") return;
     expect(view.points.base).toBe(90);
     expect(view.line).not.toMatch(REPORT_BANNED_COPY);
+    expect(view.pointsPage.fields[1]).toEqual({
+      label: "Occupation",
+      value: "No occupation chosen",
+    });
+  });
+
+  it("carries the evidence and the points page with a report", () => {
+    const view = reportOf("middle");
+    expect(view.evidence.rounds?.you).toBe(70);
+    expect(view.pointsPage.totals[0]).toEqual({
+      points: 70,
+      label: "189 Independent",
+    });
+    expect(view.pointsPage.mrz[1]).toMatch(/<<OCT2026</);
   });
 
   it("is points-only without an occupation even while loading", () => {

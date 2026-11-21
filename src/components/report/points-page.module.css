@@ -1,0 +1,163 @@
+.page {
+  display: grid;
+  grid-template-columns: 130px minmax(0, 1fr);
+  gap: 22px;
+}
+
+.photo {
+  width: 130px;
+  height: 164px;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.silhouette {
+  fill: color-mix(in srgb, var(--muted-soft) 30%, var(--surface));
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 22px;
+  margin: 0;
+  font-size: 15px;
+}
+
+.fields dt {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.fields dd {
+  margin: 0;
+}
+
+.table {
+  width: 100%;
+  margin-top: 16px;
+  border-collapse: collapse;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+
+.table td,
+.table th {
+  padding: 8px 0;
+  border-top: 1px solid var(--rule);
+  font-weight: 400;
+  text-align: left;
+  vertical-align: top;
+}
+
+.detail {
+  padding-left: 14px;
+  color: var(--muted);
+}
+
+.table .number {
+  width: 48px;
+  font-weight: 700;
+  text-align: right;
+}
+
+.zero td,
+.zero th {
+  color: var(--muted-soft);
+}
+
+.totals {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.total {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.total b {
+  display: block;
+  color: var(--ink);
+  font-family: var(--font-report);
+  font-size: 28px;
+  font-stretch: 116%;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.warnings {
+  margin: 16px 0 0;
+  padding-left: 20px;
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.mrz {
+  margin-top: 18px;
+  padding: 10px 12px;
+  overflow-x: auto;
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--muted);
+  font:
+    500 14px/1.6 ui-monospace,
+    "SFMono-Regular",
+    Menlo,
+    monospace;
+  letter-spacing: 0.1em;
+  white-space: pre;
+}
+
+/* Phones: no photo, the detail under each category, totals still three across. */
+@media screen and (max-width: 720px) {
+  .page {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .photo {
+    display: none;
+  }
+
+  .fields {
+    gap: 10px 14px;
+    font-size: 16px;
+  }
+
+  .table tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .table .detail {
+    grid-row: 2;
+    grid-column: 1 / -1;
+    padding: 0 0 8px;
+    border-top: 0;
+    font-size: 15px;
+  }
+
+  .table .number {
+    grid-row: 1;
+    grid-column: 2;
+  }
+
+  .total {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+  .total b {
+    font-size: 24px;
+  }
+
+  .mrz {
+    font-size: 12px;
+  }
+}
