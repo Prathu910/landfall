@@ -1,55 +1,27 @@
 import type { StateCode, StateVisa } from "../data/types";
-import { formatDate } from "../migration";
 import { STATE_NAMES } from "../state-outlook/context";
 import type { OutlookInput, ProfileOutlook } from "./evaluate-profile";
 import type { Improve, Move } from "./improve";
 import { LABEL_RANK, isAtLeast } from "./labels";
 import type { OutlookLabel } from "./labels";
+import { isLodged, joinAnd } from "./phrases";
+import { noData, notEligible, nothingSuits } from "./route-combined";
 import { buildDeadlines } from "./route-deadlines";
 import type { RouteDeadline } from "./route-deadlines";
+import {
+  dated,
+  improvementStep,
+  invitation,
+  lodgedStart,
+  today,
+  updateEoi,
+} from "./route-steps";
+import type { Dated, RouteStep } from "./route-steps";
 
-export type RouteStep = {
-  title: string;
-  sub: string;
-  points: number | null;
-  label: OutlookLabel | null;
-};
+export type { RouteStep } from "./route-steps";
+export { daysBetween } from "./route-steps";
 export type { RouteDeadline } from "./route-deadlines";
 export type Route = { steps: RouteStep[]; deadlines: RouteDeadline[] };
-
-/** A step with the date it happens; null means now. */
-type Dated = { step: RouteStep; date: string | null };
-
-const MS_PER_DAY = 86_400_000;
-
-function dated(
-  title: string,
-  sub: string,
-  date: string | null,
-  points: number | null = null,
-  label: OutlookLabel | null = null,
-): Dated {
-  return { step: { title, sub, points, label }, date };
-}
-
-function joinList(items: string[]): string {
-  if (items.length < 2) return items.join("");
-  return `${items.slice(0, -1).join(", ")} and ${items[items.length - 1]}`;
-}
-
-export function daysBetween(from: string, to: string): number {
-  return Math.round((Date.parse(to) - Date.parse(from)) / MS_PER_DAY);
-}
-
-function today(input: OutlookInput, o: ProfileOutlook): Dated {
-  return dated(
-    "Today",
-    formatDate(input.asOf),
-    input.asOf,
-    o.points.base,
-    o.v189.label,
-  );
-}
 
 /** Each state visa with its own best state; none for a visa that names no state (ruling R7). */
 function stateVisas(
@@ -94,11 +66,12 @@ function submitEoi189(o: ProfileOutlook): Dated {
   return dated("Submit EOI", sub, null);
 }
 
+function stateParts(o: ProfileOutlook): string[] {
+  return stateVisas(o).map((v) => `${v.visa} ${STATE_NAMES[v.state]}`);
+}
+
 function submitEoiState(o: ProfileOutlook, with189: boolean): Dated {
-  const parts = [
-    ...(with189 ? ["189"] : []),
-    ...stateVisas(o).map((v) => `${v.visa} ${STATE_NAMES[v.state]}`),
-  ];
+  const parts = [...(with189 ? ["189"] : []), ...stateParts(o)];
   return dated("Submit EOI", parts.join(" + "), null);
 }
 
@@ -118,28 +91,6 @@ function statesToCheck(o: ProfileOutlook): StateCode[] {
     }
   }
   return found;
-}
-
-function improvementName(move: Move): string {
-  return move.title.replace(/, \+\d+$/, "");
-}
-
-function improvementStep(move: Move, retake: boolean): Dated {
-  const isEnglish = move.id.startsWith("english");
-  const name = improvementName(move);
-  const title = retake && isEnglish ? "English retake" : name;
-  const sub = retake && isEnglish ? name : move.detail;
-  return dated(title, sub, move.date, move.to.points, move.to.label);
-}
-
-function updateEoi(move: Move | undefined, opensNote: boolean): Dated {
-  const opens = move && opensNote && isAtLeast(move.to.label, "long-wait");
-  const sub = opens ? "189 can open to you" : "the day results arrive";
-  return dated("Update your EOI", sub, null);
-}
-
-function invitation(label: OutlookLabel | null): Dated {
-  return dated("Invitation", "60 days to lodge", null, null, label);
 }
 
 function bestMove(improve: Improve): Move | undefined {
@@ -185,14 +136,22 @@ function belowThreshold(
   return [...steps, improvementStep(move, true), updateEoi(move, true)];
 }
 
+/**
+ * A stamped state visa: check its rules, then submit for it. A lodged reader
+ * starts from the EOI they submitted and adds the state to it instead.
+ */
 function stateRoute(input: OutlookInput, o: ProfileOutlook): Dated[] {
   const check = statesToCheck(o);
   const names = check.map((state) => STATE_NAMES[state]);
-  const checkStep = dated("Check state rules", joinList(names), null);
+  const checkStep = dated("Check state rules", joinAnd(names), null);
+  const lodged = isLodged(input);
+  const eoi = lodged
+    ? dated("Update your EOI", `add ${stateParts(o).join(" + ")}`, null)
+    : submitEoiState(o, false);
   return [
-    today(input, o),
+    ...(lodged ? lodgedStart(input, o) : [today(input, o)]),
     ...(check.length > 0 ? [checkStep] : []),
-    submitEoiState(o, false),
+    eoi,
     dated("Keep 189 ticked", "it costs nothing", null),
   ];
 }
@@ -202,52 +161,11 @@ function lodged(
   o: ProfileOutlook,
   improve: Improve,
 ): Dated[] {
-  const { eoiDate } = input.profile;
   const move = bestMove(improve);
-  const waiting = dated(
-    "Today",
-    `${daysBetween(eoiDate, input.asOf)} days waiting`,
-    input.asOf,
-  );
   return [
-    dated(
-      "EOI submitted",
-      formatDate(eoiDate),
-      eoiDate,
-      o.points.base,
-      o.v189.label,
-    ),
-    waiting,
+    ...lodgedStart(input, o),
     ...(move ? [improvementStep(move, false)] : []),
     invitation(move ? move.to.label : o.v189.label),
-  ];
-}
-
-function nothingSuits(input: OutlookInput, o: ProfileOutlook): Dated[] {
-  const { states } = o.listMembership;
-  const watch =
-    states.length > 0
-      ? [dated(`Watch ${joinList(states)}`, "they still list you", null)]
-      : [];
-  return [
-    today(input, o),
-    dated("Keep your EOI in", "189 + 190 + 491", null),
-    dated("Check other occupations", "you could be assessed in", null),
-    ...watch,
-  ];
-}
-
-function noData(input: OutlookInput, o: ProfileOutlook): Dated[] {
-  const { states } = o.listMembership;
-  const title =
-    states.length === 1
-      ? `Check ${states[0]}'s program`
-      : "Check state programs";
-  return [
-    today(input, o),
-    dated(title, "190 and 491", null),
-    dated("Submit EOI", "189 + 190 + 491", null),
-    dated("Wait for a state", "or a 189 round", null),
   ];
 }
 
@@ -256,15 +174,20 @@ function pickSteps(
   o: ProfileOutlook,
   improve: Improve,
 ): Dated[] {
-  if (o.v189.label === "no-data" && o.stamp.kind === "combined") {
-    return noData(input, o);
+  if (o.stamp.kind === "combined") {
+    if (o.v189.label === "not-eligible") return notEligible(input, o, improve);
+    if (o.v189.label === "no-data") return noData(input, o);
+    return nothingSuits(input, o);
   }
-  if (o.stamp.kind === "combined") return nothingSuits(input, o);
-  if (input.profile.eoiDate) return lodged(input, o, improve);
+  const stateStamped = o.stamp.visa !== "189";
+  if (isLodged(input)) {
+    // The headline leads with the stamped state, so the route does too.
+    return stateStamped ? stateRoute(input, o) : lodged(input, o, improve);
+  }
   if (o.stamp.visa === "189" && o.stamp.label === "very-strong") {
     return veryStrong(input, o);
   }
-  if (o.stamp.visa === "189" || isAtLeast(o.v189.label, "long-wait")) {
+  if (!stateStamped || isAtLeast(o.v189.label, "long-wait")) {
     return improving(input, o, improve);
   }
   if (o.v189.label === "not-eligible") return belowThreshold(input, o, improve);

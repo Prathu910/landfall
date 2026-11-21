@@ -6,6 +6,7 @@ import {
   realFederal,
   realLists,
 } from "../state-outlook/__fixtures__/real-data";
+import { PLANNER, profileInput } from "./__fixtures__/review-profiles";
 import { SCENARIOS } from "./__fixtures__/scenarios";
 import type { ScenarioId } from "./__fixtures__/scenarios";
 import { evaluateProfile } from "./evaluate-profile";
@@ -308,6 +309,102 @@ describe("buildImprove copy", () => {
       for (const loss of run(id).losses) {
         expect(loss.date <= "2028-11-21").toBe(true);
       }
+    }
+  });
+});
+
+function runProfile(profile: Profile): Improve {
+  const input = profileInput(profile);
+  return buildImprove(input, evaluateProfile(input));
+}
+
+describe("buildImprove, combined stamps (final review)", () => {
+  it("keeps the no-visa-inviting banner for a not-invited stamp only", () => {
+    // Management Accountant at 65: 189 not invited, 190 and 491 a long wait.
+    const improve = runProfile({ ...PLANNER, occupation: "221112" });
+    expect(improve.mode).toBe("points-not-problem");
+    expect(improve.banner).toBe(
+      "More points won't open 189: it needs to start listing your occupation again.",
+    );
+  });
+
+  it("lists points plainly when 189 has no data, even with a core", () => {
+    // Sales and Marketing Manager: no 189 pool or rounds; states long wait.
+    const improve = runProfile({ ...PLANNER, occupation: "131112" });
+    expect(improve.mode).toBe("plain");
+    expect(improve.moves).toEqual([]);
+    expect(improve.plain).toContain("Superior English, +20. Takes you to 85.");
+  });
+
+  it("finds the change that takes a no-data occupation past 65", () => {
+    // Aquaculture Farmer at 55: under 65, and 189 has no data.
+    const improve = runProfile({
+      ...PLANNER,
+      occupation: "121111",
+      overseasYears: 0,
+    });
+    expect(improve.mode).toBe("plain");
+    expect(improve.opener?.to.points).toBeGreaterThanOrEqual(65);
+    expect(improve.opener?.id).toBe("english-superior");
+  });
+});
+
+describe("buildImprove, not eligible (final review)", () => {
+  it("leads with a retake that restores an expired English test", () => {
+    const improve = runProfile({ ...PLANNER, englishDate: "2023-01-01" });
+    const best = improve.moves.find((m) => m.best);
+    expect(best?.from.label).toBe("not-eligible");
+    expect(best?.to.label).not.toBe("not-eligible");
+    expect(improve.opener).toBe(best);
+  });
+
+  it("offers a same-level English retake that adds no points", () => {
+    const improve = runProfile({
+      ...PLANNER,
+      occupation: "254412",
+      englishDate: "2023-01-01",
+    });
+    const retake = move(improve, "english-retake");
+    expect(retake.title).toBe("English retake");
+    expect(retake.to.points).toBe(retake.from.points);
+    expect(retake.to.label).not.toBe("not-eligible");
+  });
+
+  it("offers a skills assessment renewal when the assessment has expired", () => {
+    const improve = runProfile({
+      ...PLANNER,
+      occupation: "254412",
+      english: "proficient",
+      assessmentDate: "2022-01-01",
+      assessmentExpiry: "",
+    });
+    const renewal = move(improve, "assessment-renewal");
+    expect(renewal.title).toBe("Skills assessment renewal");
+    expect(renewal.to.label).not.toBe("not-eligible");
+    // The renewal stacked with the next change reaches a higher label.
+    expect(improve.opener?.id).toBe("combined");
+    expect(improve.opener?.detail).toMatch(/^Skills assessment renewal and /);
+  });
+
+  it("marks no biggest jump and no opener at 45 or over", () => {
+    const improve = runProfile({ ...PLANNER, dob: "1980-01-01" });
+    expect(improve.moves.filter((m) => m.best)).toEqual([]);
+    expect(improve.opener).toBeNull();
+  });
+
+  it("never marks a biggest jump that leaves the label unchanged", () => {
+    const improve = runProfile({ ...PLANNER, english: "superior" });
+    for (const m of improve.moves.filter((x) => x.best)) {
+      expect(m.to.label).not.toBe(m.from.label);
+    }
+    const under = runProfile({
+      ...PLANNER,
+      overseasYears: 0,
+      english: "competent",
+      occupation: "254412",
+    });
+    for (const m of under.moves.filter((x) => x.best)) {
+      expect(m.to.label).not.toBe("not-eligible");
     }
   });
 });

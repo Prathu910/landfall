@@ -1,10 +1,16 @@
 import { parseCountText, sumIntervals } from "../data/published-count";
 import type { Interval, OccupationCore, OccupationDetail } from "../data/types";
-import { formatMonth, isMasked, submissionMonth } from "../report/copy";
+import {
+  formatMonth,
+  formatSummed,
+  isMasked,
+  submissionMonth,
+} from "../report/copy";
+import { combinedWait } from "./combined";
 import type { OutlookInput, ProfileOutlook } from "./evaluate-profile";
 import { higherScoreCount } from "./label-189";
 import type { OutlookLabel } from "./labels";
-import { capital, theState } from "./phrases";
+import { capital, monthsOfSix, theState } from "./phrases";
 
 export type LodgedPace = {
   ahead: Interval;
@@ -87,11 +93,34 @@ function range(min: number, max: number, unit: string): string {
   return min === max ? `${min} ${unit}` : `${min} to ${max} ${unit}s`;
 }
 
-/** An estimate to the nearest ten: "870 to 970". */
+function toTen(value: number): number {
+  // Under 10 stays exact, so a small count never rounds down to zero.
+  return value < 10 ? value : Math.round(value / 10) * 10;
+}
+
+/**
+ * An estimate to the nearest ten: "870 to 970". A count from zero is a sum
+ * of masked cells, so it reads "under 39" (ruling R20), never "0 to 40".
+ */
 export function roughly(ahead: Interval): string {
-  const low = Math.round(ahead.min / 10) * 10;
-  const high = Math.round(ahead.max / 10) * 10;
+  if (ahead.min === 0) return ahead.max === 0 ? "0" : formatSummed(ahead);
+  const low = toTen(ahead.min);
+  const high = toTen(ahead.max);
   return low === high ? `${low}` : `${low} to ${high}`;
+}
+
+/** Sentence-initial: "Roughly 870 to 970 EOIs", "Under 39 EOIs" or "No EOIs". */
+export function roughlyEois(ahead: Interval): string {
+  if (ahead.max === 0) return "No EOIs";
+  if (ahead.min === 0) return `${capital(formatSummed(ahead))} EOIs`;
+  return `Roughly ${roughly(ahead)} EOIs`;
+}
+
+/** Mid-sentence: "about 50 to 60", "under 39" or "none"; never "about 0". */
+export function aboutCount(count: Interval): string {
+  if (count.max === 0) return "none";
+  if (count.min === 0) return formatSummed(count);
+  return `about ${roughly(count)}`;
 }
 
 function paceText(pace: LodgedPace, points: number): string {
@@ -106,7 +135,7 @@ function paceText(pace: LodgedPace, points: number): string {
     max: Math.max(1, Math.ceil(rounds.max / roundsPerYear)),
   };
   return (
-    `Roughly ${roughly(pace.ahead)} EOIs ahead. ` +
+    `${roughlyEois(pace.ahead)} ahead. ` +
     `At the latest pace, about ${range(rounds.min, rounds.max, "round")}, ` +
     `so plan for ${range(years.min, years.max, "year")} at ${points} (estimate).`
   );
@@ -149,7 +178,7 @@ function stateText(o: ProfileOutlook): string | null {
   }
   const best = (stamp.visa === "190" ? o.v190 : o.v491)?.best;
   if (!best) return null;
-  return `States don't publish a queue. ${capital(theState(stamp.state))} invited at or below your points in ${best.monthsAtOrBelow6} of the last 6 months.`;
+  return `States don't publish a queue. ${capital(theState(stamp.state))} invited at or below your points in ${monthsOfSix(best)}.`;
 }
 
 export function estimatedWait(
@@ -159,6 +188,8 @@ export function estimatedWait(
   const { stamp } = o;
   const state = stateText(o);
   if (state) return { text: state, pace: null };
+  const combined = stamp.kind === "combined" ? combinedWait(o) : null;
+  if (combined) return { text: combined, pace: null };
   if (stamp.kind === "single" && stamp.visa !== "189") {
     return { text: NO_DATA_TEXT, pace: null };
   }

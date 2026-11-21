@@ -26,10 +26,14 @@ function stateBackup(facts: ReportFacts): Visa | null {
   return named[0] ?? null;
 }
 
+// "Not enough data" is no reading, so a sentence never quotes it as one.
+const NO_READING = ["Not enough data", "Too few to count"];
+
 function gainSentence(facts: ReportFacts, change: Change): string {
   const added = change.toPoints - change.fromPoints;
   const v189 = facts.visas[0];
-  if (change.toLabel === v189.label && v189.label === "Not currently invited") {
+  // A change that leaves the label as it is was never the biggest jump.
+  if (change.toLabel === v189.label) {
     return `${change.title} would take you to ${change.toPoints}, and 189 would still be ${change.toLabel}.`;
   }
   return `Your biggest jump is ${change.title}: it adds ${added} points and puts you at ${change.toPoints}, which reads as ${change.toLabel} for 189.`;
@@ -39,6 +43,9 @@ function lossSentence(change: Change): string {
   const when = `${change.title} in ${change.month}`;
   if (change.toPoints === change.fromPoints) {
     return `Watch your dates: ${lowerFirst(when)}.`;
+  }
+  if (NO_READING.includes(change.toLabel)) {
+    return `Watch your dates: ${lowerFirst(when)}, which leaves you at ${change.toPoints} points.`;
   }
   return `Watch your dates: ${lowerFirst(when)}, which leaves you at ${change.toPoints} points (${change.toLabel}).`;
 }

@@ -10,7 +10,13 @@ import { formatCount, formatMonth, formatSummed } from "../report/copy";
 import type { OutlookInput, ProfileOutlook } from "./evaluate-profile";
 import type { VisaLabel } from "./label-state";
 import type { OutlookLabel } from "./labels";
-import { flagNote, isLodged, longMonth, occupationName } from "./phrases";
+import {
+  flagNote,
+  isLodged,
+  longMonth,
+  monthsOfSix,
+  occupationName,
+} from "./phrases";
 
 export type RoundRow = {
   date: string;
@@ -166,7 +172,7 @@ function stateTable(input: OutlookInput, visa: VisaLabel): StateTable {
       latest: state.latest
         ? latestText(state.latest.month, state.latest.count)
         : `None in the last ${STATE_WINDOW} months`,
-      months: `${state.monthsAtOrBelow6} of the last ${STATE_WINDOW} months`,
+      months: monthsOfSix(state),
       label: state.label,
       flag: flagNote(state),
       rules: state.rules,

@@ -81,6 +81,7 @@ export function evaluateProfile(input: OutlookInput): ProfileOutlook {
     points: points.base,
     eligible: points.eligible,
     core,
+    reasons: points.ineligibleReasons,
   });
   const v190 = core ? labelVisa(input, core, points, "190") : null;
   const v491 = core ? labelVisa(input, core, points, "491") : null;

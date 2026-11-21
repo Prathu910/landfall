@@ -1,9 +1,10 @@
 import type { Visa } from "../data/types";
 import type { Profile } from "../migration";
-import { applyScenarios } from "../scenarios";
 import { evaluateProfile } from "./evaluate-profile";
 import type { OutlookInput, ProfileOutlook } from "./evaluate-profile";
-import { CONFIRM } from "./label-189";
+import { ENGLISH_MOVES, LEAD_TIME, candidates } from "./improve-candidates";
+import type { Candidate, MoveId, SingleId } from "./improve-candidates";
+import { CONFIRM, no189Data } from "./label-189";
 import { LABEL_RANK, labelName } from "./labels";
 import type { OutlookLabel } from "./labels";
 import { buildLosses } from "./losses";
@@ -12,14 +13,7 @@ import type { Loss, Shift } from "./losses";
 export type { Loss, Shift } from "./losses";
 
 export type Move = {
-  id:
-    | "english-proficient"
-    | "english-superior"
-    | "naati"
-    | "professional-year"
-    | "partner-skills"
-    | "experience"
-    | "combined";
+  id: MoveId;
   title: string;
   detail: string;
   why: string;
@@ -35,106 +29,30 @@ export type Improve = {
   moves: Move[];
   losses: Loss[];
   plain: string[];
+  /**
+   * For a reader not yet eligible for 189: the change that takes them to 65
+   * or restores an expired test or assessment, also in plain mode. Null when
+   * none does, and always at 45 or over, which points can't fix.
+   */
+  opener: Move | null;
 };
 
-type SingleId = Exclude<Move["id"], "combined">;
-type Candidate = {
-  id: SingleId;
-  name: string;
-  /** The name as it reads mid-sentence. */
-  phrase?: string;
-  detail: string;
-  apply: (profile: Profile) => Profile;
-};
 type Scored = Candidate & { outlook: ProfileOutlook };
 
 // Moves report the 189 shift, also when 189 isn't inviting (spec 6.7).
 const VISA: Visa = "189";
-// The profile holds years, not dates, so "shortest time" uses typical lead
-// times: one test, then an English result, then longer steps.
-const LEAD_TIME: Record<Move["id"], number> = {
-  naati: 0,
-  "english-proficient": 1,
-  "english-superior": 2,
-  "partner-skills": 3,
-  "professional-year": 4,
-  experience: 5,
-  combined: 6,
-};
-const ENGLISH_MOVES: SingleId[] = ["english-proficient", "english-superior"];
 const BANNERS = {
   protect: "You're already at the top. The only risk is waiting too long.",
   closed189:
     "Points aren't what's holding you back. 189 needs to start listing your occupation again.",
+  // Combined but not "not invited": a state visa may still respond to points.
+  closed189Combined:
+    "More points won't open 189: it needs to start listing your occupation again.",
   closedAll:
     "Points won't change this. No visa is inviting your occupation right now.",
 };
 const LODGED_NOTE =
   " Updating your EOI with new points resets your date of effect to that day.";
-
-/** The next experience band; applyScenarios leaves 8+ years unchanged. */
-function experienceCandidate(profile: Profile, asOf: string): Candidate {
-  // Onshore readers are building Australian experience; others overseas.
-  const band = profile.onshore ? "australian-work" : "overseas-work";
-  const next = applyScenarios(profile, [band], asOf);
-  const years = profile.onshore ? next.australianYears : next.overseasYears;
-  const where = profile.onshore ? "Australian" : "overseas";
-  const unit = years === 1 ? "year" : "years";
-  const possessive = years === 1 ? "year's" : "years'";
-  return {
-    id: "experience",
-    name: `${years} ${possessive} ${where} experience`,
-    detail: `Happens on its own when you reach ${years} ${unit}.`,
-    apply: (p) => applyScenarios(p, [band], asOf),
-  };
-}
-
-/** Every move to try; scoreCandidates keeps those that add points. */
-function candidates(profile: Profile, asOf: string): Candidate[] {
-  const scenario = (id: string) => (p: Profile) =>
-    applyScenarios(p, [id], asOf);
-  const list: Candidate[] = [
-    {
-      id: "english-proficient",
-      name: "Proficient English",
-      detail: "A new English test result at Proficient level.",
-      apply: (p) => ({ ...p, english: "proficient", englishDate: asOf }),
-    },
-    {
-      id: "english-superior",
-      name: "Superior English",
-      detail: "A new English test result at Superior level.",
-      apply: scenario("english"),
-    },
-    {
-      id: "naati",
-      name: "NAATI CCL test",
-      detail: "One test in a community language.",
-      apply: scenario("language"),
-    },
-    // calculatePoints decides which occupations a Professional Year counts for.
-    {
-      id: "professional-year",
-      name: "Professional Year",
-      detail: "A Professional Year program in your field, about 12 months.",
-      apply: (p) => ({
-        ...p,
-        professionalYear: true,
-        professionalYearDate: "",
-      }),
-    },
-  ];
-  if (profile.partner === "english") {
-    list.push({
-      id: "partner-skills",
-      name: "Partner skills assessment",
-      phrase: "your partner's skills assessment",
-      detail: "Partner points go from 5 to 10.",
-      apply: (p) => ({ ...p, partner: "skilled" }),
-    });
-  }
-  return [...list, experienceCandidate(profile, asOf)];
-}
 
 function shiftOf(outlook: ProfileOutlook): Shift {
   return { points: outlook.points.base, label: outlook.v189.label };
@@ -165,7 +83,7 @@ function stacks(a: SingleId, b: SingleId): boolean {
 }
 
 function toMove(
-  id: Move["id"],
+  id: MoveId,
   name: string,
   detail: string,
   outlook: ProfileOutlook,
@@ -173,9 +91,11 @@ function toMove(
 ): Move {
   const from = shiftOf(base);
   const to = shiftOf(outlook);
+  const added = to.points - from.points;
   return {
     id,
-    title: `${name}, +${to.points - from.points}`,
+    // A retake or renewal can restore eligibility without adding points.
+    title: added > 0 ? `${name}, +${added}` : name,
     detail,
     why: whyOf(outlook),
     from,
@@ -186,18 +106,32 @@ function toMove(
   };
 }
 
+/** The label gets better: the only kind of change worth "Biggest jump". */
+function lifts(move: Move): boolean {
+  return rankOf(move.to.label) < rankOf(move.from.label);
+}
+
 function scoreCandidates(input: OutlookInput, base: ProfileOutlook): Scored[] {
-  return candidates(input.profile, input.asOf)
+  const reasons = base.points.ineligibleReasons;
+  return candidates(input.profile, input.asOf, reasons)
     .map((c) => ({
       ...c,
       outlook: evaluateProfile({ ...input, profile: c.apply(input.profile) }),
     }))
-    .filter((c) => c.outlook.points.base > base.points.base);
+    .filter(
+      (c) =>
+        c.outlook.points.base > base.points.base ||
+        rankOf(c.outlook.v189.label) < rankOf(base.v189.label),
+    );
 }
 
 type Ranked = { candidate: Scored; move: Move };
 
-/** Marks a biggest jump only in improve mode (ruling R11). */
+/**
+ * Every move, best first. A biggest jump is marked only in improve mode
+ * (ruling R11) and only when it lifts the label, so it is never a change that
+ * leaves the reader where they are (for example still not eligible).
+ */
 function buildMoves(
   input: OutlookInput,
   base: ProfileOutlook,
@@ -216,9 +150,9 @@ function buildMoves(
   const second = ranked
     .map((r) => r.candidate)
     .find((c) => c.id !== first.id && stacks(first.id, c.id));
-  singles[0].best = markBest;
+  singles[0].best = markBest && lifts(singles[0]);
   if (!second) return singles;
-  const profile = second.apply(first.apply(input.profile));
+  const profile: Profile = second.apply(first.apply(input.profile));
   const combined = toMove(
     "combined",
     "Both together",
@@ -227,24 +161,38 @@ function buildMoves(
     base,
   );
   // Combined is the biggest jump only when it reaches a label no single move does.
-  if (markBest && rankOf(combined.to.label) < rankOf(singles[0].to.label)) {
+  const beats = rankOf(combined.to.label) < rankOf(singles[0].to.label);
+  if (markBest && lifts(combined) && beats) {
     singles[0].best = false;
     combined.best = true;
   }
   return [...singles, combined];
 }
 
+/**
+ * The change that opens 189 to a reader who isn't eligible yet: the biggest
+ * jump when there is one, else the first move that leaves "not eligible"
+ * (in plain mode every label reads no data, so none is marked best).
+ */
+function openerOf(base: ProfileOutlook, moves: Move[]): Move | null {
+  if (base.v189.label !== "not-eligible") return null;
+  const best = moves.find((m) => m.best);
+  // 189 is "not eligible" under 65 or without the basics, so any other label
+  // means the change reaches 65 with the requirements met.
+  return best ?? moves.find((m) => m.to.label !== "not-eligible") ?? null;
+}
+
 function plainLines(input: OutlookInput, base: ProfileOutlook): string[] {
   return scoreCandidates(input, base).map((c) => {
     const after = c.outlook.points.base;
-    return `${c.name}, +${after - base.points.base}. Takes you to ${after}.`;
+    const added = after - base.points.base;
+    if (added === 0) return `${c.name}. Keeps you at ${after}.`;
+    return `${c.name}, +${added}. Takes you to ${after}.`;
   });
 }
 
-function modeOf(base: ProfileOutlook): Improve["mode"] {
-  if (base.stamp.kind === "combined" && base.stamp.label === "no-data") {
-    return "plain";
-  }
+function modeOf(input: OutlookInput, base: ProfileOutlook): Improve["mode"] {
+  if (no189Data(input.core)) return "plain";
   if (base.v189.label === "very-strong") return "protect";
   if (base.v189.label === "not-invited") return "points-not-problem";
   return "improve";
@@ -253,28 +201,29 @@ function modeOf(base: ProfileOutlook): Improve["mode"] {
 function bannerOf(mode: Improve["mode"], base: ProfileOutlook): string | null {
   if (mode === "protect") return BANNERS.protect;
   if (mode !== "points-not-problem") return null;
-  return base.stamp.kind === "combined" ? BANNERS.closedAll : BANNERS.closed189;
+  if (base.stamp.kind !== "combined") return BANNERS.closed189;
+  return base.stamp.label === "not-invited"
+    ? BANNERS.closedAll
+    : BANNERS.closed189Combined;
 }
 
 export function buildImprove(
   input: OutlookInput,
   base: ProfileOutlook,
 ): Improve {
-  const mode = modeOf(base);
-  const plain = mode === "plain" ? plainLines(input, base) : [];
-  const moves =
-    mode === "improve" || mode === "points-not-problem"
-      ? buildMoves(input, base, mode === "improve")
-      : [];
+  const mode = modeOf(input, base);
+  const all = buildMoves(input, base, mode === "improve");
+  const shown = mode === "improve" || mode === "points-not-problem";
   return {
     mode,
     banner: bannerOf(mode, base),
-    moves,
+    moves: shown ? all : [],
     losses: buildLosses(input.profile, input.asOf, input.core, {
       points: base.points.base,
       eligible: base.points.eligible,
       label: base.v189.label,
     }),
-    plain,
+    plain: mode === "plain" ? plainLines(input, base) : [],
+    opener: openerOf(base, all),
   };
 }

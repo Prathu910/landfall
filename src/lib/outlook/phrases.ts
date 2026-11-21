@@ -3,6 +3,7 @@ import manifest from "../../data/manifest.json";
 import type { MonthKey, StateCode, StateVisa } from "../data/types";
 import { STATE_NAMES } from "../state-outlook/context";
 import type { OutlookInput, ProfileOutlook } from "./evaluate-profile";
+import type { Move } from "./improve";
 import { CONFIRM } from "./label-189";
 import type { StateLabel, VisaLabel } from "./label-state";
 import { labelName } from "./labels";
@@ -78,6 +79,12 @@ export function moveName(title: string): string {
   return title.replace(/, \+\d+$/, "");
 }
 
+/** A move as it reads in a sentence; "Both together" names its two changes. */
+export function moveLabel(move: Move): string {
+  if (move.id !== "combined") return moveName(move.title);
+  return move.detail.replace(/ together\..*$/, "");
+}
+
 export function joinAnd(items: string[]): string {
   if (items.length < 2) return items.join("");
   return `${items.slice(0, -1).join(", ")} and ${items[items.length - 1]}`;
@@ -97,6 +104,18 @@ export function theState(state: StateCode): string {
   return theStateName(STATE_NAMES[state]);
 }
 
+/**
+ * "2 of the last 6 months". An unfetched month is unknown, not zero, so with
+ * gaps the count is out of the months that were published.
+ */
+export function monthsOfSix(state: StateLabel): string {
+  const n = state.monthsAtOrBelow6;
+  const fetched = state.monthsFetched6;
+  return fetched >= 6
+    ? `${n} of the last 6 months`
+    : `${n} of the ${fetched} published months of the last 6`;
+}
+
 /** Why a state got its label, from the evidence ladder (spec 6.3). */
 export function stateWhy(state: StateLabel): string {
   switch (state.label) {
@@ -108,7 +127,7 @@ export function stateWhy(state: StateLabel): string {
         : "under-20 invitations at or below your points in at least 2 of the last 3 months";
     case "long-wait":
       return state.monthsAtOrBelow6 > 0
-        ? `invitations at or below your points in ${state.monthsAtOrBelow6} of the last 6 months, but too few recently`
+        ? `invitations at or below your points in ${monthsOfSix(state)}, but too few recently`
         : "invitations only above your points in the last 6 months";
     case "not-invited":
       return "no invitations for your occupation in the last 6 months";

@@ -1,5 +1,5 @@
 import type { OccupationCore, OccupationDetail } from "../data/types";
-import { calculatePoints, formatDate } from "../migration";
+import { addYearsToDate, calculatePoints, formatDate } from "../migration";
 import type { PointsResult } from "../migration";
 import { formatMonth } from "../report/copy";
 import { cutoffColumns } from "./charts";
@@ -87,6 +87,7 @@ const LOAD_FAILED_LINE =
   "We couldn't load the published data. Reload to try again.";
 const NO_OCCUPATION = "No occupation chosen";
 const COMBINED_RING = "189 • 190 • 491";
+const EOI_YEARS = 2;
 
 function footerText(month: string): string {
   return (
@@ -110,19 +111,40 @@ function stampBottom(input: OutlookInput, o: ProfileOutlook): string {
   return `${month} • ${points} POINTS`;
 }
 
-function whoDetail(input: OutlookInput, o: ProfileOutlook): string {
+/** The day a two-year EOI lapsed, if it has (calculatePoints warns the same). */
+function eoiExpiry(input: OutlookInput): string | null {
+  const { eoiDate } = input.profile;
+  const end = eoiDate ? addYearsToDate(eoiDate, EOI_YEARS) : null;
+  return end && end <= input.asOf ? end : null;
+}
+
+function whoDetail(
+  input: OutlookInput,
+  o: ProfileOutlook,
+  expiry: string | null,
+): string {
   const { profile } = input;
   const where = profile.onshore
     ? `onshore${profile.state ? ` in ${profile.state}` : ""}`
     : "offshore";
-  const submitted = isLodged(input)
-    ? ` EOI submitted ${formatDate(profile.eoiDate)}.`
-    : "";
-  return `${occupationName(input)}, ${o.points.base} points, ${where}.${submitted} Data to ${dataMonth(input)}.`;
+  const submitted = `EOI submitted ${formatDate(profile.eoiDate)}`;
+  const eoi = expiry
+    ? ` ${submitted}, expired ${formatDate(expiry)}: a new EOI gets a new date of effect.`
+    : isLodged(input)
+      ? ` ${submitted}.`
+      : "";
+  return `${occupationName(input)}, ${o.points.base} points, ${where}.${eoi} Data to ${dataMonth(input)}.`;
 }
 
-function reportView(input: OutlookInput): OutlookView {
+function reportView(entered: OutlookInput): OutlookView {
+  const expiry = eoiExpiry(entered);
+  // An expired EOI holds no place in the queue, so plan as for a new one.
+  const input = expiry
+    ? { ...entered, profile: { ...entered.profile, eoiDate: "" } }
+    : entered;
   const o = evaluateProfile(input);
+  // From the answers as entered, so the points page keeps the EOI warning.
+  const points = calculatePoints(entered.profile, entered.asOf);
   const improve = buildImprove(input, o);
   const wait = estimatedWait(o, input);
   const route = buildRoute(input, o, improve);
@@ -142,7 +164,7 @@ function reportView(input: OutlookInput): OutlookView {
   return {
     kind: "report",
     headline: buildHeadline(input, o, improve),
-    whoDetail: whoDetail(input, o),
+    whoDetail: whoDetail(entered, o, expiry),
     stamp: o.stamp,
     stampRing: stampRing(o.stamp),
     stampBottom: stampBottom(input, o),
@@ -161,10 +183,10 @@ function reportView(input: OutlookInput): OutlookView {
     improveLabels: improve.mode !== "plain",
     facts,
     templateRead: readTemplate(facts),
-    points: o.points,
+    points,
     pointsPage: buildPointsPage({
-      profile: input.profile,
-      points: o.points,
+      profile: entered.profile,
+      points,
       occupation: name,
       asOf: input.asOf,
       month: dataMonthKey(input),

@@ -1,7 +1,13 @@
-import type { StateVisa } from "../data/types";
-import { countInSentence, formatCount, submissionMonth } from "../report/copy";
+import type { Interval, StateVisa } from "../data/types";
+import {
+  countInSentence,
+  formatSummed,
+  isMasked,
+  submissionMonth,
+} from "../report/copy";
 import { STATE_NAMES } from "../state-outlook/context";
 import type { OutlookInput, ProfileOutlook } from "./evaluate-profile";
+import { blockerFact, combinedH1 } from "./combined";
 import { lastListedMonth } from "./facts";
 import { bestLine } from "./headline-best";
 import { stampedState } from "./headline-context";
@@ -14,6 +20,7 @@ import {
   isLodged,
   longMonth,
   lowerFirst,
+  monthsOfSix,
   namedState,
   occupationName,
   stateVisaOf,
@@ -21,7 +28,12 @@ import {
   theState,
   withoutConfirm,
 } from "./phrases";
-import { estimatedWait, roughly, submittedBefore } from "./wait";
+import {
+  aboutCount,
+  estimatedWait,
+  roughlyEois,
+  submittedBefore,
+} from "./wait";
 
 export type Headline = {
   who: string;
@@ -30,6 +42,11 @@ export type Headline = {
   best: string;
   why: string;
 };
+
+/** A summed count mid-sentence: "under 39", never "0–38" (ruling R20). */
+function summedInSentence(count: Interval): string {
+  return isMasked(count) ? countInSentence(count) : formatSummed(count);
+}
 
 function whoLine(name: string): string {
   const trimmed = name.trim();
@@ -46,8 +63,8 @@ function h1(ctx: HeadlineCtx): string {
     if (stamp.label === "not-invited") {
       return `None of the three visas is inviting ${name} right now.`;
     }
-    if (stamp.label === "long-wait") {
-      return "Every visa is a long wait at your points right now.";
+    if (stamp.label === "long-wait" || stamp.label === "not-eligible") {
+      return combinedH1(o);
     }
     return "None of the three visas is open to you yet.";
   }
@@ -117,8 +134,8 @@ function lodgedFact(ctx: HeadlineCtx): string | null {
   );
   const before = submittedBefore(detail, points, month);
   const ahead =
-    `Roughly ${roughly(pace.ahead)} EOIs are ahead of you: ` +
-    `${formatCount(o.v189.ahead)} with higher scores, and about ${roughly(before)} ` +
+    `${roughlyEois(pace.ahead)} are ahead of you: ` +
+    `${formatSummed(o.v189.ahead)} with higher scores, and ${aboutCount(before)} ` +
     `at ${points} submitted before ${longMonth(month)}.`;
   if (!round) return ahead;
   const when = longMonth(round.date.slice(0, 7));
@@ -148,7 +165,7 @@ function position189(ctx: HeadlineCtx): string {
     const high = Math.max(...v189.lastThree);
     const range = low === high ? `${low}` : `${low} to ${high}`;
     const ahead = v189.ahead
-      ? `, with ${countInSentence(v189.ahead)} EOIs ahead of you`
+      ? `, with ${summedInSentence(v189.ahead)} EOIs ahead of you`
       : "";
     return `At ${points.base} you're behind every recent 189 cut-off (${range})${ahead}.`;
   }
@@ -161,7 +178,7 @@ function stateFact(ctx: HeadlineCtx, stamped: Stamped): string {
   const state = namedState(stateVisaOf(o, stamped.visa));
   if (o.v189.label === "not-eligible" || !state) return position;
   const where = capital(theState(state.state));
-  return `${position} ${where} has invited ${name} EOIs at or below your ${stamped.points} points with nomination in ${state.monthsAtOrBelow6} of the last 6 months.`;
+  return `${position} ${where} has invited ${name} EOIs at or below your ${stamped.points} points with nomination in ${monthsOfSix(state)}.`;
 }
 
 function combinedFact(ctx: HeadlineCtx): string {
@@ -171,6 +188,9 @@ function combinedFact(ctx: HeadlineCtx): string {
     return stamp.tooFew
       ? `Every published 189 count for ${name} is under 20, too few to compare you with.`
       : `SkillSelect hasn't published any EOI counts, 189 rounds or state invitations for ${name}, so there's nothing to compare you with.`;
+  }
+  if (v189.label === "not-eligible" && o.points.eligible === false) {
+    return blockerFact(o.points.ineligibleReasons);
   }
   const last = lastListedMonth(input);
   const lead =

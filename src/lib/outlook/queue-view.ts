@@ -177,6 +177,11 @@ function submittedAfter(
   );
 }
 
+/** The reader's own month: a published zero means none at this score, not "0" of them. */
+function monthText(count: Interval): string {
+  return count.max === 0 ? "none published" : formatSummed(count);
+}
+
 function lodgedView(
   core: OccupationCore,
   detail: OccupationDetail,
@@ -204,7 +209,7 @@ function lodgedView(
     },
     {
       key: "month",
-      label: `Your month: ${formatSummed(month)}`,
+      label: `Your month: ${monthText(month)}`,
       count: month,
       emphasis: true,
     },
@@ -216,7 +221,7 @@ function lodgedView(
   ];
   const aria =
     `Your place among EOIs: ${plainRange(higher)} with higher scores, ` +
-    `${spoken(about(earlier))} at ${points} submitted earlier, ${formatSummed(month)} in your month, ` +
+    `${spoken(about(earlier))} at ${points} submitted earlier, ${monthText(month)} in your month, ` +
     `${spoken(about(later))} at ${points} submitted later.`;
   const title = stampedClosed
     ? "A queue that isn't moving"

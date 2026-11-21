@@ -24,6 +24,8 @@ export type StateLabel = {
   rules: string;
   confirmedAtOrBelow: number; // sum of mins, last 3 months
   monthsAtOrBelow6: number; // months with any invitation at/below, last 6
+  /** Months of the last 6 that were fetched: the honest denominator. */
+  monthsFetched6: number;
   latest: { month: MonthKey; count: Interval } | null; // latest month with invitations at/below
 };
 
@@ -109,6 +111,7 @@ export function evidenceLabel(
     label: ladder(recent, window),
     confirmedAtOrBelow: sumIntervals(recent.map((m) => m.atOrBelow)).min,
     monthsAtOrBelow6: withInvites.length,
+    monthsFetched6: window.length,
     latest: latest ? { month: latest.month, count: latest.atOrBelow } : null,
   };
 }

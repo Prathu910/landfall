@@ -1,5 +1,6 @@
 import type { Interval, OccupationCore, Visa } from "../data/types";
 import { parseCountText, sumIntervals } from "../data/published-count";
+import { requirementWhy } from "./eligibility";
 import type { OutlookLabel } from "./labels";
 
 export type Label189 = {
@@ -89,6 +90,8 @@ export function label189(input: {
   points: number;
   eligible: boolean | null;
   core: OccupationCore | null;
+  /** calculatePoints' ineligibleReasons, so the why names the requirement. */
+  reasons?: string[];
 }): Label189 {
   const { points, eligible, core } = input;
 
@@ -96,7 +99,7 @@ export function label189(input: {
     return finish(
       "not-eligible",
       eligible === false
-        ? "You don't meet the basic age, English or skills assessment requirements yet."
+        ? requirementWhy(input.reasons ?? [])
         : `${points} is below the 65-point minimum for a 189 invitation.`,
       true,
     );
@@ -178,4 +181,14 @@ export function label189(input: {
     eligible,
     rest,
   );
+}
+
+/**
+ * True when 189 would read "Not enough data" at any score: no core, or no
+ * published pool or listing. Points can't change that, so changes are listed
+ * without labels (spec 6.7).
+ */
+export function no189Data(core: OccupationCore | null): boolean {
+  const atPassMark = label189({ points: MIN_POINTS, eligible: true, core });
+  return atPassMark.label === "no-data";
 }

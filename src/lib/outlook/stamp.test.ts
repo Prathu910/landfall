@@ -29,6 +29,7 @@ function visa(
           rules: "",
           confirmedAtOrBelow: 0,
           monthsAtOrBelow6: 0,
+          monthsFetched6: 6,
           latest: null,
         }
       : null,

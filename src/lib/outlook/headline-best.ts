@@ -1,3 +1,4 @@
+import { notEligibleBest } from "./combined";
 import { isAtLeast, labelName } from "./labels";
 import type { HeadlineCtx, Stamped } from "./headline-context";
 import { suitedStates } from "./headline-context";
@@ -56,6 +57,8 @@ function bestState(ctx: HeadlineCtx, stamped: Stamped): string {
 function bestCombined(ctx: HeadlineCtx): string {
   const { o } = ctx;
   const { states, federal190, federal491 } = o.listMembership;
+  // Points or a retake can open 189, so that leads, not "nothing suits".
+  if (o.v189.label === "not-eligible") return notEligibleBest(o, ctx.improve);
   if (o.stamp.label !== "no-data") {
     if (states.length === 0) return "None right now. Stay in the pool.";
     // Named from list membership (ruling R16), not invitation evidence.

@@ -20,7 +20,7 @@ import {
   withoutConfirm,
 } from "./phrases";
 import { daysBetween } from "./route";
-import { roughly } from "./wait";
+import { roughlyEois } from "./wait";
 import type { EstimatedWait } from "./wait";
 
 export type VisaCard = {
@@ -103,7 +103,7 @@ function caption189(
   if (days !== null) {
     const waiting = `Waiting ${plural(days, "day")}.`;
     if (wait.pace) {
-      return `${waiting} Roughly ${roughly(wait.pace.ahead)} EOIs ahead.`;
+      return `${waiting} ${roughlyEois(wait.pace.ahead)} ahead.`;
     }
     // Without a pace the higher scores are only part of the queue.
     return v189.ahead

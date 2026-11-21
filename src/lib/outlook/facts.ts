@@ -11,7 +11,7 @@ import {
   isLodged,
   longMonth,
   lowerFirst,
-  moveName,
+  moveLabel,
   namedState,
   occupationName,
   stateSentence,
@@ -177,11 +177,14 @@ function counts(input: OutlookInput, o: ProfileOutlook): Count[] {
 
 function route(r: Route): string[] {
   const steps = r.steps.map((step) => {
-    const at =
-      step.points === null
-        ? ""
-        : `, ${step.points} points${step.label ? `, ${labelName(step.label)}` : ""}`;
-    return monthsWaiting(monthOnly(`${step.title} (${step.sub}${at})`));
+    // A no-data label is no reading, so the route never quotes it.
+    const label =
+      step.label && step.label !== "no-data"
+        ? `, ${labelName(step.label)}`
+        : "";
+    const at = step.points === null ? "" : `, ${step.points} points${label}`;
+    const sub = step.sub.replace(/\.$/, "");
+    return monthsWaiting(monthOnly(`${step.title} (${sub}${at})`));
   });
   // Insert from the last deadline so earlier indexes stay valid.
   for (const deadline of [...r.deadlines].reverse()) {
@@ -192,14 +195,9 @@ function route(r: Route): string[] {
   return steps;
 }
 
-function moveTitle(move: Move): string {
-  if (move.id !== "combined") return moveName(move.title);
-  return move.detail.replace(/ together\..*$/, "");
-}
-
 function moveChange(move: Move): Change {
   return {
-    title: moveTitle(move),
+    title: moveLabel(move),
     fromPoints: move.from.points,
     toPoints: move.to.points,
     toLabel: labelName(move.to.label),
