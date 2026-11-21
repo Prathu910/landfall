@@ -95,7 +95,9 @@ describe("buildRoute", () => {
     ]);
     expect(route.steps[0]).toMatchObject({ points: 85, label: "not-invited" });
     expect(route.steps[1].sub).toBe("Northern Territory and Tasmania");
-    expect(route.steps[2].sub).toBe("190 + 491, Northern Territory");
+    expect(route.steps[2].sub).toBe(
+      "190 Northern Territory + 491 Northern Territory",
+    );
     expect(route.deadlines[0].title).toBe("English test expires");
   });
 
@@ -107,7 +109,7 @@ describe("buildRoute", () => {
       "English retake",
       "Update your EOI",
     ]);
-    expect(route.steps[1].sub).toBe("190 + 491, Tasmania");
+    expect(route.steps[1].sub).toBe("190 Tasmania + 491 South Australia");
     expect(route.steps[2]).toMatchObject({ points: 80, label: "very-strong" });
   });
 

@@ -2,9 +2,11 @@ import type { StateCode, StateVisa } from "../data/types";
 import { formatDate } from "../migration";
 import { STATE_NAMES } from "../state-outlook/context";
 import type { OutlookInput, ProfileOutlook } from "./evaluate-profile";
-import type { Improve, Loss, Move } from "./improve";
+import type { Improve, Move } from "./improve";
 import { LABEL_RANK, isAtLeast } from "./labels";
 import type { OutlookLabel } from "./labels";
+import { buildDeadlines } from "./route-deadlines";
+import type { RouteDeadline } from "./route-deadlines";
 
 export type RouteStep = {
   title: string;
@@ -12,12 +14,7 @@ export type RouteStep = {
   points: number | null;
   label: OutlookLabel | null;
 };
-export type RouteDeadline = {
-  date: string;
-  title: string;
-  sub: string;
-  afterStep: number; // index of the step it follows
-};
+export type { RouteDeadline } from "./route-deadlines";
 export type Route = { steps: RouteStep[]; deadlines: RouteDeadline[] };
 
 /** A step with the date it happens; null means now. */
@@ -54,12 +51,19 @@ function today(input: OutlookInput, o: ProfileOutlook): Dated {
   );
 }
 
-/** The state visas that name a state the reader can use (ruling R7). */
-function stateVisas(o: ProfileOutlook): StateVisa[] {
-  const visas: StateVisa[] = [];
-  if (o.v190?.best) visas.push("190");
-  if (o.v491?.best) visas.push("491");
-  return visas;
+/** Each state visa with its own best state; none for a visa that names no state (ruling R7). */
+function stateVisas(
+  o: ProfileOutlook,
+): { visa: StateVisa; state: StateCode }[] {
+  const options = [
+    { visa: "190" as const, best: o.v190?.best ?? null },
+    { visa: "491" as const, best: o.v491?.best ?? null },
+  ];
+  return options.flatMap(({ visa, best }) =>
+    best && isAtLeast(best.label, "not-eligible")
+      ? [{ visa, state: best.state }]
+      : [],
+  );
 }
 
 /** The strongest state to pair with 189; 190 wins a tie, and only competitive or better counts. */
@@ -91,10 +95,11 @@ function submitEoi189(o: ProfileOutlook): Dated {
 }
 
 function submitEoiState(o: ProfileOutlook, with189: boolean): Dated {
-  const stateName = o.stamp.kind === "single" ? o.stamp.state : null;
-  const visas = [...(with189 ? ["189"] : []), ...stateVisas(o)];
-  const place = stateName ? `, ${STATE_NAMES[stateName]}` : "";
-  return dated("Submit EOI", `${visas.join(" + ")}${place}`, null);
+  const parts = [
+    ...(with189 ? ["189"] : []),
+    ...stateVisas(o).map((v) => `${v.visa} ${STATE_NAMES[v.state]}`),
+  ];
+  return dated("Submit EOI", parts.join(" + "), null);
 }
 
 /** States whose rules are still being checked and that suit the reader. */
@@ -266,37 +271,12 @@ function pickSteps(
   return stateRoute(input, o);
 }
 
-function deadlineTitle(loss: Loss): string {
-  if (loss.kind === "points") {
-    const age = loss.title.match(/\d+/)?.[0] ?? "";
-    return `Turns ${age}: −${loss.from.points - loss.to.points}`;
-  }
-  return loss.title.replace(/, \d{1,2} \w{3} \d{4}$/, "");
-}
-
-/**
- * The last step that happens on or before the loss. Steps without a date
- * happen now; the final step is the outcome and comes after every loss.
- */
-function followedStep(steps: Dated[], date: string, asOf: string): number {
-  let after = 0;
-  steps.slice(0, -1).forEach((s, index) => {
-    if ((s.date ?? asOf) <= date) after = index;
-  });
-  return after;
-}
-
 export function buildRoute(
   input: OutlookInput,
   o: ProfileOutlook,
   improve: Improve,
 ): Route {
   const steps = pickSteps(input, o, improve);
-  const deadlines = improve.losses.map((loss) => ({
-    date: loss.date,
-    title: deadlineTitle(loss),
-    sub: formatDate(loss.date),
-    afterStep: followedStep(steps, loss.date, input.asOf),
-  }));
+  const deadlines = buildDeadlines(improve.losses, steps, input.asOf);
   return { steps: steps.map((s) => s.step), deadlines };
 }
