@@ -62,11 +62,11 @@ About 80% of readers are on phones, so the report is designed for 360–390 px f
 
 ## 4. Approaches considered
 
-| Approach | Trade-off | Outcome |
-|---|---|---|
-| **A. Code decides, AI explains** | Labels and numbers are deterministic and testable; AI adds a readable paragraph; a template covers failures. About US$0.15–0.20 per AI read. | **Chosen by the founder.** |
-| B. Code only, templated wording | Free and instant, but reads robotic and is harder to charge for. | Kept as the fallback inside A. |
-| C. AI does everything from raw data | Flexible, but will sometimes invent or miscount numbers. | Rejected. |
+| Approach                            | Trade-off                                                                                                                                    | Outcome                        |
+| ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------ |
+| **A. Code decides, AI explains**    | Labels and numbers are deterministic and testable; AI adds a readable paragraph; a template covers failures. About US$0.15–0.20 per AI read. | **Chosen by the founder.**     |
+| B. Code only, templated wording     | Free and instant, but reads robotic and is harder to charge for.                                                                             | Kept as the fallback inside A. |
+| C. AI does everything from raw data | Flexible, but will sometimes invent or miscount numbers.                                                                                     | Rejected.                      |
 
 Visual direction: four looks (A Signal, B current brand, C Departures, D Passport) led to **Option E**, combining A's clean white layout and Archivo type, D's ink stamps and passport-style points page, and C's charts. Desktop is final; mobile-first behaviour is in section 8.
 
@@ -100,8 +100,13 @@ New pure modules live in `src/lib/outlook/` (names are suggestions; the builder 
 
 ```ts
 type OutlookLabel =
-  | "very-strong" | "strong" | "competitive" | "long-wait"
-  | "not-invited" | "not-eligible" | "no-data";
+  | "very-strong"
+  | "strong"
+  | "competitive"
+  | "long-wait"
+  | "not-invited"
+  | "not-eligible"
+  | "no-data";
 ```
 
 Display names: Very strong, Strong, Competitive, Long wait, Not currently invited (stamps may shorten to "Not invited"), Not eligible yet ("Not eligible"), Not enough data ("No data"; "Too few to count" when every count is "<20").
@@ -117,7 +122,7 @@ Checked in this order:
 1. **Not eligible yet**: under 65 points, or `eligible === false`.
 2. **Not enough data**: no published 189 pool **and** no round lists the occupation. If every published count is "<20", the display name is "Too few to count". An occupation that rounds list but that has no published pool (some medical specialists, for example Endocrinologist 253315) is labelled from its rounds as below, with zero EOIs ahead, when a core is supplied. The client never fetches `hasData: false` occupations (`docs/DATA.md`), so in the product these show No data; fetching them is out of scope.
 3. **Not currently invited**: the occupation's cutoff is `null` in each of the last 4 rounds (the last 4 rounds overall, not the last 4 listings).
-4. Let *L3* be the cutoffs of the occupation's last 3 **listed** rounds (fewer if fewer exist).
+4. Let _L3_ be the cutoffs of the occupation's last 3 **listed** rounds (fewer if fewer exist).
 5. **Very strong**: points > max(L3) **and** EOIs with a higher score ≤ 19 (cautious reading: the interval's max ≤ 19).
 6. **Strong**: points ≥ max(L3).
 7. **Competitive**: points ≥ min(L3).
@@ -149,17 +154,17 @@ Months come from `calendarMonths` back from `asAt`, never from the keys a record
 
 Shown for the stamped visa. Always labelled as an estimate in the methodology; the figure is never a percentage.
 
-| Situation | Text |
-|---|---|
-| 189 Very strong | "The next 189 round." |
-| 189 Strong | "The next 1 to 2 rounds." |
-| 189 Competitive, not lodged | "Uncertain. Possible in a round that goes down to {points}, like {month of the latest round at that cutoff}." |
-| 189 Competitive or Strong, lodged (EOI date given) | Pace estimate (below), e.g. "1 to 2 years at 70 (estimate)." |
-| 189 Long wait | "Unlikely without more points." |
-| 189 Not currently invited | "No 189 invitations to measure." |
-| 189 Not eligible yet | "189: not possible until you reach 65." |
-| No data | "We can't estimate one without data." |
-| A state visa stamped | "States don't publish a queue. {State} invited at or below your points in {n} of the last 6 months." |
+| Situation                                          | Text                                                                                                          |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| 189 Very strong                                    | "The next 189 round."                                                                                         |
+| 189 Strong                                         | "The next 1 to 2 rounds."                                                                                     |
+| 189 Competitive, not lodged                        | "Uncertain. Possible in a round that goes down to {points}, like {month of the latest round at that cutoff}." |
+| 189 Competitive or Strong, lodged (EOI date given) | Pace estimate (below), e.g. "1 to 2 years at 70 (estimate)."                                                  |
+| 189 Long wait                                      | "Unlikely without more points."                                                                               |
+| 189 Not currently invited                          | "No 189 invitations to measure."                                                                              |
+| 189 Not eligible yet                               | "189: not possible until you reach 65."                                                                       |
+| No data                                            | "We can't estimate one without data."                                                                         |
+| A state visa stamped                               | "States don't publish a queue. {State} invited at or below your points in {n} of the last 6 months."          |
 
 **Pace estimate for lodged readers** (189 only):
 
@@ -209,14 +214,15 @@ Dated losses from 6.7 are placed between steps by date.
 - **Model and prompt**: called through the official Anthropic SDK with a fixed system prompt (voice rules from section 10, "use only the numbers in the facts", 60–90 words, no greeting, no name) and the facts as the user message. Server-side refusal fallback enabled where the model supports it.
 - **Configuration** (founder, 21 Nov 2026): all AI settings are **server-side environment variables** (Supabase secrets), never in the frontend build, so they can change without a frontend release and are never visible to visitors:
 
-  | Variable | Purpose | Default if unset |
-  |---|---|---|
-  | `ANTHROPIC_API_KEY` | API key | none: the function answers "disabled" and every report uses the template |
-  | `READ_MODEL` | Model ID, e.g. `claude-opus-5-5` or `claude-sonnet-5-5` | `claude-opus-5-5` |
-  | `READ_ENABLED` | Server kill switch (`true`/`false`) | `false` |
-  | `READ_MAX_OUTPUT_TOKENS` | Cost cap per read | a small value suited to 60–90 words |
+  | Variable                 | Purpose                                                 | Default if unset                                                         |
+  | ------------------------ | ------------------------------------------------------- | ------------------------------------------------------------------------ |
+  | `ANTHROPIC_API_KEY`      | API key                                                 | none: the function answers "disabled" and every report uses the template |
+  | `READ_MODEL`             | Model ID, e.g. `claude-opus-5-5` or `claude-sonnet-5-5` | `claude-opus-5-5`                                                        |
+  | `READ_ENABLED`           | Server kill switch (`true`/`false`)                     | `false`                                                                  |
+  | `READ_MAX_OUTPUT_TOKENS` | Cost cap per read                                       | a small value suited to 60–90 words                                      |
 
   Safety rules: the function checks `READ_MODEL` against an allowlist of current Claude model IDs kept in the function's code (adding a model is a one-line code change with a test), and an unknown or misspelled value never reaches the API: the function answers "disabled" and logs the configuration error, and the reader gets the template. The same happens for a missing key, `READ_ENABLED` not `true`, a timeout, a refusal or a failed `checkRead`. A model change takes effect on the next request with no frontend deploy. `docs/OPERATIONS-BACKEND.md` documents the variables and how to set them.
+
 - **No storage**: facts and the generated text are not written to the database or logs. A per-IP rate limit protects cost.
 - **Switch**: two switches must both be on. The frontend calls `write-read` only when a public build setting enables it (off by default), and the function itself serves reads only when `READ_ENABLED=true`. Turn them on after the privacy text and the coordinated `PRIVACY_VERSION` deploy are live. With either off, every report uses the template read.
 - **Changes after render**: answering the "Sharpen my state outlook" questions re-runs every deterministic part at once (labels, stamp, wait, route, improve). "Our read" is requested again once per change; a token allows up to 3 calls in its 10 minutes, after which the template is shown.
