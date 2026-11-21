@@ -56,7 +56,8 @@ async function fetchRead(
  * "Our read" text: the template unless the AI switch is on, the reader has a
  * token and a reply passes `checkRead` within six seconds. Facts change when a
  * Sharpen answer changes the profile, so it refetches then, up to three calls
- * per token; after that the last accepted text stays, or the template.
+ * per token; after the third call, any further change in facts or template
+ * shows the template, because no more AI reads are requested.
  */
 export function useOurRead(
   facts: ReportFacts | null,

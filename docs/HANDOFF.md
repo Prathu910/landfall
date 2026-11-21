@@ -1,15 +1,34 @@
 # Resume here
 
-## AI "Our read": enablement checklist (21 November 2026)
+## Report redesign: shipped on the branch, not merged, not deployed (22 November 2026)
 
-The client code is merged but dark. `PRIVACY_VERSION` stays `2026-11-20` on purpose (ruling R31): the deployed Functions check it exactly, so bumping it before a coordinated Functions deploy would make every submission fail. The AI sentences (the email gate's "Your summary is written by AI from your results (not your answers)." and the privacy text's Anthropic sentence) appear only in a build with `NEXT_PUBLIC_READ_ENABLED=true`. To turn the feature on, in this order:
+Branch `roadmap/report-redesign` (spec `docs/superpowers/specs/2026-11-21-report-redesign-design.md`; ledger `.superpowers/sdd/2026-11-21-report-redesign/progress.md`). Every plan task (1 to 19) is done; the whole-branch review is next. Nothing is merged to `main` or deployed. What changed: the 34-page report is replaced by a short report built around stamps (a label from code for 189, 190 and 491), a route line, queue and cut-off charts, an improve section, an evidence section (closed on screen, the old state panels and tables inside) and a 4 to 5 page print layout; `/sample/` has four example tabs; a `write-read` Function and "Our read" client exist but stay dark. See `docs/REPORT-COVERAGE.md`.
 
-1. Set the Function secrets: `ANTHROPIC_API_KEY`, `READ_MODEL`, `READ_ENABLED=true`, `READ_MAX_OUTPUT_TOKENS`, `READ_TOKEN_SECRET`.
-2. Bump `PRIVACY_VERSION` in `src/lib/submissions/contract.ts` and the "Collection notice version" date in `src/app/methodology/page.tsx`.
-3. Deploy the Functions (all three).
-4. Build the frontend with `NEXT_PUBLIC_READ_ENABLED=true` and deploy it.
+**Both AI switches stay off.** `NEXT_PUBLIC_READ_ENABLED` is unset and `READ_ENABLED` is not `true`, so every report shows the template read. `PRIVACY_VERSION` stays `2026-11-20` on purpose (ruling R31): the deployed Functions check it exactly. The AI sentences (the email gate's "Your summary is written by AI from your results (not your answers)." and the privacy text's Anthropic sentence) show only in a build with `NEXT_PUBLIC_READ_ENABLED=true`.
 
-Until then every report shows the template read. The read token lives in memory only (never localStorage or the URL); the report allows at most 3 `write-read` calls per token.
+**Enablement checklist.** Merging the branch changes nothing visible about the AI. To turn it on:
+
+1. Set the Function secrets: `ANTHROPIC_API_KEY`, `READ_MODEL`, `READ_MAX_OUTPUT_TOKENS`, `READ_TOKEN_SECRET`. Leave `READ_ENABLED` unset for now.
+2. In code, bump `PRIVACY_VERSION` in `src/lib/submissions/contract.ts` and the "Collection notice version" date in `src/app/methodology/page.tsx`. Build the frontend with `NEXT_PUBLIC_READ_ENABLED=true`.
+3. Deploy the three Functions and the frontend **back to back**, Functions first. Between the two deploys the old live frontend still sends the old `PRIVACY_VERSION`, which the new Functions reject, so submissions fail until the frontend lands. To avoid any window, have the Functions accept both the old and new version for a day, then remove the old one.
+4. Then set `READ_ENABLED=true`. Kill switch: `READ_ENABLED=false`.
+
+The read token lives in memory only (never localStorage or the URL); the report allows at most 3 `write-read` calls per token.
+
+**Rulings the founder should know.** R22: stamps use Archivo (the font in the mockups the founder approved), not the spec's Big Shoulders Stencil; restoring the stencil look is one token and one dependency. R25: the route line shows only at 1024 px and wider; tablets and phones get a vertical route list. R27: the print `@page` margins (14/14/18 mm) apply to every route. R26: the old "Useful definitions" glossary now lives on the methodology page.
+
+**Where the real rules engine's states differ from the approved mockups** (spec section 9 accepts this; the stamp labels are unaffected unless noted). Mockup copy was hand-written; the engine names the state its evidence and rules support:
+
+- Priya and Kavya, 190: Victoria (rules being checked), not NSW. 491: Northern Territory. SA has 20 confirmed invitations but fails the half test, so it is only competitive.
+- Arjun, 491: South Australia (tied with Tasmania, wins on code); 190: Tasmania.
+- Rahul: Northern Territory for both 190 and 491 (only NT shows for 491).
+- Aarav, 491: Victoria (rules being checked); his 190 is NSW as in the mockup.
+- Meera: 190 Tasmania (rules being checked), 491 Western Australia.
+- Dev: no state is named for a not-invited visa (ruling R7).
+
+Other differences: Kavya reads "Roughly 870 to 970 EOIs ahead" (data), not the mockup's 870 to 990 (R2); the pool-by-points chart is a table of bars so its labels reach 12 px; the mockup's guilloche hero background is omitted.
+
+Verification of the built export is in `.superpowers/sdd/2026-11-21-report-redesign/task-19-report.md`.
 
 ## Search indexing launched (20 November 2026)
 
