@@ -38,4 +38,24 @@ describe("visaCards", () => {
     const card = visaCards(future, o, estimatedWait(o, future))[0];
     expect(card.caption).not.toMatch(/Waiting/);
   });
+
+  it("links a needs-answers note to the Sharpen questions", () => {
+    const input = scenarioInput("middle");
+    const o = evaluateProfile(input);
+    const best = o.v190?.best;
+    if (!o.v190 || !best) throw new Error("middle has a 190 state");
+    const asked = {
+      ...o,
+      v190: { ...o.v190, best: { ...best, flag: "needs-answers" as const } },
+    };
+    const card = visaCards(input, asked, estimatedWait(asked, input))[1];
+    expect(card.flagText).toBe("Answer the state questions to confirm it.");
+    expect(card.flagHref).toBe("#sharpen");
+  });
+
+  it("gives a rules-being-checked note no link", () => {
+    const card = cardsOf("middle")[1];
+    expect(card.flagText).toMatch(/still checking/);
+    expect(card.flagHref).toBeNull();
+  });
 });

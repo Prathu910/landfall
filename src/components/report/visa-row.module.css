@@ -30,6 +30,12 @@
   font-size: 14px;
 }
 
+.flagLink {
+  color: var(--slate);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 /* Phones: one row per visa, the stamp (about 140px, ruling R24) beside its caption. */
 @media screen and (max-width: 720px) {
   .visas {

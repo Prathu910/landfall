@@ -43,7 +43,16 @@ export function VisaRow({
               <b className={styles.title}>{card.title}</b>
               <span className={styles.line}>{card.caption}</span>
               {card.flagText && (
-                <span className={styles.line}>{card.flagText}</span>
+                <span className={styles.line}>
+                  {/* On paper the link has nowhere to go, so it prints as text. */}
+                  {card.flagHref && anchor ? (
+                    <a className={styles.flagLink} href={card.flagHref}>
+                      {card.flagText}
+                    </a>
+                  ) : (
+                    card.flagText
+                  )}
+                </span>
               )}
             </figcaption>
           </figure>

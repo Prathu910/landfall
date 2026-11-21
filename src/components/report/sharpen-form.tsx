@@ -201,7 +201,7 @@ export function SharpenForm({
 }: Props) {
   if (questions.length === 0) return null;
   return (
-    <details className={styles.form} open>
+    <details id="sharpen" className={styles.form} open>
       <summary className={styles.summary}>Sharpen my state outlook</summary>
       <p className={styles.intro}>
         Optional. Answers stay in this browser and change which states we can

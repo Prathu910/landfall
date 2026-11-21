@@ -33,6 +33,8 @@ export type VisaCard = {
   title: string;
   caption: string;
   flagText: string | null;
+  /** Where the flag's answer lives: the Sharpen questions in the evidence fold. */
+  flagHref: "#sharpen" | null;
 };
 
 type StateCardText = Pick<VisaCard, "top" | "stampWord" | "caption">;
@@ -49,6 +51,7 @@ const TITLES: Record<Visa, string> = {
   "491": "491 Regional",
 };
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+const SHARPEN_HREF = "#sharpen";
 
 function plural(count: number, unit: string): string {
   return `${count} ${count === 1 ? unit : `${unit}s`}`;
@@ -128,6 +131,7 @@ function card189(
     title: TITLES["189"],
     caption: caption189(input, o, wait),
     flagText: null,
+    flagHref: null,
   };
 }
 
@@ -206,6 +210,7 @@ function stateCard(
     label,
     title: TITLES[visa],
     flagText: named ? flagNote(named) : null,
+    flagHref: named?.flag === "needs-answers" ? SHARPEN_HREF : null,
   };
 }
 

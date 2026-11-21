@@ -1,5 +1,5 @@
 "use client";
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import type { ReportSource } from "@/lib/data/report-source";
 import type { OccupationIndexEntry } from "@/lib/data/types";
 import type { PointsResult, Profile } from "@/lib/migration";
@@ -17,6 +17,7 @@ import section from "./section.module.css";
 import { StateOutlookSection } from "./state-outlook-section";
 import { StateTables } from "./state-tables";
 import { TrendChart } from "./trend-chart";
+import { useOpenOnHash } from "./use-open-on-hash";
 import styles from "./evidence-section.module.css";
 
 type Props = {
@@ -81,9 +82,13 @@ export function EvidenceSection(props: Props) {
   const trend = occupation.status === "ready" ? occupation.evidence.trend : [];
   const detailLoading =
     occupation.status === "ready" && occupation.detail.status === "loading";
+  const band = useRef<HTMLElement>(null);
+  const fold = useRef<HTMLDetailsElement>(null);
+  // A link to #evidence, #sharpen or #state-outlook opens the fold.
+  useOpenOnHash(band, fold);
   return (
-    <section id="evidence" className={section.band}>
-      <details className={styles.details}>
+    <section id="evidence" ref={band} className={section.band}>
+      <details ref={fold} className={styles.details}>
         <summary className={styles.summary}>
           See the evidence
           <span className={styles.hint}>
