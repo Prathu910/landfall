@@ -222,8 +222,8 @@ describe("buildImprove, Rahul (189 closed)", () => {
     );
   });
 
-  it("still marks exactly one move", () => {
-    expect(bestIds(improve)).toHaveLength(1);
+  it("marks no move as the biggest jump", () => {
+    expect(bestIds(improve)).toEqual([]);
   });
 
   it("dates his English expiry", () => {
