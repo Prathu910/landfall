@@ -66,17 +66,23 @@ function finish(
   };
 }
 
-function competitiveWhy(points: number, l3: number[]): string {
-  const lowest = Math.min(...l3);
-  const others = l3.filter((_, i) => i !== l3.indexOf(lowest));
-  if (others.length === 0) {
-    return `${points} meets your occupation's last listed cut-off (${lowest}).`;
-  }
-  return `${points} meets the lowest of your occupation's last ${l3.length} listed cut-offs (${lowest}) but not the ${others.length === 1 ? "other" : "other " + numberWord(others.length)} (${others.join(", ")}).`;
+const WORDS = ["no", "one", "two", "three"];
+
+function cutoffPhrase(n: number): string {
+  return n === 1 ? "last listed cut-off" : `last ${n} listed cut-offs`;
 }
 
-function numberWord(n: number): string {
-  return n === 2 ? "two" : String(n);
+function competitiveWhy(points: number, l3: number[]): string {
+  const met = l3.filter((c) => c <= points);
+  const unmet = l3.filter((c) => c > points);
+  const scope = `your occupation's ${cutoffPhrase(l3.length)}`;
+  const metPart =
+    met.length === 1
+      ? `${l3.length === 2 ? "the lower" : "the lowest"} of ${scope} (${met[0]})`
+      : `${WORDS[met.length]} of ${scope} (${met.join(", ")})`;
+  const other =
+    unmet.length === 1 ? "the other" : `the other ${WORDS[unmet.length]}`;
+  return `${points} meets ${metPart} but not ${other} (${unmet.join(", ")}).`;
 }
 
 export function label189(input: {
@@ -143,10 +149,10 @@ export function label189(input: {
   const high = Math.max(...l3);
   const low = Math.min(...l3);
   const cutoffs = list(l3);
-  if (points > high && ahead !== null && ahead.max <= 19) {
+  if (points > high && (ahead?.max ?? 0) <= 19) {
     return finish(
       "very-strong",
-      `${points} is above your occupation's last ${l3.length} listed cut-offs (${cutoffs}), and fewer than 20 EOIs score higher.`,
+      `${points} is above your occupation's ${cutoffPhrase(l3.length)} (${cutoffs}), and fewer than 20 EOIs score higher.`,
       eligible,
       rest,
     );
@@ -154,7 +160,7 @@ export function label189(input: {
   if (points >= high) {
     return finish(
       "strong",
-      `${points} meets your occupation's last ${l3.length} listed cut-offs (${cutoffs}).`,
+      `${points} meets your occupation's ${cutoffPhrase(l3.length)} (${cutoffs}).`,
       eligible,
       rest,
     );
@@ -164,7 +170,7 @@ export function label189(input: {
   }
   return finish(
     "long-wait",
-    `${points} is below your occupation's last ${l3.length} listed cut-offs (${cutoffs}).`,
+    `${points} is below your occupation's ${cutoffPhrase(l3.length)} (${cutoffs}).`,
     eligible,
     rest,
   );

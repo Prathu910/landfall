@@ -138,3 +138,60 @@ describe("higherScoreCount", () => {
     expect(higherScoreCount(core("253315"), "189", 80)).toBeNull();
   });
 });
+
+describe("label189 edge cases", () => {
+  const withRounds = (cutoffs: number[], pool = true) =>
+    synthetic(
+      {
+        rounds189: cutoffs.map((cutoff, i) => ({
+          date: `2026-0${9 - i}-01`,
+          cutoff,
+        })),
+      },
+      pool ? { "95": "<20" } : {},
+    );
+  it("no pool but listed rounds counts zero EOIs ahead", () => {
+    const c = withRounds([70, 75, 75]);
+    delete c.pool["189"];
+    const r = label189({ points: 80, eligible: true, core: c });
+    expect(r.label).toBe("very-strong");
+    expect(r.ahead).toBeNull();
+  });
+  it("names met and unmet cut-offs truthfully", () => {
+    const r = label189({
+      points: 75,
+      eligible: true,
+      core: withRounds([80, 75, 70]),
+    });
+    expect(r.label).toBe("competitive");
+    expect(r.why).toBe(
+      "75 meets two of your occupation's last 3 listed cut-offs (75, 70) but not the other (80).",
+    );
+  });
+  it("handles duplicate lowest cut-offs", () => {
+    const r = label189({
+      points: 70,
+      eligible: true,
+      core: withRounds([75, 70, 70]),
+    });
+    expect(r.why).toBe(
+      "70 meets two of your occupation's last 3 listed cut-offs (70, 70) but not the other (75).",
+    );
+  });
+  it("reads correctly with fewer than 3 listed rounds", () => {
+    const one = label189({
+      points: 80,
+      eligible: true,
+      core: withRounds([75]),
+    });
+    expect(one.why).toContain("last listed cut-off (75)");
+    const two = label189({
+      points: 72,
+      eligible: true,
+      core: withRounds([75, 70]),
+    });
+    expect(two.why).toBe(
+      "72 meets the lower of your occupation's last 2 listed cut-offs (70) but not the other (75).",
+    );
+  });
+});
