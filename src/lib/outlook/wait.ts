@@ -26,7 +26,7 @@ function roundsInLastYear(core: OccupationCore, asOf: string): number {
 }
 
 /** Submitted EOIs at this score from months before the reader's month. */
-function submittedBefore(
+export function submittedBefore(
   detail: OccupationDetail,
   points: number,
   readerMonth: string,
