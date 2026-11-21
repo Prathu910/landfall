@@ -127,18 +127,35 @@ Deno.test(
   "returns a read token that write-read accepts when its secret is set",
   async () => {
     const variables = { ...env, READ_TOKEN_SECRET: "test-read-secret" };
-    for (const receipt of ["missing", "existing"]) {
-      const { request } = setup("calculation", { receipt, variables });
-      const body = await (await request()).json();
-      equal(body.id, id);
-      equal(typeof body.read_token, "string");
-      equal(
-        await verifyReadToken(body.read_token, Date.now(), "test-read-secret"),
-        { ok: true, submissionId: id },
-      );
-    }
+    const { request } = setup("calculation", { variables });
+    const response = await request();
+    equal(response.status, 201);
+    const body = await response.json();
+    equal(body.id, id);
+    equal(typeof body.read_token, "string");
+    equal(
+      await verifyReadToken(body.read_token, Date.now(), "test-read-secret"),
+      { ok: true, submissionId: id },
+    );
     const report = setup("feedback", { variables });
     equal(await (await report.request()).json(), { id });
+  },
+);
+Deno.test(
+  "never mints a read token for a retry receipt, which skips Turnstile",
+  async () => {
+    const variables = { ...env, READ_TOKEN_SECRET: "test-read-secret" };
+    const { request, calls } = setup("calculation", {
+      receipt: "existing",
+      variables,
+    });
+    const response = await request({
+      submission: calculation,
+      turnstile_token: "any replayed string",
+    });
+    equal(response.status, 200);
+    equal(await response.json(), { id });
+    equal(calls.length, 1);
   },
 );
 Deno.test(

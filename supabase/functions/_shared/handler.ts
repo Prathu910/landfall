@@ -6,6 +6,13 @@ import {
   type FeedbackSubmission,
 } from "../../../src/lib/submissions/contract.ts";
 
+import {
+  RequestError,
+  allowedOrigins,
+  preflight,
+  readJson,
+  response,
+} from "./http.ts";
 import { READ_TOKEN_TTL_MS, signReadToken } from "./read-token.ts";
 
 import occupationIndex from "../../../src/data/occupation-index.json" with { type: "json" };
@@ -31,39 +38,7 @@ type Receipt = {
   status: "missing" | "conflict" | "created" | "existing";
   id: string;
 };
-const BODY_LIMIT = 16 * 1024;
 const UPSTREAM_TIMEOUT_MS = 15_000;
-export class RequestError extends Error {
-  constructor(
-    public status: number,
-    message: string,
-  ) {
-    super(message);
-  }
-}
-/** Exact frontend origins; throws (so callers answer 503) when misconfigured. */
-export function allowedOrigins(env: Dependencies["env"]): string[] {
-  const origins = (env("ALLOWED_ORIGINS") ?? "")
-    .split(",")
-    .map((value) => value.trim())
-    .filter(Boolean);
-  if (
-    !origins.length ||
-    origins.some((origin) => {
-      try {
-        const parsed = new URL(origin);
-        return (
-          !["https:", "http:"].includes(parsed.protocol) ||
-          parsed.origin !== origin
-        );
-      } catch {
-        return true;
-      }
-    })
-  )
-    throw new Error("Invalid server origin configuration");
-  return origins;
-}
 function settings(env: Dependencies["env"]): Settings {
   return {
     origins: allowedOrigins(env),
@@ -71,82 +46,6 @@ function settings(env: Dependencies["env"]): Settings {
     serviceKey: env("SUPABASE_SERVICE_ROLE_KEY") ?? "",
     turnstileSecret: env("TURNSTILE_SECRET_KEY") ?? "",
   };
-}
-export function response(
-  status: number,
-  body: unknown,
-  origin?: string,
-): Response {
-  const headers = new Headers({
-    Vary: "Origin",
-    "Cache-Control": "no-store",
-    "X-Robots-Tag": "noindex",
-    "Content-Type": "application/json",
-    Allow: "POST, OPTIONS",
-  });
-  if (origin) headers.set("Access-Control-Allow-Origin", origin);
-  if (status === 204) {
-    headers.set("Access-Control-Allow-Methods", "POST, OPTIONS");
-    headers.set("Access-Control-Allow-Headers", "content-type");
-  }
-  return new Response(status === 204 ? null : JSON.stringify(body), {
-    status,
-    headers,
-  });
-}
-export async function readJson(request: Request): Promise<unknown> {
-  if (
-    request.headers.get("Content-Type")?.split(";")[0].trim().toLowerCase() !==
-    "application/json"
-  ) {
-    throw new RequestError(415, "Send application/json.");
-  }
-  if (Number(request.headers.get("Content-Length")) > BODY_LIMIT) {
-    await request.body?.cancel();
-    throw new RequestError(413, "The submission is too large.");
-  }
-  if (!request.body) throw new RequestError(400, "A submission is required.");
-  const reader = request.body.getReader();
-  const chunks: Uint8Array[] = [];
-  let size = 0;
-  try {
-    while (true) {
-      const chunk = await reader.read();
-      if (chunk.done) break;
-      size += chunk.value.byteLength;
-      if (size > BODY_LIMIT) {
-        await reader.cancel();
-        throw new RequestError(413, "The submission is too large.");
-      }
-      chunks.push(chunk.value);
-    }
-  } finally {
-    reader.releaseLock();
-  }
-  const bytes = new Uint8Array(size);
-  let offset = 0;
-  for (const chunk of chunks) {
-    bytes.set(chunk, offset);
-    offset += chunk.byteLength;
-  }
-  try {
-    return JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes));
-  } catch {
-    throw new RequestError(400, "Send valid JSON.");
-  }
-}
-export function preflight(request: Request, origin: string): Response {
-  const method = request.headers.get("Access-Control-Request-Method");
-  const headers = (request.headers.get("Access-Control-Request-Headers") ?? "")
-    .split(",")
-    .map((value) => value.trim().toLowerCase())
-    .filter(Boolean);
-  if (
-    (method && method !== "POST") ||
-    headers.some((header) => header !== "content-type")
-  )
-    return response(400, { error: "Unsupported preflight." }, origin);
-  return response(204, null, origin);
 }
 async function receipt(
   kind: Kind,
@@ -208,7 +107,11 @@ async function verify(
     throw new RequestError(403, "Complete the spam check again.");
   }
 }
-/** Ruling R4: the AI read is optional, so a missing secret or a signing failure never fails the submission. */
+/**
+ * Ruling R4: the AI read is optional, so a missing secret or a signing failure
+ * never fails the submission. Only a new, Turnstile-verified write earns a
+ * token: a retry receipt skips Turnstile, so replaying it must not mint reads.
+ */
 async function readTokenField(
   id: string,
   dependencies: Dependencies,
@@ -228,6 +131,7 @@ async function persisted(
   result: Receipt,
   origin: string,
   dependencies: Dependencies,
+  verified: boolean,
 ): Promise<Response | null> {
   if (result.status === "conflict")
     return response(
@@ -239,8 +143,9 @@ async function persisted(
       origin,
     );
   if (result.status === "missing") return null;
-  const token =
-    kind === "calculation" ? await readTokenField(result.id, dependencies) : {};
+  const earnsToken =
+    kind === "calculation" && verified && result.status === "created";
+  const token = earnsToken ? await readTokenField(result.id, dependencies) : {};
   return response(
     result.status === "created" ? 201 : 200,
     { id: result.id, ...token },
@@ -297,6 +202,7 @@ export function createHandler(kind: Kind, dependencies: Dependencies) {
         await receipt(kind, validated.value, false, config, dependencies.fetch),
         origin,
         dependencies,
+        false,
       );
       if (existing) return existing;
       await verify(
@@ -311,6 +217,7 @@ export function createHandler(kind: Kind, dependencies: Dependencies) {
         await receipt(kind, validated.value, true, config, dependencies.fetch),
         origin,
         dependencies,
+        true,
       );
       if (!saved) throw new Error("Storage did not acknowledge persistence");
       return saved;

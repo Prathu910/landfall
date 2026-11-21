@@ -1,4 +1,6 @@
+import { requestParams } from "../functions/_shared/anthropic-complete.ts";
 import {
+  PRUNE_AT,
   READ_MODELS,
   READ_SYSTEM_PROMPT,
   ReadTimeoutError,
@@ -430,5 +432,69 @@ Deno.test(
     equal(other.status, 200);
     advance(60_001);
     equal((await request({ token: issued, facts })).status, 200);
+  },
+);
+Deno.test(
+  "the rate-limit map is capped, dropping the oldest addresses first",
+  async () => {
+    const { request } = setup({
+      variables: { ...env, READ_ENABLED: "false" },
+    });
+    const issued = await token();
+    function from(ip: string) {
+      return request(
+        { token: issued, facts },
+        {
+          headers: {
+            Origin: origin,
+            "Content-Type": "application/json",
+            "X-Forwarded-For": ip,
+          },
+        },
+      );
+    }
+    for (let attempt = 0; attempt < 10; attempt++) await from("192.0.2.1");
+    equal((await from("192.0.2.1")).status, 429);
+    // Fill the map with new addresses inside the same window.
+    for (let index = 0; index < PRUNE_AT; index++) {
+      await from(`10.0.${Math.floor(index / 256)}.${index % 256}`);
+    }
+    // The oldest address was evicted, so its count starts again.
+    equal((await from("192.0.2.1")).status, 200);
+  },
+);
+Deno.test(
+  "requests server-side fallback only for models that support it",
+  () => {
+    const enabled = readConfig((name) => env[name]);
+    if (!enabled.enabled) throw new Error("fixture config should be enabled");
+    for (const model of [
+      "claude-opus-5-5",
+      "claude-sonnet-5-5",
+      "claude-fable-5-2",
+    ]) {
+      equal(requestParams("system", facts, { ...enabled, model }), {
+        model,
+        max_tokens: 2000,
+        output_config: { effort: "low" },
+        system: "system",
+        messages: [{ role: "user", content: JSON.stringify(facts) }],
+        betas: ["server-side-fallback-2026-07-01"],
+        fallbacks: "default",
+      });
+    }
+    const haiku = requestParams("system", facts, {
+      ...enabled,
+      model: "claude-haiku-5-5",
+    });
+    equal(haiku, {
+      model: "claude-haiku-5-5",
+      max_tokens: 2000,
+      output_config: { effort: "low" },
+      system: "system",
+      messages: [{ role: "user", content: JSON.stringify(facts) }],
+    });
+    equal(Object.hasOwn(haiku, "fallbacks"), false);
+    equal(Object.hasOwn(haiku, "betas"), false);
   },
 );

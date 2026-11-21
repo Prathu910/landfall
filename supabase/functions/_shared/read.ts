@@ -9,7 +9,7 @@ import {
   preflight,
   readJson,
   response,
-} from "./handler.ts";
+} from "./http.ts";
 import { validFacts } from "./read-facts.ts";
 import { verifyReadToken } from "./read-token.ts";
 
@@ -34,8 +34,9 @@ const MAX_TOKENS_CEILING = 16000;
 const USES_PER_TOKEN = 3;
 const RATE_LIMIT = 10;
 const RATE_WINDOW_MS = 60_000;
-// Maps are pruned past this size so a long-lived isolate can't grow without bound.
-const PRUNE_AT = 1000;
+// Maps are pruned past this size so a long-lived isolate can't grow without
+// bound; the rate-limit map never holds more than this many addresses.
+export const PRUNE_AT = 1000;
 const READ_OFF = "READ_ENABLED is not true";
 
 export const READ_SYSTEM_PROMPT = [
@@ -115,12 +116,22 @@ function prune<T>(entries: Map<string, T>, expired: (entry: T) => boolean) {
   }
 }
 
+/** Drops the oldest entries (Map keeps insertion order) until there is room. */
+function evictOldest<T>(entries: Map<string, T>) {
+  for (const key of entries.keys()) {
+    if (entries.size < PRUNE_AT) return;
+    entries.delete(key);
+  }
+}
+
 /** Fixed one-minute windows per IP, in memory: best effort per isolate. */
 function rateLimiter(now: () => number) {
   const windows = new Map<string, { start: number; count: number }>();
   return (ip: string): boolean => {
     const time = now();
     prune(windows, (entry) => time - entry.start >= RATE_WINDOW_MS);
+    // A flood of distinct addresses inside one window must not grow memory.
+    if (!windows.has(ip)) evictOldest(windows);
     const current = windows.get(ip);
     if (!current || time - current.start >= RATE_WINDOW_MS) {
       windows.set(ip, { start: time, count: 1 });
@@ -203,6 +214,8 @@ export function createReadHandler(deps: {
       )
         throw new RequestError(400, "Send a token and the report facts.");
       const config = readConfig(deps.env);
+      // Disabled answers before the token check on purpose: with no secret
+      // there is nothing to verify against, and no model call can follow.
       if (!config.enabled) {
         // Only the reason is logged: never facts, text, keys or tokens.
         if (config.reason !== READ_OFF)
