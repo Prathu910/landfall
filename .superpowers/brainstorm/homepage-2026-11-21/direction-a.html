@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MigrateLens, stamp desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..800&family=Big+Shoulders+Stencil+Display:wght@800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #FFFFFF; --desk: #EEF2F0; --ink: #12202C; --muted: #52606B; --rule: #D8DFDB; --cobalt: #2446D6; --line: #C9D8CF;
+    --co: #996000; --co-bg: #FBEFD6; --vs: #0F6B3C; --vs-bg: #D6EFE0;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--desk); color: var(--ink); font: 400 17px/1.55 "Archivo", system-ui, sans-serif; }
+  h1, h2, h3 { font-stretch: 118%; font-weight: 750; letter-spacing: -0.012em; margin: 0; line-height: 1.1; }
+  a { color: var(--cobalt); }
+  a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visible + span { outline: 3px solid var(--cobalt); outline-offset: 3px; }
+  svg { display: block; max-width: 100%; height: auto; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 32px; }
+
+  /* top bar */
+  .top { display: flex; align-items: center; justify-content: space-between; padding: 18px 0; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; font-weight: 750; font-stretch: 112%; font-size: 19px; }
+  .top nav { display: flex; gap: 22px; font-size: 15px; }
+  .top nav a { color: var(--ink); text-decoration: none; font-weight: 500; }
+  .top nav a:hover { text-decoration: underline; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 50px; padding: 0 24px; border-radius: 999px; font: inherit; font-weight: 650; font-size: 17px; text-decoration: none; cursor: pointer; }
+  .btn.primary { background: var(--ink); color: #fff; }
+  .btn.primary:hover { background: #1F3446; }
+  .btn.ghost { color: var(--ink); border: 2px solid var(--ink); background: transparent; }
+  .btn.ghost:hover { background: #fff; }
+
+  /* hero: the desk with an open passport */
+  .hero { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 48px; align-items: center; padding: 40px 0 72px; }
+  .hero h1 { font-size: clamp(40px, 4.6vw, 56px); font-stretch: 120%; line-height: 1.02; letter-spacing: -0.02em; }
+  .lede { font-size: 20px; line-height: 1.45; margin: 20px 0 28px; max-width: 30ch; color: #2A3946; }
+  .ctas { display: flex; flex-wrap: wrap; gap: 12px; }
+  .fine { margin: 18px 0 0; font-size: 14px; color: var(--muted); }
+
+  .spread { position: relative; display: grid; grid-template-columns: 1fr 1fr; background: var(--paper); border-radius: 18px; box-shadow: 0 1px 0 #C7D1CB, 0 24px 48px -28px #12202C55; transform: rotate(1.2deg); }
+  .spread::after { content: ""; position: absolute; left: 50%; top: 14px; bottom: 14px; width: 1px; background: linear-gradient(var(--rule), #B9C4BE, var(--rule)); }
+  .pp { position: relative; overflow: hidden; padding: 22px 22px 20px; min-height: 380px; }
+  .pp .guill { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .75; pointer-events: none; }
+  .pp > *:not(.guill) { position: relative; }
+  .pp-h { font-size: 13px; color: var(--muted); display: flex; justify-content: space-between; gap: 8px; }
+  .pp-h b { color: var(--ink); font-weight: 600; }
+  .collage { position: relative; height: 320px; margin-top: 6px; }
+  .collage svg { position: absolute; width: 72%; }
+  .collage svg:nth-child(1) { left: -2%; top: 0; }
+  .collage svg:nth-child(2) { right: -4%; top: 98px; }
+  .collage svg:nth-child(3) { left: 4%; top: 196px; }
+  .big { display: grid; place-items: center; height: calc(100% - 40px); }
+  .big svg { width: 100%; max-width: 300px; }
+  .cap { font-size: 14px; color: var(--muted); text-align: center; margin: 6px 0 0; }
+  .thump { animation: thump 420ms cubic-bezier(.2, .9, .3, 1.2) both; }
+  @keyframes thump { 0% { opacity: 0; transform: scale(1.35) rotate(-6deg); } 55% { opacity: 1; transform: scale(.97) rotate(1deg); } 100% { transform: none; } }
+
+  /* sections */
+  section.band { padding: 72px 0; }
+  section.paper { background: var(--paper); }
+  .sec-h { font-size: clamp(28px, 3.4vw, 40px); }
+  .sub { color: var(--muted); font-size: 17px; margin: 10px 0 32px; max-width: 52ch; }
+
+  /* doors */
+  .doors { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .door { position: relative; display: grid; grid-template-columns: 1fr 120px; gap: 16px; align-items: center; padding: 26px 26px 24px; border-radius: 16px; background: var(--paper); border: 2px solid var(--ink); color: var(--ink); text-decoration: none; }
+  .door:hover { background: #F7FAF8; }
+  .door .tag { font-size: 15px; font-weight: 600; color: var(--muted); }
+  .door h3 { font-size: 24px; margin: 6px 0 8px; }
+  .door p { margin: 0 0 14px; font-size: 16px; color: #34424E; }
+  .door .go { font-weight: 650; color: var(--cobalt); text-decoration: underline; text-underline-offset: 3px; }
+  .door svg { width: 120px; }
+
+  /* try-it desk */
+  .desk { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+  fieldset { border: 0; margin: 0 0 26px; padding: 0; }
+  legend { font-weight: 650; font-size: 17px; margin-bottom: 10px; }
+  .occ { display: grid; gap: 8px; }
+  .occ label, .pts label { position: relative; cursor: pointer; }
+  .occ input, .pts input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .occ span { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px; padding: 13px 16px; border-radius: 12px; border: 1.5px solid var(--rule); background: #fff; font-size: 16px; }
+  .occ span small { color: var(--muted); font-size: 14px; }
+  .occ input:checked + span { border: 2px solid var(--ink); padding: 12.5px 15.5px; font-weight: 600; box-shadow: inset 4px 0 0 var(--ink); }
+  .pts { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+  .pts span { display: grid; place-items: center; height: 50px; border-radius: 10px; border: 1.5px solid var(--rule); background: #fff; font-weight: 700; font-stretch: 112%; font-size: 18px; font-variant-numeric: tabular-nums; }
+  .pts input:checked + span { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .result { position: relative; overflow: hidden; background: var(--paper); border-radius: 18px; padding: 24px; box-shadow: 0 1px 0 #C7D1CB, 0 24px 48px -30px #12202C55; }
+  .result .guill { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .6; pointer-events: none; }
+  .result > *:not(.guill) { position: relative; }
+  .result .big { height: auto; }
+  .result .big svg { max-width: 280px; }
+  .why { font-size: 17px; margin: 8px 0 0; }
+  .count { font-size: 17px; font-weight: 650; margin: 6px 0 0; }
+  .note { font-size: 14px; color: var(--muted); margin: 12px 0 0; }
+
+  /* what you get */
+  .get { display: grid; grid-template-columns: 1.1fr 1fr 1fr; gap: 20px; }
+  .item { background: var(--paper); border-radius: 16px; padding: 22px; border: 1px solid var(--rule); }
+  .item h3 { font-size: 19px; font-stretch: 110%; }
+  .item p { margin: 6px 0 0; font-size: 15px; color: var(--muted); }
+  .item .big svg { max-width: 210px; }
+  .item.stamp-item { display: flex; flex-direction: column; }
+  .item.stamp-item .big { flex: 1; margin-top: 4px; }
+  .item.pdf { grid-column: 1 / -1; display: grid; grid-template-columns: 0.8fr 2fr; gap: 24px; align-items: center; }
+  .item.pdf .pages { margin-top: 0; max-width: 560px; }
+  .kv { display: grid; gap: 12px; margin-top: 12px; }
+  .kv div { border-left: 4px solid var(--co); padding: 2px 0 2px 12px; font-size: 16px; }
+  .kv b { display: block; font-size: 14px; color: var(--muted); font-weight: 600; }
+  .pages { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 14px; }
+  .pg { aspect-ratio: 210 / 297; background: #fff; border: 1px solid var(--rule); border-radius: 4px; padding: 6px; display: flex; flex-direction: column; gap: 4px; box-shadow: 0 6px 14px -10px #12202C66; }
+  .pg i { display: block; height: 4px; border-radius: 2px; background: #DCE3DF; }
+  .pg i.s { width: 60%; }
+  .pg .dot { width: 22px; height: 22px; border-radius: 50%; border: 2.5px solid var(--co); margin: 2px auto; }
+  .pg .bars { display: flex; align-items: flex-end; gap: 2px; height: 22px; }
+  .pg .bars i { flex: 1; background: var(--ink); height: auto; }
+  .pages figcaption, .pagecap { font-size: 13px; color: var(--muted); text-align: center; margin-top: 4px; }
+  .pagecol { display: flex; flex-direction: column; }
+  .example-cap { margin: 20px 0 0; font-size: 14px; color: var(--muted); }
+
+  /* conditions (trust) */
+  .conditions { background: var(--paper); border-radius: 18px; padding: 8px; }
+  .conditions-in { border: 3px double var(--ink); border-radius: 12px; padding: 28px 30px; display: grid; grid-template-columns: 0.8fr 2fr; gap: 32px; }
+  .conditions h2 { font-size: 30px; }
+  .conditions .sub { margin-bottom: 0; }
+  .conds { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 22px 30px; counter-reset: c; }
+  .conds li { counter-increment: c; display: grid; grid-template-columns: 34px 1fr; gap: 12px; }
+  .conds li::before { content: counter(c); display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; border: 2px solid var(--ink); font-weight: 750; font-stretch: 112%; font-size: 15px; }
+  .conds b { display: block; font-size: 17px; }
+  .conds span { font-size: 15px; color: var(--muted); }
+
+  /* faq */
+  .faq { max-width: 760px; }
+  details { border-top: 1.5px solid var(--ink); }
+  details:last-child { border-bottom: 1.5px solid var(--ink); }
+  summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 18px 0; font-weight: 650; font-size: 18px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; flex: none; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid var(--ink); font-weight: 500; }
+  details[open] summary::after { content: "−"; }
+  details p { margin: 0 0 18px; color: #34424E; max-width: 62ch; }
+
+  /* final */
+  .final { display: grid; grid-template-columns: 200px 1fr; gap: 36px; align-items: center; }
+  .final svg { width: 200px; }
+  .final h2 { font-size: clamp(30px, 4vw, 46px); font-stretch: 122%; }
+  .final p { color: var(--muted); margin: 10px 0 22px; }
+  footer { background: var(--ink); color: #CBD3DA; font-size: 14px; padding: 26px 0; }
+  footer b { color: #fff; }
+  footer p { margin: 0; max-width: 80ch; }
+
+  /* ===== phone first-class ===== */
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; gap: 28px; padding-top: 16px; }
+    .get { grid-template-columns: 1fr 1fr; }
+    .item.stamp-item { grid-column: 1 / -1; }
+    .item.pdf { grid-template-columns: 1fr; gap: 14px; }
+    .conditions-in { grid-template-columns: 1fr; gap: 20px; }
+  }
+  @media (max-width: 720px) {
+    body { font-size: 16px; }
+    .wrap { padding: 0 16px; }
+    .top { padding: 12px 0; }
+    .top nav a:first-child { display: none; }
+    .hero { padding-bottom: 44px; gap: 18px; }
+    .fine { margin-top: 0; }
+    .hero h1 { font-size: 44px; }
+    .lede { font-size: 18px; margin: 0; }
+    .ctas { display: grid; }
+    .hero-copy { display: contents; }
+    .hero h1 { order: 1; } .spread { order: 2; } .lede { order: 3; } .ctas { order: 4; } .fine { order: 5; }
+    .spread { grid-template-columns: 1fr; transform: none; }
+    .spread::after { display: none; }
+    .pp.left { display: none; }
+    .pp { min-height: 0; padding: 14px 14px 12px; }
+    .big svg { max-width: 230px; }
+    section.band { padding: 48px 0; }
+    .sub { margin-bottom: 22px; font-size: 16px; }
+    .doors { grid-template-columns: 1fr; gap: 12px; }
+    .door { grid-template-columns: 1fr; padding: 18px; }
+    .door > div:last-child { position: absolute; right: 12px; top: 12px; }
+    .door svg { width: 104px; }
+    .door .tag { display: block; min-height: 64px; padding-right: 110px; }
+    .door h3 { font-size: 21px; }
+    .desk { grid-template-columns: 1fr; gap: 8px; }
+    .pts span { height: 48px; font-size: 17px; }
+    .result { padding: 16px; }
+    .result .big svg { max-width: 220px; }
+    .get { grid-template-columns: 1fr; gap: 12px; }
+    .item { padding: 18px; }
+    .conditions-in { padding: 20px 16px; }
+    .conds { grid-template-columns: 1fr; gap: 16px; }
+    .final { grid-template-columns: 1fr; gap: 12px; text-align: left; }
+    .final svg { width: 140px; }
+    .final .ctas { display: grid; }
+    summary { font-size: 17px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .thump { animation: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top"><a class="brand" href="#"><span data-logo></span>MigrateLens</a>
+    <nav aria-label="Main"><a href="#example">Example report</a><a href="#faq">Questions</a></nav></header>
+
+  <section class="hero" aria-labelledby="h1">
+    <div class="hero-copy">
+      <h1 id="h1">Will my points get me invited?</h1>
+      <p class="lede">Get a straight answer for 189, 190 and 491, read from official SkillSelect data. Free.</p>
+      <div class="ctas"><a class="btn primary" href="#try">Check my points, free</a><a class="btn ghost" href="#example">See an example report</a></div>
+      <p class="fine">Data as at 31 October 2026. No documents needed.</p>
+    </div>
+    <div class="spread" aria-label="An example report, opened like a passport">
+      <div class="pp left"><div class="g1"></div>
+        <div class="pp-h"><b>Your three visas</b><span>Oct 2026</span></div>
+        <div class="collage" id="heroVisas"></div>
+      </div>
+      <div class="pp"><div class="g2"></div>
+        <div class="pp-h"><b>Your outlook</b><span>Example</span></div>
+        <div class="big" id="heroStamp"></div>
+        <p class="cap">A registered nurse at 70 points.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<section class="band paper" aria-labelledby="doors-h">
+  <div class="wrap">
+    <h2 class="sec-h" id="doors-h">Where are you up to?</h2>
+    <p class="sub">Both open the same free check. Your report changes with your answer.</p>
+    <div class="doors">
+      <a class="door" href="#try"><div><span class="tag">Not lodged an EOI yet</span><h3>Am I ready, and is it worth it?</h3><p>Your points, what could add more, and where an EOI at your score would sit today.</p><span class="go">Check my points</span></div><div id="door1"></div></a>
+      <a class="door" href="#try"><div><span class="tag">Already lodged</span><h3>Where does my EOI stand?</h3><p>The EOIs ahead of you, the ones tied with you, and how long EOIs like yours have waited.</p><span class="go">Check where I stand</span></div><div id="door2"></div></a>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="try" aria-labelledby="try-h">
+  <div class="wrap">
+    <h2 class="sec-h" id="try-h">Stamp a profile yourself</h2>
+    <p class="sub">Pick an occupation and a score. The 189 label comes straight from the last published rounds.</p>
+    <div class="desk">
+      <form id="tryForm" onsubmit="return false">
+        <fieldset><legend>Occupation</legend><div class="occ" id="occ"></div></fieldset>
+        <fieldset><legend>Points for 189</legend><div class="pts" id="pts"></div></fieldset>
+      </form>
+      <div class="result" aria-live="polite"><div class="g3"></div>
+        <div class="big" id="tryStamp"></div>
+        <p class="why" id="tryWhy"></p><p class="count" id="tryCount"></p>
+        <p class="note">SkillSelect, as at 31 Oct 2026. Your report adds 190 and 491, state by state.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band paper" id="example" aria-labelledby="get-h">
+  <div class="wrap">
+    <h2 class="sec-h" id="get-h">What your report gives you</h2>
+    <p class="sub">One answer on the first page, then what to do about it.</p>
+    <div class="get">
+      <div class="item stamp-item"><h3>Your outlook</h3><p>Your best visa today, in one word.</p><div class="big" id="getStamp"></div></div>
+      <div class="item"><h3>Best route and wait</h3>
+        <div class="kv"><div><b>Best route</b>189, with NSW 190 alongside.</div><div><b>Estimated wait</b>Possible in a round that goes down to 70, like October's.</div></div></div>
+      <div class="item"><h3>How to improve</h3><p>Superior English, +10. About 2 to 3 months.</p><div id="getShift" style="margin-top:12px"></div></div>
+      <div class="item pdf"><div><h3>A 4-page PDF to keep</h3><p>The same pages on any phone or laptop, ready to share with family or an agent.</p></div>
+        <div class="pages">
+          <figure style="margin:0"><div class="pg"><i class="s"></i><div class="dot"></div><i></i><i></i><i class="s"></i></div><figcaption>1. The answer</figcaption></figure>
+          <figure style="margin:0"><div class="pg"><i class="s"></i><div class="bars"><i style="height:70%"></i><i style="height:55%"></i><i style="height:90%"></i><i style="height:60%"></i></div><i></i><i class="s"></i></div><figcaption>2. What to do</figcaption></figure>
+          <figure style="margin:0"><div class="pg"><i class="s"></i><i></i><i></i><i></i><i></i><i class="s"></i></div><figcaption>3. Your points</figcaption></figure>
+          <figure style="margin:0"><div class="pg"><i class="s"></i><i></i><i class="s"></i><i></i><i class="s"></i><i></i></div><figcaption>4. Evidence</figcaption></figure>
+        </div></div>
+    </div>
+    <p class="example-cap">From the example report: a registered nurse at 70 points, applying from offshore.</p>
+  </div>
+</section>
+
+<section class="band" aria-labelledby="cond-h">
+  <div class="wrap">
+    <div class="conditions"><div class="conditions-in">
+      <div><h2 id="cond-h">Conditions of this report</h2><p class="sub">What it is, and what it isn't.</p></div>
+      <ol class="conds">
+        <li><div><b>Official data, dated</b><span>SkillSelect EOI data as at 31 Oct 2026 and invitation rounds to Oct 2026, from Home Affairs. State rules from each state's own pages.</span></div></li>
+        <li><div><b>Built by someone who went through it</b><span>A skilled migrant who paid an agency for a report and heard only "you qualify, submit and hope".</span></div></li>
+        <li><div><b>Not a guarantee</b><span>Our best reading of the data. Round sizes, cut-offs and state rules can change at any time.</span></div></li>
+        <li><div><b>Not a migration agent</b><span>General information, not advice. For your own case, talk to a registered agent.</span></div></li>
+      </ol>
+    </div></div>
+  </div>
+</section>
+
+<section class="band paper" id="faq" aria-labelledby="faq-h">
+  <div class="wrap">
+    <h2 class="sec-h" id="faq-h">Questions</h2>
+    <div class="faq" style="margin-top:24px">
+      <details><summary>Is it really free?</summary><p>Yes. The check and your report are free. We ask for an email to show your report, and there's no account.</p></details>
+      <details><summary>What do the labels mean?</summary><p>They come from your occupation's last 3 listed 189 rounds. Strong means you meet every cut-off, Competitive the lowest one, Long wait none of them. Not currently invited means 189 hasn't listed your occupation in 4 rounds.</p></details>
+      <details><summary>Are the counts people?</summary><p>No, they count EOIs. One person can lodge several, and ties are broken by a date SkillSelect doesn't publish.</p></details>
+      <details><summary>Does state nomination add points?</summary><p>Yes: 5 for a 190 nomination and 15 for a 491. Each state also has its own rules, which your report checks separately.</p></details>
+      <details><summary>Where do my answers go?</summary><p>Your full profile stays in your browser. We keep only your email and a short summary: occupation, age band, onshore or offshore, and points.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="band" aria-labelledby="fin-h">
+  <div class="wrap final">
+    <svg viewBox="-12 -12 344 344" aria-hidden="true"><g filter="url(#ink)" transform="rotate(-7 160 160)"><circle cx="160" cy="160" r="150" fill="none" stroke="#12202C" stroke-width="5" stroke-dasharray="14 10"/><circle cx="160" cy="160" r="132" fill="none" stroke="#12202C" stroke-width="2" stroke-dasharray="4 6"/><text x="160" y="186" text-anchor="middle" font-family="'Big Shoulders Stencil Display'" font-weight="900" font-size="80" fill="#12202C">YOURS?</text></g></svg>
+    <div><h2 id="fin-h">Get your own stamp</h2><p>Four short steps. Your report opens straight after.</p>
+      <div class="ctas"><a class="btn primary" href="#try">Check my points, free</a><a class="btn ghost" href="#example">See an example report</a></div></div>
+  </div>
+</section>
+
+<footer><div class="wrap"><p><b>This is our best reading of the data, not a guarantee.</b> MigrateLens uses published SkillSelect figures up to October 2026. Home Affairs and the states can change rounds and rules at any time. MigrateLens isn't a registered migration agent.</p></div></footer>
+
+<script>
+/* ---------- shared with the locked report (Option E): labels, stamps, real figures ---------- */
+const V = {
+  vs: { label: "Very strong", hex: "#0F6B3C", bg: "#D6EFE0" },
+  st: { label: "Strong", hex: "#1E7A4C", bg: "#E5F3EA" },
+  co: { label: "Competitive", hex: "#996000", bg: "#FBEFD6" },
+  lw: { label: "Long wait", hex: "#BE3F0B", bg: "#FDE8DB" },
+  ni: { label: "Not currently invited", hex: "#B42318", bg: "#FCE5E3" },
+  ne: { label: "Not eligible yet", hex: "#5B3F9E", bg: "#ECE6F8" },
+  nd: { label: "Not enough data", hex: "#586470", bg: "#E8ECEF" },
+};
+const SHORT = { ni: "Not invited", ne: "Not eligible", nd: "No data" };
+const short = k => SHORT[k] || V[k].label;
+const fitSize = (text, width, max, f) => Math.min(max, width / (text.length * (f || 0.6)));
+let stampSeq = 0;
+
+function bigStamp(k, ring, bottom, word) {
+  const id = "s" + (++stampSeq), hex = V[k].hex, w = (word || V[k].label).toUpperCase();
+  const lines = w.length > 12 ? w.split(" ").reduce((a, x) => { const l = a[a.length - 1]; (l && (l + " " + x).length <= 12) ? a[a.length - 1] = l + " " + x : a.push(x); return a; }, []) : [w];
+  const fs = fitSize(lines.reduce((m, l) => l.length > m.length ? l : m, ""), 250, 56, 0.56);
+  const y0 = 172 - (lines.length - 1) * fs * 0.5;
+  return `<svg viewBox="-24 -24 368 368" role="img" aria-label="Stamp: ${ring}, ${V[k].label}">
+    <defs><path id="rt${id}" d="M40 160 A120 120 0 0 1 280 160"/><path id="rb${id}" d="M52 160 A108 108 0 0 0 268 160"/></defs>
+    <g filter="url(#ink)" transform="rotate(-7 160 160)">
+      <circle cx="160" cy="160" r="150" fill="none" stroke="${hex}" stroke-width="7"/>
+      <circle cx="160" cy="160" r="136" fill="none" stroke="${hex}" stroke-width="2.5"/>
+      <text font-family="'Big Shoulders Stencil Display'" font-weight="800" font-size="24" fill="${hex}" letter-spacing="2"><textPath href="#rt${id}" startOffset="50%" text-anchor="middle">${ring}</textPath></text>
+      <text font-family="'Big Shoulders Stencil Display'" font-weight="800" font-size="21" fill="${hex}" letter-spacing="2"><textPath href="#rb${id}" startOffset="50%" text-anchor="middle" dominant-baseline="hanging">${bottom}</textPath></text>
+      <rect x="22" y="${118 - (lines.length - 1) * fs * 0.5}" width="276" height="${84 + (lines.length - 1) * fs}" fill="#fff" stroke="${hex}" stroke-width="5"/>
+      ${lines.map((l, i) => `<text x="160" y="${y0 + i * fs}" text-anchor="middle" data-fit="250" font-family="'Big Shoulders Stencil Display'" font-weight="900" font-size="${fs}" fill="${hex}" letter-spacing="1.5">${l}</text>`).join("")}
+    </g></svg>`;
+}
+function visaStamp(shape, k, top, word, bottom, rot) {
+  const hex = V[k].hex, W = word.toUpperCase(), fs = fitSize(W, 168, 30, 0.56), ts = fitSize(top, 150, 22, 0.62);
+  const frame = shape === "rect"
+    ? `<rect x="10" y="10" width="200" height="140" rx="16" fill="none" stroke="${hex}" stroke-width="5"/><rect x="20" y="20" width="180" height="120" rx="10" fill="none" stroke="${hex}" stroke-width="2"/>`
+    : shape === "hex"
+    ? `<polygon points="110,6 206,40 206,120 110,154 14,120 14,40" fill="none" stroke="${hex}" stroke-width="5"/>`
+    : `<ellipse cx="110" cy="80" rx="102" ry="72" fill="none" stroke="${hex}" stroke-width="5"/><ellipse cx="110" cy="80" rx="90" ry="60" fill="none" stroke="${hex}" stroke-width="2" stroke-dasharray="3 4"/>`;
+  return `<svg viewBox="-12 -12 244 184" role="img" aria-label="${top}: ${word}"><g filter="url(#ink)" transform="rotate(${rot || 0} 110 80)">${frame}
+    <text x="110" y="58" text-anchor="middle" data-fit="150" font-family="'Big Shoulders Stencil Display'" font-weight="800" font-size="${ts}" fill="${hex}" letter-spacing="1">${top}</text>
+    <text x="110" y="${88 + fs / 3}" text-anchor="middle" data-fit="168" font-family="'Big Shoulders Stencil Display'" font-weight="900" font-size="${fs}" fill="${hex}">${W}</text>
+    <text x="110" y="128" text-anchor="middle" font-family="'Big Shoulders Stencil Display'" font-weight="800" font-size="19" fill="${hex}">${bottom}</text></g></svg>`;
+}
+function shiftStamps(from, to, ink) {
+  const box = (x, s, rot) => { const hex = V[s.k].hex; const t = `${s.p} ${short(s.k)}`.toUpperCase(); const fs = fitSize(t, 104, 19, 0.55);
+    return `<g transform="rotate(${rot} ${x + 56} 35)"><rect x="${x}" y="10" width="118" height="50" rx="8" fill="#fff" stroke="${hex}" stroke-width="3"/><text x="${x + 59}" y="${35 + fs * 0.36}" text-anchor="middle" data-fit="104" font-family="'Big Shoulders Stencil Display'" font-weight="900" font-size="${fs}" fill="${hex}">${t}</text></g>`; };
+  return `<svg viewBox="-6 -4 286 78" role="img" aria-label="From ${from.p} points, ${V[from.k].label}, to ${to.p} points, ${V[to.k].label}"><g filter="url(#ink)">${box(0, from, -4)}${box(158, to, 3)}</g><path d="M124 35 H150" stroke="${ink || "#12202C"}" stroke-width="2.5" marker-end="url(#arrow)"/></svg>`;
+}
+function fitStamps(root) {
+  (root || document).querySelectorAll("text[data-fit]").forEach(t => {
+    t.removeAttribute("textLength"); t.removeAttribute("lengthAdjust");
+    const max = +t.dataset.fit; if (t.getComputedTextLength() > max) { t.setAttribute("textLength", max); t.setAttribute("lengthAdjust", "spacingAndGlyphs"); }
+  });
+}
+const LOGO = (ink = "#12202C", size = 30) => `<svg viewBox="0 0 48 48" width="${size}" height="${size}" aria-hidden="true"><circle cx="24" cy="24" r="18" fill="none" stroke="${ink}" stroke-width="3.5"/><rect x="15" y="25" width="4.5" height="8" fill="${ink}"/><rect x="21.75" y="20" width="4.5" height="13" fill="${ink}"/><rect x="28.5" y="15" width="4.5" height="18" fill="#D9822B"/></svg>`;
+document.body.insertAdjacentHTML("afterbegin", `<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+  <filter id="ink" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.6"/><feComponentTransfer><feFuncA type="discrete" tableValues="0 1 1 1 0.8 1"/></feComponentTransfer></filter>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#12202C"/></marker></defs></svg>`);
+document.querySelectorAll("[data-logo]").forEach(el => el.insertAdjacentHTML("afterbegin", LOGO(el.dataset.logo || undefined)));
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------- the try-it: real figures, SkillSelect snapshot 31 Oct 2026 ---------- */
+const OCC = {
+  "254499": { name: "Registered Nurses (nec)", short: "Registered nurse", code: "254499", listed: true,
+    cuts: [75, 75, 70], cutMonths: ["Nov 25", "Jun 26", "Oct 26"],
+    counts: { 70: { ahead: "107–126", tied: "1,841" } } },
+  "261313": { name: "Software Engineer", short: "Software engineer", code: "261313", listed: false, last: [95, 100] },
+  "241111": { name: "Early Childhood (Pre-primary School) Teacher", short: "Early childhood teacher", code: "241111", listed: true,
+    cuts: [90, 85, 85], cutMonths: null,
+    counts: { 80: { ahead: "2,444–2,463" } } },
+};
+const POINTS = [65, 70, 75, 80, 85, 90];
+const OCC_LIST = ["254499", "261313", "241111"].map(c => OCC[c]);
+function outlook(code, pts) {
+  const o = OCC[code];
+  if (pts < 65) return { k: "ne", why: "Under 65, the pass mark. You can't be invited yet." };
+  if (!o.listed) return { k: "ni", why: `Not listed in any of the last 4 rounds, since Nov 2024. Its last cut-offs were ${o.last[0]} and ${o.last[1]}. More points won't change that.` };
+  const lo = Math.min(...o.cuts), hi = Math.max(...o.cuts), list = o.cuts.join(", "), c = o.counts[pts];
+  let k, why;
+  if (pts > hi && code === "254499") { k = "vs"; why = `Above every cut-off in the last 3 listed rounds (${list}), and fewer than 20 EOIs score higher.`; }
+  else if (pts >= hi) { k = "st"; why = `Meets every cut-off in the last 3 listed rounds (${list}).`; }
+  else if (pts >= lo) { k = "co"; why = `Meets the lowest of the last 3 listed cut-offs (${lo}), not all of them (${list}).`; }
+  else { k = "lw"; why = `Still listed, but below all 3 recent cut-offs (${list}).`; }
+  let count = "";
+  if (c && c.tied) count = `${c.ahead} EOIs score higher. ${c.tied} are tied with you.`;
+  else if (c) count = `${c.ahead} EOIs score higher.`;
+  return { k, why, count };
+}
+</script>
+<script>
+function guilloche(seed) {
+  const W = 600, H = 520;
+  const curve = (cx, cy, R, r, d, turns) => { let o = ""; for (let t = 0; t <= Math.PI * 2 * turns; t += 0.03) { const X = cx + (R - r) * Math.cos(t) + d * Math.cos(((R - r) / r) * t), Y = cy + (R - r) * Math.sin(t) - d * Math.sin(((R - r) / r) * t); o += (o ? "L" : "M") + X.toFixed(1) + " " + Y.toFixed(1); } return o; };
+  let waves = ""; for (let y = 0; y < H; y += 18) { let d = ""; for (let x = 0; x <= W; x += 14) d += (x ? "L" : "M") + x + " " + (y + Math.sin(x / 38 + y / 30 + seed) * 4).toFixed(1); waves += `<path d="${d}" fill="none" stroke="#D6E1DA" stroke-width="0.7"/>`; }
+  return `<svg class="guill" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${waves}<path d="${curve(W * .5, H * .5, 210, 33 + seed, 64, 33 + seed)}" fill="none" stroke="#BCD0C4" stroke-width="0.6"/></svg>`;
+}
+document.querySelector(".g1").outerHTML = guilloche(1);
+document.querySelector(".g2").outerHTML = guilloche(4);
+document.querySelector(".g3").outerHTML = guilloche(2);
+
+heroStamp.innerHTML = bigStamp("co", "SUBCLASS 189", "OCT 2026 • 70 POINTS");
+heroVisas.innerHTML = [["rect", "189 ANY STATE", "70 PTS", "189 Independent", "107 to 126 EOIs score higher."], ["hex", "190 NSW", "75 PTS", "190 Nominated", "NSW invited 26 nurses at 75 in October."], ["oval", "491 WA", "85 PTS", "491 Regional", "WA invited nurses at 85 in each of the last 3 months."]]
+  .map((v, i) => visaStamp(v[0], "co", v[1], "Competitive", v[2], [-6, 7, -3][i])).join("");
+getStamp.innerHTML = bigStamp("co", "SUBCLASS 189", "OCT 2026 • 70 POINTS");
+getShift.innerHTML = shiftStamps({ p: 70, k: "co" }, { p: 80, k: "vs" });
+const doorMark = (word, shape) => `<svg viewBox="-8 -8 236 176" aria-hidden="true"><g filter="url(#ink)" transform="rotate(${shape === "rect" ? -6 : 5} 110 80)">${shape === "rect" ? `<rect x="10" y="10" width="200" height="140" rx="16" fill="none" stroke="#52606B" stroke-width="5" stroke-dasharray="12 8"/>` : `<polygon points="110,6 206,40 206,120 110,154 14,120 14,40" fill="none" stroke="#12202C" stroke-width="5"/>`}<text x="110" y="74" text-anchor="middle" font-family="'Big Shoulders Stencil Display'" font-weight="900" font-size="34" fill="${shape === "rect" ? "#52606B" : "#12202C"}">EOI</text><text x="110" y="112" text-anchor="middle" font-family="'Big Shoulders Stencil Display'" font-weight="900" font-size="30" fill="${shape === "rect" ? "#52606B" : "#12202C"}">${word}</text></g></svg>`;
+door1.innerHTML = doorMark("NOT YET", "rect");
+door2.innerHTML = doorMark("LODGED", "hex");
+
+occ.innerHTML = OCC_LIST.map((o, i) => `<label><input type="radio" name="occ" value="${o.code}" ${i ? "" : "checked"}><span>${o.short}<small>${o.code}</small></span></label>`).join("");
+pts.innerHTML = POINTS.map(p => `<label><input type="radio" name="pts" value="${p}" ${p === 70 ? "checked" : ""} aria-label="${p} points"><span>${p}</span></label>`).join("");
+function renderTry(animate) {
+  const code = tryForm.occ.value, p = +tryForm.pts.value, r = outlook(code, p);
+  tryStamp.innerHTML = bigStamp(r.k, "SUBCLASS 189", `OCT 2026 • ${p} POINTS`);
+  tryWhy.textContent = r.why; tryCount.textContent = r.count || "";
+  tryCount.hidden = !r.count;
+  fitStamps(tryStamp);
+  if (animate && !reduceMotion) { const s = tryStamp.firstElementChild; s.classList.add("thump"); }
+}
+tryForm.addEventListener("change", () => renderTry(true));
+renderTry(false);
+fitStamps();
+if (!reduceMotion) heroStamp.firstElementChild.classList.add("thump");
+document.fonts && document.fonts.ready.then(() => fitStamps());
+</script>
+</body>
+</html>
