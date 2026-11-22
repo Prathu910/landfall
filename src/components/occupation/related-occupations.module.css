@@ -1,20 +1,34 @@
 .heading {
-  margin: 0 0 10px;
-  font-family: var(--serif);
-  font-weight: 600;
-  font-size: 1.25rem;
+  margin-bottom: calc(var(--brand-unit) * 4);
+  font: 600 1.5rem/1.25 var(--brand-font);
+  letter-spacing: -0.035em;
 }
 .list {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: grid;
-  gap: 6px;
+  border-top: var(--brand-rule-width) solid var(--rule);
+}
+.list li {
+  border-bottom: var(--brand-rule-width) solid var(--rule);
 }
 .link {
-  display: inline-block;
-  padding: 6px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: calc(var(--brand-unit) * 5);
+  min-height: var(--brand-target);
+  padding: calc(var(--brand-unit) * 4) 0;
   font-size: 1rem;
-  color: var(--slate);
+  color: var(--ink);
+  line-height: 1.5;
+}
+.link:hover {
   text-decoration: underline;
+  text-underline-offset: var(--brand-unit);
+}
+.code {
+  display: block;
+  font-size: 0.8125rem;
+  color: var(--muted);
 }

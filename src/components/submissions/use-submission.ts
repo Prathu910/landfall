@@ -13,6 +13,7 @@ export function useSubmission(kind: "calculation" | "feedback") {
   const attempt = useRef<{ fingerprint: string; id: string } | null>(null);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
+  const [readToken, setReadToken] = useState<string | null>(null);
   async function submit(
     draft: Draft,
     token: string,
@@ -32,12 +33,13 @@ export function useSubmission(kind: "calculation" | "feedback") {
       const fingerprint = JSON.stringify(draft);
       if (!attempt.current || attempt.current.fingerprint !== fingerprint)
         attempt.current = { fingerprint, id: crypto.randomUUID() };
-      await sendSubmission(
+      const receipt = await sendSubmission(
         kind,
         { ...draft, id: attempt.current.id },
         token,
         config,
       );
+      setReadToken(receipt.readToken);
       return true;
     } catch (caught) {
       setError(
@@ -55,9 +57,12 @@ export function useSubmission(kind: "calculation" | "feedback") {
     submit,
     pending,
     error,
+    /** In memory only: never stored and never put in a URL. */
+    readToken,
     clearError: () => setError(""),
     reset: () => {
       attempt.current = null;
+      setReadToken(null);
       setError("");
     },
   };

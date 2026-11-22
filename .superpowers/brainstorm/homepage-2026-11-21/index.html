@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Homepage directions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..800&display=swap" rel="stylesheet">
+<style>
+  :root { --ink: #12202C; --muted: #52606B; --rule: #D8DFDB; --wash: #EEF2F0; --cobalt: #2446D6; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--wash); color: var(--ink); font: 400 17px/1.55 "Archivo", system-ui, sans-serif; }
+  main { max-width: 1120px; margin: 0 auto; padding: 48px 32px 72px; }
+  h1 { font-size: 40px; font-stretch: 118%; font-weight: 750; margin: 0; line-height: 1.1; }
+  .lede { color: var(--muted); margin: 10px 0 32px; max-width: 60ch; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  a.card { display: grid; grid-template-rows: auto 1fr; background: #fff; border-radius: 16px; overflow: hidden; color: var(--ink); text-decoration: none; border: 1px solid var(--rule); }
+  a.card:hover { border-color: var(--ink); }
+  a.card:focus-visible { outline: 3px solid var(--cobalt); outline-offset: 3px; }
+  .shots { display: grid; grid-template-columns: 1fr 96px; gap: 10px; padding: 14px 14px 0; background: var(--wash); align-items: end; }
+  .shots img { display: block; width: 100%; border-radius: 8px 8px 0 0; box-shadow: 0 6px 20px -14px #12202C88; }
+  .shots img.ph { border-radius: 12px 12px 0 0; }
+  .body { padding: 16px 18px 18px; }
+  .body h2 { font-size: 22px; font-stretch: 112%; font-weight: 750; margin: 0 0 4px; }
+  .body p { margin: 0; color: var(--muted); font-size: 15px; }
+  .foot { margin-top: 28px; font-size: 15px; color: var(--muted); }
+  @media (max-width: 760px) { main { padding: 28px 16px 48px; } h1 { font-size: 32px; } .grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Homepage directions</h1>
+  <p class="lede">Four ways to open MigrateLens, all leading into the locked report (Option E). Same content in each; open one on your phone too. Figures are real (SkillSelect, 31 Oct 2026).</p>
+  <div class="grid">
+    <a class="card" href="direction-a.html"><div class="shots"><img src="screens/direction-a-desktop-fold.png" alt=""><img class="ph" src="screens/direction-a-phone-fold.png" alt=""></div>
+      <div class="body"><h2>A. Stamp desk</h2><p>The report's ink stamps on an open passport. The try-it stamps your label as you choose.</p></div></a>
+    <a class="card" href="direction-b.html"><div class="shots"><img src="screens/direction-b-desktop-fold.png" alt=""><img class="ph" src="screens/direction-b-phone-fold.png" alt=""></div>
+      <div class="body"><h2>B. Departures</h2><p>A split-flap board shows your three visas; the page is a route of stops to your report.</p></div></a>
+    <a class="card" href="direction-c.html"><div class="shots"><img src="screens/direction-c-desktop-fold.png" alt=""><img class="ph" src="screens/direction-c-phone-fold.png" alt=""></div>
+      <div class="body"><h2>C. The numbers</h2><p>Quiet and editorial: real numbers set large in plain sentences, and a slider that moves your line across the cut-offs.</p></div></a>
+    <a class="card" href="direction-d.html"><div class="shots"><img src="screens/direction-d-desktop-fold.png" alt=""><img class="ph" src="screens/direction-d-phone-fold.png" alt=""></div>
+      <div class="body"><h2>D. Story</h2><p>A bold scroll story for phones: one label per screen in giant stencil type, and the try-it floods with your label's colour.</p></div></a>
+  </div>
+  <p class="foot">Notes on each direction (palette, type, risks) are in notes.md in this folder.</p>
+</main>
+</body>
+</html>

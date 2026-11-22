@@ -3,7 +3,10 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { contrastRatio } from "./contrast";
 import {
+  CHECK_PALETTE,
+  SHELL_PALETTE,
   FOCUS_RING,
+  LABEL_PAIRS,
   PALETTE,
   QUESTION_LINE,
   STATUS,
@@ -22,6 +25,8 @@ function cssFiles(dir: string): string[] {
 }
 
 const globals = readFileSync("src/app/globals.css", "utf8");
+const hasLabelToken = (name: string, value: string) =>
+  new RegExp(`--label-${name}:\\s*${value}\\b`, "i").test(globals);
 
 describe("contrastRatio", () => {
   it("measures black on white as 21", () => {
@@ -61,6 +66,12 @@ describe("globals.css", () => {
     for (const [key, value] of Object.entries(PALETTE)) {
       expect(hasToken(kebab(key), value), key).toBe(true);
     }
+    for (const [key, value] of Object.entries(SHELL_PALETTE)) {
+      expect(hasToken(`brand-${kebab(key)}`, value), key).toBe(true);
+    }
+    for (const [key, value] of Object.entries(CHECK_PALETTE)) {
+      expect(hasToken(`check-${kebab(key)}`, value), key).toBe(true);
+    }
   });
   it("mirrors the status colours", () => {
     for (const [key, { fg, bg }] of Object.entries(STATUS)) {
@@ -76,6 +87,30 @@ describe("globals.css", () => {
     for (const file of cssFiles("src")) {
       expect(readFileSync(file, "utf8"), file).not.toMatch(old);
     }
+  });
+});
+
+describe("outlook label pairs", () => {
+  it("every ink passes AA on its tint and on white", () => {
+    for (const [key, { ink, bg }] of Object.entries(LABEL_PAIRS)) {
+      expect(contrastRatio(ink, bg), `${key} on bg`).toBeGreaterThanOrEqual(
+        4.5,
+      );
+      expect(
+        contrastRatio(ink, "#FFFFFF"),
+        `${key} on white`,
+      ).toBeGreaterThanOrEqual(4.5);
+    }
+  });
+  it("mirrors the label tokens and fonts in globals.css", () => {
+    for (const [key, { ink, bg }] of Object.entries(LABEL_PAIRS)) {
+      expect(hasLabelToken(`${kebab(key)}-ink`, ink), key).toBe(true);
+      expect(hasLabelToken(`${kebab(key)}-bg`, bg), key).toBe(true);
+    }
+    expect(globals).toMatch(/--font-report:[^;]*Archivo Variable/);
+    // Ruling R22: stamps use Archivo, as in the approved mockups.
+    expect(globals).toMatch(/--font-stamp:\s*"Archivo Variable"/);
+    expect(globals).not.toMatch(/Big Shoulders/);
   });
 });
 

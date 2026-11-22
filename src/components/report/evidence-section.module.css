@@ -1,0 +1,84 @@
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  list-style: none;
+  cursor: pointer;
+  font-family: var(--font-report);
+  font-size: 21px;
+  font-stretch: 116%;
+  font-weight: 750;
+}
+
+.summary::-webkit-details-marker {
+  display: none;
+}
+
+.summary::before {
+  content: "+";
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1.5px solid var(--ink);
+  border-radius: 50%;
+  font-weight: 600;
+}
+
+.details[open] .summary::before {
+  content: "−";
+}
+
+.hint {
+  color: var(--muted);
+  font-size: 15px;
+  font-stretch: 100%;
+  font-weight: 400;
+}
+
+.grid {
+  display: grid;
+  gap: 28px;
+  margin-top: 22px;
+}
+
+.grid > * {
+  min-width: 0;
+}
+
+.stack {
+  display: grid;
+  gap: 22px;
+}
+
+.trendNote {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+@media screen and (max-width: 720px) {
+  .summary {
+    font-size: 19px;
+  }
+
+  .hint {
+    flex-basis: 100%;
+    padding-left: 38px;
+  }
+
+  .trendNote {
+    font-size: 15px;
+  }
+}
+
+/* The trend chart draws 12-unit text in a 600-unit box; below that width it
+   scrolls sideways inside its card rather than shrinking text under 12px. */
+.trend :global(.trend-chart) {
+  overflow-x: auto;
+}
+
+.trend :global(.trend-chart > svg) {
+  min-width: 600px;
+}

@@ -20,16 +20,16 @@
   flex: none;
 }
 .INVITED {
-  background: var(--status-strongest-fg);
+  background: var(--brand-green);
 }
 .LODGED {
-  background: var(--slate);
+  background: var(--brand-focus);
 }
 .SUBMITTED {
-  background: var(--saffron);
+  background: var(--brand-dark-line);
 }
 .HOLD {
-  background: var(--muted-soft);
+  background: var(--brand-line);
 }
 .CLOSED {
   background: var(--muted);
@@ -41,7 +41,7 @@
     var(--rule) 0 4px,
     var(--surface) 4px 8px
   );
-  border: 1px solid var(--muted-soft);
+  border: 1px solid var(--brand-line);
 }
 .rows {
   list-style: none;

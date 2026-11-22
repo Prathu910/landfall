@@ -1,0 +1,57 @@
+.chart {
+  display: block;
+  width: 100%;
+  max-width: 560px;
+  height: auto;
+}
+
+.wide {
+  display: block;
+}
+
+.narrow {
+  display: none;
+}
+
+@media screen and (max-width: 720px) {
+  .wide {
+    display: none;
+  }
+
+  .narrow {
+    display: block;
+  }
+}
+
+.note {
+  fill: var(--muted);
+}
+
+.legend {
+  fill: var(--ink);
+}
+
+/* Groups ahead of the reader are dark, the reader's own is a mark colour,
+   and the rest fade back. */
+.ahead,
+.higher {
+  fill: var(--ink);
+}
+
+.tied,
+.month {
+  fill: var(--label-competitive-ink);
+}
+
+.you {
+  fill: var(--label-very-strong-ink);
+}
+
+.earlier {
+  fill: var(--muted);
+}
+
+.behind,
+.later {
+  fill: color-mix(in srgb, var(--muted-soft) 40%, var(--newsprint));
+}

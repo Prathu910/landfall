@@ -1,0 +1,180 @@
+.header {
+  height: var(--site-header-height);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--brand-paper);
+  color: var(--brand-ink);
+  border-bottom: var(--brand-rule-width) solid var(--brand-line);
+  font-family: var(--brand-font);
+  --focus-ring: var(--brand-focus);
+}
+.inner {
+  max-width: var(--brand-shell-width);
+  margin: auto;
+  padding-inline: var(--brand-gutter);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: calc(var(--brand-unit) * 8);
+}
+.navigation {
+  display: flex;
+  gap: calc(var(--brand-unit) * 7);
+  align-items: center;
+  margin-left: auto;
+  font-size: var(--brand-size-14);
+  font-weight: 500;
+}
+.navigation a {
+  min-height: var(--brand-target);
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  color: var(--brand-muted);
+}
+.navigation a:hover,
+.navigation a[aria-current="page"] {
+  color: var(--brand-ink);
+}
+.navigation a[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: calc(var(--brand-unit) / 2);
+  border-radius: var(--brand-pill);
+  background: currentColor;
+}
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--brand-unit) * 3);
+  min-height: var(--brand-target);
+  padding: calc(var(--brand-unit) * 3) calc(var(--brand-unit) * 5);
+  border: var(--brand-rule-width) solid var(--brand-ink);
+  border-radius: var(--brand-pill);
+  font-family: var(--brand-font);
+  font-size: var(--brand-size-14);
+  font-weight: 600;
+  line-height: 1.3;
+  white-space: nowrap;
+  color: var(--brand-paper);
+  background: var(--brand-ink);
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease;
+}
+.cta:hover {
+  background: var(--brand-green);
+  border-color: var(--brand-green);
+}
+.burger {
+  display: none;
+  width: var(--brand-target);
+  height: var(--brand-target);
+  padding: calc(var(--brand-unit) * 2.75);
+  border-radius: var(--brand-pill);
+  flex-shrink: 0;
+}
+.burger:hover,
+.close:hover {
+  background: var(--brand-sage);
+}
+.drawer {
+  background: var(--brand-paper);
+  color: var(--brand-ink);
+  font-family: var(--brand-font);
+  --focus-ring: var(--brand-focus);
+}
+.drawerHeader {
+  padding: calc(var(--brand-unit) * 5) calc(var(--brand-unit) * 6);
+  border-bottom: var(--brand-rule-width) solid var(--brand-line);
+  background: var(--brand-paper);
+}
+.close {
+  width: var(--brand-target);
+  height: var(--brand-target);
+  min-width: var(--brand-target);
+  color: var(--brand-ink);
+  border-radius: var(--brand-pill);
+}
+.drawerBody {
+  padding: calc(var(--brand-unit) * 8) calc(var(--brand-unit) * 6);
+}
+.drawerLabel {
+  color: var(--brand-muted);
+  font-size: var(--brand-size-12);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.mobileNavigation {
+  display: flex;
+  flex-direction: column;
+  margin-block: calc(var(--brand-unit) * 4) calc(var(--brand-unit) * 8);
+}
+.mobileNavigation a {
+  padding: calc(var(--brand-unit) * 4) calc(var(--brand-unit) * 3);
+  min-height: var(--brand-target);
+  border-bottom: var(--brand-rule-width) solid var(--brand-line);
+  font-size: var(--brand-size-20);
+  font-weight: 500;
+}
+.mobileNavigation a:hover,
+.mobileNavigation a[aria-current="page"] {
+  background: var(--brand-sage);
+}
+.drawerBody > .cta {
+  width: 100%;
+}
+.drawerNote {
+  margin-top: calc(var(--brand-unit) * 5);
+  color: var(--brand-muted);
+  font-size: var(--brand-size-16);
+  line-height: 1.6;
+}
+@media (max-width: 1150px) {
+  .inner {
+    gap: calc(var(--brand-unit) * 6);
+  }
+  .navigation {
+    gap: calc(var(--brand-unit) * 5);
+  }
+}
+@media (max-width: 1040px) {
+  .navigation {
+    display: none;
+  }
+  .desktopCta {
+    margin-left: auto;
+  }
+  .burger {
+    display: inline-flex;
+  }
+}
+@media (max-width: 600px) {
+  .desktopCta {
+    display: none;
+  }
+  .burger {
+    margin-left: auto;
+  }
+  .inner {
+    gap: calc(var(--brand-unit) * 3);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cta {
+    transition: none;
+  }
+}
+
+@media print {
+  /* Mantine portals live outside the header's existing print-hidden hook. */
+  .drawerRoot {
+    display: none !important;
+  }
+}

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Report mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..800&family=Inter:wght@400;500;600&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet">
+<style>
+  /* Direction A: Signal (new) */
+  body[data-theme="a"] {
+    --paper: #FFFFFF; --wash: #F1F4F2; --ink: #12202C; --muted: #52606B; --rule: #D9DFDC;
+    --strong: #1E7A4C; --strong-bg: #E3F2E9;
+    --edge: #A86A00; --edge-bg: #FBF0D9;
+    --long: #B42318; --long-bg: #FCE7E5;
+    --link: #1F4FD1; --ladder: #12202C;
+    --display: "Archivo", system-ui, sans-serif; --body: "Archivo", system-ui, sans-serif;
+    --display-stretch: 118%; --display-weight: 750; --radius: 14px;
+  }
+  /* Direction B: current MigrateLens brand, restructured */
+  body[data-theme="b"] {
+    --paper: #FAF7F0; --wash: #F1ECE1; --ink: #1D1B17; --muted: #5E584D; --rule: #E2DACB;
+    --strong: #2F6B47; --strong-bg: #DCEADF;
+    --edge: #8A5A00; --edge-bg: #F5E6C8;
+    --long: #A8321E; --long-bg: #F6DDD6;
+    --link: #2B4A73; --ladder: #D9822B;
+    --display: "Newsreader", Georgia, serif; --body: "Inter", system-ui, sans-serif;
+    --display-stretch: 100%; --display-weight: 600; --radius: 10px;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--wash); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.55; transition: background .2s; }
+  .switch { position: sticky; top: 0; z-index: 5; background: #12202C; color: #fff; padding: 12px 16px; display: flex; gap: 10px; align-items: center; justify-content: center; flex-wrap: wrap; font: 500 14px/1.3 Inter, sans-serif; }
+  .switch button { font: inherit; border: 1px solid #ffffff55; background: transparent; color: #fff; padding: 8px 14px; border-radius: 999px; cursor: pointer; }
+  .switch button.on { background: #fff; color: #12202C; }
+  .page { max-width: 860px; margin: 32px auto 64px; background: var(--paper); border-radius: var(--radius); padding: 48px 56px; box-shadow: 0 1px 0 var(--rule); }
+  @media (max-width: 700px) { .page { margin: 0; border-radius: 0; padding: 28px 18px; } }
+  h1, h2, h3, .verdict-word { font-family: var(--display); font-stretch: var(--display-stretch); font-weight: var(--display-weight); letter-spacing: -0.01em; margin: 0; }
+  .who { color: var(--muted); font-size: 15px; margin-bottom: 28px; }
+  .who strong { color: var(--ink); font-weight: 600; }
+
+  /* Verdict */
+  .verdict { border-radius: var(--radius); padding: 28px 30px; background: var(--edge-bg); }
+  .verdict-label { font-size: 15px; color: var(--muted); margin-bottom: 4px; }
+  .verdict-word { font-size: clamp(44px, 7vw, 68px); line-height: 1; color: var(--edge); }
+  .verdict-line { font-size: 21px; line-height: 1.4; margin: 14px 0 0; max-width: 34em; }
+  .read { margin-top: 22px; padding-top: 18px; border-top: 1px solid color-mix(in srgb, var(--edge) 25%, transparent); }
+  .read h3 { font-size: 17px; margin-bottom: 6px; }
+  .read p { margin: 0; max-width: 40em; }
+  .read small { display: block; color: var(--muted); font-size: 13px; margin-top: 8px; }
+
+  /* Ladder */
+  .ladder { margin: 34px 0 8px; }
+  .ladder h2 { font-size: 22px; margin-bottom: 4px; }
+  .ladder p.sub { margin: 0 0 18px; color: var(--muted); font-size: 15px; }
+  .ladder svg { width: 100%; height: auto; display: block; }
+  .ladder text { font-family: var(--body); }
+
+  /* Visa row */
+  .visas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin: 36px 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+  .visa { padding: 18px 18px 18px 0; }
+  .visa + .visa { padding-left: 18px; border-left: 1px solid var(--rule); }
+  .visa h3 { font-size: 17px; }
+  .chip { display: inline-block; font-size: 14px; font-weight: 600; padding: 3px 10px; border-radius: 999px; margin: 8px 0 6px; }
+  .chip.strong { background: var(--strong-bg); color: var(--strong); }
+  .chip.edge { background: var(--edge-bg); color: var(--edge); }
+  .chip.long { background: var(--long-bg); color: var(--long); }
+  .visa p { margin: 0; font-size: 15px; color: var(--muted); }
+  @media (max-width: 700px) { .visas { grid-template-columns: 1fr; } .visa + .visa { padding-left: 0; border-left: 0; border-top: 1px solid var(--rule); } }
+
+  section { margin-top: 44px; }
+  section > h2 { font-size: 26px; margin-bottom: 6px; }
+  section > p.sub { color: var(--muted); margin: 0 0 18px; }
+
+  /* Route */
+  ol.route { list-style: none; padding: 0; margin: 0; counter-reset: s; }
+  ol.route li { counter-increment: s; display: grid; grid-template-columns: 40px 1fr; gap: 14px; padding: 14px 0; border-top: 1px solid var(--rule); }
+  ol.route li::before { content: counter(s); font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 700; font-size: 22px; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--ink); color: var(--paper); }
+  ol.route b { display: block; }
+  ol.route span { color: var(--muted); font-size: 15px; }
+
+  /* Improve */
+  .moves { display: grid; gap: 12px; }
+  .move { display: grid; grid-template-columns: 1fr auto; gap: 6px 18px; align-items: center; padding: 16px 18px; border: 1px solid var(--rule); border-radius: var(--radius); }
+  .move.best { border: 2px solid var(--strong); }
+  .move .what b { font-size: 18px; }
+  .move .what span { display: block; color: var(--muted); font-size: 14px; }
+  .shift { display: flex; align-items: center; gap: 8px; font-size: 15px; white-space: nowrap; }
+  .shift .pts { font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 700; font-size: 22px; }
+  .shift .arrow { color: var(--muted); }
+  .move .why { grid-column: 1 / -1; font-size: 15px; margin: 0; }
+  .tag { font-size: 13px; font-weight: 600; color: var(--strong); }
+  @media (max-width: 700px) { .move { grid-template-columns: 1fr; } }
+
+  /* Deadline */
+  .deadline { display: flex; gap: 16px; align-items: baseline; padding: 16px 18px; border-radius: var(--radius); background: var(--long-bg); margin-top: 14px; }
+  .deadline .pts { font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 700; font-size: 22px; color: var(--long); }
+
+  details.evidence { margin-top: 44px; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); padding: 16px 0; }
+  details.evidence summary { cursor: pointer; font-family: var(--display); font-stretch: var(--display-stretch); font-weight: var(--display-weight); font-size: 20px; }
+  details.evidence ul { color: var(--muted); font-size: 15px; }
+
+  footer.guarantee { margin-top: 40px; padding: 18px 20px; border-radius: var(--radius); background: var(--wash); font-size: 14px; color: var(--muted); }
+  footer.guarantee b { color: var(--ink); }
+
+  .note { max-width: 860px; margin: 20px auto 0; padding: 0 16px; font: 14px/1.5 Inter, sans-serif; color: #52606B; }
+</style>
+</head>
+<body data-theme="a">
+<div class="switch">
+  <span>Look:</span>
+  <button class="on" data-choice="direction-a" onclick="setTheme('a', this)">A. New look (Signal)</button>
+  <button data-choice="direction-b" onclick="setTheme('b', this)">B. Current brand, new structure</button>
+</div>
+<p class="note">Fictional applicant, real SkillSelect data (Registered Nurses nec, Oct 2026). The words in "Our read" stand in for the AI summary. Switch the look at the top; the content and order stay the same.</p>
+
+<main class="page">
+  <div class="who"><strong>Priya's report</strong>, Registered Nurse (nec), 70 points, offshore. Data to October 2026.</div>
+
+  <div class="verdict">
+    <div class="verdict-label">Your 189 outlook</div>
+    <div class="verdict-word">Competitive</div>
+    <p class="verdict-line">You're on the edge. 70 points was enough in 2 of the last 6 rounds, but 1,841 other nurse EOIs are tied with you at 70.</p>
+    <div class="read">
+      <h3>Our read</h3>
+      <p>Your fastest win is English. A Superior score adds 10 points and puts you at 80, above every cut-off since 2024. It also lifts your NSW 190 score to 85. In October, NSW invited 168 nurses at just 80.</p>
+      <small>Written by AI from the numbers in this report. Every figure is checked against the data.</small>
+    </div>
+  </div>
+
+  <div class="ladder">
+    <h2>Where 70 points sits</h2>
+    <p class="sub">The last 6 189 cut-offs for your occupation, with you and your next steps.</p>
+    <svg viewBox="0 0 760 150" role="img" aria-label="Points scale from 60 to 90. Recent cut-offs fall between 70 and 80. You are at 70. Adding English takes you to 80.">
+      <!-- scale 60..90 => x 40..720 ; 22.67px per point -->
+      <rect x="153" y="58" width="453" height="34" rx="6" fill="var(--edge-bg)"/>
+      <text x="380" y="50" text-anchor="middle" font-size="13" fill="var(--muted)">Recent cut-offs: 70 to 80</text>
+      <line x1="40" y1="75" x2="720" y2="75" stroke="var(--rule)" stroke-width="2"/>
+      <!-- cut-off dots: 70,75,75,80,70,75 -->
+      <circle cx="267" cy="75" r="7" fill="var(--ladder)"/><circle cx="267" cy="75" r="7" fill="var(--ladder)" transform="translate(0,0)"/>
+      <circle cx="380" cy="75" r="7" fill="var(--ladder)"/>
+      <circle cx="493" cy="75" r="7" fill="var(--ladder)"/>
+      <text x="267" y="112" text-anchor="middle" font-size="12" fill="var(--muted)">×2</text>
+      <text x="380" y="112" text-anchor="middle" font-size="12" fill="var(--muted)">×3</text>
+      <text x="493" y="112" text-anchor="middle" font-size="12" fill="var(--muted)">×1</text>
+      <!-- axis labels -->
+      <g font-size="13" fill="var(--muted)" text-anchor="middle">
+        <text x="40" y="140">60</text><text x="153" y="140">65</text><text x="267" y="140">70</text><text x="380" y="140">75</text><text x="493" y="140">80</text><text x="607" y="140">85</text><text x="720" y="140">90</text>
+      </g>
+      <!-- you -->
+      <line x1="267" y1="20" x2="267" y2="92" stroke="var(--edge)" stroke-width="3"/>
+      <text x="267" y="14" text-anchor="middle" font-size="14" font-weight="700" fill="var(--edge)">You, 70</text>
+      <!-- with English -->
+      <line x1="493" y1="20" x2="493" y2="92" stroke="var(--strong)" stroke-width="3" stroke-dasharray="5 4"/>
+      <text x="493" y="14" text-anchor="middle" font-size="14" font-weight="700" fill="var(--strong)">With English, 80</text>
+      <path d="M282 30 C 360 24, 420 24, 478 30" fill="none" stroke="var(--strong)" stroke-width="2" marker-end="url(#ar)"/>
+      <defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--strong)"/></marker></defs>
+    </svg>
+  </div>
+
+  <div class="visas">
+    <div class="visa"><h3>189 Independent</h3><span class="chip edge">Competitive</span><p>70 points. 107 to 126 EOIs ahead of you.</p></div>
+    <div class="visa"><h3>190 Nominated</h3><span class="chip edge">Competitive in NSW</span><p>75 points with nomination. NSW invited 26 nurses at 75 in October.</p></div>
+    <div class="visa"><h3>491 Regional</h3><span class="chip edge">Competitive in WA</span><p>85 points with nomination. WA has invited nurses at 85 every month since August.</p></div>
+  </div>
+
+  <section>
+    <h2>Your best route</h2>
+    <p class="sub">What we'd do with your profile, in order.</p>
+    <ol class="route">
+      <li><div><b>Retake English and aim for Superior</b><span>PTE 79 in every band, or the IELTS/TOEFL equal. Book before February 2027.</span></div></li>
+      <li><div><b>Submit your EOI for 189 and NSW 190 now</b><span>Your date of effect starts the day you submit, so don't wait for the new score.</span></div></li>
+      <li><div><b>Update your EOI the day your new score arrives</b><span>Your points rise to 80 straight away; your date of effect resets to that day.</span></div></li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>How to improve</h2>
+    <p class="sub">Each step, and what your outlook becomes after it.</p>
+    <div class="moves">
+      <div class="move best">
+        <div class="what"><span class="tag">Biggest jump</span><b>Superior English</b><span>+10 points. About 2 to 3 months to prepare and get results.</span></div>
+        <div class="shift"><span class="pts">70</span><span class="chip edge">Competitive</span><span class="arrow">to</span><span class="pts">80</span><span class="chip strong">Strong</span></div>
+        <p class="why">80 is above all 6 recent cut-offs, and under 20 nurse EOIs score higher.</p>
+      </div>
+      <div class="move">
+        <div class="what"><b>NAATI CCL test (community language)</b><span>+5 points. One test, about 1 to 2 months.</span></div>
+        <div class="shift"><span class="pts">70</span><span class="chip edge">Competitive</span><span class="arrow">to</span><span class="pts">75</span><span class="chip strong">Strong</span></div>
+        <p class="why">75 met 5 of the last 6 cut-offs. 27 to 46 EOIs would still score higher.</p>
+      </div>
+      <div class="move">
+        <div class="what"><b>Both together</b><span>+15 points.</span></div>
+        <div class="shift"><span class="pts">70</span><span class="chip edge">Competitive</span><span class="arrow">to</span><span class="pts">85</span><span class="chip strong">Very strong</span></div>
+        <p class="why">Almost no nurse EOIs score 85 or more. You'd be near the front of the queue.</p>
+      </div>
+    </div>
+    <div class="deadline"><span class="pts">−5</span><div><b>You turn 33 on 14 March 2027.</b> Your age points drop from 30 to 25, taking you to 65, where your outlook becomes <span class="chip long">Long wait</span>. Get your English done before then.</div></div>
+  </section>
+
+  <details class="evidence">
+    <summary>See the evidence</summary>
+    <ul>
+      <li>Every 189 round since 2022, with cut-offs</li>
+      <li>The 189, 190 and 491 pools by points</li>
+      <li>What happened to nurse EOIs submitted in your month</li>
+      <li>State-by-state rules and invitations</li>
+    </ul>
+  </details>
+
+  <footer class="guarantee">
+    <b>This is our best reading of the data, not a guarantee.</b> It comes from published SkillSelect figures up to October 2026. Home Affairs and the states can change round sizes, cut-offs and rules at any time, so your real result may be different. MigrateLens isn't a registered migration agent; for advice on your own case, talk to one.
+  </footer>
+</main>
+
+<script>
+function setTheme(t, btn) {
+  document.body.dataset.theme = t;
+  document.querySelectorAll('.switch button').forEach(b => b.classList.toggle('on', b === btn));
+  if (window.toggleSelect) { try { window.brainstorm && window.brainstorm.send && 0; } catch(e){} }
+}
+</script>
+</body>
+</html>

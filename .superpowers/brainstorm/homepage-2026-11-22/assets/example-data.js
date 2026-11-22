@@ -1,0 +1,152 @@
+window.DEMO_DATA = {
+  241111: {
+    name: "Early Childhood (Pre-primary School) Teacher",
+    shortName: "Early Childhood Teacher",
+    rounds: [
+      { month: "Sept 24", cutoff: 75 },
+      { month: "Nov 24", cutoff: 70 },
+      { month: "Aug 25", cutoff: 85 },
+      { month: "Nov 25", cutoff: 85 },
+      { month: "Jun 26", cutoff: null },
+      { month: "Oct 26", cutoff: 90 },
+    ],
+    points: {
+      65: {
+        label: "long-wait",
+        why: "65 is below your occupation's last 3 listed cut-offs (90, 85, 85).",
+        higher: "10,123–10,142",
+        same: "2,115",
+      },
+      70: {
+        label: "long-wait",
+        why: "70 is below your occupation's last 3 listed cut-offs (90, 85, 85).",
+        higher: "7,264–7,283",
+        same: "2,859",
+      },
+      75: {
+        label: "long-wait",
+        why: "75 is below your occupation's last 3 listed cut-offs (90, 85, 85).",
+        higher: "4,582–4,601",
+        same: "2,682",
+      },
+      80: {
+        label: "long-wait",
+        why: "80 is below your occupation's last 3 listed cut-offs (90, 85, 85).",
+        higher: "2,444–2,463",
+        same: "2,138",
+      },
+      85: {
+        label: "competitive",
+        why: "85 meets two of your occupation's last 3 listed cut-offs (85, 85) but not the other (90).",
+        higher: "222–241",
+        same: "2,222",
+      },
+      90: {
+        label: "strong",
+        why: "90 meets your occupation's last 3 listed cut-offs (90, 85, 85).",
+        higher: "under 20 (so may be zero)",
+        same: "222",
+      },
+    },
+  },
+  254499: {
+    name: "Registered Nurses nec",
+    shortName: "Registered Nurses nec",
+    rounds: [
+      { month: "Sept 24", cutoff: 75 },
+      { month: "Nov 24", cutoff: 70 },
+      { month: "Aug 25", cutoff: 80 },
+      { month: "Nov 25", cutoff: 75 },
+      { month: "Jun 26", cutoff: 75 },
+      { month: "Oct 26", cutoff: 70 },
+    ],
+    points: {
+      65: {
+        label: "long-wait",
+        why: "65 is below your occupation's last 3 listed cut-offs (70, 75, 75).",
+        higher: "1,948–1,967",
+        same: "1,532",
+      },
+      70: {
+        label: "competitive",
+        why: "70 meets the lowest of your occupation's last 3 listed cut-offs (70) but not the other two (75, 75).",
+        higher: "107–126",
+        same: "1,841",
+      },
+      75: {
+        label: "strong",
+        why: "75 meets your occupation's last 3 listed cut-offs (70, 75, 75).",
+        higher: "27–46",
+        same: "80",
+      },
+      80: {
+        label: "very-strong",
+        why: "80 is above your occupation's last 3 listed cut-offs (70, 75, 75), and fewer than 20 EOIs score higher.",
+        higher: "under 20 (so may be zero)",
+        same: "27",
+      },
+      85: {
+        label: "very-strong",
+        why: "85 is above your occupation's last 3 listed cut-offs (70, 75, 75), and fewer than 20 EOIs score higher.",
+        higher: "0",
+        same: "under 20 (so may be zero)",
+      },
+      90: {
+        label: "very-strong",
+        why: "90 is above your occupation's last 3 listed cut-offs (70, 75, 75), and fewer than 20 EOIs score higher.",
+        higher: "0",
+        same: "0",
+      },
+    },
+  },
+  261313: {
+    name: "Software Engineer",
+    shortName: "Software Engineer",
+    rounds: [
+      { month: "Sept 24", cutoff: 100 },
+      { month: "Nov 24", cutoff: 95 },
+      { month: "Aug 25", cutoff: null },
+      { month: "Nov 25", cutoff: null },
+      { month: "Jun 26", cutoff: null },
+      { month: "Oct 26", cutoff: null },
+    ],
+    points: {
+      65: {
+        label: "not-invited",
+        why: "Your occupation wasn't listed in any of the last 4 invitation rounds.",
+        higher: "7,500–7,519",
+        same: "1,219",
+      },
+      70: {
+        label: "not-invited",
+        why: "Your occupation wasn't listed in any of the last 4 invitation rounds.",
+        higher: "6,107–6,126",
+        same: "1,393",
+      },
+      75: {
+        label: "not-invited",
+        why: "Your occupation wasn't listed in any of the last 4 invitation rounds.",
+        higher: "4,555–4,574",
+        same: "1,552",
+      },
+      80: {
+        label: "not-invited",
+        why: "Your occupation wasn't listed in any of the last 4 invitation rounds.",
+        higher: "3,217–3,236",
+        same: "1,338",
+      },
+      85: {
+        label: "not-invited",
+        why: "Your occupation wasn't listed in any of the last 4 invitation rounds.",
+        higher: "2,004–2,023",
+        same: "1,213",
+      },
+      90: {
+        label: "not-invited",
+        why: "Your occupation wasn't listed in any of the last 4 invitation rounds.",
+        higher: "872–891",
+        same: "1,132",
+      },
+    },
+  },
+};

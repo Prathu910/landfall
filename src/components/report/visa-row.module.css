@@ -1,0 +1,87 @@
+.visas {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.visa {
+  margin: 0;
+  text-align: center;
+}
+
+.stamp {
+  max-width: 220px;
+  margin: 0 auto;
+}
+
+.caption {
+  margin-top: 6px;
+  font-size: 15px;
+}
+
+.title {
+  display: block;
+  font-weight: 600;
+}
+
+.line {
+  display: block;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.flagLink {
+  color: var(--slate);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Phones: one row per visa, the stamp (about 140px, ruling R24) beside its caption. */
+@media screen and (max-width: 720px) {
+  .visas {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .visa {
+    display: grid;
+    grid-template-columns: 140px minmax(0, 1fr);
+    gap: 12px;
+    align-items: center;
+    padding: 6px 0;
+    border-top: 1px solid var(--rule);
+    text-align: left;
+  }
+
+  .visa:first-child {
+    border-top: 0;
+  }
+
+  .stamp {
+    max-width: none;
+    margin: 0;
+  }
+
+  .caption {
+    margin: 0;
+    font-size: 16px;
+  }
+
+  .line {
+    font-size: 15px;
+  }
+}
+
+@media print {
+  .stamp {
+    max-width: 150px;
+  }
+
+  .caption {
+    font-size: 13px;
+  }
+
+  .line {
+    font-size: 12px;
+  }
+}

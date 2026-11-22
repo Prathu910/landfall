@@ -1,0 +1,16 @@
+.source {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+@media screen and (max-width: 720px) {
+  .source {
+    font-size: 15px;
+  }
+}
+
+@media print {
+  .source {
+    font-size: 12px;
+  }
+}

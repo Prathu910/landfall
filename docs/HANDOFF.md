@@ -1,5 +1,87 @@
 # Resume here
 
+## Occupation pages redesigned (22 November 2026)
+
+The directory and all 479 generated detail pages now follow the approved passport-style identity. Preview `/occupations/` and `/occupations/registered-nurses-nec-254499/` on the local dev server. Search, visa pool tabs, round/cohort/state evidence, FAQ and related links are restyled; a scoped points preview keeps the existing occupation-only check URL contract. Federal-list chips now say membership rather than implying eligibility.
+
+See `docs/OCCUPATION-REDESIGN-HANDOFF.md` for exact files, reviews, checks and screenshots. SEO comparison covers 480 HTML paths: unchanged route set, metadata, canonical/robots/JSON-LD and byte-identical sitemap, 130 unchanged noindex pages, 479 FAQ parity checks and zero broken internal links. Built-browser checks cover 35 route/width cases plus keyboard, touch, reduced motion, search, disclosures, prefill and print. Parent inspected representative screenshots and SEO/test/build artifacts and tightened directory placeholder contrast with the existing muted token. No merge or deployment. State/supporting-page redesigns remain next.
+
+## Shared identity and shell implemented (22 November 2026)
+
+The locally implemented recommendation is **Open lens**: a simple lens/bearing mark, Archivo wordmark, matching sage-backed favicon and ordinary/reversed SVG assets. Header, mobile navigation and footer now match the approved homepage/check palette. Preview `http://127.0.0.1:3000/`. This is ready for founder review, not a founder-approved logo decision or a deployment.
+
+Detailed assets, checks and screenshots: `docs/BRAND-SHELL-HANDOFF.md`. Agent verification: `npm run check` (120 files / 1,287 tests), `npm run build` (491 pages), separate spec/quality reviews, 56 route/width combinations and mobile drawer keyboard/touch/print checks. Parent inspected the identity board, phone homepage and QA artifacts, and confirmed dev preview responds. No commit, merge or deployment.
+
+Follow-ups: refresh the older social-share PNG separately; fix the existing 320px Feedback Turnstile overflow during that page's redesign. Those do not block reviewing the shared shell. Earlier notes below describing the shell as reserved are historical.
+
+## Approved homepage implementation (22 November 2026)
+
+The actual `/` route now implements Direction A+: passport/stencil hero, searchable occupation control, points and visa chips, interactive state map, historical evidence, report examples and compact FAQ. Preview `http://127.0.0.1:3000/`. The original prototypes are unchanged. Full file ownership, domain/provenance details, visual artifacts and independent review evidence are in `docs/HOMEPAGE-IMPLEMENTATION-HANDOFF.md`; implementation checklist is `docs/superpowers/plans/2026-11-22-approved-homepage.md`. Verified 288 state combinations and 18 national cases, keyboard/touch/zoom, loading/missing/error states and mobile layouts. Shared shell, logo and favicon remain a separate design task. No deployment.
+
+## Points-check redesign (22 November 2026)
+
+`/check/` now follows the approved Direction A+ homepage identity: sage desk, white paper, ink Archivo headings, scoped premium Mantine controls and a passport security-line live points preview. Preview: `http://127.0.0.1:3000/check/`; built static verification: `http://127.0.0.1:3017/check/`.
+
+The four steps, calculations, dependent-answer resets, validation, opt-in local saving, required email, Turnstile and report handlers are preserved. Step bodies and reusable date/experience fields now live under `src/components/check/`. `CheckFlowTheme` inherits the root Mantine theme without affecting other routes or the generated report. Paired fields keep shared label/help/control tracks. The points breakdown is an accessible disclosure, and the introductory check header hides once the report is shown. No backend submissions were made in browser QA.
+
+Verification: all four steps at eight widths (1440/1280/1024/820/600/390/360/320), no page/form overflow; sample flow reaches the report; manual profile reaches required-email validation with focus on the email field. Conditional state/study/Professional Year fields and points updates checked. Keyboard occupation search/selection, radio arrow navigation and the points disclosure work. The final built recheck confirms white controls, full-opacity placeholders and no obsolete local-token classes. Independent scoped review passed after fixing placeholder contrast to 6.41:1 and centralizing check tokens in `globals.css`/`CHECK_PALETTE`. Full `npm run check`: 119 files / 1,286 tests pass. Production build and combined homepage final verification are recorded in the homepage implementation handoff. Screenshots: `output/playwright/check-points-final-desktop.png`, `check-points-final-mobile.png`, `check-review-desktop.png`, `check-review-mobile.png`.
+
+Shared header/footer, logo and favicon retain their existing design, awaiting the founder's separate design pass. Work remains on `roadmap/report-redesign`, uncommitted and undeployed; the known report wording issue below remains outside this redesign.
+
+## Revised homepage: Direction A plus interactive map (22 November 2026)
+
+The founder prefers the original 21 November Direction A to the blue/white proposal and requested enhancing a separate copy. Open `http://127.0.0.1:3001/homepage-2026-11-22/direction-a-plus.html`. The original Direction A is unchanged. The new preview keeps the paper/sage/ink/stamp language, adds explicit Australian permanent-residency context, and replaces the old doors/try-it layout with an interactive state map and passport evidence panel. State shapes and equivalent buttons select all eight states/territories; 189/190/491 controls, occupation, points and zoom work locally. State evidence is generated by the existing `stateEvidence` / `evidenceLabel` code, with nomination points included and masked counts retained as ranges. This is historical evidence, not state-policy status or eligibility. The app homepage is unchanged pending design approval. Research and provenance are in `direction-a-plus-notes.md` beside the preview. AI scope remains summary only.
+
+## Homepage design preview and AI scope (22 November 2026)
+
+The founder chose AI summary only for the current release. Deferred AI explanations, comparisons, state explanations and report questions are recorded in `docs/AI-ROADMAP.md`.
+
+The founder rejected the four 21 November homepage directions and requested a premium, attractive, graphics-led page that clearly explains Australian PR. A new interactive design preview is in `.superpowers/brainstorm/homepage-2026-11-22/`; open `http://127.0.0.1:3001/homepage-2026-11-22/` while the brainstorm server is running. It uses a real Australian coastline, a sample outlook, pathway controls and an occupation/points example generated with the existing calculation code. The illustration is not an eligibility map. The app homepage is unchanged pending founder review. Design plan and asset provenance are in the preview's `notes.md`.
+
+## Passport background restored (22 November 2026)
+
+The founder identified that the implemented report and PDF were missing the approved Option E passport security-line artwork and requested restoring it. The shared `PassportBackground` decoration uses the original mockup's SVG paths, cached as `public/report-passport.svg`, behind both the screen hero and print hero. It is hidden from assistive technology, ignores pointer events, and takes no layout space. The image loads eagerly for the offscreen print tree and remains printable with browser background graphics disabled. This applies to personal and sample reports through their shared components. The original omission is resolved. Follow-up: the print artwork now spans the full hero instead of starting 40% across it, removing the abrupt vertical edge through the horizontal security lines. The separate R34 wording issue remains parked. No AI enablement or deployment is included.
+
+Verified: `npm run check` (1,276 tests) and `npm run build` pass. Built-export browser checks cover all four sample tabs at 1280, 820, 390 and 360px with reduced motion, no horizontal overflow or page errors, and loaded, non-interactive artwork hidden from assistive technology. Eight PDFs exported with background graphics off retain the original page counts (Strong 4; the other three 5) from both desktop and mobile viewports; all four opening pages were rendered and visually inspected. Scoped code review confirms all 35 SVG paths match the approved artwork.
+
+## Report redesign: shipped on the branch, not merged, not deployed (22 November 2026)
+
+Branch `roadmap/report-redesign` (spec `docs/superpowers/specs/2026-11-21-report-redesign-design.md`; ledger `.superpowers/sdd/2026-11-21-report-redesign/progress.md`). Every plan task (1 to 19) is done, and the whole-branch review's fix wave (ruling R32) is in; its report is `.superpowers/sdd/2026-11-21-report-redesign/final-fix-report.md`. Nothing is merged to `main` or deployed. What changed: the 34-page report is replaced by a short report built around stamps (a label from code for 189, 190 and 491), a route line, queue and cut-off charts, an improve section, an evidence section (closed on screen, the old state panels and tables inside) and a 4 to 5 page print layout; `/sample/` has four example tabs; a `write-read` Function and "Our read" client exist but stay dark. See `docs/REPORT-COVERAGE.md`.
+
+**Known issue to fix before merge (final re-review, parked as ruling R34).** For a reader under 65 (or with an expired English test or skills assessment) in an occupation 189 isn't inviting, the best line can say an improvement "opens 189" (e.g. Management Accountant 221112 at 60: "Superior English would take you to 80 points, which opens 189"), while the route bubble and the rest of the report say 189 isn't inviting the occupation. The template read's gain sentence can also call a non-lifting move the "biggest jump". About 55 of ~958 views at 55–60 points. Fix: in `src/lib/outlook/combined.ts` (~line 151) word it as "would take you to N points, so you can submit an EOI, though 189 isn't inviting your occupation" when the opener's after-label is not-invited or no-data, and let `gainSentence` in `read-template.ts` say "biggest jump" only for a move that lifts the label. Smaller follow-ups from the same review: move order puts a still-not-eligible move before the one that reaches 65 in not-invited occupations; readers 45+ still see +points moves without a banner; the under-18 route step says "under 45"; "Next steps" lower-cases move titles ("superior English").
+
+**Both AI switches stay off.** `NEXT_PUBLIC_READ_ENABLED` is unset and `READ_ENABLED` is not `true`, so every report shows the template read. `PRIVACY_VERSION` stays `2026-11-20` on purpose (ruling R31): the deployed Functions check it exactly. The AI sentences (the email gate's "Your summary is written by AI from your results (not your answers)." and the privacy text's Anthropic sentence) show only in a build with `NEXT_PUBLIC_READ_ENABLED=true`.
+
+**Enablement checklist.** Merging the branch changes nothing visible about the AI. Before step 1, three things must be done (final review, ruling R32):
+
+- Set a monthly spend limit on the Anthropic workspace that holds `ANTHROPIC_API_KEY`, so a leaked token or a flood of reads has a hard cost ceiling.
+- Build a Postgres-backed use counter per submission id (ids only, never facts or text) and have `write-read` check it. Today's per-token count lives in memory per Function instance, so a cold start or a second instance resets it. Do not set `READ_ENABLED=true` until this exists.
+- Confirm on the hosted project that Supabase sets the first `X-Forwarded-For` entry to the real client address (the rate limit keys on it, and requests without it share one bucket), and that a hosted deploy resolves the `npm:@anthropic-ai/sdk` import.
+
+Then, to turn it on:
+
+1. Set the Function secrets: `ANTHROPIC_API_KEY`, `READ_MODEL`, `READ_MAX_OUTPUT_TOKENS`, `READ_TOKEN_SECRET`. Leave `READ_ENABLED` unset for now.
+2. In code, bump `PRIVACY_VERSION` in `src/lib/submissions/contract.ts` and the "Collection notice version" date in `src/app/methodology/page.tsx`. Build the frontend with `NEXT_PUBLIC_READ_ENABLED=true`.
+3. Deploy the three Functions and the frontend **back to back**, Functions first. Between the two deploys the old live frontend still sends the old `PRIVACY_VERSION`, which the new Functions reject, so submissions fail until the frontend lands. To avoid any window, have the Functions accept both the old and new version for a day, then remove the old one.
+4. Then set `READ_ENABLED=true`. Kill switch: `READ_ENABLED=false`.
+
+The read token lives in memory only (never localStorage or the URL); the report allows at most 3 `write-read` calls per token.
+
+**Rulings the founder should know.** R22: stamps use Archivo (the font in the mockups the founder approved), not the spec's Big Shoulders Stencil; restoring the stencil look is one token and one dependency. R25: the route line shows only at 1024 px and wider; tablets and phones get a vertical route list. R27: the print `@page` margins (14/14/18 mm) apply to every route. R26: the old "Useful definitions" glossary now lives on the methodology page.
+
+**Where the real rules engine's states differ from the approved mockups** (spec section 9 accepts this; the stamp labels are unaffected unless noted). Mockup copy was hand-written; the engine names the state its evidence and rules support:
+
+- Priya and Kavya, 190: Victoria (rules being checked), not NSW. 491: Northern Territory. SA has 20 confirmed invitations but fails the half test, so it is only competitive.
+- Arjun, 491: South Australia (tied with Tasmania, wins on code); 190: Tasmania.
+- Rahul: Northern Territory for both 190 and 491 (only NT shows for 491).
+- Aarav, 491: Victoria (rules being checked); his 190 is NSW as in the mockup.
+- Meera: 190 Tasmania (rules being checked), 491 Western Australia.
+- Dev: no state is named for a not-invited visa (ruling R7).
+
+Other differences: Kavya reads "Roughly 870 to 970 EOIs ahead" (data), not the mockup's 870 to 990 (R2); the pool-by-points chart is a table of bars so its labels reach 12 px; the mockup's guilloche hero background was restored on 22 November at the founder's request (see above).
+
+Verification of the built export is in `.superpowers/sdd/2026-11-21-report-redesign/task-19-report.md`.
+
 ## Search indexing launched (20 November 2026)
 
 The founder launched indexing: `SITE_INDEXABLE = true` in `src/lib/site.ts`, so `robots.txt` allows all crawlers, pages are indexable (occupation pages whose every count is "<20" stay `noindex`), and `sitemap.xml` lists the 5 site pages and 349 occupation pages. Robots rules are a pure function (`src/lib/robots-rules.ts`) tested in both states.

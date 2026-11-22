@@ -1,0 +1,102 @@
+.page {
+  background: var(--check-sage);
+  color: var(--check-ink);
+  font-family: var(--check-font);
+  padding: calc(var(--check-unit) * 9) 0 calc(var(--check-unit) * 20);
+}
+.inner {
+  width: min(100% - 3rem, 75rem);
+  margin-inline: auto;
+}
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--check-unit) * 2);
+  font-size: var(--check-text-sm);
+  color: var(--check-muted);
+}
+.breadcrumb a:hover {
+  color: var(--check-ink);
+  text-decoration: underline;
+  text-underline-offset: var(--check-unit);
+}
+.heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: calc(var(--check-unit) * 10);
+  padding-block: calc(var(--check-unit) * 9);
+}
+.context {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--check-unit) * 2);
+  margin-bottom: calc(var(--check-unit) * 3);
+  color: var(--check-green);
+  font-size: var(--check-text-sm);
+  font-weight: 550;
+}
+.heading h1 {
+  font: 650 clamp(2.25rem, 4.2vw, 3.25rem) / 1.08 var(--check-font);
+  letter-spacing: -0.045em;
+  max-width: 16ch;
+}
+.description {
+  max-width: 27rem;
+  font-size: var(--check-text);
+  line-height: 1.7;
+  color: var(--check-muted);
+}
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--check-unit) * 2) calc(var(--check-unit) * 4);
+  list-style: none;
+  padding: 0;
+  margin: calc(var(--check-unit) * 4) 0 0;
+  font-size: var(--check-text-sm);
+}
+.facts li {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--check-unit) * 1.5);
+  white-space: nowrap;
+}
+.facts svg {
+  color: var(--check-green);
+}
+.page:not(:has([data-points-check])) .heading,
+.page:not(:has([data-points-check])) .breadcrumb {
+  display: none;
+}
+@media (max-width: 760px) {
+  .page {
+    padding-top: calc(var(--check-unit) * 5);
+  }
+  .inner {
+    width: min(100% - 2rem, 75rem);
+  }
+  .heading {
+    display: block;
+    padding-block: calc(var(--check-unit) * 7);
+  }
+  .heading h1 {
+    max-width: none;
+  }
+  .heading > div:last-child {
+    margin-top: calc(var(--check-unit) * 4);
+  }
+}
+@media print {
+  .page {
+    padding: 0;
+    background: white;
+  }
+  .inner {
+    width: 100%;
+  }
+  .heading,
+  .breadcrumb {
+    display: none;
+  }
+}

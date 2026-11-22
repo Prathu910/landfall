@@ -1,0 +1,54 @@
+.line {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.track {
+  stroke: var(--rule);
+  stroke-width: 8;
+  stroke-linecap: round;
+}
+
+.dots {
+  stroke: var(--slate);
+  stroke-width: 3;
+  stroke-dasharray: 2 8;
+  stroke-linecap: round;
+}
+
+.stem {
+  stroke: var(--label-not-invited-ink);
+  stroke-width: 2;
+  stroke-dasharray: 4 4;
+}
+
+.deadline rect {
+  fill: var(--label-not-invited-bg);
+}
+
+.deadline text {
+  fill: var(--label-not-invited-ink);
+}
+
+.solid {
+  fill: currentcolor;
+}
+
+.hollow {
+  fill: var(--card);
+  stroke: currentcolor;
+  stroke-width: 4;
+}
+
+.points {
+  fill: var(--card);
+}
+
+.title {
+  fill: currentcolor;
+}
+
+.sub {
+  fill: var(--muted);
+}

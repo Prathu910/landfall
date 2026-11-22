@@ -57,8 +57,8 @@ scripts/         Reproducible importers. The only writers of generated data.
 - A masked count (`<20`) is an interval. A missing row is `null`, which means "not published", never zero.
 - Every displayed number traces to a snapshot ID, a source URL and a checked-at date. Components receive that provenance alongside the value.
 - EOIs are not people. Pools overlap across visas and states, so never sum them as unique applicants.
-- No percentage chances and no forecasts. History-based counts only (see `docs/STRATEGY.md`).
-- Copy presents data, not advice. Never write "you should apply" or "choose state X".
+- No percentage chances. Estimates (a typical wait, a pace, a "best route") are allowed only when code computes them from published history and the report labels them as estimates (founder decision, 21 Nov 2026; see `docs/STRATEGY.md`).
+- AI never decides a label or a number. Code chooses labels, waits and improvements; the AI only words facts that code computed, and its reply is accepted only if `checkRead` passes, otherwise the template read is shown.
 
 ## Styling
 
@@ -82,7 +82,7 @@ The site must feel modern, premium, trustworthy and engaging.
 - **Lead with the user's own number,** then the context. Every section answers "what does this mean for me?" in its first sentence.
 - **Empty states never look broken.** If data is masked or missing, say so in a plain sentence and point to what _is_ known.
 - **Motion has a purpose:** orientation, feedback or progression. Every animation respects `prefers-reduced-motion`.
-- **Printing works.** Every report section, including collapsed content, is visible when printed.
+- **Printing works.** Every report section prints in the PDF; interactive controls and the detailed views inside "See the evidence" are screen only.
 
 ## Accessibility
 

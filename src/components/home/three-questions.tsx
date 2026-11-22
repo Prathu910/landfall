@@ -80,7 +80,7 @@ export function ThreeQuestions({
       <Question
         id="question-stand"
         {...COPY.stand}
-        href="/sample/#visa-189-stand"
+        href="/sample/#charts"
         caption={sampleCaption(occupationName, "189", pointsFor("189"))}
       >
         <QueueBar segments={stand.segments} />
@@ -89,7 +89,7 @@ export function ThreeQuestions({
       <Question
         id="question-outcomes"
         {...COPY.outcomes}
-        href="/sample/#visa-189-eois"
+        href="/sample/#evidence"
         caption={sampleCaption(occupationName, "189", pointsFor("189"))}
       >
         <p className={styles.sentence}>{eois.sentence}</p>

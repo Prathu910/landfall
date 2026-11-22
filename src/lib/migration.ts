@@ -138,6 +138,11 @@ export function ageOnDate(dob: string, asOf: string): number | null {
   const today = parseDate(asOf);
   return birth && today && birth <= today ? ageOn(birth, today) : null;
 }
+/** `years` after a YYYY-MM-DD date, with the points test's leap-day rule; null when invalid. */
+export function addYearsToDate(date: string, years: number): string | null {
+  const parsed = parseDate(date);
+  return parsed ? iso(addYears(parsed, years)) : null;
+}
 function agePoints(age: number): number {
   return age < 18 || age >= 45
     ? 0
@@ -158,6 +163,11 @@ function assessmentEnd(profile: Profile): Date | null {
       ? cap
       : letterEnd
     : (cap ?? letterEnd);
+}
+/** The skills assessment's end as YYYY-MM-DD: the letter expiry or 3 years from issue, whichever is earlier. */
+export function assessmentEndDate(profile: Profile): string | null {
+  const end = assessmentEnd(profile);
+  return end ? iso(end) : null;
 }
 function supportsProfessionalYear(occupation: string): boolean {
   return (

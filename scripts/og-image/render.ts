@@ -10,9 +10,9 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import {
-  MARK_BARS,
   MARK_COLOURS,
-  MARK_RING,
+  MARK_VIEWBOX,
+  markSvgBody,
 } from "../../src/components/brand/mark-geometry";
 
 const root = resolve(__dirname, "..", "..");
@@ -21,13 +21,7 @@ const DEFAULT_CHROME =
 
 /** The reversed logo mark, generated from the same geometry as the site logo. */
 export function markSvg(): string {
-  const { cx, cy, r, strokeWidth } = MARK_RING;
-  const base = MARK_COLOURS.reversed;
-  const bars = MARK_BARS.map(
-    (b) =>
-      `<rect x="${b.x}" y="${b.y}" width="${b.width}" height="${b.height}" rx="1" fill="${b.accent ? MARK_COLOURS.accent : base}"/>`,
-  ).join("");
-  return `<svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${base}" stroke-width="${strokeWidth}"/>${bars}</svg>`;
+  return `<svg viewBox="${MARK_VIEWBOX}" aria-hidden="true">${markSvgBody(MARK_COLOURS.reversed)}</svg>`;
 }
 
 function fontUrl(file: string): string {

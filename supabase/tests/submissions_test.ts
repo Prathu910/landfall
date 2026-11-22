@@ -1,4 +1,5 @@
 import { createHandler } from "../functions/_shared/handler.ts";
+import { verifyReadToken } from "../functions/_shared/read.ts";
 
 function equal(actual: unknown, expected: unknown) {
   if (JSON.stringify(actual) !== JSON.stringify(expected)) {
@@ -120,6 +121,41 @@ Deno.test(
     equal(response.headers.get("Vary"), "Origin");
     equal(response.headers.get("Cache-Control"), "no-store");
     equal(response.headers.get("X-Robots-Tag"), "noindex");
+  },
+);
+Deno.test(
+  "returns a read token that write-read accepts when its secret is set",
+  async () => {
+    const variables = { ...env, READ_TOKEN_SECRET: "test-read-secret" };
+    const { request } = setup("calculation", { variables });
+    const response = await request();
+    equal(response.status, 201);
+    const body = await response.json();
+    equal(body.id, id);
+    equal(typeof body.read_token, "string");
+    equal(
+      await verifyReadToken(body.read_token, Date.now(), "test-read-secret"),
+      { ok: true, submissionId: id },
+    );
+    const report = setup("feedback", { variables });
+    equal(await (await report.request()).json(), { id });
+  },
+);
+Deno.test(
+  "never mints a read token for a retry receipt, which skips Turnstile",
+  async () => {
+    const variables = { ...env, READ_TOKEN_SECRET: "test-read-secret" };
+    const { request, calls } = setup("calculation", {
+      receipt: "existing",
+      variables,
+    });
+    const response = await request({
+      submission: calculation,
+      turnstile_token: "any replayed string",
+    });
+    equal(response.status, 200);
+    equal(await response.json(), { id });
+    equal(calls.length, 1);
   },
 );
 Deno.test(

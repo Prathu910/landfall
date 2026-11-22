@@ -1,136 +1,113 @@
-import Link from "next/link";
-import { ArrowRight, Check } from "lucide-react";
-import { Doors } from "@/components/home/doors";
-import { HeroDemoLoader } from "@/components/home/hero-demo-loader";
-import { HomeFaqList } from "@/components/home/home-faq-list";
-import { buildSampleView } from "@/components/home/sample-view";
-import { ThreeQuestions } from "@/components/home/three-questions";
-import { TryIt } from "@/components/home/try-it";
-import { loadManifest } from "@/lib/data/load-server";
-import { buildDemoContent } from "@/lib/home/demo-content";
-import { HOME_COPY, trustLine } from "@/lib/home/home-copy";
-import { TRY_IT_OCCUPATION } from "@/lib/home/try-it";
+import type { Metadata } from "next";
+import {
+  loadManifest,
+  loadOccupationCore,
+  loadOccupationDetail,
+} from "@/lib/data/load-server";
+import { stateRuleData } from "@/components/data/state-rule-data";
+import { EXAMPLE_PROFILES } from "@/lib/outlook/examples";
+import { SAMPLE_AS_OF } from "@/lib/sample";
+import { buildHomeExample } from "@/lib/home/example";
+import { buildHomeAtlas } from "@/lib/home/atlas";
+import { formatMonth } from "@/lib/report/copy";
+import { HomeAction } from "@/components/home/controls/home-action";
+import { HomePassport } from "@/components/home/home-passport";
+import { HomeAtlas } from "@/components/home/home-atlas";
+import { HomeReportExample } from "@/components/home/home-report-example";
+import { HomeConditions } from "@/components/home/home-conditions";
+import { HomeQuestions } from "@/components/home/home-questions";
+import { HomeFinal } from "@/components/home/home-final";
 import styles from "./home.module.css";
 
+export const metadata: Metadata = {
+  title: "Australian PR: will my points get me invited?",
+  description:
+    "Understand your points, occupation and Australian outlook. Explore official SkillSelect evidence for the 189, 190 and provisional 491 pathways, then get your free personal report.",
+  alternates: { canonical: "/" },
+};
+
 export default function Home() {
-  const sample = buildSampleView();
-  const demo = buildDemoContent(
-    sample.view,
-    sample.occupationName,
-    sample.points,
-    sample.categories,
-  );
-  const { story, rules, finalCta } = HOME_COPY;
+  const { snapshotId, asAt, checkedAt, sources } = loadManifest();
+  const provenance = { snapshotId, asAt, checkedAt, sources };
+  const core = loadOccupationCore("254499");
+  if (!core)
+    throw new Error(
+      "The homepage nurse example needs its published occupation snapshot.",
+    );
+  const national = buildHomeAtlas(core, 70, "189", "NSW", provenance);
+  const vic = buildHomeAtlas(core, 70, "190", "VIC", provenance);
+  const nt = buildHomeAtlas(core, 70, "491", "NT", provenance);
+  const example = buildHomeExample({
+    profile: EXAMPLE_PROFILES.middle,
+    core,
+    detail: loadOccupationDetail(core.code),
+    asOf: SAMPLE_AS_OF,
+    rules: stateRuleData,
+  });
+  const date = formatMonth(asAt);
+  const longDate = new Intl.DateTimeFormat("en-AU", {
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(`${asAt}-01T00:00:00Z`));
   return (
-    <main id="main">
-      <section
-        className={`container ${styles.hero}`}
-        aria-labelledby="home-heading"
-      >
-        <div className={styles.heroCopy}>
-          <h1 id="home-heading" className={styles.headline}>
-            {HOME_COPY.headline.split(/(?<=\.) /).map((sentence, index) => (
-              <span key={sentence}>
-                {index ? " " : null}
-                {sentence}
-              </span>
-            ))}
-          </h1>
-          <p className={styles.lede}>{HOME_COPY.lede}</p>
-          <Doors />
-          <ul className={styles.trust}>
-            {trustLine(loadManifest().asAt).map((point) => (
-              <li key={point}>
-                <Check size={15} aria-hidden />
-                {point}
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className={styles.heroDemo}>
-          <HeroDemoLoader content={demo} />
-        </div>
-      </section>
-
-      <div className={`container ${styles.band}`}>
-        <div className={styles.tryIt}>
-          <TryIt defaultOccupation={TRY_IT_OCCUPATION} />
-        </div>
-      </div>
-
-      <div className={`container ${styles.band}`}>
-        <ThreeQuestions
-          view={sample.view}
-          occupationName={sample.occupationName}
-        />
-      </div>
-
-      <section className={styles.story} aria-labelledby="story-heading">
-        <div className={`container ${styles.storyInner}`}>
-          <div>
-            <p className={styles.label}>{story.label}</p>
-            <h2 id="story-heading" className={styles.storyTitle}>
-              {story.title}
-            </h2>
+    <main id="main" className={styles.home}>
+      <div className="wrap">
+        <section className="hero" aria-labelledby="home-heading">
+          <div className="hero-copy">
+            <p className="pr-context">
+              <span aria-hidden="true">◎</span> Australian permanent residency,
+              explained
+            </p>
+            <h1 id="home-heading">
+              Will my points
+              <br />
+              get me invited?
+            </h1>
+            <p className="lede">
+              Your points. Your occupation. Your Australian outlook. Understand
+              the 189, 190 and 491 pathways in one free, personal report.
+            </p>
+            <div className="ctas">
+              <HomeAction href="/check/">Check my points, free</HomeAction>
+              <HomeAction secondary href="/sample/">
+                See an example report
+              </HomeAction>
+            </div>
+            <p className="fine">
+              Official data to {longDate}. No documents needed.
+              <br />
+              Email required for your personal report; no account needed.
+            </p>
           </div>
-          <p className={styles.storyBody}>{story.body}</p>
-        </div>
-      </section>
-
+          <HomePassport national={national} vic={vic} nt={nt} date={date} />
+        </section>
+      </div>
       <section
-        className={`container ${styles.band} ${styles.rules}`}
-        aria-labelledby="rules-heading"
+        className="band atlas-section"
+        id="try"
+        aria-labelledby="atlas-h"
       >
-        <h2 id="rules-heading" className={styles.heading}>
-          {rules.heading}
-        </h2>
-        <div>
-          <ul className={styles.ruleList}>
-            {rules.items.map((rule) => (
-              <li key={rule}>
-                <Check size={18} aria-hidden />
-                {rule}
-              </li>
-            ))}
-          </ul>
-          <Link className={styles.textLink} href="/methodology/">
-            {rules.link}
-            <ArrowRight size={16} aria-hidden />
-          </Link>
-        </div>
-      </section>
-
-      <section
-        id="questions"
-        className={`container ${styles.band}`}
-        aria-labelledby="faq-heading"
-      >
-        <h2 id="faq-heading" className={styles.heading}>
-          {HOME_COPY.faqHeading}
-        </h2>
-        <HomeFaqList />
-      </section>
-
-      <section
-        className={`container ${styles.band}`}
-        aria-labelledby="cta-heading"
-      >
-        <div className={styles.cta}>
-          <h2 id="cta-heading" className={styles.heading}>
-            {finalCta.heading}
-          </h2>
-          <p className={styles.ctaBody}>{finalCta.body}</p>
-          <div className={styles.ctaActions}>
-            <Link className="button" href="/check/">
-              {finalCta.action}
-              <ArrowRight size={18} aria-hidden />
-            </Link>
-            <Link className={styles.textLink} href="/sample/">
-              {finalCta.sample}
-            </Link>
+        <div className="wrap">
+          <div className="atlas-heading">
+            <div>
+              <p className="atlas-kicker">The Australian picture</p>
+              <h2 className="sec-h" id="atlas-h">
+                Put your points on the map.
+              </h2>
+            </div>
+            <p className="atlas-intro">
+              A score is only part of the story. Explore your occupation’s
+              published invitation evidence, state by state.
+            </p>
           </div>
+          <HomeAtlas initialCore={core} provenance={provenance} />
         </div>
       </section>
+      <HomeReportExample example={example} date={date} />
+      <HomeConditions date={longDate} />
+      <HomeQuestions />
+      <HomeFinal />
     </main>
   );
 }

@@ -1,0 +1,18 @@
+/* Ruling R25: the horizontal route only from 1024px; the list below that. */
+.line {
+  display: block;
+}
+
+.list {
+  display: none;
+}
+
+@media screen and (max-width: 1023px) {
+  .line {
+    display: none;
+  }
+
+  .list {
+    display: block;
+  }
+}

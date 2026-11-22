@@ -1,0 +1,135 @@
+.hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: grid;
+  /* The stamp column never drops below the big stamp's 230px minimum. */
+  grid-template-columns: minmax(0, 1.15fr) minmax(230px, 0.85fr);
+  gap: 28px;
+  align-items: center;
+  border-top: 0;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+.who {
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.who b {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.h1 {
+  margin: 0;
+  font-family: var(--font-report);
+  font-size: clamp(30px, 4.4vw, 42px);
+  font-stretch: 116%;
+  font-weight: 750;
+  letter-spacing: -0.01em;
+  line-height: 1.08;
+}
+
+.fact {
+  font-size: 19px;
+  line-height: 1.45;
+}
+
+.meta {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  font-size: 15px;
+}
+
+.tile dt {
+  display: inline;
+  font-weight: 600;
+}
+
+.tile dt::after {
+  content: ": ";
+}
+
+.tile dd {
+  display: inline;
+  margin: 0;
+}
+
+.why {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.stamp {
+  min-width: 0;
+}
+
+/* Phones: stamp first, then Best route and Estimated wait as two tiles above Our read. */
+@media screen and (max-width: 720px) {
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .stamp {
+    order: -1;
+    width: 100%;
+    max-width: 230px;
+    margin: 0 auto;
+  }
+
+  .h1 {
+    font-size: 29px;
+  }
+
+  .fact {
+    font-size: 17px;
+  }
+
+  .meta {
+    order: 1;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .why {
+    order: 2;
+    font-size: 15px;
+  }
+
+  .read {
+    order: 3;
+  }
+
+  .download {
+    order: 4;
+  }
+
+  .tile {
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: var(--surface);
+  }
+
+  .tile dt {
+    display: block;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .tile dt::after {
+    content: none;
+  }
+
+  .tile dd {
+    display: block;
+  }
+}

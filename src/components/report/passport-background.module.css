@@ -1,0 +1,21 @@
+.artwork {
+  position: absolute;
+  inset: -40px;
+  width: calc(100% + 80px);
+  height: calc(100% + 80px);
+  max-width: none;
+  object-fit: cover;
+  opacity: 0.5;
+  pointer-events: none;
+  user-select: none;
+  z-index: -1;
+}
+
+/* Cover the whole print hero so security lines never start mid-section.
+   The image prints even with browser background graphics off. */
+.print {
+  inset: -10pt;
+  width: calc(100% + 20pt);
+  height: calc(100% + 20pt);
+  opacity: 0.45;
+}

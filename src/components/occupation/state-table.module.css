@@ -4,13 +4,13 @@
 .table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.9375rem;
+  font-size: 1rem;
 }
 .table th,
 .table td {
   text-align: left;
   vertical-align: top;
-  padding: 10px 12px;
+  padding: calc(var(--brand-unit) * 4) calc(var(--brand-unit) * 3);
   border-bottom: 1px solid var(--rule);
 }
 .table thead th {

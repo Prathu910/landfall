@@ -163,7 +163,7 @@ export function statusChips(
     for (const visa of ["190", "491"] as const) {
       chips.push({
         label: entry[visa]
-          ? `${visa} eligible`
+          ? `${visa}: on federal list`
           : `Not on the federal list for ${visa}`,
         tone: "neutral",
       });

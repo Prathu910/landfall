@@ -18,7 +18,11 @@ export function RelatedOccupations({
         {items.map((item) => (
           <li key={item.code}>
             <Link href={item.path} className={styles.link}>
-              {item.name}
+              <span>
+                {item.name}
+                <span className={styles.code}>ANZSCO {item.code}</span>
+              </span>
+              <span aria-hidden="true">↗</span>
             </Link>
           </li>
         ))}

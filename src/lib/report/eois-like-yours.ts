@@ -6,12 +6,12 @@ import type {
   OccupationCore,
   OccupationDetail,
 } from "../data/types";
-import { formatInterval } from "../pool";
 import {
   afterSnapshotText,
   countInSentence,
   formatCount,
   formatMonth,
+  formatSummed,
 } from "./copy";
 
 export type CohortRow = {
@@ -164,7 +164,7 @@ export function buildEoisLikeYours(input: {
     basisNote: submittedMonth
       ? null
       : `You haven't added an EOI date, so this shows EOIs submitted in ${formatMonth(month)}.`,
-    sentence: `Of the ${formatInterval(range)} ${occupationName} EOIs from ${formatMonth(month)}, as at ${asAtLabel}: ${countInSentence(INVITED)} are invited and ${countInSentence(LODGED)} have a visa application lodged.`,
+    sentence: `Of the ${formatSummed(range)} ${occupationName} EOIs from ${formatMonth(month)}, as at ${asAtLabel}: ${countInSentence(INVITED)} are invited and ${countInSentence(LODGED)} have a visa application lodged.`,
     numbers: {
       invited: formatCount(INVITED),
       lodged: formatCount(LODGED),

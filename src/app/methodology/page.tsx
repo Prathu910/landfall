@@ -1,7 +1,9 @@
+import { readEnabled } from "@/components/submissions/config";
 import { PrivacyContact } from "@/components/submissions/privacy-contact";
 import { ArrowUpRight } from "lucide-react";
 import { Faq } from "@/components/faq";
 import { loadManifest } from "@/lib/data/load-server";
+import { METHOD_LIMITS, METHOD_LINES } from "@/lib/outlook/method";
 const manifest = loadManifest();
 export const metadata = { title: "Our methodology and sources" };
 const sources = [
@@ -42,6 +44,32 @@ const sources = [
     url: "https://www.homeaffairs.gov.au/access-and-accountability/using-our-website/copyright-and-disclaimer",
   },
 ];
+const definitions = [
+  [
+    "EOI",
+    "An Expression of Interest records interest in a skilled visa through SkillSelect. It is not a visa application.",
+  ],
+  [
+    "Date of effect",
+    "The date and time associated with an EOI’s points score for ranking purposes. It may change when the score changes. It is not necessarily the original submission date.",
+  ],
+  [
+    "Pool snapshot",
+    "A dated picture of published EOI counts. It is not a live queue and may include multiple EOIs from the same person.",
+  ],
+  [
+    "Invitation cutoff",
+    "The lowest score published for an occupation in a particular invitation round. It does not establish a future cutoff or your invitation prospects.",
+  ],
+  [
+    "State nomination",
+    "A separate selection process conducted by a state or territory. Federal points alone do not establish nomination eligibility.",
+  ],
+  [
+    "491 and permanent residence",
+    "Subclass 491 is a provisional regional visa. A later permanent residence pathway, such as subclass 191, has separate requirements.",
+  ],
+];
 export default function MethodologyPage() {
   return (
     <main id="main" className="container">
@@ -58,6 +86,7 @@ export default function MethodologyPage() {
           <a href="#pool">Reading the pool</a>
           <a href="#points">Points & dates</a>
           <a href="#limitations">Limitations</a>
+          <a href="#definitions">Useful definitions</a>
           <a href="#privacy">Your privacy</a>
           <a href="#questions">Common questions</a>
         </nav>
@@ -154,12 +183,15 @@ export default function MethodologyPage() {
           </section>
           <section id="limitations">
             <h2>What we can’t tell you</h2>
-            <p>
-              This overview does not establish full visa eligibility, advise
-              which visa to apply for, or predict an invitation. Age, English
-              and assessment checks cover only a subset of the requirements, and
-              exceptions can apply.
-            </p>
+            {METHOD_LIMITS.map((line) => (
+              <p key={line}>{line}</p>
+            ))}
+            <p>How the report labels your outlook:</p>
+            <ul>
+              {METHOD_LINES.map((line) => (
+                <li key={line}>{line}</li>
+              ))}
+            </ul>
             <p>
               State summaries describe published systems. They are not a
               complete personal state-eligibility engine. WA and NT current
@@ -181,6 +213,19 @@ export default function MethodologyPage() {
               to find a registered migration agent.
             </p>
           </section>
+          <section id="definitions">
+            <h2>Useful definitions</h2>
+            <dl>
+              {definitions.map(([term, meaning]) => (
+                <div key={term}>
+                  <dt>
+                    <strong>{term}</strong>
+                  </dt>
+                  <dd>{meaning}</dd>
+                </div>
+              ))}
+            </dl>
+          </section>
           <section id="privacy">
             <h2>Your information and privacy</h2>
             <p>
@@ -199,6 +244,14 @@ export default function MethodologyPage() {
               ownership, create an account, subscribe you to updates or
               marketing, or send an emailed report.
             </p>
+            {readEnabled && (
+              <p>
+                When the AI-written summary is on, your computed results (not
+                your answers, name, email or date of birth) are sent to
+                Anthropic to write your summary. MigrateLens does not store
+                them.
+              </p>
+            )}
             <p>
               Feedback stores your message and category, plus an email and
               calculation summary only if you choose to include them. Please do

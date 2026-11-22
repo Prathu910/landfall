@@ -1,0 +1,35 @@
+/* Chips only below 1024px; desktop readers see the whole page at once. */
+.chips {
+  display: none;
+}
+
+@media screen and (max-width: 1023px) {
+  .chips {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    position: sticky;
+    top: var(--site-header-height);
+    z-index: 20;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--rule);
+    background: color-mix(in srgb, var(--card) 95%, transparent);
+    backdrop-filter: blur(6px);
+    scrollbar-width: none;
+  }
+
+  .chips::-webkit-scrollbar {
+    display: none;
+  }
+
+  .chip {
+    flex: none;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+}

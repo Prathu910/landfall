@@ -1,0 +1,24 @@
+.shift {
+  font-family: "Homepage Stencil", sans-serif;
+  width: 100%;
+  height: auto;
+  margin-top: var(--homepage-size-12);
+}
+.very-strong,
+.strong {
+  color: var(--homepage-strong);
+}
+.competitive {
+  color: var(--homepage-competitive);
+}
+.long-wait {
+  color: var(--homepage-color-815c32);
+}
+.not-eligible,
+.not-open,
+.not-invited {
+  color: var(--homepage-color-a23b39);
+}
+.no-data {
+  color: var(--homepage-muted);
+}

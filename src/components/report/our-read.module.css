@@ -1,0 +1,35 @@
+.read {
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  padding: 14px 16px;
+  background: var(--card);
+}
+
+.title {
+  display: block;
+  margin-bottom: 3px;
+  font-weight: 700;
+}
+
+.text {
+  margin: 0;
+}
+
+.note {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+@media print {
+  .read {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .note {
+    margin-top: 4px;
+    font-size: 12px;
+  }
+}

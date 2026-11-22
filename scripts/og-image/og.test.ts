@@ -2,6 +2,11 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { markSvg } from "./render";
+import {
+  MARK_COLOURS,
+  MARK_VIEWBOX,
+  markSvgBody,
+} from "../../src/components/brand/mark-geometry";
 
 const root = join(__dirname, "..", "..");
 
@@ -26,9 +31,7 @@ describe("social share image", () => {
 
   it("the template mark is built from the logo geometry", () => {
     const svg = markSvg();
-    expect(svg).toContain('r="18"');
-    expect(svg).toContain('stroke="#F3EEE3"');
-    expect(svg).toContain('fill="#D9731A"');
-    expect(svg.match(/<rect/g)).toHaveLength(3);
+    expect(svg).toContain(`viewBox="${MARK_VIEWBOX}"`);
+    expect(svg).toContain(markSvgBody(MARK_COLOURS.reversed));
   });
 });

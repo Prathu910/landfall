@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MigrateLens, story</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..800&family=Big+Shoulders+Stencil+Display:wght@800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cobalt: #2446D6; --cobalt-deep: #1A34A8; --ink: #12202C; --paper: #FFFFFF; --muted: #52606B;
+    --co: #996000; --co-bg: #FBEFD6; --lw: #BE3F0B; --lw-bg: #FDE8DB; --ni: #B42318; --ni-bg: #FCE5E3; --vs: #0F6B3C; --vs-bg: #D6EFE0;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 400 18px/1.5 "Archivo", system-ui, sans-serif; }
+  a { color: inherit; }
+  a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; box-shadow: 0 0 0 6px #fff; }
+  svg { display: block; max-width: 100%; height: auto; }
+  .big { font-family: "Big Shoulders Stencil Display", "Archivo", sans-serif; font-weight: 900; text-transform: uppercase; line-height: .9; letter-spacing: .005em; margin: 0; }
+  .inner { max-width: 1160px; margin: 0 auto; padding: 0 40px; }
+
+  /* story progress */
+  .progress { position: fixed; z-index: 30; top: 0; left: 0; right: 0; display: flex; gap: 4px; padding: 8px 10px; pointer-events: none; }
+  .progress i { flex: 1; height: 4px; border-radius: 2px; background: #12202C33; overflow: hidden; }
+  .progress i b { display: block; height: 100%; width: 0; background: var(--ink); transition: width .25s; }
+  body[data-on-dark] .progress i { background: #ffffff40; }
+  body[data-on-dark] .progress i b { background: #fff; }
+
+  .ch { position: relative; padding: 96px 0; }
+  .ch.full { min-height: 100vh; min-height: 100svh; display: flex; align-items: center; }
+  .ch.full > .inner { width: 100%; }
+  .split { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: center; }
+  .kicker { font-weight: 600; font-size: 17px; margin: 0 0 14px; }
+  .say { font-size: 21px; line-height: 1.45; max-width: 30ch; margin: 22px 0 0; }
+  .src { font-size: 14px; margin: 14px 0 0; opacity: .85; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 56px; padding: 0 28px; border-radius: 999px; font-weight: 700; font-size: 18px; text-decoration: none; }
+  .ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+
+  /* hero */
+  .hero { background: var(--cobalt); color: #fff; overflow: hidden; }
+  .hero .top { position: absolute; top: 26px; left: 0; right: 0; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; color: #fff; text-decoration: none; font-weight: 750; font-stretch: 112%; font-size: 19px; }
+  .brand svg circle { stroke: #fff; } .brand svg rect:not(:last-child) { fill: #fff; }
+  .hero h1 { font-size: clamp(60px, 8.4vw, 116px); text-wrap: balance; }
+  .hero .say { color: #E6EBFF; }
+  .btn.white { background: #fff; color: var(--ink); }
+  .btn.white:hover { background: #E6EBFF; }
+  .btn.line { border: 2px solid #fff; color: #fff; }
+  .btn.line:hover { background: #ffffff1a; }
+  .deck { position: relative; height: 470px; }
+  .card { position: absolute; width: 300px; background: #fff; border-radius: 22px; padding: 22px 22px 18px; box-shadow: 0 30px 60px -30px #0A1A6E; color: var(--ink); }
+  .card p { margin: 6px 0 0; font-size: 15px; font-weight: 600; text-align: center; }
+  .card:nth-child(1) { left: 0; top: 70px; transform: rotate(-9deg); }
+  .card:nth-child(2) { right: 0; top: 10px; transform: rotate(7deg); }
+  .card:nth-child(3) { left: 22%; top: 140px; transform: rotate(-1.5deg); }
+  .deal .card { animation: deal .7s cubic-bezier(.2, .8, .2, 1) both; }
+  .deal .card:nth-child(2) { animation-delay: .12s; } .deal .card:nth-child(3) { animation-delay: .24s; }
+  @keyframes deal { from { opacity: 0; translate: 0 60px; } }
+
+  /* doors */
+  .doors-ch { padding: 80px 0; }
+  .doors-ch h2 { font-size: clamp(48px, 6vw, 84px); }
+  .doors { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 34px; }
+  .door { display: block; padding: 30px 30px 28px; border-radius: 24px; text-decoration: none; min-height: 250px; position: relative; }
+  .door.a { background: var(--ink); color: #fff; }
+  .door.b { background: #E9EDFC; color: var(--ink); }
+  .door .tag { font-size: 16px; font-weight: 600; opacity: .8; }
+  .door h3 { font-family: "Big Shoulders Stencil Display"; font-weight: 900; text-transform: uppercase; font-size: 46px; line-height: .95; margin: 10px 0 12px; }
+  .door p { margin: 0; font-size: 17px; max-width: 32ch; opacity: .9; }
+  .door .go { display: inline-flex; margin-top: 20px; font-weight: 700; padding: 10px 18px; border-radius: 999px; }
+  .door.a .go { background: #fff; color: var(--ink); }
+  .door.b .go { background: var(--cobalt); color: #fff; }
+  .door:hover .go { text-decoration: underline; }
+
+  /* story chapters */
+  .ch.amber { background: var(--co-bg); color: var(--co); }
+  .ch.orange { background: var(--lw-bg); color: var(--lw); }
+  .ch.red { background: var(--ni-bg); color: var(--ni); }
+  .ch.green { background: var(--vs-bg); color: var(--vs); }
+  .ch.amber .say, .ch.orange .say, .ch.red .say, .ch.green .say { color: var(--ink); }
+  .story h2 { font-size: clamp(64px, 9vw, 132px); }
+  .who { display: inline-block; background: #fff; color: var(--ink); font-weight: 600; font-size: 16px; padding: 6px 14px; border-radius: 999px; margin-bottom: 18px; }
+  .squares { display: grid; grid-template-columns: repeat(12, 1fr); gap: 5px; max-width: 460px; }
+  .squares i { aspect-ratio: 1; border-radius: 3px; background: #E2D6BD; }
+  .squares i.ahead { background: var(--ink); }
+  .squares i.tied { background: var(--co); }
+  .legend { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 16px; font-size: 16px; color: var(--ink); font-weight: 500; }
+  .legend span::before { content: ""; display: inline-block; width: 14px; height: 14px; border-radius: 3px; margin-right: 7px; vertical-align: -2px; background: var(--c); }
+  .bars { display: flex; align-items: flex-end; gap: 14px; height: 300px; position: relative; max-width: 460px; }
+  .bars .bar { flex: 1; background: var(--lw); border-radius: 10px 10px 0 0; color: #fff; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 12px; font-family: "Big Shoulders Stencil Display"; font-weight: 900; font-size: 44px; }
+  .bars .you { position: absolute; left: -8px; right: -8px; border-top: 4px dashed var(--ink); }
+  .bars .you span { position: absolute; right: 0; top: 6px; background: var(--ink); color: #fff; font-weight: 700; font-size: 16px; padding: 4px 12px; border-radius: 999px; }
+  .empties { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; max-width: 460px; }
+  .empties div { aspect-ratio: 3 / 4; border: 3px dashed var(--ni); border-radius: 12px; display: grid; place-items: center; text-align: center; font-weight: 700; font-size: 16px; line-height: 1.2; }
+  .empties-cap { font-size: 16px; color: var(--ink); margin: 14px 0 0; }
+
+  /* try-it */
+  .try { background: #F2F4F3; transition: background-color .45s, color .45s; }
+  .try h2 { font-size: clamp(56px, 7vw, 100px); color: var(--ink); }
+  .chips { display: flex; flex-wrap: wrap; gap: 10px; margin: 24px 0 18px; }
+  .chips button { font: inherit; font-size: 17px; font-weight: 600; padding: 12px 18px; border-radius: 999px; border: 2px solid var(--ink); background: #fff; color: var(--ink); cursor: pointer; min-height: 50px; }
+  .chips button[aria-pressed="true"] { background: var(--ink); color: #fff; }
+  .stepper { display: inline-grid; grid-template-columns: 60px auto 60px; align-items: center; gap: 14px; background: #fff; border-radius: 999px; padding: 6px; border: 2px solid var(--ink); }
+  .stepper button { width: 60px; height: 60px; border-radius: 50%; border: 0; background: var(--ink); color: #fff; font-size: 30px; font-weight: 500; cursor: pointer; line-height: 1; }
+  .stepper button:disabled { opacity: .3; cursor: default; }
+  .stepper output { font-family: "Big Shoulders Stencil Display"; font-weight: 900; font-size: 52px; color: var(--ink); min-width: 3.4ch; text-align: center; line-height: 1; }
+  .stepper output small { font-family: "Archivo"; font-weight: 600; font-size: 15px; display: block; }
+  .verdict { font-size: clamp(64px, 8.6vw, 128px); margin: 0; min-height: 1.8em; display: flex; align-items: flex-end; }
+  .try .say { color: var(--ink); margin-top: 18px; }
+  .try .src { color: var(--ink); }
+
+  /* what you get */
+  .get h2 { font-size: clamp(56px, 7vw, 100px); }
+  .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 36px; }
+  .tile { background: #F2F4F3; border-radius: 24px; padding: 22px; display: flex; flex-direction: column; }
+  .tile h3 { font-size: 20px; font-stretch: 112%; font-weight: 750; margin: 0 0 4px; }
+  .tile p { font-size: 15px; margin: 0; color: var(--muted); }
+  .tile .vis { flex: 1; display: grid; place-items: center; margin-top: 14px; min-height: 160px; }
+  .tile .vis > svg { width: 100%; max-width: 230px; }
+  .facts { display: grid; gap: 10px; width: 100%; }
+  .facts div { background: #fff; border-radius: 14px; padding: 12px 14px; font-size: 16px; line-height: 1.35; }
+  .facts b { display: block; font-size: 13px; color: var(--muted); }
+  .moves { display: grid; gap: 6px; justify-items: center; }
+  .moves span { font-family: "Big Shoulders Stencil Display"; font-weight: 900; text-transform: uppercase; font-size: 26px; line-height: 1; padding: 8px 14px; border: 3px solid; border-radius: 10px; background: #fff; }
+  .moves span:nth-child(1) { rotate: -3deg; } .moves span:nth-child(3) { rotate: 2deg; }
+  .moves .arr { font-family: "Archivo"; text-transform: none; font-size: 15px; font-weight: 600; border: 0; background: none; padding: 2px; color: #52606B; }
+  .pages { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; width: 100%; }
+  .pages div { aspect-ratio: 210 / 297; background: #fff; border-radius: 4px; box-shadow: 0 8px 16px -12px #12202C99; padding: 6px; display: flex; flex-direction: column; gap: 4px; }
+  .pages i { height: 4px; border-radius: 2px; background: #D8DFDB; }
+  .pages .o { width: 24px; height: 24px; border-radius: 50%; border: 3px solid var(--co); margin: 4px auto; }
+  .improve { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+  .improve h2 { font-size: clamp(56px, 7vw, 104px); }
+  .improve .shift { background: #fff; border-radius: 24px; padding: 28px 24px; }
+  .improve .shift p { margin: 12px 0 0; color: var(--ink); font-size: 16px; }
+
+  /* trust */
+  .trust { background: var(--ink); color: #fff; }
+  .trust h2 { font-size: clamp(56px, 7vw, 100px); }
+  .claims { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; margin-top: 40px; }
+  .claims b { display: block; font-family: "Big Shoulders Stencil Display"; font-weight: 900; text-transform: uppercase; font-size: 34px; line-height: 1; margin-bottom: 10px; color: #fff; }
+  .claims p { margin: 0; font-size: 16px; color: #C9D2DA; }
+
+  .faq h2 { font-size: clamp(56px, 7vw, 100px); }
+  .faq-list { max-width: 800px; margin-top: 28px; }
+  details { border-radius: 18px; background: #F2F4F3; margin-bottom: 10px; }
+  summary { cursor: pointer; list-style: none; padding: 20px 22px; font-weight: 700; font-size: 19px; display: flex; justify-content: space-between; gap: 16px; align-items: center; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; font-size: 28px; font-weight: 400; line-height: 1; }
+  details[open] summary::after { content: "−"; }
+  details p { margin: 0; padding: 0 22px 20px; font-size: 17px; max-width: 62ch; }
+
+  .final { background: var(--cobalt); color: #fff; text-align: left; }
+  .final h2 { font-size: clamp(64px, 9vw, 132px); }
+  footer { background: var(--cobalt-deep); color: #DCE3FF; font-size: 14px; padding: 24px 0; }
+  footer b { color: #fff; }
+  footer p { margin: 0; max-width: 80ch; }
+
+  /* ===== phone: one idea per screen ===== */
+  @media (max-width: 900px) {
+    .split, .improve { grid-template-columns: 1fr; gap: 28px; }
+    .tiles { grid-template-columns: 1fr 1fr; }
+    .claims { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 720px) {
+    html { scroll-snap-type: y proximity; }
+    .ch.full { scroll-snap-align: start; }
+    body { font-size: 17px; }
+    .inner { padding: 0 16px; }
+    .ch { padding: 64px 0; }
+    .ch.full { padding: 64px 0 48px; }
+    .hero .top { top: 22px; }
+    .hero h1 { font-size: 64px; }
+    .hero.ch.full { align-items: flex-start; padding-top: 84px; }
+    .say { font-size: 18px; margin-top: 16px; }
+    .ctas { display: grid; margin-top: 22px; }
+    .deck { height: 330px; }
+    .card { width: 232px; padding: 10px 10px 8px; border-radius: 18px; }
+    .card svg { width: 100%; }
+    .card p { display: none; }
+    .card:nth-child(1) { left: -14px; top: 20px; }
+    .card:nth-child(2) { right: -14px; top: 0; }
+    .card:nth-child(3) { left: calc(50% - 116px); top: 70px; }
+    .doors-ch { padding: 56px 0; }
+    .doors-ch h2 { font-size: 54px; }
+    .doors { grid-template-columns: 1fr; gap: 12px; margin-top: 24px; }
+    .door { min-height: 0; padding: 22px; border-radius: 20px; }
+    .door h3 { font-size: 40px; }
+    .story h2 { font-size: 60px; }
+    .empties div { font-size: 14px; padding: 4px; }
+    .squares { gap: 4px; }
+    .bars { height: 220px; gap: 10px; }
+    .bars .bar { font-size: 36px; }
+    .try h2 { font-size: 64px; }
+    .chips button { font-size: 16px; padding: 10px 14px; }
+    .verdict { font-size: 64px; min-height: 2em; }
+    .get h2, .improve h2, .trust h2, .faq h2 { font-size: 60px; }
+    .tiles { grid-template-columns: 1fr; gap: 12px; margin-top: 24px; }
+    .tile .vis { min-height: 0; }
+    .claims { grid-template-columns: 1fr; gap: 22px; margin-top: 26px; }
+    .claims b { font-size: 30px; }
+    summary { font-size: 17px; padding: 18px; }
+    details p { padding: 0 18px 18px; font-size: 16px; }
+    .final h2 { font-size: 66px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .deal .card { animation: none; } .try { transition: none; } .progress i b { transition: none; }
+    html { scroll-snap-type: none; }
+  }
+</style>
+</head>
+<body>
+<div class="progress" aria-hidden="true" id="progress"></div>
+
+<section class="ch full hero" data-dark aria-labelledby="h1">
+  <div class="inner top"><a class="brand" href="#"><span data-logo></span>MigrateLens</a></div>
+  <div class="inner split">
+    <div>
+      <h1 class="big" id="h1">Will my points get me invited?</h1>
+      <p class="say">One clear label for 189, 190 and 491, read from official SkillSelect data. Free.</p>
+      <div class="ctas"><a class="btn white" href="#try">Check my points, free</a><a class="btn line" href="#get">See an example report</a></div>
+    </div>
+    <div class="deck deal" id="deck" aria-label="Three example labels"></div>
+  </div>
+</section>
+
+<section class="ch doors-ch" aria-labelledby="doors-h">
+  <div class="inner">
+    <h2 class="big" id="doors-h">First, where are you up to?</h2>
+    <div class="doors">
+      <a class="door a" href="#try"><span class="tag">Not lodged an EOI yet</span><h3>Am I ready, and is it worth it?</h3><p>Your points, what could add more, and where an EOI at your score would sit today.</p><span class="go">Check my points</span></a>
+      <a class="door b" href="#try"><span class="tag">Already lodged</span><h3>Where does my EOI stand?</h3><p>The EOIs ahead of you, the ones tied with you, and how long EOIs like yours have waited.</p><span class="go">Check where I stand</span></a>
+    </div>
+  </div>
+</section>
+
+<section class="ch full amber story" aria-labelledby="s1">
+  <div class="inner split">
+    <div><span class="who">Registered nurse, 189</span>
+      <h2 class="big" id="s1">70 points. Competitive.</h2>
+      <p class="say">107 to 126 EOIs score higher, and 1,841 are tied at 70. A round that goes down to 70 could reach you.</p></div>
+    <div><div class="squares" id="squares" role="img" aria-label="The nurse queue: 107 to 126 ahead, 1,841 tied, about 2,320 behind. Each square is about 40 EOIs."></div>
+      <div class="legend"><span style="--c:#12202C">Ahead</span><span style="--c:#996000">Tied at 70</span><span style="--c:#E2D6BD">Behind</span></div>
+      <p class="src" style="color:#12202C">Each square is about 40 EOIs. SkillSelect, 31 Oct 2026.</p></div>
+  </div>
+</section>
+
+<section class="ch full orange story" aria-labelledby="s2">
+  <div class="inner split">
+    <div><span class="who">Early childhood teacher, 189</span>
+      <h2 class="big" id="s2">80 points. Long wait.</h2>
+      <p class="say">The last 3 listed cut-offs were 90, 85 and 85. 2,444 to 2,463 EOIs score higher.</p></div>
+    <div class="bars" role="img" aria-label="Last 3 listed cut-offs 90, 85, 85. You are at 80, below all of them.">
+      <div class="bar" style="height:100%">90</div><div class="bar" style="height:80%">85</div><div class="bar" style="height:80%">85</div>
+      <div class="you" style="bottom:60%"><span>You, 80</span></div></div>
+  </div>
+</section>
+
+<section class="ch full red story" aria-labelledby="s3">
+  <div class="inner split">
+    <div><span class="who">Software engineer, 189</span>
+      <h2 class="big" id="s3">Not currently invited.</h2>
+      <p class="say">Not listed in the last 4 rounds, since Nov 2024. The last cut-offs were 95 and 100. More points won't change it, so your report looks at the states.</p></div>
+    <div><div class="empties" role="img" aria-label="Four rounds, none listing software engineers"><div>Not listed</div><div>Not listed</div><div>Not listed</div><div>Not listed</div></div>
+      <p class="empties-cap">The last 4 rounds, oldest first.</p></div>
+  </div>
+</section>
+
+<section class="ch full try" id="try" aria-labelledby="try-h">
+  <div class="inner split">
+    <div>
+      <h2 class="big" id="try-h">Your turn.</h2>
+      <div class="chips" id="chips" role="group" aria-label="Occupation"></div>
+      <div class="stepper"><button type="button" id="minus" aria-label="5 fewer points">−</button><output id="ptsOut" aria-live="polite">70<small>points</small></output><button type="button" id="plus" aria-label="5 more points">+</button></div>
+    </div>
+    <div aria-live="polite">
+      <p class="big verdict" id="verdict"></p>
+      <p class="say" id="why"></p>
+      <p class="src">The 189 label, from SkillSelect as at 31 Oct 2026. Your report adds 190 and 491.</p>
+    </div>
+  </div>
+</section>
+
+<section class="ch get" id="get" aria-labelledby="get-h">
+  <div class="inner">
+    <h2 class="big" id="get-h">What you get.</h2>
+    <div class="tiles">
+      <div class="tile"><h3>Your outlook</h3><p>One label for your best visa.</p><div class="vis" id="tStamp"></div></div>
+      <div class="tile"><h3>Best route and wait</h3><p>What we'd go for, and when.</p><div class="vis"><div class="facts"><div><b>Best route</b>189, with NSW 190 alongside.</div><div><b>Estimated wait</b>Possible in a round that goes down to 70.</div></div></div></div>
+      <div class="tile"><h3>How to improve</h3><p>Each change, with its new label.</p><div class="vis"><div class="moves"><span style="color:#996000;border-color:#996000">70 Competitive</span><span class="arr" aria-label="becomes">+10 English</span><span style="color:#0F6B3C;border-color:#0F6B3C">80 Very strong</span></div></div></div>
+      <div class="tile"><h3>A 4-page PDF</h3><p>Same pages on any phone or laptop.</p><div class="vis"><div class="pages" aria-hidden="true"><div><i></i><span class="o"></span><i></i><i></i></div><div><i></i><i></i><i></i><i></i></div><div><i></i><i></i><i></i><i></i><i></i></div><div><i></i><i></i><i></i></div></div></div></div>
+    </div>
+    <p class="src" style="color:#52606B;margin-top:16px">From the example report: a registered nurse at 70 points.</p>
+  </div>
+</section>
+
+<section class="ch full green" aria-labelledby="imp-h">
+  <div class="inner improve">
+    <div><span class="who">The same nurse</span><h2 class="big" id="imp-h">+10 for English. Very strong.</h2>
+      <p class="say">Superior English takes 70 to 80, above every recent cut-off. About 2 to 3 months to prepare and get results.</p></div>
+    <div class="shift"><div id="bigShift"></div><p>Your report lists every change like this, best first.</p></div>
+  </div>
+</section>
+
+<section class="ch trust" data-dark aria-labelledby="trust-h">
+  <div class="inner">
+    <h2 class="big" id="trust-h">Straight from the source.</h2>
+    <div class="claims">
+      <div><b>Official, dated</b><p>SkillSelect EOI data as at 31 Oct 2026 and invitation rounds to Oct 2026, from Home Affairs.</p></div>
+      <div><b>Been there</b><p>Built by a skilled migrant who paid an agency and heard only "you qualify, submit and hope".</p></div>
+      <div><b>Not a guarantee</b><p>Our best reading of the data. Rounds and rules can change at any time.</p></div>
+      <div><b>Not an agent</b><p>General information, not advice. For your own case, talk to a registered agent.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="ch faq" aria-labelledby="faq-h">
+  <div class="inner">
+    <h2 class="big" id="faq-h">Questions.</h2>
+    <div class="faq-list">
+      <details><summary>Is it really free?</summary><p>Yes. The check and your report are free. We ask for an email to show your report, and there's no account.</p></details>
+      <details><summary>What do the labels mean?</summary><p>They come from your occupation's last 3 listed 189 rounds. Strong: you meet every cut-off. Competitive: the lowest one. Long wait: none of them.</p></details>
+      <details><summary>Are the counts people?</summary><p>No, they count EOIs. One person can lodge several, and ties are broken by a date SkillSelect doesn't publish.</p></details>
+      <details><summary>Does state nomination add points?</summary><p>Yes: 5 for a 190 nomination and 15 for a 491. Your report checks each state's rules separately.</p></details>
+      <details><summary>Where do my answers go?</summary><p>Your full profile stays in your browser. We keep only your email and a short summary: occupation, age band, onshore or offshore, and points.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="ch full final" data-dark aria-labelledby="fin-h">
+  <div class="inner">
+    <h2 class="big" id="fin-h">Your label is four steps away.</h2>
+    <div class="ctas"><a class="btn white" href="#try">Check my points, free</a><a class="btn line" href="#get">See an example report</a></div>
+  </div>
+</section>
+<footer><div class="inner"><p><b>This is our best reading of the data, not a guarantee.</b> MigrateLens uses published SkillSelect figures up to October 2026. Home Affairs and the states can change rounds and rules at any time. MigrateLens isn't a registered migration agent.</p></div></footer>
+
+<script>
+/* ---------- shared with the locked report (Option E): labels, stamps, real figures ---------- */
+const V = {
+  vs: { label: "Very strong", hex: "#0F6B3C", bg: "#D6EFE0" },
+  st: { label: "Strong", hex: "#1E7A4C", bg: "#E5F3EA" },
+  co: { label: "Competitive", hex: "#996000", bg: "#FBEFD6" },
+  lw: { label: "Long wait", hex: "#BE3F0B", bg: "#FDE8DB" },
+  ni: { label: "Not currently invited", hex: "#B42318", bg: "#FCE5E3" },
+  ne: { label: "Not eligible yet", hex: "#5B3F9E", bg: "#ECE6F8" },
+  nd: { label: "Not enough data", hex: "#586470", bg: "#E8ECEF" },
+};
+const SHORT = { ni: "Not invited", ne: "Not eligible", nd: "No data" };
+const short = k => SHORT[k] || V[k].label;
+const fitSize = (text, width, max, f) => Math.min(max, width / (text.length * (f || 0.6)));
+let stampSeq = 0;
+
+function bigStamp(k, ring, bottom, word) {
+  const id = "s" + (++stampSeq), hex = V[k].hex, w = (word || V[k].label).toUpperCase();
+  const lines = w.length > 12 ? w.split(" ").reduce((a, x) => { const l = a[a.length - 1]; (l && (l + " " + x).length <= 12) ? a[a.length - 1] = l + " " + x : a.push(x); return a; }, []) : [w];
+  const fs = fitSize(lines.reduce((m, l) => l.length > m.length ? l : m, ""), 250, 56, 0.56);
+  const y0 = 172 - (lines.length - 1) * fs * 0.5;
+  return `<svg viewBox="-24 -24 368 368" role="img" aria-label="Stamp: ${ring}, ${V[k].label}">
+    <defs><path id="rt${id}" d="M40 160 A120 120 0 0 1 280 160"/><path id="rb${id}" d="M52 160 A108 108 0 0 0 268 160"/></defs>
+    <g filter="url(#ink)" transform="rotate(-7 160 160)">
+      <circle cx="160" cy="160" r="150" fill="none" stroke="${hex}" stroke-width="7"/>
+      <circle cx="160" cy="160" r="136" fill="none" stroke="${hex}" stroke-width="2.5"/>
+      <text font-family="'Big Shoulders Stencil Display'" font-weight="800" font-size="24" fill="${hex}" letter-spacing="2"><textPath href="#rt${id}" startOffset="50%" text-anchor="middle">${ring}</textPath></text>
+      <text font-family="'Big Shoulders Stencil Display'" font-weight="800" font-size="21" fill="${hex}" letter-spacing="2"><textPath href="#rb${id}" startOffset="50%" text-anchor="middle" dominant-baseline="hanging">${bottom}</textPath></text>
+      <rect x="22" y="${118 - (lines.length - 1) * fs * 0.5}" width="276" height="${84 + (lines.length - 1) * fs}" fill="#fff" stroke="${hex}" stroke-width="5"/>
+      ${lines.map((l, i) => `<text x="160" y="${y0 + i * fs}" text-anchor="middle" data-fit="250" font-family="'Big Shoulders Stencil Display'" font-weight="900" font-size="${fs}" fill="${hex}" letter-spacing="1.5">${l}</text>`).join("")}
+    </g></svg>`;
+}
+function visaStamp(shape, k, top, word, bottom, rot) {
+  const hex = V[k].hex, W = word.toUpperCase(), fs = fitSize(W, 168, 30, 0.56), ts = fitSize(top, 150, 22, 0.62);
+  const frame = shape === "rect"
+    ? `<rect x="10" y="10" width="200" height="140" rx="16" fill="none" stroke="${hex}" stroke-width="5"/><rect x="20" y="20" width="180" height="120" rx="10" fill="none" stroke="${hex}" stroke-width="2"/>`
+    : shape === "hex"
+    ? `<polygon points="110,6 206,40 206,120 110,154 14,120 14,40" fill="none" stroke="${hex}" stroke-width="5"/>`
+    : `<ellipse cx="110" cy="80" rx="102" ry="72" fill="none" stroke="${hex}" stroke-width="5"/><ellipse cx="110" cy="80" rx="90" ry="60" fill="none" stroke="${hex}" stroke-width="2" stroke-dasharray="3 4"/>`;
+  return `<svg viewBox="-12 -12 244 184" role="img" aria-label="${top}: ${word}"><g filter="url(#ink)" transform="rotate(${rot || 0} 110 80)">${frame}
+    <text x="110" y="58" text-anchor="middle" data-fit="150" font-family="'Big Shoulders Stencil Display'" font-weight="800" font-size="${ts}" fill="${hex}" letter-spacing="1">${top}</text>
+    <text x="110" y="${88 + fs / 3}" text-anchor="middle" data-fit="168" font-family="'Big Shoulders Stencil Display'" font-weight="900" font-size="${fs}" fill="${hex}">${W}</text>
+    <text x="110" y="128" text-anchor="middle" font-family="'Big Shoulders Stencil Display'" font-weight="800" font-size="19" fill="${hex}">${bottom}</text></g></svg>`;
+}
+function shiftStamps(from, to, ink) {
+  const box = (x, s, rot) => { const hex = V[s.k].hex; const t = `${s.p} ${short(s.k)}`.toUpperCase(); const fs = fitSize(t, 104, 19, 0.55);
+    return `<g transform="rotate(${rot} ${x + 56} 35)"><rect x="${x}" y="10" width="118" height="50" rx="8" fill="#fff" stroke="${hex}" stroke-width="3"/><text x="${x + 59}" y="${35 + fs * 0.36}" text-anchor="middle" data-fit="104" font-family="'Big Shoulders Stencil Display'" font-weight="900" font-size="${fs}" fill="${hex}">${t}</text></g>`; };
+  return `<svg viewBox="-6 -4 286 78" role="img" aria-label="From ${from.p} points, ${V[from.k].label}, to ${to.p} points, ${V[to.k].label}"><g filter="url(#ink)">${box(0, from, -4)}${box(158, to, 3)}</g><path d="M124 35 H150" stroke="${ink || "#12202C"}" stroke-width="2.5" marker-end="url(#arrow)"/></svg>`;
+}
+function fitStamps(root) {
+  (root || document).querySelectorAll("text[data-fit]").forEach(t => {
+    t.removeAttribute("textLength"); t.removeAttribute("lengthAdjust");
+    const max = +t.dataset.fit; if (t.getComputedTextLength() > max) { t.setAttribute("textLength", max); t.setAttribute("lengthAdjust", "spacingAndGlyphs"); }
+  });
+}
+const LOGO = (ink = "#12202C", size = 30) => `<svg viewBox="0 0 48 48" width="${size}" height="${size}" aria-hidden="true"><circle cx="24" cy="24" r="18" fill="none" stroke="${ink}" stroke-width="3.5"/><rect x="15" y="25" width="4.5" height="8" fill="${ink}"/><rect x="21.75" y="20" width="4.5" height="13" fill="${ink}"/><rect x="28.5" y="15" width="4.5" height="18" fill="#D9822B"/></svg>`;
+document.body.insertAdjacentHTML("afterbegin", `<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+  <filter id="ink" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.6"/><feComponentTransfer><feFuncA type="discrete" tableValues="0 1 1 1 0.8 1"/></feComponentTransfer></filter>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#12202C"/></marker></defs></svg>`);
+document.querySelectorAll("[data-logo]").forEach(el => el.insertAdjacentHTML("afterbegin", LOGO(el.dataset.logo || undefined)));
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------- the try-it: real figures, SkillSelect snapshot 31 Oct 2026 ---------- */
+const OCC = {
+  "254499": { name: "Registered Nurses (nec)", short: "Registered nurse", code: "254499", listed: true,
+    cuts: [75, 75, 70], cutMonths: ["Nov 25", "Jun 26", "Oct 26"],
+    counts: { 70: { ahead: "107–126", tied: "1,841" } } },
+  "261313": { name: "Software Engineer", short: "Software engineer", code: "261313", listed: false, last: [95, 100] },
+  "241111": { name: "Early Childhood (Pre-primary School) Teacher", short: "Early childhood teacher", code: "241111", listed: true,
+    cuts: [90, 85, 85], cutMonths: null,
+    counts: { 80: { ahead: "2,444–2,463" } } },
+};
+const POINTS = [65, 70, 75, 80, 85, 90];
+const OCC_LIST = ["254499", "261313", "241111"].map(c => OCC[c]);
+function outlook(code, pts) {
+  const o = OCC[code];
+  if (pts < 65) return { k: "ne", why: "Under 65, the pass mark. You can't be invited yet." };
+  if (!o.listed) return { k: "ni", why: `Not listed in any of the last 4 rounds, since Nov 2024. Its last cut-offs were ${o.last[0]} and ${o.last[1]}. More points won't change that.` };
+  const lo = Math.min(...o.cuts), hi = Math.max(...o.cuts), list = o.cuts.join(", "), c = o.counts[pts];
+  let k, why;
+  if (pts > hi && code === "254499") { k = "vs"; why = `Above every cut-off in the last 3 listed rounds (${list}), and fewer than 20 EOIs score higher.`; }
+  else if (pts >= hi) { k = "st"; why = `Meets every cut-off in the last 3 listed rounds (${list}).`; }
+  else if (pts >= lo) { k = "co"; why = `Meets the lowest of the last 3 listed cut-offs (${lo}), not all of them (${list}).`; }
+  else { k = "lw"; why = `Still listed, but below all 3 recent cut-offs (${list}).`; }
+  let count = "";
+  if (c && c.tied) count = `${c.ahead} EOIs score higher. ${c.tied} are tied with you.`;
+  else if (c) count = `${c.ahead} EOIs score higher.`;
+  return { k, why, count };
+}
+</script>
+<script>
+/* hero deck: three real labels */
+deck.innerHTML = [["vs", "Nurse at 80"], ["ni", "Software engineer"], ["co", "Nurse at 70"]]
+  .map(([k, cap]) => `<div class="card">${bigStamp(k, "SUBCLASS 189", "OCT 2026")}<p>${cap}</p></div>`).join("");
+if (reduceMotion) deck.classList.remove("deal");
+
+/* nurse queue: 3 ahead, 46 tied, 58 behind (about 40 EOIs a square, as in the report) */
+squares.innerHTML = Array.from({ length: 107 }, (_, i) => `<i class="${i < 3 ? "ahead" : i < 49 ? "tied" : ""}"></i>`).join("");
+
+/* try-it */
+let code = "254499", p = 70;
+chips.innerHTML = OCC_LIST.map(o => `<button type="button" aria-pressed="${o.code === code}" data-code="${o.code}">${o.short}</button>`).join("");
+chips.addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; code = b.dataset.code; [...chips.children].forEach(x => x.setAttribute("aria-pressed", x === b)); renderTry(); });
+minus.onclick = () => { p = Math.max(65, p - 5); renderTry(); };
+plus.onclick = () => { p = Math.min(90, p + 5); renderTry(); };
+const tryEl = document.getElementById("try");
+function renderTry() {
+  const r = outlook(code, p);
+  ptsOut.innerHTML = `${p}<small>points</small>`;
+  minus.disabled = p <= 65; plus.disabled = p >= 90;
+  verdict.textContent = V[r.k].label + ".";
+  verdict.style.color = V[r.k].hex;
+  tryEl.style.backgroundColor = V[r.k].bg;
+  why.textContent = r.why + (r.count ? " " + r.count : "");
+}
+renderTry();
+
+tStamp.innerHTML = bigStamp("co", "SUBCLASS 189", "OCT 2026 • 70 POINTS");
+bigShift.innerHTML = shiftStamps({ p: 70, k: "co" }, { p: 80, k: "vs" });
+
+/* story progress: one segment per screen */
+const chs = [...document.querySelectorAll("section.ch")];
+progress.innerHTML = chs.map(() => "<i><b></b></i>").join("");
+const segs = [...progress.querySelectorAll("b")];
+function onScroll() {
+  const mid = innerHeight * 0.35; let dark = false;
+  chs.forEach((c, i) => { const r = c.getBoundingClientRect(); const f = Math.min(1, Math.max(0, (mid - r.top) / r.height)); segs[i].style.width = (f * 100) + "%"; if (r.top <= 10 && r.bottom > 10 && c.hasAttribute("data-dark")) dark = true; });
+  document.body.toggleAttribute("data-on-dark", dark);
+}
+addEventListener("scroll", onScroll, { passive: true }); onScroll();
+fitStamps(); document.fonts && document.fonts.ready.then(() => fitStamps());
+</script>
+</body>
+</html>

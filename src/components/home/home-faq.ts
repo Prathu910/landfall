@@ -18,7 +18,7 @@ export const HOME_FAQ: FaqItem[] = [
     answer:
       "The check counts them for you: the published 189 EOIs for your occupation with a higher score than yours, and the ones at your score, from SkillSelect data. These are counts of EOIs, not your place in a queue: ties are broken by an unpublished date of effect, and one person can hold several EOIs.",
     link: {
-      href: "/sample/#visa-189-stand",
+      href: "/sample/#charts",
       text: "See an example in the sample report",
     },
   },
