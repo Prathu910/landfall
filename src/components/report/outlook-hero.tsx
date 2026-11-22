@@ -2,6 +2,7 @@ import type { ReportOutlookView } from "@/lib/outlook/view";
 import { BigStamp } from "./big-stamp";
 import { DownloadPdfButton } from "./download-pdf-button";
 import { OurRead } from "./our-read";
+import { PassportBackground } from "./passport-background";
 import type { OurReadResult } from "./use-our-read";
 import section from "./section.module.css";
 import styles from "./outlook-hero.module.css";
@@ -17,6 +18,7 @@ export function OutlookHero({
   const { headline, stamp } = view;
   return (
     <section id="outlook" className={`${section.band} ${styles.hero}`}>
+      <PassportBackground />
       <div className={styles.text}>
         <p className={styles.who}>
           <b>{headline.who}</b> {view.whoDetail}

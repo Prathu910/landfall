@@ -6,6 +6,8 @@ The first implementation covered the federal points audit, a submitted 189 pool 
 
 ## Report redesign (21 to 22 November 2026)
 
+The approved passport security-line artwork is restored behind the opening outlook in both screen and PDF layouts, shared by sample and personal reports. It is decorative and prints independently of the browser background-graphics setting.
+
 The report was rebuilt (spec `docs/superpowers/specs/2026-11-21-report-redesign-design.md`). The table below was written against the earlier report; where it names a removed section, this list wins.
 
 **New sections, top to bottom:** the outlook hero (a big stamp label for the best visa, the headline and "Our read"); the three visa stamps (189, 190, 491); the route (which state or visa fits, with deadlines); the charts (the queue at your score and the 189 cut-off columns); "What would improve your outlook" (the biggest jump, other moves, dated losses); the evidence section (closed on screen; state panels, rule tables, "Sharpen my state outlook", the occupation comparison and the trend chart); the points page; the method note; the footer. Labels come from code: Very strong, Strong, Competitive, Long wait, Not eligible yet, Not open to you, Not currently invited, Not enough data, Too few to count. Waits and paces are estimates computed from published history and labelled as such; there are no percentage chances.

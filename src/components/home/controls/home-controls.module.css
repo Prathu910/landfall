@@ -1,0 +1,182 @@
+.action {
+  font-family: inherit;
+  font-size: var(--homepage-size-17);
+  font-weight: 650;
+  min-height: var(--homepage-size-50);
+  height: auto;
+  padding: var(--homepage-size-12) var(--homepage-size-24);
+  border-radius: 999px;
+  white-space: normal;
+  transition:
+    background 0.15s,
+    box-shadow 0.15s,
+    transform 0.15s;
+}
+.action:active {
+  transform: translateY(1px);
+}
+.primary {
+  color: var(--homepage-paper);
+  background: var(--homepage-ink);
+  border: 2px solid var(--homepage-ink);
+}
+.primary:hover {
+  color: var(--homepage-paper);
+  background: var(--homepage-color-1f3446);
+  border-color: var(--homepage-color-1f3446);
+}
+.secondary {
+  background: transparent;
+  color: var(--homepage-ink);
+  border: 2px solid var(--homepage-ink);
+}
+.secondary:hover {
+  background: var(--homepage-paper);
+  color: var(--homepage-ink);
+}
+.action:focus-visible,
+.selectInput:focus,
+.segmentInput:focus-visible + .segmentLabel {
+  outline: 3px solid var(--homepage-focus);
+  outline-offset: 3px;
+}
+.selectInput {
+  height: var(--homepage-size-50);
+  font-family: inherit;
+  font-size: var(--homepage-size-15);
+  color: var(--homepage-ink);
+  border: 1px solid var(--homepage-color-c8d2cb);
+  border-radius: var(--homepage-size-8);
+  background: var(--homepage-paper);
+}
+.selectInput:hover {
+  border-color: var(--homepage-muted);
+}
+.selectLabel {
+  font:
+    550 var(--homepage-size-13)/1.5 "Homepage Archivo",
+    Arial,
+    sans-serif;
+  margin-bottom: var(--homepage-size-11);
+  color: var(--homepage-ink);
+}
+.dropdown {
+  font-family: "Homepage Archivo", Arial, sans-serif;
+  border: 1px solid var(--homepage-rule);
+  background: var(--homepage-paper);
+  border-radius: var(--homepage-size-12);
+  box-shadow: 0 12px 28px #12202c20;
+}
+.option {
+  font-size: var(--homepage-size-14);
+  min-height: var(--homepage-size-44);
+  color: var(--homepage-ink);
+  border-radius: var(--homepage-size-6);
+}
+.option[data-combobox-selected] {
+  background: var(--homepage-ink);
+  color: var(--homepage-paper);
+}
+.option[data-combobox-active] {
+  background: var(--homepage-desk);
+  color: var(--homepage-ink);
+}
+.empty {
+  font-size: var(--homepage-size-14);
+  color: var(--homepage-muted);
+}
+.segments,
+.points {
+  font-family: inherit;
+  background: var(--homepage-color-fff9);
+  border: 1px solid var(--homepage-color-ccd6ce);
+  padding: var(--homepage-size-4);
+  gap: var(--homepage-size-3);
+  min-width: 0;
+}
+.points {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  gap: var(--homepage-size-7);
+}
+.segmentControl::before {
+  display: none;
+}
+.segmentLabel {
+  color: var(--homepage-muted);
+  font-size: var(--homepage-size-14);
+  font-weight: 550;
+  padding: var(--homepage-size-9) var(--homepage-size-12);
+  min-height: var(--homepage-size-44);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--homepage-size-3);
+  border-radius: 999px;
+}
+.segmentLabel :global(.mantine-SegmentedControl-innerLabel) > span {
+  font-size: var(--homepage-size-12);
+}
+.segmentLabel:hover {
+  color: var(--homepage-ink);
+  background: var(--homepage-color-fff9);
+}
+.segmentLabel[data-active] {
+  color: var(--homepage-paper);
+}
+.indicator {
+  background: var(--homepage-ink);
+  border-radius: 999px;
+  box-shadow: 0 1px 3px #12202c22;
+}
+.points .segmentLabel {
+  font-size: var(--homepage-size-16);
+  border: 1px solid var(--homepage-color-c8d2cb);
+  border-radius: var(--homepage-size-8);
+  min-height: var(--homepage-size-50);
+  padding-inline: var(--homepage-size-8);
+  background: var(--homepage-paper);
+}
+.points .segmentLabel[data-active] {
+  background: var(--homepage-ink);
+  border-color: var(--homepage-ink);
+}
+.points .indicator {
+  box-shadow: none;
+  border-radius: var(--homepage-size-8);
+}
+@media (max-width: 1050px) {
+  .segmentLabel :global(.mantine-SegmentedControl-innerLabel) > span {
+    display: none;
+  }
+  .segmentLabel {
+    padding-inline: var(--homepage-size-10);
+  }
+}
+@media (max-width: 760px) {
+  .action {
+    font-size: var(--homepage-size-15);
+    width: 100%;
+  }
+  .points .segmentLabel {
+    font-size: var(--homepage-size-15);
+    padding-inline: var(--homepage-size-5);
+  }
+  .points {
+    gap: var(--homepage-size-6);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .action,
+  .indicator {
+    transition: none;
+  }
+}
+
+.segmentLabel :global(.mantine-SegmentedControl-innerLabel) {
+  font-size: inherit;
+}
+.points {
+  border-radius: var(--homepage-size-8);
+}

@@ -1,0 +1,95 @@
+.page {
+  --ink: var(--brand-ink);
+  --card: var(--brand-paper);
+  --surface: var(--brand-sage);
+  --rule: var(--brand-line);
+  --muted: var(--brand-muted);
+  --slate: var(--brand-green);
+  --focus-ring: var(--brand-focus);
+  background: var(--surface);
+  color: var(--ink);
+  font: 400 1rem/1.6 var(--brand-font);
+  padding: calc(var(--brand-unit) * 8) 0 calc(var(--brand-unit) * 20);
+}
+.page h1,
+.page h2,
+.page h3 {
+  font-family: var(--brand-font);
+}
+.inner {
+  width: min(100% - 5rem, 75rem);
+  margin-inline: auto;
+}
+.eyebrow {
+  color: var(--slate);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  font-weight: 650;
+  line-height: 1.5;
+}
+.directoryHead {
+  background: url("/report-passport.svg") no-repeat right top / 45% auto;
+  padding: calc(var(--brand-unit) * 10) 0 calc(var(--brand-unit) * 8);
+}
+.directoryHead h1 {
+  max-width: 16ch;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 650;
+  letter-spacing: -0.055em;
+  margin-block: calc(var(--brand-unit) * 4);
+}
+.intro {
+  max-width: 44rem;
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.directoryMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--brand-unit) * 2) calc(var(--brand-unit) * 6);
+  margin-top: calc(var(--brand-unit) * 6);
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+.directoryNote {
+  border-top: var(--brand-rule-width) solid var(--rule);
+  padding-top: calc(var(--brand-unit) * 8);
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: calc(var(--brand-unit) * 4) calc(var(--brand-unit) * 12);
+}
+.directoryNote h2 {
+  font-size: 1.75rem;
+  line-height: 1.15;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+}
+.directoryNote p {
+  color: var(--muted);
+}
+.directoryNote a {
+  grid-column: 2;
+  text-decoration: underline;
+  text-underline-offset: var(--brand-unit);
+  font-weight: 600;
+}
+@media (max-width: 760px) {
+  .inner {
+    width: calc(100% - 2rem);
+  }
+  .page {
+    padding-top: calc(var(--brand-unit) * 5);
+  }
+  .directoryHead {
+    background: url("/report-passport.svg") no-repeat right top / 45% auto;
+    padding-top: calc(var(--brand-unit) * 5);
+  }
+  .directoryNote {
+    grid-template-columns: minmax(0, 1fr);
+    gap: calc(var(--brand-unit) * 4);
+  }
+  .directoryNote a {
+    grid-column: auto;
+  }
+}

@@ -12,6 +12,33 @@ export const PALETTE = {
   rule: "#DDD4C2",
 } as const;
 
+/** Approved passport check colours, scoped through --check-* CSS tokens. */
+export const CHECK_PALETTE = {
+  ink: "#12202c",
+  muted: "#52616a",
+  sage: "#eef2f0",
+  paper: "#ffffff",
+  line: "#d5ded8",
+  soft: "#f7f9f7",
+  green: "#3b6551",
+  greenSoft: "#e6eee8",
+  focus: "#315c87",
+  error: "#b42318",
+} as const;
+
+/** Shared shell only; existing page themes retain their own tokens. */
+export const SHELL_PALETTE = {
+  ink: "#12202c",
+  paper: "#ffffff",
+  sage: "#eef2f0",
+  muted: "#52616a",
+  line: "#d5ded8",
+  green: "#3b6551",
+  onDark: "#c4d0d0",
+  darkLine: "#41525b",
+  focus: "#315c87",
+} as const;
+
 /** Report status chips. Every status also shows its label, never colour alone. */
 export const STATUS = {
   strongest: { fg: "#1F5136", bg: "#DDEBDF" },
@@ -61,6 +88,25 @@ export const TEXT_PAIRS: {
     bg,
   })),
   { name: "question line", fg: QUESTION_LINE.fg, bg: QUESTION_LINE.bg },
+  ...(["ink", "muted", "green"] as const).flatMap((foreground) =>
+    (["paper", "sage"] as const).map((surface) => ({
+      name: `shell ${foreground} on ${surface}`,
+      fg: SHELL_PALETTE[foreground],
+      bg: SHELL_PALETTE[surface],
+    })),
+  ),
+  ...(["paper", "onDark"] as const).map((foreground) => ({
+    name: `shell ${foreground} on ink`,
+    fg: SHELL_PALETTE[foreground],
+    bg: SHELL_PALETTE.ink,
+  })),
+  ...(["ink", "muted", "green", "error"] as const).flatMap((foreground) =>
+    (["paper", "sage", "soft", "greenSoft"] as const).map((surface) => ({
+      name: `check ${foreground} on ${surface}`,
+      fg: CHECK_PALETTE[foreground],
+      bg: CHECK_PALETTE[surface],
+    })),
+  ),
 ];
 
 /** Focus ring colours. Dark containers switch to the on-dark ring. */

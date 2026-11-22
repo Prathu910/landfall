@@ -1,26 +1,20 @@
-// Pure geometry for the logo mark. No CSS imports, so scripts can use it.
+import { SHELL_PALETTE } from "../../lib/brand/palette";
 
+/** Open lens: a clear aperture and a bearing toward the upper right. */
 export const MARK_COLOURS = {
-  ink: "#1B1A17",
-  reversed: "#F3EEE3",
-  accent: "#D9731A",
+  ink: SHELL_PALETTE.ink,
+  reversed: SHELL_PALETTE.paper,
 } as const;
 
-export const MARK_RING = { cx: 24, cy: 24, r: 18, strokeWidth: 3.5 } as const;
+export const MARK_VIEWBOX = "0 0 48 48";
+export const MARK_PATHS = ["M40 18 A17 17 0 1 1 30 8", "M24 24 L40 8"] as const;
+export const MARK_STROKE = 4.5;
 
-/** Three bars, bottom-aligned at y=33. The tallest is the saffron accent. */
-export const MARK_BARS = [
-  { x: 15, y: 25, width: 4.5, height: 8, accent: false },
-  { x: 21.75, y: 20, width: 4.5, height: 13, accent: false },
-  { x: 28.5, y: 15, width: 4.5, height: 18, accent: true },
-] as const;
+/** Shared by downloadable assets, the favicon and the social-image renderer. */
+export function markSvgBody(colour: string = MARK_COLOURS.ink): string {
+  return `<g fill="none" stroke="${colour}" stroke-width="${MARK_STROKE}" stroke-linecap="round" stroke-linejoin="round">${MARK_PATHS.map((d) => `<path d="${d}"/>`).join("")}</g>`;
+}
 
-/** Heavier ring and square bars so the mark holds up at 16 and 24px. */
-export const FAVICON_MARK = {
-  ring: { ...MARK_RING, strokeWidth: 5 },
-  bars: [
-    { x: 14, y: 24, width: 6, height: 10, accent: false },
-    { x: 21, y: 19, width: 6, height: 15, accent: false },
-    { x: 28, y: 14, width: 6, height: 20, accent: true },
-  ],
-} as const;
+export function faviconSvg(): string {
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${MARK_VIEWBOX}"><rect width="48" height="48" rx="12" fill="${SHELL_PALETTE.sage}"/>${markSvgBody()}</svg>\n`;
+}

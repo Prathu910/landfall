@@ -1,0 +1,109 @@
+.card {
+  padding: calc(var(--brand-unit) * 7);
+  background: var(--card);
+  border: var(--brand-rule-width) solid var(--rule);
+  border-radius: calc(var(--brand-unit) * 3);
+}
+.eyebrow {
+  color: var(--slate);
+  font-size: 0.75rem;
+  font-weight: 650;
+  letter-spacing: 0.1em;
+}
+.card h2 {
+  font: 650 1.75rem/1.1 var(--brand-font);
+  letter-spacing: -0.04em;
+  margin: calc(var(--brand-unit) * 3) 0 calc(var(--brand-unit) * 5);
+}
+.occupation {
+  font-size: 1rem;
+  font-weight: 550;
+  margin-bottom: calc(var(--brand-unit) * 6);
+  line-height: 1.4;
+}
+.occupation span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.8125rem;
+  font-weight: 400;
+  margin-top: var(--brand-unit);
+}
+.input {
+  color: var(--ink);
+  background: var(--surface);
+  border-color: var(--brand-muted);
+  border-radius: calc(var(--brand-unit) * 2);
+  min-height: calc(var(--brand-unit) * 13);
+  font: inherit;
+}
+.label {
+  font-size: 1rem;
+  color: var(--ink);
+}
+.description {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.option {
+  font-family: var(--brand-font);
+  font-size: 1rem;
+}
+.results {
+  margin-block: calc(var(--brand-unit) * 5);
+}
+.results dl {
+  margin: 0;
+}
+.results dl > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: calc(var(--brand-unit) * 3);
+  padding-block: calc(var(--brand-unit) * 3);
+  border-bottom: var(--brand-rule-width) solid var(--rule);
+}
+.results dt {
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+.results dd {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  white-space: nowrap;
+  letter-spacing: -0.04em;
+}
+.note {
+  color: var(--muted);
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  margin-top: calc(var(--brand-unit) * 4);
+}
+.cta {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: calc(var(--brand-unit) * 2);
+  background: var(--ink);
+  color: var(--card);
+  font-size: 1rem;
+  font-weight: 550;
+  border-radius: var(--brand-pill);
+  min-height: calc(var(--brand-unit) * 13);
+  padding: calc(var(--brand-unit) * 3) calc(var(--brand-unit) * 4);
+  margin-bottom: calc(var(--brand-unit) * 3);
+}
+.cta:hover {
+  background: var(--brand-green);
+}
+@media (max-width: 760px) {
+  .card {
+    padding: calc(var(--brand-unit) * 6);
+  }
+  .results dt,
+  .note,
+  .description {
+    font-size: 1rem;
+  }
+}

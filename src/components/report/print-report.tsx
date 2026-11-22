@@ -8,6 +8,7 @@ import { CutoffColumns } from "./cutoff-columns";
 import { ImproveSection } from "./improve-section";
 import { MethodNote } from "./method-note";
 import { OurRead } from "./our-read";
+import { PassportBackground } from "./passport-background";
 import { PointsPage } from "./points-page";
 import { PrintAppendix } from "./print-appendix";
 import { QueueSquares } from "./queue-squares";
@@ -53,6 +54,7 @@ function PrintHero({
   const { headline, stamp } = view;
   return (
     <section className={styles.hero}>
+      <PassportBackground print />
       <div className={styles.heroText}>
         <p className={styles.who}>
           <b>{headline.who}</b> {view.whoDetail}

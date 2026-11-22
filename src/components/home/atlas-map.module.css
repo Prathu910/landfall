@@ -1,0 +1,30 @@
+.tool,
+.state {
+  font-family: inherit;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+}
+.tool:hover,
+.state:hover {
+  background: var(--homepage-paper);
+  border-color: var(--homepage-muted);
+}
+.tool:focus-visible,
+.state:focus-visible {
+  outline: 3px solid var(--homepage-focus);
+  outline-offset: 3px;
+}
+.state[aria-pressed="true"]:hover {
+  background: var(--homepage-color-1f3446);
+  color: var(--homepage-paper);
+}
+.tool:disabled {
+  color: var(--homepage-muted);
+}
+@media (prefers-reduced-motion: reduce) {
+  .tool,
+  .state {
+    transition: none;
+  }
+}

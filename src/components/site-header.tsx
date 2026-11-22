@@ -2,78 +2,105 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowUpRight } from "lucide-react";
-import { Burger, Drawer, Button } from "@mantine/core";
+import { Burger, Drawer } from "@mantine/core";
 import { Brand } from "@/components/brand/brand";
+import { isNavigationActive, SITE_NAVIGATION } from "./site-navigation";
+import styles from "./site-header.module.css";
 
 export function SiteHeader() {
   const path = usePathname();
   const [open, setOpen] = useState(false);
-  const links = [
-    ["/occupations/", "Occupations"],
-    ["/sample/", "Sample report"],
-    ["/states/", "States"],
-    ["/methodology/", "Method"],
-  ];
-  const navLinks = links.map(([href, label]) => (
+  const close = () => setOpen(false);
+
+  useEffect(() => {
+    const desktop = window.matchMedia("(min-width: 1041px)");
+    const closeOnDesktop = () => {
+      if (desktop.matches) setOpen(false);
+    };
+    desktop.addEventListener("change", closeOnDesktop);
+    return () => desktop.removeEventListener("change", closeOnDesktop);
+  }, []);
+
+  const navLinks = SITE_NAVIGATION.map(({ href, label }) => (
     <Link
       key={href}
       href={href}
-      onClick={() => setOpen(false)}
-      aria-current={
-        path === href || path === href.slice(0, -1) ? "page" : undefined
-      }
+      onClick={close}
+      aria-current={isNavigationActive(path, href) ? "page" : undefined}
     >
       {label}
     </Link>
   ));
   return (
-    <header className="site-header">
-      <div className="header-inner">
-        <Brand />
-        <nav className="main-nav" aria-label="Main navigation">
-          {navLinks}
-        </nav>
-        <Button
-          component={Link}
-          href="/check/"
-          className="header-cta"
-          color="ink.9"
-          size="sm"
-          rightSection={<ArrowUpRight size={14} />}
-        >
-          Check my points
-        </Button>
-        <Burger
-          className="menu-button"
-          opened={open}
-          onClick={() => setOpen(!open)}
-          aria-label={open ? "Close navigation" : "Open navigation"}
-          size="sm"
-        />
-      </div>
+    <>
+      <header className={`site-header ${styles.header}`}>
+        <div className={styles.inner}>
+          <Brand />
+          <nav className={styles.navigation} aria-label="Main navigation">
+            {navLinks}
+          </nav>
+          <Link
+            href="/check/"
+            className={`${styles.cta} ${styles.desktopCta}`}
+            aria-current={
+              isNavigationActive(path, "/check/") ? "page" : undefined
+            }
+          >
+            Check my points <ArrowUpRight size={17} aria-hidden />
+          </Link>
+          <Burger
+            className={styles.burger}
+            opened={open}
+            onClick={() => setOpen(!open)}
+            aria-label={open ? "Close navigation" : "Open navigation"}
+            aria-expanded={open}
+            aria-controls="site-navigation-body"
+            size={22}
+            color="var(--brand-ink)"
+          />
+        </div>
+      </header>
       <Drawer
+        id="site-navigation"
         opened={open}
-        onClose={() => setOpen(false)}
-        title={<Brand />}
-        size="xs"
+        onClose={close}
+        title={<Brand onClick={close} />}
+        size="min(100%, 420px)"
         position="right"
-        overlayProps={{ backgroundOpacity: 0.25, blur: 3 }}
+        classNames={{
+          root: styles.drawerRoot,
+          content: styles.drawer,
+          header: styles.drawerHeader,
+          body: styles.drawerBody,
+          close: styles.close,
+        }}
+        closeButtonProps={{ "aria-label": "Close navigation" }}
+        overlayProps={{ backgroundOpacity: 0.35, blur: 2 }}
+        trapFocus
+        returnFocus
+        lockScroll
+        closeOnEscape
       >
-        <nav className="mobile-nav" aria-label="Mobile navigation">
+        <p className={styles.drawerLabel}>Explore MigrateLens</p>
+        <nav className={styles.mobileNavigation} aria-label="Mobile navigation">
           {navLinks}
         </nav>
-        <Button
-          component={Link}
+        <Link
           href="/check/"
-          onClick={() => setOpen(false)}
-          fullWidth
-          mt="xl"
+          onClick={close}
+          className={styles.cta}
+          aria-current={
+            isNavigationActive(path, "/check/") ? "page" : undefined
+          }
         >
-          Check my points
-        </Button>
+          Check my points <ArrowUpRight size={18} aria-hidden />
+        </Link>
+        <p className={styles.drawerNote}>
+          Your points, with published SkillSelect data to put them in context.
+        </p>
       </Drawer>
-    </header>
+    </>
   );
 }

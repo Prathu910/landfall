@@ -62,6 +62,9 @@
 }
 
 .hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 230px;
   gap: 18px;

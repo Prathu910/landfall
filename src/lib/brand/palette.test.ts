@@ -3,6 +3,8 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { contrastRatio } from "./contrast";
 import {
+  CHECK_PALETTE,
+  SHELL_PALETTE,
   FOCUS_RING,
   LABEL_PAIRS,
   PALETTE,
@@ -63,6 +65,12 @@ describe("globals.css", () => {
   it("mirrors the palette", () => {
     for (const [key, value] of Object.entries(PALETTE)) {
       expect(hasToken(kebab(key), value), key).toBe(true);
+    }
+    for (const [key, value] of Object.entries(SHELL_PALETTE)) {
+      expect(hasToken(`brand-${kebab(key)}`, value), key).toBe(true);
+    }
+    for (const [key, value] of Object.entries(CHECK_PALETTE)) {
+      expect(hasToken(`check-${kebab(key)}`, value), key).toBe(true);
     }
   });
   it("mirrors the status colours", () => {

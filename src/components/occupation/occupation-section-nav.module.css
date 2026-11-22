@@ -1,0 +1,34 @@
+.sections {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--brand-unit) * 2);
+  padding-block: calc(var(--brand-unit) * 6) calc(var(--brand-unit) * 10);
+}
+.sections a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--brand-target);
+  padding: calc(var(--brand-unit) * 2) calc(var(--brand-unit) * 4);
+  border: var(--brand-rule-width) solid var(--rule);
+  border-radius: var(--brand-pill);
+  font-size: 0.875rem;
+  background: var(--card);
+}
+.sections a:hover {
+  border-color: var(--ink);
+}
+@media (max-width: 760px) {
+  .sections {
+    padding-bottom: calc(var(--brand-unit) * 7);
+    gap: var(--brand-unit);
+  }
+  .sections a {
+    font-size: 0.875rem;
+    padding-inline: calc(var(--brand-unit) * 3);
+  }
+}
+@media print {
+  .sections {
+    display: none;
+  }
+}

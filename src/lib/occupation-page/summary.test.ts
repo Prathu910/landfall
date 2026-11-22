@@ -134,8 +134,8 @@ describe("statusChips", () => {
   it("shows the 189 status and the federal list", () => {
     expect(statusChips(core261313, federal)).toEqual([
       { label: "189: No recent invitations", tone: "red" },
-      { label: "190 eligible", tone: "neutral" },
-      { label: "491 eligible", tone: "neutral" },
+      { label: "190: on federal list", tone: "neutral" },
+      { label: "491: on federal list", tone: "neutral" },
     ]);
   });
   it("flags a code that is not on the federal list", () => {

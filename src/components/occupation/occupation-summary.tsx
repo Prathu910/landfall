@@ -15,6 +15,11 @@ export function OccupationSummary({
       <h2 id="what-data-says" className={styles.eyebrow}>
         What the data says
       </h2>
+      {sentences.map((sentence, i) => (
+        <p key={sentence} className={i === 0 ? styles.headline : styles.detail}>
+          {sentence}
+        </p>
+      ))}
       {chips.length > 0 && (
         <ul className={styles.chips}>
           {chips.map((chip) => (
@@ -27,11 +32,6 @@ export function OccupationSummary({
           ))}
         </ul>
       )}
-      {sentences.map((sentence, i) => (
-        <p key={sentence} className={i === 0 ? styles.headline : styles.detail}>
-          {sentence}
-        </p>
-      ))}
       <p className={styles.source}>{sourceLine}</p>
     </section>
   );

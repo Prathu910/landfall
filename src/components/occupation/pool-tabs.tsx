@@ -48,7 +48,14 @@ export function PoolTabs({
             onClick={() => setActive(visa)}
             onKeyDown={(e) => onKeyDown(e, i)}
           >
-            {visa}
+            <b>{visa}</b>
+            <span>
+              {visa === "189"
+                ? "Independent"
+                : visa === "190"
+                  ? "State nominated"
+                  : "Provisional"}
+            </span>
           </button>
         ))}
       </div>
@@ -81,7 +88,14 @@ function Panel({
   return (
     <>
       {total && <p className={styles.total}>{total}</p>}
-      <ul className={styles.bars}>
+      <div className={styles.axis}>
+        <span>Points</span>
+        <span>Submitted EOIs</span>
+      </div>
+      <ul
+        className={styles.bars}
+        aria-label="Published EOI counts by points score"
+      >
         {bars.map((bar) => (
           <li key={bar.score} className={styles.row}>
             <span className={styles.score}>{bar.score}</span>
@@ -95,6 +109,10 @@ function Panel({
           </li>
         ))}
       </ul>
+      <p className={styles.note}>
+        Hatched bars show masked counts of under 20 (0–19); their width uses 19.
+        Bars are scaled within this visa, not across visas.
+      </p>
     </>
   );
 }

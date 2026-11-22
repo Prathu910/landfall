@@ -1,10 +1,22 @@
 import Link from "next/link";
 import { Logo } from "./logo";
+import styles from "./logo.module.css";
 
-/** The logo lockup as the home link, for the header and the footer. */
-export function Brand({ reversed = false }: { reversed?: boolean }) {
+/** The SVG is decorative within this explicitly named home link. */
+export function Brand({
+  reversed = false,
+  onClick,
+}: {
+  reversed?: boolean;
+  onClick?: () => void;
+}) {
   return (
-    <Link className="brand" href="/" aria-label="MigrateLens home">
+    <Link
+      className={`${styles.link} ${reversed ? styles.linkReversed : ""}`}
+      href="/"
+      aria-label="MigrateLens home"
+      onClick={onClick}
+    >
       <Logo reversed={reversed} />
     </Link>
   );

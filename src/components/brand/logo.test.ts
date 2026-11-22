@@ -1,30 +1,47 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { FAVICON_MARK, MARK_BARS, MARK_COLOURS, MARK_RING } from "./logo";
+import { renderToStaticMarkup } from "react-dom/server";
+import { createElement } from "react";
+import { LogoMark } from "./logo";
+import {
+  faviconSvg,
+  MARK_COLOURS,
+  MARK_PATHS,
+  markSvgBody,
+} from "./mark-geometry";
 
-describe("C1 logo geometry", () => {
-  it("draws a ring at r=18 with a 3.5 stroke", () => {
-    expect(MARK_RING).toEqual({ cx: 24, cy: 24, r: 18, strokeWidth: 3.5 });
+const read = (path: string) => readFileSync(path, "utf8");
+
+describe("open lens identity", () => {
+  it("keeps exported marks and the favicon in sync with shared geometry", () => {
+    expect(read("src/app/icon.svg")).toBe(faviconSvg());
+    for (const [file, colour] of [
+      ["mark-ink.svg", MARK_COLOURS.ink],
+      ["mark-reversed.svg", MARK_COLOURS.reversed],
+    ] as const) {
+      expect(read(`public/brand/${file}`)).toContain(markSvgBody(colour));
+    }
   });
-
-  it("draws three bars bottom-aligned at y=33, the last in saffron", () => {
-    expect(MARK_BARS).toEqual([
-      { x: 15, y: 25, width: 4.5, height: 8, accent: false },
-      { x: 21.75, y: 20, width: 4.5, height: 13, accent: false },
-      { x: 28.5, y: 15, width: 4.5, height: 18, accent: true },
-    ]);
-    for (const bar of MARK_BARS) expect(bar.y + bar.height).toBe(33);
+  it("renders the same single-ink geometry at favicon and lockup sizes", () => {
+    for (const size of [16, 24, 32]) {
+      const svg = renderToStaticMarkup(createElement(LogoMark, { size }));
+      expect(svg).toContain(`width="${size}"`);
+      for (const path of MARK_PATHS) expect(svg).toContain(`d="${path}"`);
+      expect(svg).toContain('aria-hidden="true"');
+      expect(svg).not.toContain("<title>");
+    }
   });
-
-  it("uses the Data Desk colours", () => {
-    expect(MARK_COLOURS.ink).toBe("#1B1A17");
-    expect(MARK_COLOURS.reversed).toBe("#F3EEE3");
-    expect(MARK_COLOURS.accent).toBe("#D9731A");
-  });
-
-  it("has a favicon variant with a 5 stroke and square bars", () => {
-    expect(FAVICON_MARK.ring.strokeWidth).toBe(5);
-    expect(FAVICON_MARK.bars.map((b) => b.x)).toEqual([14, 21, 28]);
-    expect(FAVICON_MARK.bars.map((b) => b.width)).toEqual([6, 6, 6]);
-    expect(FAVICON_MARK.bars.map((b) => b.height)).toEqual([10, 15, 20]);
+  it("provides a text alternative when the mark is used on its own", () => {
+    const svg = renderToStaticMarkup(
+      createElement(LogoMark, {
+        reversed: true,
+        title: "MigrateLens open lens mark",
+      }),
+    );
+    expect(svg).toContain('role="img"');
+    expect(svg).toContain('aria-label="MigrateLens open lens mark"');
+    expect(svg).toContain(`<title>MigrateLens open lens mark</title>`);
+    expect(svg).toContain(`stroke="${MARK_COLOURS.reversed}"`);
+    expect(svg).not.toContain('aria-hidden="true"');
   });
 });

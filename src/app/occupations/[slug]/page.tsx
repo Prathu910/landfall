@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { occupationIndex } from "@/components/data/occupation-index";
 import { stateRuleData } from "@/components/data/state-rule-data";
-import { TryIt } from "@/components/home/try-it";
+import { OccupationEvidenceFooter } from "@/components/occupation/occupation-evidence-footer";
+import { OccupationSectionNav } from "@/components/occupation/occupation-section-nav";
+import { OccupationCheckPanel } from "@/components/occupation/occupation-check-panel";
+import shell from "@/components/occupation/occupation-shell.module.css";
 import { CohortBars } from "@/components/occupation/cohort-bars";
 import { OccupationFaq } from "@/components/occupation/occupation-faq";
 import { OccupationSummary } from "@/components/occupation/occupation-summary";
@@ -102,79 +105,146 @@ export default async function OccupationPage({ params }: Props) {
   ) as Record<Visa, string | null>;
 
   return (
-    <main id="main" className="container">
-      <nav className={styles.crumb} aria-label="Breadcrumb">
-        <Link href="/occupations/">Occupations</Link>
-        <span aria-hidden="true"> › </span>
-        <span aria-current="page">{name}</span>
-      </nav>
-      <h1 className={styles.title}>
-        {name} ({code})
-      </h1>
-      <p className={styles.subtitle}>
-        Australian skilled visas: 189, 190 and 491 EOIs, cut-offs and
-        invitations · as at {formatMonth(core.asAt)}
-      </p>
-      <OccupationSummary
-        chips={statusChips(core, stateRuleData.federal)}
-        sentences={sentences}
-        sourceLine={sourceLine(core)}
-      />
-      <div className={styles.grid}>
-        <div className={styles.main}>
-          <section aria-labelledby="pool-heading" className={styles.block}>
-            <h2 id="pool-heading">EOIs waiting, by points</h2>
-            <PoolTabs pools={pools} totals={totals} />
-          </section>
-          {has189Rounds(core) && (
-            <section aria-labelledby="rounds-heading" className={styles.block}>
-              <h2 id="rounds-heading">Recent 189 rounds</h2>
-              <RoundCards
-                cards={roundCards(core.rounds189)}
-                note={roundsNote(core.rounds189)}
-              />
+    <main id="main" className={shell.page}>
+      <div className={shell.inner}>
+        <nav className={styles.crumb} aria-label="Breadcrumb">
+          <Link href="/occupations/">Occupations</Link>
+          <span aria-hidden="true"> › </span>
+          <span aria-current="page">{name}</span>
+        </nav>
+        <header className={styles.header}>
+          <div>
+            <p className={shell.eyebrow}>
+              AUSTRALIAN SKILLED MIGRATION · OCCUPATION RECORD
+            </p>
+            <h1 className={styles.title}>{name}</h1>
+            <p className={styles.code}>ANZSCO {code}</p>
+            <p className={styles.subtitle}>
+              189 & 190 permanent visas · 491 provisional visa
+            </p>
+          </div>
+          <dl className={styles.recordDate}>
+            <div>
+              <dt>DATA SNAPSHOT</dt>
+              <dd>{formatMonth(core.asAt)}</dd>
+            </div>
+            <div>
+              <dt>LAST UPDATED</dt>
+              <dd>{formatDate(manifest.checkedAt)}</dd>
+            </div>
+          </dl>
+        </header>
+        <OccupationSummary
+          chips={statusChips(core, stateRuleData.federal)}
+          sentences={sentences}
+          sourceLine={sourceLine(core)}
+        />
+        <OccupationSectionNav
+          hasRounds={has189Rounds(core)}
+          hasCohorts={Boolean(cohorts)}
+        />
+        <div className={styles.grid}>
+          <aside className={styles.side}>
+            <OccupationCheckPanel core={core} />
+          </aside>
+          <div className={styles.main}>
+            <section aria-labelledby="pool-heading" className={styles.block}>
+              <p className={styles.sectionLabel}>THE PUBLISHED POOL</p>
+              <h2 id="pool-heading">Where the points sit.</h2>
+              <p className={styles.sectionIntro}>
+                Submitted EOIs by points score, as at {formatMonth(core.asAt)}.
+                Each visa has its own pool; EOIs can appear in more than one.
+              </p>
+              <PoolTabs pools={pools} totals={totals} />
             </section>
-          )}
-          {cohorts && (
-            <section aria-labelledby="cohort-heading" className={styles.block}>
-              <h2 id="cohort-heading">Where recent 189 EOIs stand now</h2>
-              <CohortBars rows={cohorts} note={cohortNote(name, cohorts)} />
+            {has189Rounds(core) && (
+              <section
+                aria-labelledby="rounds-heading"
+                className={styles.block}
+              >
+                <p className={styles.sectionLabel}>NATIONAL INVITATIONS</p>
+                <h2 id="rounds-heading">Recent 189 rounds.</h2>
+                <p className={styles.sectionIntro}>
+                  Published minimum points for this occupation. “Not listed” is
+                  an absent occupation row, not a zero-point cut-off.
+                </p>
+                <RoundCards
+                  cards={roundCards(core.rounds189)}
+                  note={roundsNote(core.rounds189)}
+                />
+              </section>
+            )}
+            {cohorts && (
+              <section
+                aria-labelledby="cohort-heading"
+                className={styles.block}
+              >
+                <p className={styles.sectionLabel}>
+                  FOLLOW THE SUBMISSION MONTHS
+                </p>
+                <h2 id="cohort-heading">Where recent 189 EOIs stand.</h2>
+                <p className={styles.sectionIntro}>
+                  {cohortNote(name, cohorts)}
+                </p>
+                <details className={styles.disclosure}>
+                  <summary>See outcomes by submission month</summary>
+                  <div className={styles.disclosureBody}>
+                    <CohortBars
+                      rows={cohorts}
+                      note="A snapshot of EOI statuses, not the number of invitations issued during each month. Closed does not establish whether an EOI expired, was withdrawn or had another outcome. Masked segments use the published upper bound for their visual width."
+                    />
+                  </div>
+                </details>
+              </section>
+            )}
+            <section aria-labelledby="states-heading" className={styles.block}>
+              <p className={styles.sectionLabel}>190 & PROVISIONAL 491</p>
+              <h2 id="states-heading">Look at the state evidence.</h2>
+              <p className={styles.sectionIntro}>
+                A list entry is one part of the rules, not a finding that you
+                are eligible. State nomination has separate residence, work and
+                other requirements. National 189 rounds do not describe 190 or
+                491 invitations.
+              </p>
+              <details className={styles.disclosure} open>
+                <summary>Compare all eight states & territories</summary>
+                <div className={styles.disclosureBody}>
+                  <StateTable
+                    rows={rows}
+                    invitedHeading={invitedHeading(core)}
+                  />
+                </div>
+              </details>
             </section>
-          )}
-          <section aria-labelledby="states-heading" className={styles.block}>
-            <h2 id="states-heading">State nomination</h2>
-            <StateTable rows={rows} invitedHeading={invitedHeading(core)} />
-          </section>
-          <section aria-labelledby="faq-heading" className={styles.block}>
-            <h2 id="faq-heading">Common questions</h2>
-            <OccupationFaq items={faq} />
-          </section>
-          <RelatedOccupations
-            items={relatedOccupations(code, occupationIndex)}
-            unitGroup={code.slice(0, 4)}
-          />
+            <section aria-labelledby="faq-heading" className={styles.block}>
+              <p className={styles.sectionLabel}>THE USEFUL DETAILS</p>
+              <h2 id="faq-heading">Common questions.</h2>
+              <OccupationFaq items={faq} />
+            </section>
+            <RelatedOccupations
+              items={relatedOccupations(code, occupationIndex)}
+              unitGroup={code.slice(0, 4)}
+            />
+          </div>
         </div>
-        <aside className={styles.side}>
-          <TryIt defaultOccupation={code} currentCode={code} />
-          <Link href={`/check/?occupation=${code}`} className={styles.cta}>
-            Check my points, free
-          </Link>
-        </aside>
+        <OccupationEvidenceFooter
+          code={code}
+          sourceText={sourceLine(core)}
+          checkedAt={manifest.checkedAt}
+          sources={manifest.sources}
+          snapshotId={manifest.snapshotId}
+          federalCheckedAt={stateRuleData.federal?.checkedAt}
+        />
+        {occupationJsonLd(core, faq, sentences, manifest.checkedAt).map(
+          (obj, i) => (
+            <script
+              key={i}
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{ __html: jsonLd(obj) }}
+            />
+          ),
+        )}
       </div>
-      <p className={styles.sources}>
-        {sourceLine(core)}. Last updated {formatDate(manifest.checkedAt)}.
-        General information, not migration advice. MigrateLens is not a
-        registered migration agent.
-      </p>
-      {occupationJsonLd(core, faq, sentences, manifest.checkedAt).map(
-        (obj, i) => (
-          <script
-            key={i}
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: jsonLd(obj) }}
-          />
-        ),
-      )}
     </main>
   );
 }

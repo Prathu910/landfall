@@ -1,24 +1,37 @@
+.link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--brand-target);
+  flex-shrink: 0;
+  border-radius: var(--brand-radius-small);
+  --focus-ring: var(--brand-focus);
+}
+.linkReversed {
+  --focus-ring: var(--focus-ring-on-dark);
+}
 .logo {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  color: var(--ink);
+  gap: calc(var(--brand-unit) * 2);
+  color: var(--brand-ink);
 }
-
 .reversed {
-  color: var(--newsprint);
+  color: var(--brand-paper);
 }
-
 .wordmark {
-  font-family: var(--serif);
-  font-weight: 600;
-  font-size: 26px;
-  letter-spacing: -0.01em;
+  font-family: var(--brand-font);
+  font-weight: 680;
+  font-size: var(--brand-size-24);
+  font-stretch: 106%;
+  letter-spacing: -0.065em;
   line-height: 1;
 }
-
-@media (max-width: 480px) {
+.lens {
+  font-weight: 450;
+  letter-spacing: -0.055em;
+}
+@media (max-width: 600px) {
   .wordmark {
-    font-size: 22px;
+    font-size: var(--brand-size-22);
   }
 }
