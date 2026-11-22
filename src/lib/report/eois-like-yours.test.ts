@@ -88,6 +88,25 @@ describe("buildEoisLikeYours", () => {
     expect(r.sentence).toContain(`Of the ${formatInterval(sum)} `);
   });
 
+  it("reads a total of masked counts as under N, never 0–38 (ruling R20)", () => {
+    const r = ready(
+      buildEoisLikeYours({
+        ...base,
+        detail: {
+          ...detail,
+          cohorts: {
+            "189": {
+              older: {},
+              "2025-02": nurseCohort("<20", "<20", "0", "0", "0"),
+            },
+          },
+        },
+        submittedMonth: "2025-02",
+      }),
+    );
+    expect(r.sentence).toMatch(/^Of the under 39 Registered Nurses nec EOIs /);
+  });
+
   it("leaves on hold out of the key when it is zero", () => {
     const r = ready(
       buildEoisLikeYours({
