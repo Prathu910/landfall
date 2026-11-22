@@ -135,10 +135,11 @@ type Ranked = { candidate: Scored; move: Move };
 function buildMoves(
   input: OutlookInput,
   base: ProfileOutlook,
+  scored: Scored[],
   markBest: boolean,
 ): Move[] {
   const note = input.profile.eoiDate ? LODGED_NOTE : "";
-  const ranked: Ranked[] = scoreCandidates(input, base)
+  const ranked: Ranked[] = scored
     .map((c) => ({
       candidate: c,
       move: toMove(c.id, c.name, c.detail + note, c.outlook, base),
@@ -182,8 +183,8 @@ function openerOf(base: ProfileOutlook, moves: Move[]): Move | null {
   return best ?? moves.find((m) => m.to.label !== "not-eligible") ?? null;
 }
 
-function plainLines(input: OutlookInput, base: ProfileOutlook): string[] {
-  return scoreCandidates(input, base).map((c) => {
+function plainLines(base: ProfileOutlook, scored: Scored[]): string[] {
+  return scored.map((c) => {
     const after = c.outlook.points.base;
     const added = after - base.points.base;
     if (added === 0) return `${c.name}. Keeps you at ${after}.`;
@@ -212,8 +213,16 @@ export function buildImprove(
   base: ProfileOutlook,
 ): Improve {
   const mode = modeOf(input, base);
-  const all = buildMoves(input, base, mode === "improve");
   const shown = mode === "improve" || mode === "points-not-problem";
+  // Each candidate is a full re-evaluation, so it runs once and only when
+  // something reads it: shown moves, plain lines or the opener.
+  const needOpener = base.v189.label === "not-eligible";
+  const scored =
+    shown || mode === "plain" || needOpener ? scoreCandidates(input, base) : [];
+  const all =
+    shown || needOpener
+      ? buildMoves(input, base, scored, mode === "improve")
+      : [];
   return {
     mode,
     banner: bannerOf(mode, base),
@@ -223,7 +232,7 @@ export function buildImprove(
       eligible: base.points.eligible,
       label: base.v189.label,
     }),
-    plain: mode === "plain" ? plainLines(input, base) : [],
+    plain: mode === "plain" ? plainLines(base, scored) : [],
     opener: openerOf(base, all),
   };
 }
