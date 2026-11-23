@@ -7,7 +7,7 @@ import {
   SCENARIOS,
   type ScenarioId,
 } from "./__fixtures__/scenarios";
-import { higherScoreCount, label189 } from "./label-189";
+import { higherScoreCount, label189, stateVisasOnList } from "./label-189";
 
 const AS_OF = "2026-11-21";
 const core = (code: string) => {
@@ -241,5 +241,16 @@ describe("label189 for an occupation off the Home Affairs 189 list", () => {
       label189({ points: 80, eligible: true, core: nurse, listed189: true })
         .label,
     ).toBe("very-strong");
+  });
+});
+
+describe("stateVisasOnList", () => {
+  it("lists the state visas the federal list has, 190 first", () => {
+    const on = (federal190: boolean, federal491: boolean) =>
+      stateVisasOnList({ federal190, federal491 });
+    expect(on(true, true)).toEqual(["190", "491"]);
+    expect(on(false, true)).toEqual(["491"]);
+    expect(on(true, false)).toEqual(["190"]);
+    expect(on(false, false)).toEqual([]);
   });
 });

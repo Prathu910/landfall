@@ -1,4 +1,4 @@
-import type { Interval, OccupationCore, Visa } from "../data/types";
+import type { Interval, OccupationCore, StateVisa, Visa } from "../data/types";
 import { parseCountText, sumIntervals } from "../data/published-count";
 import { requirementWhy } from "./eligibility";
 import { labelName, stampName } from "./labels";
@@ -25,6 +25,20 @@ export const OFF_LIST_WHY =
   "This occupation isn't on the Home Affairs list for 189, so 189 isn't available at any score.";
 /** The 189 name for an occupation off the list, as on its occupation page. */
 export const NOT_AVAILABLE = "Not available";
+
+/**
+ * The state visas the federal list still has the occupation for, 190 first:
+ * what is left to name when 189 isn't available.
+ */
+export function stateVisasOnList(list: {
+  federal190: boolean;
+  federal491: boolean;
+}): StateVisa[] {
+  const visas: StateVisa[] = [];
+  if (list.federal190) visas.push("190");
+  if (list.federal491) visas.push("491");
+  return visas;
+}
 
 /** EOIs in the pool with a score above `points`. Null when there is no pool. */
 export function higherScoreCount(

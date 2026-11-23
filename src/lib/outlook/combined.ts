@@ -2,7 +2,7 @@ import type { Visa } from "../data/types";
 import { ageRule, blockerOf, expiredItems, expiredPhrase } from "./eligibility";
 import type { ProfileOutlook } from "./evaluate-profile";
 import type { Improve } from "./improve";
-import { MIN_POINTS, isOffList } from "./label-189";
+import { MIN_POINTS, isOffList, stateVisasOnList } from "./label-189";
 import { LABEL_RANK } from "./labels";
 import type { OutlookLabel } from "./labels";
 import { capital, joinAnd, moveLabel } from "./phrases";
@@ -155,14 +155,6 @@ export function statesHaveNoData(o: ProfileOutlook): boolean {
   return [o.v190, o.v491].every((v) => (v?.label ?? "no-data") === "no-data");
 }
 
-/** "190 and 491", "491" or "" for the state visas the federal list has. */
-export function listedStateVisas(o: ProfileOutlook): string {
-  const { federal190, federal491 } = o.listMembership;
-  return joinAnd(
-    [federal190 ? "190" : "", federal491 ? "491" : ""].filter(Boolean),
-  );
-}
-
 /**
  * What reaching 65 means for 189. It opens 189 only when 189 is inviting the
  * occupation; otherwise the reader can submit an EOI, but nothing more
@@ -170,7 +162,7 @@ export function listedStateVisas(o: ProfileOutlook): string {
  */
 function openerOutcome(o: ProfileOutlook, after: OutlookLabel): string {
   if (o.v189.offList) {
-    const visas = listedStateVisas(o);
+    const visas = joinAnd(stateVisasOnList(o.listMembership));
     return visas
       ? `, though 189 isn't available for your occupation; ${visas} may be, with state nomination.`
       : ", though the Home Affairs list doesn't include your occupation for 189, 190 or 491.";

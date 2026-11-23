@@ -5,7 +5,7 @@ import { evaluateProfile } from "./evaluate-profile";
 import type { OutlookInput, ProfileOutlook } from "./evaluate-profile";
 import { ENGLISH_MOVES, LEAD_TIME, candidates } from "./improve-candidates";
 import type { Candidate, MoveId, SingleId } from "./improve-candidates";
-import { CONFIRM, no189Data } from "./label-189";
+import { CONFIRM, no189Data, stateVisasOnList } from "./label-189";
 import { LABEL_RANK, isAtLeast, labelName } from "./labels";
 import type { OutlookLabel } from "./labels";
 import { buildLosses } from "./losses";
@@ -234,10 +234,7 @@ function pointsHelpStates(base: ProfileOutlook, scored: Scored[]): boolean {
 
 /** Which state visas the federal list still has the occupation for. */
 function offListBanner(base: ProfileOutlook, helps: boolean): string {
-  const { federal190, federal491 } = base.listMembership;
-  const visas = [federal190 ? "190" : "", federal491 ? "491" : ""].filter(
-    Boolean,
-  );
+  const visas = stateVisasOnList(base.listMembership);
   if (visas.length === 0) {
     return "Points won't change this: the Home Affairs list doesn't include this occupation for 189, 190 or 491.";
   }

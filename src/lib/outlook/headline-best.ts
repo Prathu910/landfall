@@ -1,9 +1,5 @@
-import {
-  listedStateVisas,
-  notEligibleBest,
-  statesHaveNoData,
-} from "./combined";
-import { isOffList } from "./label-189";
+import { notEligibleBest, statesHaveNoData } from "./combined";
+import { isOffList, stateVisasOnList } from "./label-189";
 import { isAtLeast, labelName } from "./labels";
 import type { HeadlineCtx, Stamped } from "./headline-context";
 import { suitedStates } from "./headline-context";
@@ -69,7 +65,7 @@ function watchStates(states: string[]): string {
 /** Off the 189 list, only state nomination is left to name (23 Nov 2026). */
 function bestOffList(ctx: HeadlineCtx): string {
   const { o, improve } = ctx;
-  const visas = listedStateVisas(o);
+  const visas = joinAnd(stateVisasOnList(o.listMembership));
   if (!visas) {
     return "None: the Home Affairs list doesn't include your occupation for 189, 190 or 491.";
   }

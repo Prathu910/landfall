@@ -1,5 +1,10 @@
 import type { OccupationCore } from "../data/types";
-import { MIN_POINTS, label189 } from "../outlook/label-189";
+import {
+  MIN_POINTS,
+  NOT_AVAILABLE,
+  label189,
+  stateVisasOnList,
+} from "../outlook/label-189";
 import { labelName } from "../outlook/labels";
 import type { OutlookLabel } from "../outlook/labels";
 import type { FederalList } from "../state-outlook/rules-types";
@@ -89,14 +94,11 @@ function closedText(label: OutlookLabel, tooFew: boolean): string {
     : "No published 189 pool or invitation round lists this occupation, so there is no 189 outlook to show at any score.";
 }
 
-/** "190 and 491", "491" or "" for the state visas the federal list has. */
-function stateVisasOf(entry: FederalEntry | undefined) {
-  const visas = (["190", "491"] as const).filter((visa) => entry?.[visa]);
-  return visas.join(" and ");
-}
-
 function unavailableText(entry: FederalEntry | undefined) {
-  const visas = stateVisasOf(entry);
+  const visas = stateVisasOnList({
+    federal190: entry?.["190"] === true,
+    federal491: entry?.["491"] === true,
+  }).join(" and ");
   const lead = visas
     ? `189 isn't available for this occupation; ${visas} may be, with state or territory nomination.`
     : "189 isn't available for this occupation, and nor are 190 and 491.";
@@ -116,7 +118,7 @@ export function occupationVerdict(
   if (federal && !entry?.["189"]) {
     return {
       kind: "unavailable",
-      name: "Not available",
+      name: NOT_AVAILABLE,
       text: unavailableText(entry),
       checkHref,
     };
