@@ -27,8 +27,9 @@ type ImporterName = (typeof IMPORTERS)[number];
 export type CliArgs = { only: ImporterName | null; checkedAt: string };
 
 const OUT_DIR = "src/data/state-rules";
-// The 2026-11-18 list had 427 codes for 190 and 504 for 491.
-const MIN_ELIGIBLE_PER_VISA = 300;
+// The 2026-11-18 list had 427 codes for 190 and 504 for 491; the 2026-11-23
+// list had the same, and 212 for 189.
+const MIN_ELIGIBLE = { "189": 150, "190": 300, "491": 300 };
 
 // The 2026-11-18 lists had 384 WA codes and 351 SA codes.
 const MIN_LIST_CODES = { wa: 250, sa: 300 };
@@ -84,15 +85,17 @@ async function importFederal(checkedAt: string): Promise<void> {
     source: FEDERAL_LIST_URL,
     checkedAt,
   });
-  assertPlausible(list, MIN_ELIGIBLE_PER_VISA);
+  assertPlausible(list, MIN_ELIGIBLE);
   const counts = countEligible(Object.values(list.entries));
   const onDashboard = countEligible(
     index.flatMap((o) => list.entries[o.code] ?? []),
   );
   console.log(`Federal entries: ${Object.keys(list.entries).length}`);
-  console.log(`Eligible for 190: ${counts["190"]}, 491: ${counts["491"]}`);
   console.log(
-    `Of the ${index.length} dashboard occupations, eligible for 190: ${onDashboard["190"]}, 491: ${onDashboard["491"]}`,
+    `Eligible for 189: ${counts["189"]}, 190: ${counts["190"]}, 491: ${counts["491"]}`,
+  );
+  console.log(
+    `Of the ${index.length} dashboard occupations, eligible for 189: ${onDashboard["189"]}, 190: ${onDashboard["190"]}, 491: ${onDashboard["491"]}`,
   );
   console.log(`Left out (no exact 2013 code): ${unmatched.length}`);
   for (const row of unmatched) {

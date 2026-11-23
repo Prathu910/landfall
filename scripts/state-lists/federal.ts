@@ -4,8 +4,10 @@ import { fetchText, sortedEntries, writeJsonFile } from "./shared";
 import { decodeEntities, normalizeOccupationName } from "../import/rounds";
 
 type Eligibility = FederalList["entries"][string];
+type FederalVisa = keyof Eligibility;
+const FEDERAL_VISAS: readonly FederalVisa[] = ["189", "190", "491"];
 
-/** A 190/491 row whose only codes are labelled ANZSCO 2022. */
+/** A 189/190/491 row whose only codes are labelled ANZSCO 2022. */
 export type UnlabelledRow = {
   occupation: string;
   codes2022: string[];
@@ -19,12 +21,15 @@ export const FEDERAL_LIST_URL =
 const DATA_INPUT_ID = "ctl00_PlaceHolderMain_PageJSONDataHiddenField_Input";
 
 // The page's visa labels, with runs of spaces collapsed.
+const LABEL_189 = "189 - Skilled Independent (subclass 189) - Points-Tested";
 const LABEL_190 = "190 - Skilled Nominated (subclass 190)";
 const LABEL_491_STATE =
   "491 - Skilled Work Regional (provisional) visa (subclass 491) State or Territory nominated";
 const LABEL_491_FAMILY =
   "491 - Skilled Work Regional (provisional) visa (subclass 491) Family Sponsored";
-const KNOWN_LABELS = [LABEL_190, LABEL_491_STATE, LABEL_491_FAMILY];
+const KNOWN_LABELS = [LABEL_189, LABEL_190, LABEL_491_STATE, LABEL_491_FAMILY];
+// The labels and caveats this importer reads start with one of these.
+const FEDERAL_LABEL = /^(189|190|491)\b/;
 
 type OfficialRow = {
   occupation: string;
@@ -94,36 +99,37 @@ function codesLabelled(text: string, year: "2013" | "2022"): string[] {
   return [...new Set(codes)];
 }
 
-/** Fails on any 190 or 491 label the parser does not know. */
+/** Fails on any 189, 190 or 491 label the parser does not know. */
 function eligibility(row: OfficialRow): Eligibility {
   const labels = row.visas
     .split(";")
     .map((label) => label.replace(/\s+/g, " ").trim())
     .filter((label) => label.length > 0);
   for (const label of labels) {
-    if (/^(190|491)\b/.test(label) && !KNOWN_LABELS.includes(label)) {
+    if (FEDERAL_LABEL.test(label) && !KNOWN_LABELS.includes(label)) {
       throw new Error(`Unknown visa label "${label}"; review the source`);
     }
   }
   return {
+    "189": labels.includes(LABEL_189),
     "190": labels.includes(LABEL_190),
     "491": labels.includes(LABEL_491_STATE),
   };
 }
 
-/** The list stores eligibility as booleans, so a 190/491 caveat can't be kept. */
+/** The list stores eligibility as booleans, so a 189/190/491 caveat can't be kept. */
 function rejectCaveats(row: OfficialRow): void {
   for (const item of row.visacaveats.split(/<li>/i).slice(1)) {
-    if (/^(190|491)\b/.test(plainText(item)) && /caveat/i.test(item)) {
+    if (FEDERAL_LABEL.test(plainText(item)) && /caveat/i.test(item)) {
       throw new Error(
-        `${row.occupation}: a caveat applies to 190 or 491; review the source`,
+        `${row.occupation}: a caveat applies to 189, 190 or 491; review the source`,
       );
     }
   }
 }
 
 /**
- * Reads the official list. Subclasses 190 and 491 use ANZSCO 2013 codes, the
+ * Reads the official list. Subclasses 189, 190 and 491 use ANZSCO 2013 codes, the
  * same codes as the SkillSelect dashboard, so entries are keyed by them.
  */
 export function parseFederalList(html: string): {
@@ -143,7 +149,7 @@ export function parseFederalList(html: string): {
       );
     }
     if (codes.length === 0) {
-      if (rowEligibility["190"] || rowEligibility["491"]) {
+      if (FEDERAL_VISAS.some((visa) => rowEligibility[visa])) {
         const codes2022 = codesLabelled(text, "2022");
         unlabelled.push({
           occupation: row.occupation,
@@ -197,23 +203,23 @@ export function buildFederalList(
   return { list, unmatched };
 }
 
-export function countEligible(entries: Eligibility[]): {
-  "190": number;
-  "491": number;
-} {
-  return {
-    "190": entries.filter((e) => e["190"]).length,
-    "491": entries.filter((e) => e["491"]).length,
-  };
+export function countEligible(
+  entries: Eligibility[],
+): Record<FederalVisa, number> {
+  const count = (visa: FederalVisa) => entries.filter((e) => e[visa]).length;
+  return { "189": count("189"), "190": count("190"), "491": count("491") };
 }
 
 /** A page change that silently drops rows would mark occupations ineligible. */
-export function assertPlausible(list: FederalList, minPerVisa: number): void {
+export function assertPlausible(
+  list: FederalList,
+  minimums: Record<FederalVisa, number>,
+): void {
   const counts = countEligible(Object.values(list.entries));
-  for (const visa of ["190", "491"] as const) {
-    if (counts[visa] < minPerVisa) {
+  for (const visa of FEDERAL_VISAS) {
+    if (counts[visa] < minimums[visa]) {
       throw new Error(
-        `Only ${counts[visa]} occupations eligible for ${visa} (expected at least ${minPerVisa}); review the source`,
+        `Only ${counts[visa]} occupations eligible for ${visa} (expected at least ${minimums[visa]}); review the source`,
       );
     }
   }

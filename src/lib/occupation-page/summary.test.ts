@@ -141,7 +141,7 @@ describe("statusChips", () => {
   it("flags a code that is not on the federal list", () => {
     const list: FederalList = {
       ...federal,
-      entries: { "261313": { "190": false, "491": true } },
+      entries: { "261313": { "189": false, "190": false, "491": true } },
     };
     expect(statusChips(core261313, list)[1].label).toBe(
       "Not on the federal list for 190",

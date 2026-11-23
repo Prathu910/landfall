@@ -106,5 +106,6 @@ export type ImportedList = {
 export type FederalList = {
   source: string;
   checkedAt: string;
-  entries: Record<string, { "190": boolean; "491": boolean }>;
+  /** Each listed code's federal eligibility; 189 is the points-tested stream. */
+  entries: Record<string, { "189": boolean; "190": boolean; "491": boolean }>;
 };
