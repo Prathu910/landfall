@@ -47,12 +47,12 @@ export function QuickCheck({
           answers={merged}
           onChange={(patch) => setAnswers((a) => ({ ...a, ...patch }))}
         />
-        {/* Phones: the running total stays in view while answering; the
-            full result (announced politely) follows the form. */}
+        {/* Phones: the running total stays in view, on one line, while
+            answering; the full result (announced politely) follows the form. */}
         <p className={styles.tally} aria-hidden="true">
           {result.answered
-            ? `Your points: ${result.points["189"]} (189) · ${result.points["190"]} (190) · ${result.points["491"]} (491)`
-            : "Answer the questions to see your points"}
+            ? `189: ${result.points["189"]} · 190: ${result.points["190"]} · 491: ${result.points["491"]}`
+            : "Answer to see your points"}
         </p>
         <QuickCheckResult
           result={result}

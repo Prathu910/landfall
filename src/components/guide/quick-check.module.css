@@ -177,6 +177,12 @@
   .result {
     position: static;
   }
+  /* Keyboard focus scrolls a field clear of the sticky bar (WCAG 2.4.11).
+     Chrome only scrolls a partly visible field when the root's scroll
+     padding excludes the bar's strip; a field's scroll-margin isn't enough. */
+  :global(html):has(.quick) {
+    scroll-padding-bottom: calc(var(--brand-unit) * 24);
+  }
 }
 @media screen and (max-width: 600px) {
   .form {
