@@ -9,6 +9,7 @@ import shell from "@/components/occupation/occupation-shell.module.css";
 import { CohortBars } from "@/components/occupation/cohort-bars";
 import { OccupationFaq } from "@/components/occupation/occupation-faq";
 import { OccupationSummary } from "@/components/occupation/occupation-summary";
+import { OccupationVerdict } from "@/components/occupation/occupation-verdict";
 import { PoolTabs } from "@/components/occupation/pool-tabs";
 import { RelatedOccupations } from "@/components/occupation/related-occupations";
 import { RoundCards } from "@/components/occupation/round-cards";
@@ -48,6 +49,7 @@ import {
   sourceLine,
   statusChips,
 } from "@/lib/occupation-page/summary";
+import { occupationVerdict } from "@/lib/occupation-page/verdict";
 import { formatMonth } from "@/lib/report/copy";
 import { SITE_INDEXABLE } from "@/lib/site";
 import styles from "./page.module.css";
@@ -136,6 +138,7 @@ export default async function OccupationPage({ params }: Props) {
           sentences={sentences}
           sourceLine={sourceLine(core)}
         />
+        <OccupationVerdict verdict={occupationVerdict(core)} />
         <OccupationSectionNav
           hasRounds={has189Rounds(core)}
           hasCohorts={Boolean(cohorts)}
