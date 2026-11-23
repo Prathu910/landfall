@@ -15,9 +15,9 @@ const header = readFileSync(
 // The site is light only, so browsers must not force a dark version of it.
 describe("SITE_VIEWPORT", () => {
   it("declares a light-only colour scheme", () => {
-    expect(SITE_VIEWPORT.colorScheme).toBe("light");
+    expect(SITE_VIEWPORT.colorScheme).toBe("only light");
     const root = /^:root \{[^}]*\}/m.exec(globals)?.[0] ?? "";
-    expect(root).toMatch(/\n\s*color-scheme: light;/);
+    expect(root).toMatch(/\n\s*color-scheme: only light;/);
   });
 
   it("tints the browser bar to match the white site header", () => {
