@@ -83,3 +83,38 @@ describe("guide copy", () => {
     }
   });
 });
+
+describe("the 191 pathway", () => {
+  // The three requirements on the Home Affairs 191 page (SOURCES.visa191).
+  const complete = (text: string) => {
+    expect(text, text).toMatch(/at least 3 years/);
+    expect(text, text).toMatch(/ATO notices of assessment for 3 income years/);
+    expect(text, text).toMatch(/condition/);
+    expect(text, text).toMatch(/designated regional area/);
+  };
+  const counts = federalCounts(stateRuleData.federal);
+
+  it("states all three requirements wherever the guide says how to reach it", () => {
+    const after = VISA_GUIDES["491"].after
+      .filter((r) => r.label.startsWith("191"))
+      .map((r) => r.text)
+      .join(" ");
+    complete(after);
+    const faqs = [
+      ...hubFaq(FEES, GUIDE_STEPS, GUIDE_CHECKED_AT),
+      ...visaFaq("491", FEES, counts),
+    ].filter((f) => /apply for the permanent 191/.test(f.answer));
+    expect(faqs.length).toBeGreaterThanOrEqual(2);
+    for (const faq of faqs) complete(faq.answer);
+    complete(directAnswer("491", GUIDE_CHECKED_AT, counts));
+  });
+
+  it("cites the 191 page and says there is no minimum income", () => {
+    const rules = VISA_GUIDES["491"].after.filter((r) =>
+      r.label.startsWith("191"),
+    );
+    expect(rules.length).toBe(3);
+    for (const rule of rules) expect(rule.source).toContain("191");
+    expect(rules.map((r) => r.text).join(" ")).toContain("no minimum income");
+  });
+});

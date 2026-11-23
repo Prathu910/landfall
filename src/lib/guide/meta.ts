@@ -8,6 +8,7 @@ import {
   type FaqEntry,
 } from "../seo/json-ld";
 import { SITE_NAME, SITE_URL } from "../site";
+import { PATHWAY_191 } from "./faq";
 import type { GuideStep } from "./types";
 
 export type GuidePageId = "hub" | Visa;
@@ -87,7 +88,7 @@ export function directAnswer(
     case "190":
       return `As at ${date}, the 190 is a permanent visa for people nominated by a state or territory, and the nomination adds 5 points. You need an occupation on the 190 list${listed("190")}, the nominating state’s own criteria, ${basics}. ${source}`;
     case "491":
-      return `As at ${date}, the 491 is a 5-year provisional visa for living and working in a designated regional area, with 15 points for a state nomination or an eligible relative’s sponsorship. You need an occupation on the 491 list${listed("491")} and ${basics}; after 3 years on the visa you can apply for the permanent 191. ${source}`;
+      return `As at ${date}, the 491 is a 5-year provisional visa for living and working in a designated regional area, with 15 points for a state nomination or an eligible relative’s sponsorship. You need an occupation on the 491 list${listed("491")} and ${basics}; ${PATHWAY_191}. ${source}`;
   }
 }
 

@@ -158,9 +158,20 @@ export const VISA_GUIDES: Record<Visa, VisaGuide> = {
       ),
     ],
     after: [
+      // The three requirements the Home Affairs 191 page lists ("You must").
       rule(
-        "191 permanent residence",
-        "After holding the 491 for at least 3 years, you can apply for the 191 with ATO notices of assessment for three income years. There is no minimum income.",
+        "191: time on the visa",
+        "To apply for the permanent 191, you must have held the 491 (or another eligible visa) for at least 3 years.",
+        SOURCES.visa191,
+      ),
+      rule(
+        "191: income",
+        "You need ATO notices of assessment for 3 income years out of the 5 years of the visa. There is no minimum income.",
+        SOURCES.visa191,
+      ),
+      rule(
+        "191: visa conditions",
+        "You must have complied with the 491's conditions the whole time you held it, including living, working and studying in a designated regional area.",
         SOURCES.visa191,
       ),
       rule(
