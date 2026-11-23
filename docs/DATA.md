@@ -214,7 +214,7 @@ The state outlook (`#state-outlook` in the report) reads three kinds of state da
 src/data/state-rules/2026-27/<state>.ts      Hand-curated 2026–27 rules per state and visa: streams, cohorts, status, requirements, restrictions.
 src/data/state-rules/2026-27/index.ts        Combines them and validates them on import (rules-guards.ts).
 src/data/state-rules/lists/<wa|sa|qld|nsw>.json   Imported state occupation lists: code → visa → cohorts (and per-visa stream tags).
-src/data/state-rules/federal-occupations.json     The Home Affairs skilled occupation list: each code's 190 and 491 eligibility.
+src/data/state-rules/federal-occupations.json     The Home Affairs skilled occupation list: each code's 189, 190 and 491 eligibility.
 ```
 
 **Sources.** The curated rules come from `docs/research/state-nomination-2026-27.md`. The lists are imported from the official pages:
@@ -238,7 +238,7 @@ VIC, ACT, TAS and NT publish no list we import. Their rules are `secondary`, so 
 
 **Restrictions.** A stream's `restrictions` are shown as "Restriction, not checked here" lines and never decide a group, for example SA's visa-expiry gate text, QLD's 2025–26 ATO Notice of Assessment gate on every onshore pathway and the Queensland employer rule on the onshore pathway.
 
-Federal eligibility comes only from the imported federal list, never from the dashboard having EOIs for a visa. A code that is absent or `false` there is "Not open to you now" in every state for that visa. If the federal list is missing or invalid, every tile is "Rules being checked". A state list that fails validation in the browser is left out, so the rules that need it read "Rules being checked" too.
+Federal eligibility comes only from the imported federal list, never from the dashboard having EOIs for a visa. Each entry has three booleans: `189` (the "189 - Skilled Independent (subclass 189) - Points-Tested" label), `190` and `491` (state or territory nominated; the family-sponsored 491 label is not recorded). The importer stops on an unknown 189, 190 or 491 label, or a caveat on one of them. The 23 Nov 2026 import (the first with 189) has 674 codes: 212 listed for 189, 427 for 190 and 504 for 491; of the 493 dashboard occupations, 211 are listed for 189. The 190 and 491 flags were unchanged from 18 Nov 2026. The occupation pages' 189 strip reads "Not available" for a code not listed for 189 (an absent code counts as not listed); the report's 189 label does not read the federal list yet. A code that is absent or `false` there is "Not open to you now" in every state for that visa. If the federal list is missing or invalid, every tile is "Rules being checked". A state list that fails validation in the browser is left out, so the rules that need it read "Rules being checked" too.
 
 **Staleness.** Tests never read the clock; they use fixed dates.
 
@@ -251,7 +251,7 @@ Federal eligibility comes only from the imported federal list, never from the da
 2. Open each rule's `source` page in a browser and compare it with the curated rule. Update the rule and its `checkedAt`. Mark anything you could not read yourself as `secondary`, with the reason in `note`.
 3. Run `npm run check` and `npm run build` (the build prints no staleness warning once every rule is fresh), then commit the list JSON and the rule files together in a `data:` commit.
 
-**Client import.** The rules (TypeScript), the four lists and the federal list are imported whole by `src/components/data/state-rule-data.ts`, the only client module that may import them. Two lists are above the plan's 100 KB guide (SA 174 KB and WA 138 KB raw), but the four lists and the federal list total about 11 KB gzipped (10.8 KB measured with gzip at its default level, 18 Nov 2026), so they are not split per state (ruling P24). Adding state-outlook code and data grew the first-load JS by about 29 KB gzipped on `/check/` and 53 KB on `/sample/`. Split the lists per state if that budget (about 60 KB) is ever exceeded.
+**Client import.** The rules (TypeScript), the four lists and the federal list are imported whole by `src/components/data/state-rule-data.ts`, the only client module that may import them. Two lists are above the plan's 100 KB guide (SA 174 KB and WA 138 KB raw), but the four lists and the federal list total about 11 KB gzipped (10.8 KB measured with gzip at its default level, 18 Nov 2026; 11.1 KB with the 189 flags, 23 Nov 2026), so they are not split per state (ruling P24). Adding state-outlook code and data grew the first-load JS by about 29 KB gzipped on `/check/` and 53 KB on `/sample/`. Split the lists per state if that budget (about 60 KB) is ever exceeded.
 
 ## Reproducibility against the legacy data (Task 10)
 

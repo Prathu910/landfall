@@ -306,12 +306,18 @@ describe("isFederalList", () => {
   const list = {
     source: "https://example.gov.au/fed",
     checkedAt: "2026-11-01",
-    entries: { "261313": { "190": true, "491": false } },
+    entries: { "261313": { "189": false, "190": true, "491": false } },
   };
   it("accepts and rejects", () => {
     expect(isFederalList(list)).toBe(true);
     expect(
       isFederalList({ ...list, entries: { "261313": { "190": true } } }),
+    ).toBe(false);
+    expect(
+      isFederalList({
+        ...list,
+        entries: { "261313": { "190": true, "491": false } },
+      }),
     ).toBe(false);
     expect(isFederalList({ ...list, source: "" })).toBe(false);
   });

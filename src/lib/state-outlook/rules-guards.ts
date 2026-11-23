@@ -280,7 +280,8 @@ export function isFederalList(v: unknown): v is FederalList {
       v.entries,
       (e) =>
         isObj(e) &&
-        hasOnlyKeys(e, ["190", "491"]) &&
+        hasOnlyKeys(e, ["189", "190", "491"]) &&
+        typeof e["189"] === "boolean" &&
         typeof e["190"] === "boolean" &&
         typeof e["491"] === "boolean",
     )

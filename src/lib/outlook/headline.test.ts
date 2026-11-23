@@ -22,7 +22,8 @@ const H1: Record<ScenarioId, string> = {
   long: "Your best chance is Tasmania, not 189.",
   notinv: "Your way in is state nomination, not 189.",
   below: "190 in Tasmania is open to you now. 189 isn't, yet.",
-  nodata: "There isn't enough published data to judge your occupation.",
+  nodata:
+    "189 isn't available for your occupation, while 190 and 491 have no published data.",
   none: "None of the three visas is inviting Internal Auditor right now.",
   lodged: "You're in the queue, right at the cut-off.",
 };
@@ -104,14 +105,15 @@ describe("buildHeadline", () => {
     expect(h.best).toBe("190 in Tasmania now; 189 after your English retake.");
   });
 
-  it("Sana: no data falls back on list membership", () => {
+  it("Sana: off the 189 list, with no data, names state nomination", () => {
     const h = run("nodata");
     expect(h.fact).toBe(
-      "SkillSelect hasn't published any EOI counts, 189 rounds or state invitations for Greenkeeper, so there's nothing to compare you with.",
+      "The Home Affairs list doesn't include Greenkeeper for 189, and SkillSelect hasn't published any state invitations for it.",
     );
     expect(h.best).toBe(
       "190 or 491 in Western Australia (your occupation is on its list).",
     );
+    expect(h.why).not.toMatch(/enough data/i);
   });
 
   it("Dev: nothing suits watches the listing states", () => {

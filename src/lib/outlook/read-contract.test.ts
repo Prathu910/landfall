@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { READ_BANNED, allowedNumbers, checkRead } from "./read-contract";
+import { NOT_AVAILABLE } from "./label-189";
+import {
+  NOT_AVAILABLE_189,
+  READ_BANNED,
+  allowedNumbers,
+  checkRead,
+} from "./read-contract";
 import type { ReportFacts } from "./read-contract";
 
 // Priya's facts, cut down to the numbers the mockup's read uses.
@@ -104,6 +110,39 @@ describe("checkRead", () => {
     expect(checkRead(`${PRIYA_READ} ${date}`, facts)).toEqual({
       ok: false,
       reason: "number",
+    });
+  });
+
+  describe("off the Home Affairs 189 list", () => {
+    const offList: ReportFacts = {
+      ...PRIYA,
+      visas: [{ ...PRIYA.visas[0], label: "Not available" }, PRIYA.visas[1]],
+    };
+
+    it.each([
+      "Superior English opens 189 for you.",
+      "You can then submit your 189 EOI.",
+      "Submit a 189 EOI after your retake.",
+    ])("rejects a read that says %s", (line) => {
+      const text = `${PRIYA_READ} ${line}`;
+      expect(checkRead(text, offList)).toEqual({
+        ok: false,
+        reason: "banned",
+      });
+    });
+
+    it("allows the same wording when 189 is on the list", () => {
+      const text = `${PRIYA_READ} Superior English opens 189 for you.`;
+      expect(checkRead(text, PRIYA)).toEqual({ ok: true });
+    });
+
+    it("marks off-list facts with the report's own 189 name", () => {
+      expect(NOT_AVAILABLE_189).toBe(NOT_AVAILABLE);
+    });
+
+    it("allows naming 189 as not available", () => {
+      const text = `${PRIYA_READ} 189 isn't available for your occupation.`;
+      expect(checkRead(text, offList)).toEqual({ ok: true });
     });
   });
 

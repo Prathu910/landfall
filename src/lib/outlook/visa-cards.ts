@@ -3,7 +3,7 @@ import { formatSummed } from "../report/copy";
 import { STATE_NAMES } from "../state-outlook/context";
 import type { OutlookInput, ProfileOutlook } from "./evaluate-profile";
 import { lastListedMonth } from "./facts";
-import { MIN_POINTS } from "./label-189";
+import { MIN_POINTS, isOffList, stampName189 } from "./label-189";
 import type { StateLabel } from "./label-state";
 import { stampName } from "./labels";
 import type { OutlookLabel } from "./labels";
@@ -30,6 +30,8 @@ export type VisaCard = {
   stampWord: string;
   points: number;
   label: OutlookLabel;
+  /** The label whose colours the stamp takes: neutral for an unavailable 189. */
+  ink: OutlookLabel;
   title: string;
   caption: string;
   flagText: string | null;
@@ -51,6 +53,7 @@ const TITLES: Record<Visa, string> = {
   "491": "491 Regional",
 };
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+const OFF_LIST_CAPTION = "Not on the Home Affairs list for 189.";
 const SHARPEN_HREF = "#sharpen";
 
 function plural(count: number, unit: string): string {
@@ -80,6 +83,7 @@ function caption189(
   wait: EstimatedWait,
 ): string {
   const { v189, points } = o;
+  if (isOffList(v189)) return OFF_LIST_CAPTION;
   if (v189.label === "not-eligible") {
     return points.eligible === false
       ? v189.why
@@ -125,9 +129,11 @@ function card189(
     visa: "189",
     shape: SHAPES["189"],
     top: `189 ${ANY_STATE}`,
-    stampWord: stampName(v189.label, v189.tooFew),
+    stampWord: stampName189(v189),
     points: o.points.base,
     label: v189.label,
+    // Neutral, like the "Not available" stamp on the occupation page.
+    ink: isOffList(v189) ? "no-data" : v189.label,
     title: TITLES["189"],
     caption: caption189(input, o, wait),
     flagText: null,
@@ -208,6 +214,7 @@ function stateCard(
     ...text,
     points: visa === "190" ? o.points.subclass190 : o.points.subclass491,
     label,
+    ink: label,
     title: TITLES[visa],
     flagText: named ? flagNote(named) : null,
     flagHref: named?.flag === "needs-answers" ? SHARPEN_HREF : null,

@@ -281,8 +281,11 @@ describe("buildImprove, Kavya (lodged)", () => {
 describe("buildImprove, Sana (no data)", () => {
   const improve = run("nodata", false);
 
-  it("lists available points plainly, without labels", () => {
-    expect(improve.mode).toBe("plain");
+  it("lists available points plainly, without labels, off the 189 list", () => {
+    expect(improve.mode).toBe("off-list");
+    expect(improve.banner).toBe(
+      "More points won't open 189: the Home Affairs list doesn't include this occupation for it. They still count for 190 and 491, with state nomination.",
+    );
     expect(improve.moves).toEqual([]);
     expect(improve.plain).toContain("Superior English, +10. Takes you to 85.");
     expect(improve.plain).toContain("NAATI CCL test, +5. Takes you to 80.");
@@ -329,23 +332,39 @@ describe("buildImprove, combined stamps (final review)", () => {
   });
 
   it("lists points plainly when 189 has no data, even with a core", () => {
-    // Sales and Marketing Manager: no 189 pool or rounds; states long wait.
-    const improve = runProfile({ ...PLANNER, occupation: "131112" });
+    // Pressure Welder: on the 189 list, but no 189 pool or rounds.
+    const improve = runProfile({ ...PLANNER, occupation: "322312" });
     expect(improve.mode).toBe("plain");
     expect(improve.moves).toEqual([]);
     expect(improve.plain).toContain("Superior English, +20. Takes you to 85.");
   });
 
   it("finds the change that takes a no-data occupation past 65", () => {
-    // Aquaculture Farmer at 55: under 65, and 189 has no data.
+    // Pressure Welder at 55: under 65, and 189 has no data.
     const improve = runProfile({
       ...PLANNER,
-      occupation: "121111",
+      occupation: "322312",
       overseasYears: 0,
     });
     expect(improve.mode).toBe("plain");
     expect(improve.opener?.to.points).toBeGreaterThanOrEqual(65);
     expect(improve.opener?.id).toBe("english-superior");
+  });
+
+  it("never has a change that opens 189 off the Home Affairs 189 list", () => {
+    // Aquaculture Farmer at 55: 189 isn't available at any score.
+    const improve = runProfile({
+      ...PLANNER,
+      occupation: "121111",
+      overseasYears: 0,
+    });
+    expect(improve.mode).toBe("off-list");
+    expect(improve.opener).toBeNull();
+    expect(improve.moves).toEqual([]);
+    expect(improve.banner).toBe(
+      "More points won't open 189: the Home Affairs list doesn't include this occupation for it. They still count for 491, with state nomination.",
+    );
+    expect(improve.plain).toContain("Superior English, +20. Takes you to 75.");
   });
 });
 

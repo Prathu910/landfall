@@ -1,0 +1,109 @@
+.cta {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: calc(var(--check-unit) * 10);
+  align-items: center;
+  margin-top: calc(var(--check-unit) * 10);
+  padding: calc(var(--check-unit) * 9);
+  border: 1px solid var(--check-line);
+  border-radius: calc(var(--check-unit) * 4);
+  background: var(--check-paper);
+  color: var(--check-ink);
+  font-family: var(--check-font);
+  box-shadow: var(--check-shadow);
+}
+.copy h2 {
+  font: 650 clamp(1.75rem, 3.6vw, 2.5rem) / 1.08 var(--check-font);
+  letter-spacing: -0.045em;
+}
+.copy p {
+  max-width: 30rem;
+  margin: calc(var(--check-unit) * 3) 0 calc(var(--check-unit) * 6);
+  color: var(--check-muted);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+}
+/* A passport visa page: sage security lines on white paper. */
+.page {
+  position: relative;
+  width: calc(var(--check-unit) * 56);
+  aspect-ratio: 5 / 6;
+  padding: calc(var(--check-unit) * 10) calc(var(--check-unit) * 4)
+    calc(var(--check-unit) * 4);
+  border: 1px solid var(--check-line);
+  border-radius: calc(var(--check-unit) * 2);
+  background:
+    repeating-linear-gradient(
+      -12deg,
+      transparent 0 9px,
+      color-mix(in srgb, var(--check-green) 9%, transparent) 9px 10px
+    ),
+    var(--check-soft);
+}
+.pageHead {
+  position: absolute;
+  top: calc(var(--check-unit) * 3);
+  left: calc(var(--check-unit) * 4);
+  color: var(--check-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+.stamp {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.blank {
+  opacity: 0;
+  fill: none;
+  stroke: var(--check-muted);
+  stroke-width: 2;
+  stroke-dasharray: 7 7;
+}
+.blank text {
+  fill: var(--check-muted);
+  stroke: none;
+  font: 900 30px var(--font-stamp);
+  text-anchor: middle;
+  letter-spacing: 0.06em;
+}
+.ink {
+  color: var(--check-green);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.ring {
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 6;
+  stroke-dasharray: 14 9;
+}
+.innerRing {
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 2;
+}
+.word {
+  fill: currentcolor;
+  font: 900 46px var(--font-stamp);
+  text-anchor: middle;
+  letter-spacing: 0.02em;
+}
+@media screen and (max-width: 640px) {
+  .cta {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: start;
+    gap: calc(var(--check-unit) * 6);
+    padding: calc(var(--check-unit) * 6);
+  }
+  .page {
+    width: calc(var(--check-unit) * 40);
+  }
+}
+@media print {
+  .cta {
+    display: none;
+  }
+}

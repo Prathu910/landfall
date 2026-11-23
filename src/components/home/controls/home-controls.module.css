@@ -54,14 +54,14 @@
 }
 .selectLabel {
   font:
-    550 var(--homepage-size-13)/1.5 "Homepage Archivo",
+    550 var(--homepage-size-13)/1.5 "Archivo Variable",
     Arial,
     sans-serif;
   margin-bottom: var(--homepage-size-11);
   color: var(--homepage-ink);
 }
 .dropdown {
-  font-family: "Homepage Archivo", Arial, sans-serif;
+  font-family: "Archivo Variable", Arial, sans-serif;
   border: 1px solid var(--homepage-rule);
   background: var(--homepage-paper);
   border-radius: var(--homepage-size-12);

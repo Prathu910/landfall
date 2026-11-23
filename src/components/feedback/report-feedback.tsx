@@ -2,7 +2,7 @@
 import Link from "next/link";
 import type { CalculationSummary } from "@/lib/submissions/contract";
 import { FEEDBACK_CONTEXT_KEY } from "@/lib/submissions/feedback-context";
-import styles from "./feedback.module.css";
+import styles from "./report-feedback.module.css";
 export function ReportFeedback({
   summary,
 }: {

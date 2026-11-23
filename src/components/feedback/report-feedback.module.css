@@ -1,0 +1,26 @@
+/* The feedback prompt under the report (screen only). */
+.prompt {
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 1.5rem 0;
+  padding: 1rem 1.5rem;
+  border: 1px solid var(--rule);
+  border-radius: 0.75rem;
+  background: var(--card);
+  font-size: 1rem;
+}
+.prompt a {
+  text-decoration: underline;
+  color: var(--slate);
+  min-height: 2.75rem;
+  display: inline-flex;
+  align-items: center;
+}
+@media print {
+  .prompt {
+    display: none !important;
+  }
+}

@@ -52,9 +52,9 @@ const federal: FederalList = {
   source: FEDERAL_SOURCE,
   checkedAt: CHECKED,
   entries: {
-    "261313": { "190": true, "491": true },
-    "254418": { "190": true, "491": true },
-    "111111": { "190": false, "491": false },
+    "261313": { "189": true, "190": true, "491": true },
+    "254418": { "189": true, "190": true, "491": true },
+    "111111": { "189": false, "190": false, "491": false },
   },
 };
 
@@ -506,7 +506,10 @@ describe("evaluateStream: occupation list", () => {
 function allEligible(code: string): FederalList {
   return {
     ...federal,
-    entries: { ...federal.entries, [code]: { "190": true, "491": true } },
+    entries: {
+      ...federal.entries,
+      [code]: { "189": true, "190": true, "491": true },
+    },
   };
 }
 

@@ -16,6 +16,8 @@ import type { FederalList } from "../state-outlook/rules-types";
 import {
   has189Rounds,
   likeTheseSentence,
+  listed189,
+  listed189Codes,
   mostCommonScore,
   occupationSummary,
   poolSentence,
@@ -123,6 +125,26 @@ describe("occupationSummary", () => {
     expect(lines.some((l) => l.startsWith("189 "))).toBe(false);
     expect(lines.some((l) => l.includes("EOIs submitted"))).toBe(false);
   });
+  it("says an occupation is off the Home Affairs 189 list instead of an empty pool", () => {
+    const farmer = loadOccupationCore("121111")!;
+    const lines = occupationSummary(farmer, null, federal);
+    expect(lines[0]).toMatch(
+      /^Aquaculture Farmer isn't on the Home Affairs list for 189; the 491 pool holds /,
+    );
+    expect(lines.join(" ")).not.toMatch(/No 189 EOIs are waiting/);
+    // Without a readable list, the published data alone is described.
+    expect(occupationSummary(farmer, null, null)[0]).toMatch(
+      /^No 189 EOIs are waiting in the published pool for Aquaculture Farmer/,
+    );
+  });
+  it("keeps every sentence for an occupation on the 189 list", () => {
+    expect(occupationSummary(core253914, null, federal)).toEqual(
+      occupationSummary(core253914, null),
+    );
+    expect(occupationSummary(core261313, detail261313, federal)).toEqual(
+      occupationSummary(core261313, detail261313),
+    );
+  });
   it("gives two or three sentences with detail", () => {
     const lines = occupationSummary(core261313, detail261313);
     expect(lines.length).toBeGreaterThanOrEqual(2);
@@ -141,7 +163,7 @@ describe("statusChips", () => {
   it("flags a code that is not on the federal list", () => {
     const list: FederalList = {
       ...federal,
-      entries: { "261313": { "190": false, "491": true } },
+      entries: { "261313": { "189": false, "190": false, "491": true } },
     };
     expect(statusChips(core261313, list)[1].label).toBe(
       "Not on the federal list for 190",
@@ -192,5 +214,20 @@ describe("banned copy", () => {
       ];
       for (const s of strings) expect(s).not.toMatch(BANNED_COPY);
     }
+  });
+});
+
+describe("listed189Codes", () => {
+  it("lists exactly the codes the federal list flags for 189", () => {
+    const codes = listed189Codes(federal)!;
+    expect(codes).toContain("254499");
+    expect(codes).not.toContain("121212");
+    for (const code of Object.keys(federal.entries)) {
+      expect(codes.includes(code)).toBe(listed189(code, federal));
+    }
+  });
+
+  it("is null when the federal list can't be read", () => {
+    expect(listed189Codes(null)).toBeNull();
   });
 });

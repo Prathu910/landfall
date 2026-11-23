@@ -1,0 +1,88 @@
+/* Its own copy of the supporting pages' sage desk: the root not-found loads
+   on every route, so it must not pull in the shared info-page styles. */
+.page {
+  background: var(--brand-sage);
+  color: var(--brand-ink);
+  font: 400 1rem/1.6 var(--brand-font);
+  padding: calc(var(--brand-unit) * 8) 0 calc(var(--brand-unit) * 20);
+}
+.page h1 {
+  font-family: var(--brand-font);
+}
+.wrap {
+  width: min(100% - 5rem, 75rem);
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: auto minmax(0, 32rem);
+  gap: calc(var(--brand-unit) * 12);
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  padding-block: calc(var(--brand-unit) * 16);
+}
+.wrap h1 {
+  font-size: clamp(2.25rem, 4.5vw, 3.5rem);
+  font-weight: 650;
+  letter-spacing: -0.05em;
+  line-height: 1.06;
+}
+.wrap p {
+  margin: calc(var(--brand-unit) * 4) 0 calc(var(--brand-unit) * 7);
+  color: var(--brand-muted);
+  font-size: 1.125rem;
+}
+/* A passport stamp in the stamps' stencil face. */
+.stamp {
+  width: calc(var(--brand-unit) * 50);
+  color: var(--label-no-data-ink);
+}
+.ring {
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 5;
+  stroke-dasharray: 12 8;
+}
+.inner {
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 2;
+}
+.big,
+.small {
+  fill: currentcolor;
+  font-family: var(--font-stamp);
+  font-weight: 900;
+  text-anchor: middle;
+}
+.big {
+  font-size: 64px;
+}
+.small {
+  font-size: 24px;
+  letter-spacing: 0.08em;
+}
+@media screen and (max-width: 600px) {
+  .wrap {
+    grid-template-columns: minmax(0, 1fr);
+    gap: calc(var(--brand-unit) * 6);
+    justify-items: start;
+    padding-block: calc(var(--brand-unit) * 8);
+  }
+  .stamp {
+    width: calc(var(--brand-unit) * 36);
+  }
+}
+@media screen and (max-width: 760px) {
+  .page {
+    padding-top: calc(var(--brand-unit) * 5);
+  }
+  .wrap {
+    width: calc(100% - 2rem);
+  }
+}
+@media print {
+  .page {
+    padding: 0;
+    background: white;
+  }
+}

@@ -20,13 +20,6 @@
   width: min(100% - 5rem, 75rem);
   margin-inline: auto;
 }
-.eyebrow {
-  color: var(--slate);
-  font-size: 0.75rem;
-  letter-spacing: 0.12em;
-  font-weight: 650;
-  line-height: 1.5;
-}
 .directoryHead {
   background: url("/report-passport.svg") no-repeat right top / 45% auto;
   padding: calc(var(--brand-unit) * 10) 0 calc(var(--brand-unit) * 8);

@@ -30,6 +30,8 @@ export type PointsPageInput = {
   occupation: string;
   asOf: string;
   month: MonthKey;
+  /** False when the Home Affairs list leaves the occupation off 189. */
+  available189?: boolean;
 };
 
 const NOT_GIVEN = "Not given";
@@ -193,7 +195,13 @@ export function buildPointsPage(input: PointsPageInput): PointsPage {
       ? zero.map((category) => category.label).join(", ")
       : null,
     totals: [
-      { points: points.base, label: "189 Independent" },
+      {
+        points: points.base,
+        label:
+          input.available189 === false
+            ? "189 Independent (not available for this occupation)"
+            : "189 Independent",
+      },
       { points: points.subclass190, label: "190 with nomination (+5)" },
       { points: points.subclass491, label: "491 with nomination (+15)" },
     ],

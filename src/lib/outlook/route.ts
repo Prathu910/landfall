@@ -5,6 +5,7 @@ import type { Improve, Move } from "./improve";
 import { LABEL_RANK, isAtLeast } from "./labels";
 import type { OutlookLabel } from "./labels";
 import { isLodged, joinAnd } from "./phrases";
+import { statesHaveNoData } from "./combined";
 import { noData, notEligible, nothingSuits } from "./route-combined";
 import { buildDeadlines } from "./route-deadlines";
 import type { RouteDeadline } from "./route-deadlines";
@@ -133,7 +134,11 @@ function belowThreshold(
   const move = bestMove(improve);
   const steps = [today(input, o), submitEoiState(o, false)];
   if (!move) return steps;
-  return [...steps, improvementStep(move, true), updateEoi(move, true)];
+  return [
+    ...steps,
+    improvementStep(move, true, o.v189.offList),
+    updateEoi(move, true),
+  ];
 }
 
 /**
@@ -152,7 +157,10 @@ function stateRoute(input: OutlookInput, o: ProfileOutlook): Dated[] {
     ...(lodged ? lodgedStart(input, o) : [today(input, o)]),
     ...(check.length > 0 ? [checkStep] : []),
     eoi,
-    dated("Keep 189 ticked", "it costs nothing", null),
+    // An occupation off the 189 list can't be ticked for 189.
+    ...(o.v189.offList
+      ? []
+      : [dated("Keep 189 ticked", "it costs nothing", null)]),
   ];
 }
 
@@ -177,6 +185,8 @@ function pickSteps(
   if (o.stamp.kind === "combined") {
     if (o.v189.label === "not-eligible") return notEligible(input, o, improve);
     if (o.v189.label === "no-data") return noData(input, o);
+    // Off the 189 list, no state data leaves only the lists to check.
+    if (o.v189.offList && statesHaveNoData(o)) return noData(input, o);
     return nothingSuits(input, o);
   }
   const stateStamped = o.stamp.visa !== "189";

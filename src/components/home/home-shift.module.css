@@ -1,5 +1,5 @@
 .shift {
-  font-family: "Homepage Stencil", sans-serif;
+  font-family: var(--font-stamp);
   width: 100%;
   height: auto;
   margin-top: var(--homepage-size-12);

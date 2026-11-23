@@ -81,6 +81,19 @@ describe("buildTryIt", () => {
     expect(buildTryIt({ ...coreFixture, pool: {} }, 85)).toEqual(none);
   });
 
+  it("says 189 isn't available off the Home Affairs 189 list", () => {
+    const offList = {
+      kind: "none",
+      message:
+        "189 isn't available for this occupation: it isn't on the Home Affairs list for 189",
+    };
+    expect(buildTryIt(null, 85, false)).toEqual(offList);
+    expect(buildTryIt({ ...coreFixture, pool: {} }, 85, false)).toEqual(
+      offList,
+    );
+    expect(buildTryIt({ ...coreFixture, pool: {} }, 85, null)).toEqual(none);
+  });
+
   it("keeps masked counts as intervals", () => {
     const view = buildTryIt(withPool({ "85": "100", "90": "<20" }), 85);
     if (view.kind !== "data") throw new Error("expected data");

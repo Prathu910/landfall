@@ -15,6 +15,8 @@ export const TRY_IT_DEFAULT = 75;
 export const TRY_IT_OCCUPATION = "254499";
 
 export const TRY_IT_NO_DATA = "No published 189 data for this occupation";
+export const TRY_IT_OFF_LIST =
+  "189 isn't available for this occupation: it isn't on the Home Affairs list for 189";
 /** Shown when the occupation's file could not be fetched or was invalid. */
 export const TRY_IT_LOAD_FAILED =
   "Couldn't load the published data for this occupation. Reload the page or choose another occupation.";
@@ -47,7 +49,10 @@ export type TryItView =
 export function buildTryIt(
   core: OccupationCore | null,
   total: number,
+  /** The federal list's 189 flag; null or absent when it can't be read. */
+  listed189: boolean | null = null,
 ): TryItView {
+  if (listed189 === false) return { kind: "none", message: TRY_IT_OFF_LIST };
   // The report's own pool position, so the published total is used, not a row sum.
   const position = core && poolPosition(core, null, "189", total, null);
   if (!core || !position?.available)

@@ -1,0 +1,79 @@
+/* The sample page sits on the points check's sage desk (check tokens). */
+.page {
+  background: var(--check-sage);
+  color: var(--check-ink);
+  font-family: var(--check-font);
+  padding: calc(var(--check-unit) * 9) 0 calc(var(--check-unit) * 16);
+}
+/* As wide as the report sheet, so the head, tabs and report share one edge. */
+.inner {
+  width: min(100% - 3rem, 56.25rem);
+  margin-inline: auto;
+}
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--check-unit) * 2);
+  font-size: var(--check-text-sm);
+  color: var(--check-muted);
+}
+.breadcrumb a:hover {
+  color: var(--check-ink);
+  text-decoration: underline;
+  text-underline-offset: var(--check-unit);
+}
+.heading {
+  padding-block: calc(var(--check-unit) * 9) calc(var(--check-unit) * 7);
+}
+.context {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--check-unit) * 2);
+  margin: 0 0 calc(var(--check-unit) * 3);
+  color: var(--check-green);
+  font-size: var(--check-text-sm);
+  font-weight: 550;
+}
+/* Styled as the page title, but a paragraph: the report's headline is the page's one h1. */
+.title {
+  margin: 0;
+  font: 650 clamp(2.25rem, 4.2vw, 3.25rem) / 1.08 var(--check-font);
+  letter-spacing: -0.045em;
+  max-width: 20ch;
+}
+.description {
+  max-width: 40rem;
+  margin: calc(var(--check-unit) * 4) 0 0;
+  font-size: var(--check-text);
+  line-height: 1.7;
+  color: var(--check-muted);
+}
+@media screen and (max-width: 760px) {
+  .page {
+    padding-top: calc(var(--check-unit) * 5);
+  }
+  .heading {
+    padding-block: calc(var(--check-unit) * 7) calc(var(--check-unit) * 5);
+  }
+}
+/* The report sheet runs edge to edge on phones by cancelling the page gutter
+   (report.module.css), so the page keeps exactly that gutter. */
+@media screen and (max-width: 720px) {
+  .inner {
+    width: auto;
+    margin-inline: var(--page-gutter);
+  }
+}
+@media print {
+  .page {
+    padding: 0;
+    background: white;
+  }
+  .inner {
+    width: 100%;
+  }
+  .heading,
+  .breadcrumb {
+    display: none;
+  }
+}

@@ -21,9 +21,6 @@ export function OccupationEvidenceFooter({
     <>
       <aside className={styles.bottomCta}>
         <div>
-          <p className={styles.sectionLabel}>
-            FROM THE OCCUPATION TO YOUR PROFILE
-          </p>
           <h2>What does this mean for you?</h2>
           <p>
             Calculate your points, see the EOIs at your score and explore the
@@ -31,7 +28,7 @@ export function OccupationEvidenceFooter({
           </p>
         </div>
         <Link href={`/check/?occupation=${code}`}>
-          Check my points, free <span aria-hidden="true">↗</span>
+          Check my points, free <span aria-hidden="true">→</span>
         </Link>
       </aside>
       <footer className={styles.sources}>

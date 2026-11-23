@@ -31,6 +31,8 @@ export type ProfileOutlook = {
   v491: VisaLabel | null;
   stamp: Stamp;
   listMembership: {
+    /** Null when the federal list can't be read (label-189.ts listed189). */
+    federal189: boolean | null;
     federal190: boolean;
     federal491: boolean;
     states: StateCode[];
@@ -47,6 +49,7 @@ function listMembership(
     (state) => rules.lists[state.toLowerCase()]?.entries[code] !== undefined,
   );
   return {
+    federal189: rules.federal ? federal?.["189"] === true : null,
     federal190: federal?.["190"] ?? false,
     federal491: federal?.["491"] ?? false,
     states,
@@ -77,11 +80,13 @@ function labelVisa(
 export function evaluateProfile(input: OutlookInput): ProfileOutlook {
   const { profile, asOf, core, rules } = input;
   const points = calculatePoints(profile, asOf);
+  const membership = listMembership(profile.occupation, rules);
   const v189 = label189({
     points: points.base,
     eligible: points.eligible,
     core,
     reasons: points.ineligibleReasons,
+    listed189: membership.federal189,
   });
   const v190 = core ? labelVisa(input, core, points, "190") : null;
   const v491 = core ? labelVisa(input, core, points, "491") : null;
@@ -96,6 +101,6 @@ export function evaluateProfile(input: OutlookInput): ProfileOutlook {
     v190,
     v491,
     stamp,
-    listMembership: listMembership(profile.occupation, rules),
+    listMembership: membership,
   };
 }

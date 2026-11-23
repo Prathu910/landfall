@@ -30,7 +30,9 @@ export function HomeOccupation({
         option: styles.option,
         empty: styles.empty,
       }}
-      comboboxProps={{ withinPortal: false }}
+      // Not kept mounted: inline (no portal), Mantine would server-render all
+      // 493 options into the homepage HTML (about 117 KB) while hidden.
+      comboboxProps={{ withinPortal: false, keepMounted: false }}
     />
   );
 }

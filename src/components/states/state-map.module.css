@@ -1,0 +1,35 @@
+.map {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.region {
+  cursor: pointer;
+}
+.face {
+  fill: var(--brand-paper);
+  stroke: var(--homepage-color-92a396);
+  stroke-width: 1.5;
+  transition: fill 0.15s;
+}
+.region:hover .face {
+  fill: var(--check-green-soft);
+}
+.connector {
+  fill: none;
+  stroke: var(--homepage-color-92a396);
+  stroke-width: 1.2;
+  pointer-events: none;
+}
+.label {
+  fill: var(--brand-ink);
+  /* The map is drawn about 0.45x, so this renders at least 13px. */
+  font: 650 30px var(--brand-font);
+  text-anchor: middle;
+  paint-order: stroke;
+  stroke: var(--brand-paper);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+  dominant-baseline: middle;
+  pointer-events: none;
+}

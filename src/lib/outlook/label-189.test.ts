@@ -7,7 +7,7 @@ import {
   SCENARIOS,
   type ScenarioId,
 } from "./__fixtures__/scenarios";
-import { higherScoreCount, label189 } from "./label-189";
+import { higherScoreCount, label189, stateVisasOnList } from "./label-189";
 
 const AS_OF = "2026-11-21";
 const core = (code: string) => {
@@ -197,5 +197,60 @@ describe("label189 edge cases", () => {
     expect(two.why).toBe(
       "72 meets the lower of your occupation's last 2 listed cut-offs (70) but not the other (75).",
     );
+  });
+});
+
+describe("label189 for an occupation off the Home Affairs 189 list", () => {
+  const farmer = core("121111");
+  const offList = (points: number, eligible: boolean | null = true) =>
+    label189({ points, eligible, core: farmer, listed189: false });
+
+  it("is not open at any score, without asking to confirm dates", () => {
+    for (const points of [55, 65, 80, 100]) {
+      const r = offList(points);
+      expect(r.label).toBe("not-open");
+      expect(r.offList).toBe(true);
+    }
+    expect(offList(80, null).why).toBe(
+      "This occupation isn't on the Home Affairs list for 189, so 189 isn't available at any score.",
+    );
+  });
+  it("says so even for an occupation with no published data", () => {
+    const r = label189({
+      points: 75,
+      eligible: true,
+      core: null,
+      listed189: false,
+    });
+    expect(r).toMatchObject({ label: "not-open", offList: true, ahead: null });
+  });
+  it("still names a failed basic requirement first", () => {
+    const r = offList(80, false);
+    expect(r.label).toBe("not-eligible");
+    expect(r.offList).toBe(true);
+  });
+  it("reads the published data alone when the list is unreadable", () => {
+    const r = label189({
+      points: 80,
+      eligible: true,
+      core: farmer,
+      listed189: null,
+    });
+    expect(r).toMatchObject({ label: "no-data", offList: false });
+    expect(
+      label189({ points: 80, eligible: true, core: nurse, listed189: true })
+        .label,
+    ).toBe("very-strong");
+  });
+});
+
+describe("stateVisasOnList", () => {
+  it("lists the state visas the federal list has, 190 first", () => {
+    const on = (federal190: boolean, federal491: boolean) =>
+      stateVisasOnList({ federal190, federal491 });
+    expect(on(true, true)).toEqual(["190", "491"]);
+    expect(on(false, true)).toEqual(["491"]);
+    expect(on(true, false)).toEqual(["190"]);
+    expect(on(false, false)).toEqual([]);
   });
 });

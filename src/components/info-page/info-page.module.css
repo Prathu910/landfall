@@ -1,0 +1,115 @@
+/* Shared shell for the supporting pages (states, methodology, feedback, 404):
+   the passport identity's sage desk, white paper and ink, as on the
+   occupation pages (occupation-shell.module.css). */
+.page {
+  --ink: var(--brand-ink);
+  --card: var(--brand-paper);
+  --surface: var(--brand-sage);
+  --rule: var(--brand-line);
+  --muted: var(--brand-muted);
+  --slate: var(--brand-green);
+  --focus-ring: var(--brand-focus);
+  background: var(--surface);
+  color: var(--ink);
+  font: 400 1rem/1.6 var(--brand-font);
+  padding: calc(var(--brand-unit) * 8) 0 calc(var(--brand-unit) * 20);
+}
+.page h1,
+.page h2,
+.page h3 {
+  font-family: var(--brand-font);
+}
+.inner {
+  width: min(100% - 5rem, 75rem);
+  margin-inline: auto;
+}
+.crumb {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--brand-unit) * 2);
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+.crumb a {
+  text-decoration: underline;
+  text-underline-offset: var(--brand-unit);
+}
+.crumb a:hover {
+  color: var(--ink);
+}
+.head {
+  padding: calc(var(--brand-unit) * 9) 0 calc(var(--brand-unit) * 10);
+}
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--brand-unit) * 2);
+  color: var(--slate);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.head h1 {
+  max-width: 20ch;
+  margin: calc(var(--brand-unit) * 3) 0 calc(var(--brand-unit) * 4);
+  font-size: clamp(2.25rem, 4.5vw, 3.5rem);
+  font-weight: 650;
+  letter-spacing: -0.05em;
+  line-height: 1.06;
+  overflow-wrap: anywhere;
+}
+.intro {
+  max-width: 44rem;
+  color: var(--muted);
+  font-size: 1.125rem;
+  line-height: 1.6;
+}
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--brand-unit) * 2) calc(var(--brand-unit) * 6);
+  margin: calc(var(--brand-unit) * 6) 0 0;
+  padding: 0;
+  list-style: none;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+.meta li {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--brand-unit) * 1.5);
+}
+.meta svg {
+  color: var(--slate);
+}
+@media screen and (max-width: 760px) {
+  .page {
+    padding-top: calc(var(--brand-unit) * 5);
+  }
+  .inner {
+    width: calc(100% - 2rem);
+  }
+  .head {
+    padding: calc(var(--brand-unit) * 6) 0 calc(var(--brand-unit) * 7);
+  }
+  .intro {
+    font-size: 1rem;
+  }
+}
+@media print {
+  .page {
+    padding: 0;
+    background: white;
+  }
+  .inner {
+    width: 100%;
+  }
+  .crumb {
+    display: none;
+  }
+  .head {
+    padding: 0 0 calc(var(--brand-unit) * 5);
+  }
+  .head h1 {
+    font-size: 1.75rem;
+  }
+}

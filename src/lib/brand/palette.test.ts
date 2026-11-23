@@ -108,9 +108,19 @@ describe("outlook label pairs", () => {
       expect(hasLabelToken(`${kebab(key)}-bg`, bg), key).toBe(true);
     }
     expect(globals).toMatch(/--font-report:[^;]*Archivo Variable/);
-    // Ruling R22: stamps use Archivo, as in the approved mockups.
-    expect(globals).toMatch(/--font-stamp:\s*"Archivo Variable"/);
-    expect(globals).not.toMatch(/Big Shoulders/);
+    // Founder decision, 23 Nov 2026 (supersedes R22): every stamp, on the
+    // homepage and in the report, uses the self-hosted stencil face.
+    expect(globals).toMatch(/--font-stamp:\s*"Big Shoulders Stencil Display"/);
+  });
+  it("loads the stencil face once, from @fontsource, for every stamp", () => {
+    const layout = readFileSync("src/app/layout.tsx", "utf8");
+    expect(layout).toMatch(
+      /@fontsource\/big-shoulders-stencil-display\/latin-900/,
+    );
+    const css = cssFiles("src")
+      .map((file) => readFileSync(file, "utf8"))
+      .join("\n");
+    expect(css).not.toMatch(/Homepage Stencil|big-shoulders-stencil\.ttf/);
   });
 });
 

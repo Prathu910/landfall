@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { StateLabel } from "./label-state";
-import { monthsOfSix } from "./phrases";
+import { lowerFirst, monthsOfSix } from "./phrases";
 
 const STATE: StateLabel = {
   state: "NT",
@@ -23,5 +23,19 @@ describe("monthsOfSix", () => {
     expect(monthsOfSix({ ...STATE, monthsFetched6: 4 })).toBe(
       "2 of the 4 published months of the last 6",
     );
+  });
+});
+
+describe("lowerFirst", () => {
+  it("lower-cases an ordinary leading word", () => {
+    expect(lowerFirst("Submit EOI (189)")).toBe("submit EOI (189)");
+  });
+
+  it("keeps acronyms and proper names as written", () => {
+    expect(lowerFirst("EOI submitted")).toBe("EOI submitted");
+    expect(lowerFirst("Superior English (80 points)")).toBe(
+      "Superior English (80 points)",
+    );
+    expect(lowerFirst("Professional Year, +5")).toBe("Professional Year, +5");
   });
 });

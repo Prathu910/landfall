@@ -3,16 +3,22 @@
 import type { VisaCard } from "./visa-cards";
 
 /**
- * Archivo 800 capitals at 100% stretch average 0.61–0.69 em each across the
- * stamp words (measured in Chrome), so sizes assume about 0.628 em a character.
+ * Stamps use Big Shoulders Stencil Display 900 (founder decision, 23 Nov
+ * 2026, superseding R22). It has no width axis, so text is sized to fit and
+ * the fit hook squeezes with textLength only when a line is still too wide.
+ *
+ * Words are sized at 0.56 em a character, as the homepage stamps always were,
+ * which leaves room on each side: the face's capitals measure 0.39–0.49 em in
+ * Chrome.
  */
-const FIT_RATIO = 0.628;
-
-/** Stamps set Archivo wide, like the report headings (ruling R22)... */
-export const STAMP_STRETCH = 116;
-/** ...and narrow along its width axis, down to its narrowest cut, to fit. */
-export const MIN_STRETCH = 62;
-/** textLength may compress a ring line's narrowest cut to this share. */
+const WORD_RATIO = 0.56;
+/**
+ * Width estimates use 0.44 em a character: long stamp lines (11 characters or
+ * more, where fitting matters) measure 0.39–0.45 em; short ones never fill
+ * their box.
+ */
+export const GLYPH_RATIO = 0.44;
+/** textLength may compress a ring line to this share of its width. */
 export const ARC_SQUEEZE = 0.8;
 
 /** Readable text never renders below this (ENGINEERING.md, 12px floor). */
@@ -47,8 +53,9 @@ export const BIG_STAMP = {
 /**
  * Visa stamps sit in 116px rows on a phone (spec 8), so their text is larger
  * relative to the frame than the mockup's and the viewBox margin is tighter.
- * The word stays on one line and narrows along Archivo's width axis when it
- * is long ("ON 3 STATE LISTS"), so the three lines keep their spacing.
+ * The word stays on one line and is squeezed when it is long ("ON 3 STATE
+ * LISTS"), so the three lines keep their spacing. Word widths follow each
+ * frame's inner rule (the oval's at the word's height).
  */
 const VISA_EDGE_SIZE = 23.5;
 export const VISA_STAMP = {
@@ -61,7 +68,7 @@ export const VISA_STAMP = {
   widths: {
     rect: { top: 160, word: 168, bottom: 150 },
     hex: { top: 160, word: 168, bottom: 120 },
-    oval: { top: 130, word: 156, bottom: 100 },
+    oval: { top: 130, word: 166, bottom: 100 },
   } satisfies Record<
     VisaCard["shape"],
     { top: number; word: number; bottom: number }
@@ -75,7 +82,7 @@ export const SHIFT_STAMP = {
   viewBox: { x: -6, y: -4, width: 286, height: 78 },
   minWidth: 240,
   floor: 14.5,
-  textWidth: 104,
+  textWidth: 106,
   textMax: 17,
   fixedSizes: [],
 } as const;
@@ -108,51 +115,21 @@ export function stampFontSize(
   width: number,
   max: number,
 ): number {
-  return Math.min(max, width / (text.length * FIT_RATIO));
+  return Math.min(max, width / (text.length * WORD_RATIO));
 }
 
-/** Width in user units at a stretch (percent), letter spacing included. */
+/** Width in user units, letter spacing included. */
 export function estimatedWidth(
   text: string,
   size: number,
-  stretch: number,
   letterSpacing = 0,
 ): number {
-  const advance = (size * FIT_RATIO * stretch) / 100 + letterSpacing;
-  return text.length * advance;
-}
-
-function clampStretch(stretch: number): number {
-  return Math.min(STAMP_STRETCH, Math.max(MIN_STRETCH, stretch));
+  return text.length * (size * GLYPH_RATIO + letterSpacing);
 }
 
 /**
- * The stretch the server renders, so text fits before the fit hook runs (or
- * where it can't measure, such as a tree that is hidden until printing).
- */
-export function stampStretch(
-  text: string,
-  size: number,
-  width: number,
-  letterSpacing = 0,
-): number {
-  const perCharacter = width / text.length - letterSpacing;
-  return clampStretch((100 * perCharacter) / (size * FIT_RATIO));
-}
-
-/** The fit hook's next stretch after measuring; it only ever narrows. */
-export function fitStretch(
-  stretch: number,
-  measuredWidth: number,
-  maxWidth: number,
-): number {
-  if (measuredWidth <= maxWidth) return stretch;
-  return Math.max(MIN_STRETCH, (stretch * maxWidth) / measuredWidth);
-}
-
-/**
- * A ring line that can't fit its arc even at the narrowest stretch and the
- * fit hook's last-resort squeeze is cut with an ellipsis, so it never runs
+ * A ring line that can't fit its arc even with the fit hook's last-resort
+ * squeeze is cut with an ellipsis, so it never runs
  * into the word box or off the ring.
  */
 export function capArcText(
@@ -162,8 +139,7 @@ export function capArcText(
   letterSpacing = 0,
 ): string {
   const fits = (candidate: string) =>
-    estimatedWidth(candidate, size, MIN_STRETCH, letterSpacing) * ARC_SQUEEZE <=
-    arcWidth;
+    estimatedWidth(candidate, size, letterSpacing) * ARC_SQUEEZE <= arcWidth;
   if (fits(text)) return text;
   let kept = text.length - 1;
   while (kept > 0 && !fits(`${text.slice(0, kept).trimEnd()}…`)) kept -= 1;

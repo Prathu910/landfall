@@ -10,37 +10,33 @@
   flex: 0 0 auto;
   min-height: 44px;
   padding: 10px 18px;
-  border: 1px solid var(--ink);
-  border-radius: 999px;
-  background: var(--card);
-  color: var(--ink);
+  border: 1px solid var(--check-line);
+  border-radius: var(--check-pill);
+  background: var(--check-paper);
+  color: var(--check-ink);
   font: inherit;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
 }
 
+.tab:hover {
+  border-color: var(--check-ink);
+}
+
 .tab[aria-selected="true"] {
-  background: var(--ink);
-  color: var(--card);
+  border-color: var(--check-ink);
+  background: var(--check-ink);
+  color: var(--check-paper);
 }
 
 .tab:focus-visible {
-  outline: 3px solid var(--focus-ring);
+  outline: 3px solid var(--check-focus);
   outline-offset: 2px;
 }
 
-.intro {
-  max-width: 690px;
-  margin: 0 0 16px;
-  color: var(--muted);
-  font-size: 15px;
-  line-height: 1.7;
-}
-
 @media print {
-  .tabs,
-  .intro {
+  .tabs {
     display: none;
   }
 }

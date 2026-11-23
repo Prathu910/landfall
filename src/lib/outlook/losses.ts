@@ -64,6 +64,8 @@ export type LossStart = {
   points: number;
   eligible: boolean | null;
   label: OutlookLabel;
+  /** The federal list's 189 flag (label-189.ts listed189). */
+  listed189?: boolean | null;
 };
 
 /** Timeline losses within 2 years, each starting where the last one left off. */
@@ -82,7 +84,12 @@ export function buildLosses(
     const from = { points, label };
     points += event.delta ?? 0;
     if (loss.kind === "eligibility") eligible = false;
-    label = label189({ points, eligible, core }).label;
+    label = label189({
+      points,
+      eligible,
+      core,
+      listed189: start.listed189,
+    }).label;
     losses.push({ date: event.date, ...loss, from, to: { points, label } });
   }
   return losses;

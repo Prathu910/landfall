@@ -8,9 +8,9 @@ import type {
   StateCode,
   Visa,
 } from "../data/types";
-import { label189 } from "../outlook/label-189";
+import { label189, name189, stampName189 } from "../outlook/label-189";
 import { evidenceLabel } from "../outlook/label-state";
-import { labelName } from "../outlook/labels";
+import { labelName, stampName } from "../outlook/labels";
 import type { OutlookLabel } from "../outlook/labels";
 import { formatMonth, formatSummed } from "../report/copy";
 import { buildRounds } from "../report/panel-189";
@@ -28,6 +28,11 @@ export type HomeAtlasMonth = {
   masked: boolean;
 };
 
+/** An "under N" month: a masked range that starts at zero. */
+function mayBeZero(month: HomeAtlasMonth): boolean {
+  return month.masked && month.count?.min === 0;
+}
+
 type PublishedMonth = { month: string; count: Interval; text: string };
 
 type AtlasCommon = {
@@ -36,6 +41,8 @@ type AtlasCommon = {
   nominationPoints: number;
   label: OutlookLabel;
   labelText: string;
+  /** The stamp's word: "Not available" for 189 off the Home Affairs list. */
+  stampWord: string;
   explanation: string;
   caveat: string;
   provenance: HomeAtlasProvenance;
@@ -85,6 +92,8 @@ export function buildHomeAtlas(
   visa: Visa,
   state: StateCode,
   provenance: HomeAtlasProvenance,
+  /** The federal list's 189 flag; null when the list can't be read. */
+  listed189: boolean | null = null,
 ): HomeAtlasView {
   const nominationPoints = visa === "190" ? 5 : visa === "491" ? 15 : 0;
   const totalPoints = basePoints + nominationPoints;
@@ -101,7 +110,12 @@ export function buildHomeAtlas(
     sourceHref: provenance.sources.dashboard,
   };
   if (visa === "189") {
-    const outcome = label189({ points: totalPoints, eligible: true, core });
+    const outcome = label189({
+      points: totalPoints,
+      eligible: true,
+      core,
+      listed189,
+    });
     const position = poolPosition(core, null, visa, totalPoints, null);
     const higher = position.available ? position.higher : null;
     const same = position.available ? position.same : null;
@@ -111,7 +125,8 @@ export function buildHomeAtlas(
       kind: "national",
       visa,
       label: outcome.label,
-      labelText: labelName(outcome.label, outcome.tooFew),
+      labelText: name189(outcome),
+      stampWord: stampName189(outcome),
       explanation: outcome.why,
       caveat: NATIONAL_CAVEAT,
       higher,
@@ -147,10 +162,11 @@ export function buildHomeAtlas(
     state,
     label: outcome.label,
     labelText: labelName(outcome.label),
+    stampWord: stampName(outcome.label),
     explanation:
       evidence.notPublished.length === 6
         ? "No monthly state evidence is published in this snapshot window."
-        : "The stamp summarises published invitation evidence at your points. Patterned bars show ranges; their height marks the upper bound.",
+        : `The stamp summarises published invitation evidence at your points. Patterned bars show ranges; their height marks the upper bound.${months.some(mayBeZero) ? " An “under” count may be zero." : ""}`,
     caveat:
       STATE_CAVEAT +
       (visa === "491"

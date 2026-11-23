@@ -4,16 +4,10 @@
   border: var(--brand-rule-width) solid var(--rule);
   border-radius: calc(var(--brand-unit) * 3);
 }
-.eyebrow {
-  color: var(--slate);
-  font-size: 0.75rem;
-  font-weight: 650;
-  letter-spacing: 0.1em;
-}
 .card h2 {
   font: 650 1.75rem/1.1 var(--brand-font);
   letter-spacing: -0.04em;
-  margin: calc(var(--brand-unit) * 3) 0 calc(var(--brand-unit) * 5);
+  margin: 0 0 calc(var(--brand-unit) * 5);
 }
 .occupation {
   font-size: 1rem;

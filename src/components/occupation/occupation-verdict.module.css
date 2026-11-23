@@ -1,0 +1,97 @@
+/* Ink stamps in the label colours; the stamp face is the report's stencil. */
+.strip {
+  margin-top: calc(var(--brand-unit) * 6);
+  padding: calc(var(--brand-unit) * 6) calc(var(--brand-unit) * 8);
+  background: var(--card);
+  border: var(--brand-rule-width) solid var(--rule);
+  border-radius: calc(var(--brand-unit) * 3);
+  break-inside: avoid;
+}
+.heading {
+  margin: 0 0 calc(var(--brand-unit) * 4);
+  font: 650 1rem/1.5 var(--brand-font);
+  color: var(--slate);
+}
+.stamps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--brand-unit) * 3);
+}
+.stamp {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--brand-unit) * 0.5);
+  margin: 0;
+  padding: calc(var(--brand-unit) * 2) calc(var(--brand-unit) * 4);
+  border: calc(var(--brand-unit) * 0.75) solid var(--stamp-ink);
+  border-radius: calc(var(--brand-unit) * 2);
+  background: var(--stamp-bg);
+  color: var(--stamp-ink);
+  font-family: var(--font-stamp);
+  font-weight: 900;
+  line-height: 1.1;
+  transform: rotate(-1.5deg);
+}
+.stamp:nth-child(even) {
+  transform: rotate(1.5deg);
+}
+.points {
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+}
+.label {
+  font-size: 1.25rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.note,
+.text {
+  margin: calc(var(--brand-unit) * 4) 0 0;
+  color: var(--muted);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  max-width: 44rem;
+}
+.closed {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: calc(var(--brand-unit) * 2) calc(var(--brand-unit) * 5);
+}
+.closed .text {
+  margin: 0;
+  flex: 1 1 18rem;
+  color: var(--ink);
+  font-size: 1rem;
+}
+.check {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--brand-unit) * 2);
+  margin-top: calc(var(--brand-unit) * 4);
+  min-height: calc(var(--brand-unit) * 11);
+  padding: calc(var(--brand-unit) * 2) calc(var(--brand-unit) * 5);
+  border-radius: var(--brand-pill);
+  background: var(--brand-ink);
+  color: var(--card);
+  font-weight: 600;
+}
+.check:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+@media screen and (max-width: 600px) {
+  .strip {
+    padding: calc(var(--brand-unit) * 5);
+  }
+}
+@media print {
+  .check {
+    display: none;
+  }
+}

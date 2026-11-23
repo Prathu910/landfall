@@ -107,7 +107,7 @@ const core: OccupationCore = {
 const federal: FederalList = {
   source: "https://immi.example.gov.au/list",
   checkedAt: CHECKED,
-  entries: { [CODE]: { "190": true, "491": true } },
+  entries: { [CODE]: { "189": true, "190": true, "491": true } },
 };
 
 const livingInSa: Profile = {
@@ -338,7 +338,7 @@ describe("stateOutlook: groups", () => {
   it("gives not-open everywhere for a federally ineligible occupation", () => {
     const ineligible: FederalList = {
       ...federal,
-      entries: { [CODE]: { "190": false, "491": true } },
+      entries: { [CODE]: { "189": false, "190": false, "491": true } },
     };
     const result = outlook(stateRules.rules, {
       federal: ineligible,

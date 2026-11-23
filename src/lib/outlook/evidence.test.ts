@@ -36,12 +36,13 @@ describe("buildEvidence rounds", () => {
     });
   });
 
-  it("has no rounds table and a plain sentence without a core", () => {
+  it("has no rounds table and says 189 isn't available off the 189 list", () => {
     const evidence = evidenceOf("nodata");
     expect(evidence.rounds).toBeNull();
     expect(evidence.roundsEmpty).toBe(
-      "No 189 round in the published results lists Greenkeeper.",
+      "189 isn't available for Greenkeeper: the Home Affairs list doesn't include it for 189.",
     );
+    expect(evidence.poolEmpty).toBe(evidence.roundsEmpty);
   });
 });
 

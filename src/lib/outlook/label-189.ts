@@ -1,11 +1,18 @@
-import type { Interval, OccupationCore, Visa } from "../data/types";
+import type { Interval, OccupationCore, StateVisa, Visa } from "../data/types";
 import { parseCountText, sumIntervals } from "../data/published-count";
 import { requirementWhy } from "./eligibility";
+import { labelName, stampName } from "./labels";
 import type { OutlookLabel } from "./labels";
 
 export type Label189 = {
   label: OutlookLabel;
   tooFew: boolean;
+  /**
+   * The Home Affairs list leaves the occupation off 189, so 189 reads "not
+   * open" ("Not available") at every score. Set even when a failed basic
+   * requirement decides the label, so a fix is never said to open 189.
+   */
+  offList: boolean;
   lastThree: number[]; // cut-offs of the last 3 listed rounds, newest first
   ahead: Interval | null; // EOIs with a higher score; null when no pool
   tied: Interval | null;
@@ -14,6 +21,24 @@ export type Label189 = {
 
 export const MIN_POINTS = 65;
 export const CONFIRM = " Confirm your English and skills assessment dates.";
+export const OFF_LIST_WHY =
+  "This occupation isn't on the Home Affairs list for 189, so 189 isn't available at any score.";
+/** The 189 name for an occupation off the list, as on its occupation page. */
+export const NOT_AVAILABLE = "Not available";
+
+/**
+ * The state visas the federal list still has the occupation for, 190 first:
+ * what is left to name when 189 isn't available.
+ */
+export function stateVisasOnList(list: {
+  federal190: boolean;
+  federal491: boolean;
+}): StateVisa[] {
+  const visas: StateVisa[] = [];
+  if (list.federal190) visas.push("190");
+  if (list.federal491) visas.push("491");
+  return visas;
+}
 
 /** EOIs in the pool with a score above `points`. Null when there is no pool. */
 export function higherScoreCount(
@@ -59,6 +84,7 @@ function finish(
   return {
     label,
     tooFew: false,
+    offList: false,
     lastThree: [],
     ahead: null,
     tied: null,
@@ -92,15 +118,27 @@ export function label189(input: {
   core: OccupationCore | null;
   /** calculatePoints' ineligibleReasons, so the why names the requirement. */
   reasons?: string[];
+  /**
+   * The Home Affairs list's 189 flag for the occupation (a code missing from
+   * the list is false). Null or absent when the list can't be read: the
+   * published data alone then decides.
+   */
+  listed189?: boolean | null;
 }): Label189 {
   const { points, eligible, core } = input;
+  const offList = input.listed189 === false;
 
-  if (eligible === false || points < MIN_POINTS) {
+  // A failed basic requirement closes 190 and 491 too, so it is named first.
+  if (eligible === false) {
+    return finish("not-eligible", requirementWhy(input.reasons ?? []), true, {
+      offList,
+    });
+  }
+  if (offList) return finish("not-open", OFF_LIST_WHY, true, { offList });
+  if (points < MIN_POINTS) {
     return finish(
       "not-eligible",
-      eligible === false
-        ? requirementWhy(input.reasons ?? [])
-        : `${points} is below the 65-point minimum for a 189 invitation.`,
+      `${points} is below the 65-point minimum for a 189 invitation.`,
       true,
     );
   }
@@ -181,6 +219,21 @@ export function label189(input: {
     eligible,
     rest,
   );
+}
+
+/** True when 189 reads "Not available": the list, not the data, closes it. */
+export function isOffList(v189: Label189): boolean {
+  return v189.offList && v189.label === "not-open";
+}
+
+/** The 189 label's display name: "Not available" off the list. */
+export function name189(v189: Label189): string {
+  return isOffList(v189) ? NOT_AVAILABLE : labelName(v189.label, v189.tooFew);
+}
+
+/** The 189 label's stamp word: "Not available" off the list. */
+export function stampName189(v189: Label189): string {
+  return isOffList(v189) ? NOT_AVAILABLE : stampName(v189.label, v189.tooFew);
 }
 
 /**

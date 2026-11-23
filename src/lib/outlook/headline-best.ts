@@ -1,8 +1,9 @@
-import { notEligibleBest } from "./combined";
+import { notEligibleBest, statesHaveNoData } from "./combined";
+import { isOffList, stateVisasOnList } from "./label-189";
 import { isAtLeast, labelName } from "./labels";
 import type { HeadlineCtx, Stamped } from "./headline-context";
 import { suitedStates } from "./headline-context";
-import { joinAnd, lowerFirst, moveName, theState } from "./phrases";
+import { capital, joinAnd, lowerFirst, moveName, theState } from "./phrases";
 
 function best189(ctx: HeadlineCtx): string {
   const { o, improve, lodged } = ctx;
@@ -54,12 +55,40 @@ function bestState(ctx: HeadlineCtx, stamped: Stamped): string {
   return `${where}.`;
 }
 
+/** "watch QLD and WA, which still list your occupation", or "" with no list. */
+function watchStates(states: string[]): string {
+  if (states.length === 0) return "";
+  const list = states.length === 1 ? "lists" : "list";
+  return `watch ${joinAnd(states)}, which still ${list} your occupation`;
+}
+
+/** Off the 189 list, only state nomination is left to name (23 Nov 2026). */
+function bestOffList(ctx: HeadlineCtx): string {
+  const { o, improve } = ctx;
+  const visas = joinAnd(stateVisasOnList(o.listMembership));
+  if (!visas) {
+    return "None: the Home Affairs list doesn't include your occupation for 189, 190 or 491.";
+  }
+  const watch = watchStates(o.listMembership.states);
+  // As on the list: when no state visa invites, points aren't the issue.
+  const points = !improve.pointsHelpStates
+    ? "Points aren't what's holding you back."
+    : improve.plain.length > 0
+      ? `More points could help ${visas}, with state nomination.`
+      : `${visas} need${visas.includes(" and ") ? "" : "s"} state nomination.`;
+  return `None right now. ${points}${watch ? ` ${capital(watch)}.` : ""}`;
+}
+
 function bestCombined(ctx: HeadlineCtx): string {
   const { o } = ctx;
   const { states, federal190, federal491 } = o.listMembership;
   // Points or a retake can open 189, so that leads, not "nothing suits".
   if (o.v189.label === "not-eligible") return notEligibleBest(o, ctx.improve);
-  if (o.stamp.label !== "no-data") {
+  // Off the 189 list with no state data, list membership is all there is.
+  const noData =
+    o.stamp.label === "no-data" || (isOffList(o.v189) && statesHaveNoData(o));
+  if (isOffList(o.v189) && !noData) return bestOffList(ctx);
+  if (!noData) {
     if (states.length === 0) return "None right now. Stay in the pool.";
     // Named from list membership (ruling R16), not invitation evidence.
     const list = states.length === 1 ? "lists" : "list";

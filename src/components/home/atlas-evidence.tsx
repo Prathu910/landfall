@@ -1,4 +1,5 @@
 import type { HomeAtlasView } from "@/lib/home/atlas";
+import { Guilloche } from "./guilloche";
 import { formatMonth } from "@/lib/report/copy";
 import { fullReportHref } from "./try-it-href";
 import { HomeStamp } from "./home-stamp";
@@ -23,19 +24,7 @@ export function AtlasEvidence({
       data-atlas-evidence
       data-snapshot={view.provenance.snapshotId}
     >
-      <svg
-        className="guill"
-        viewBox="0 0 600 520"
-        preserveAspectRatio="xMidYMid slice"
-        aria-hidden="true"
-      >
-        <image
-          href="/home/passport-evidence.svg"
-          width="600"
-          height="520"
-          preserveAspectRatio="xMidYMid slice"
-        />
-      </svg>
+      <Guilloche src="/home/passport-evidence.svg" />
       <div className="passport-topline">
         <span>Published invitation evidence</span>
         <span>{formatMonth(view.provenance.asAt)}</span>
@@ -57,6 +46,7 @@ export function AtlasEvidence({
       <div className={`big atlas-stamp${!state ? " national-stamp" : ""}`}>
         <HomeStamp
           label={view.label}
+          word={view.stampWord}
           shape={state ? (view.visa === "190" ? "hex" : "oval") : "round"}
           top={state ? `${view.visa} ${view.state}` : "SUBCLASS 189"}
           bottom={
@@ -117,9 +107,7 @@ export function AtlasEvidence({
                 aria-label={`${month.label}: ${month.text}${month.masked ? `; range; bar shows upper bound${month.count?.min === 0 ? "; may include zero" : ""}` : ""}`}
               >
                 <span className="month-number">
-                  {month.count
-                    ? month.text.replace(/^under\s+(\d+)$/i, "<$1")
-                    : "—"}
+                  {month.count ? month.text : "—"}
                 </span>
                 <span
                   className={`month-bar${!month.count ? " missing" : month.masked ? " masked" : ""}`}

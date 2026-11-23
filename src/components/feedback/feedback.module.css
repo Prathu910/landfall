@@ -3,8 +3,9 @@
   padding: 2rem;
   margin-bottom: 4rem;
   border: 1px solid var(--rule);
-  border-radius: 1rem;
+  border-radius: 0.75rem;
   background: var(--card);
+  box-shadow: var(--check-shadow);
 }
 .form fieldset {
   display: grid;
@@ -26,45 +27,28 @@
 }
 .success {
   display: grid;
+  justify-items: start;
   gap: 1.5rem;
   padding: 2rem;
   max-width: 46rem;
   margin-bottom: 4rem;
   border: 1px solid var(--rule);
-  border-radius: 1rem;
-  background: var(--card);
-}
-.prompt {
-  display: flex;
-  gap: 1rem;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  align-items: center;
-  margin: 1.5rem 0;
-  padding: 1rem 1.5rem;
-  border: 1px solid var(--rule);
   border-radius: 0.75rem;
   background: var(--card);
-  font-size: 1rem;
+  box-shadow: var(--check-shadow);
 }
-.prompt a {
-  text-decoration: underline;
-  color: var(--slate);
-  min-height: 2.75rem;
-  display: inline-flex;
-  align-items: center;
+.success h2 {
+  font-size: 1.75rem;
+  font-weight: 650;
+  letter-spacing: -0.04em;
+  line-height: 1.15;
 }
-@media (max-width: 720px) {
+@media screen and (max-width: 720px) {
   .form {
     padding: 1.25rem;
   }
   .form :global(.mantine-InputWrapper-description),
   .form :global(.mantine-Checkbox-description) {
     font-size: 1rem;
-  }
-}
-@media print {
-  .prompt {
-    display: none !important;
   }
 }

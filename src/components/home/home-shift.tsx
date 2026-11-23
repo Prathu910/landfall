@@ -1,15 +1,19 @@
-import { labelName, type OutlookLabel } from "@/lib/outlook/labels";
+import { labelName, stampName, type OutlookLabel } from "@/lib/outlook/labels";
+import { SHIFT_STAMP, stampTextSize } from "@/lib/outlook/stamp-geometry";
 import styles from "./home-shift.module.css";
-const short: Record<OutlookLabel, string> = {
-  competitive: "COMP.",
-  "very-strong": "V.STRONG",
-  strong: "STRONG",
-  "long-wait": "WAIT",
-  "not-invited": "NOT INV.",
-  "not-eligible": "NOT ELIG.",
-  "not-open": "NOT OPEN",
-  "no-data": "NO DATA",
-};
+
+/** "70 COMPETITIVE", sized by the report's shift-stamp geometry. */
+function shiftText(points: number, label: OutlookLabel) {
+  const text = `${points} ${stampName(label)}`.toUpperCase();
+  const size = stampTextSize(
+    text,
+    SHIFT_STAMP.textWidth,
+    SHIFT_STAMP.textMax,
+    SHIFT_STAMP.floor,
+  );
+  return { text, size };
+}
+
 export function HomeShift({
   from,
   to,
@@ -26,7 +30,7 @@ export function HomeShift({
     >
       {[from, to].map((item, index) => {
         const x = index * 158;
-        const text = `${item.points} ${short[item.label]}`;
+        const { text, size } = shiftText(item.points, item.label);
         return (
           <g
             key={index}
@@ -45,10 +49,10 @@ export function HomeShift({
             />
             <text
               x={x + 59}
-              y="42"
+              y={35 + size * 0.36}
               textAnchor="middle"
               fontWeight="900"
-              fontSize={Math.min(19, 104 / (text.length * 0.55))}
+              fontSize={size}
               fill="currentColor"
             >
               {text}

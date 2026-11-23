@@ -6,10 +6,7 @@ import {
   bigWordLayout,
   capArcText,
   estimatedWidth,
-  fitStretch,
-  MIN_STRETCH,
-  STAMP_STRETCH,
-  stampStretch,
+  GLYPH_RATIO,
   longestLine,
   SHIFT_STAMP,
   VISA_STAMP,
@@ -19,6 +16,7 @@ import {
   stampTextSize,
 } from "./stamp-geometry";
 import type { StampSpec } from "./stamp-geometry";
+import { LABEL_RANK, stampName } from "./labels";
 
 describe("stampLines", () => {
   it("breaks a long word into lines of at most 12 characters", () => {
@@ -39,9 +37,15 @@ describe("stampLines", () => {
 });
 
 describe("stampFontSize", () => {
-  it("fits the text to the width with Archivo's 0.628 ratio", () => {
-    // 250 / (11 × 0.628). R22 moved stamps to Archivo; see R23 in the report.
-    expect(stampFontSize("COMPETITIVE", 250, 56)).toBeCloseTo(36.2, 1);
+  it("fits the text to the width with the homepage's 0.56 ratio", () => {
+    // 250 / (11 × 0.56): the stencil word sits as it does on the homepage.
+    expect(stampFontSize("COMPETITIVE", 250, 56)).toBeCloseTo(40.58, 1);
+  });
+
+  it("leaves room for the widest stencil capitals", () => {
+    // Fitted at 0.56 em a character, text at GLYPH_RATIO still fits.
+    const size = stampFontSize("VERY STRONG", 250, 56);
+    expect(estimatedWidth("VERY STRONG", size)).toBeLessThanOrEqual(250);
   });
 
   it("never exceeds the maximum for short text", () => {
@@ -106,45 +110,52 @@ describe("longestLine", () => {
 });
 
 describe("estimatedWidth", () => {
-  it("scales with size, stretch and letter spacing", () => {
-    expect(estimatedWidth("ABCD", 10, 100)).toBeCloseTo(25.12, 5);
-    expect(estimatedWidth("ABCD", 10, 50)).toBeCloseTo(12.56, 5);
-    expect(estimatedWidth("ABCD", 10, 100, 2)).toBeCloseTo(33.12, 5);
-  });
-});
-
-describe("stampStretch", () => {
-  it("keeps the wide default when the text has room", () => {
-    expect(stampStretch("STRONG", 30, 250)).toBe(STAMP_STRETCH);
-  });
-
-  it("narrows the width axis just enough to fit", () => {
-    const stretch = stampStretch("ON 3 STATE LISTS", 23.5, 168);
-    expect(stretch).toBeLessThan(STAMP_STRETCH);
-    expect(estimatedWidth("ON 3 STATE LISTS", 23.5, stretch)).toBeCloseTo(
-      168,
+  it("scales with size and letter spacing at the widest glyph ratio", () => {
+    expect(estimatedWidth("ABCD", 10)).toBeCloseTo(4 * 10 * GLYPH_RATIO, 5);
+    expect(estimatedWidth("ABCD", 10, 2)).toBeCloseTo(
+      4 * (10 * GLYPH_RATIO + 2),
       5,
     );
   });
-
-  it("never goes below the face's narrowest width", () => {
-    expect(stampStretch("A VERY LONG STAMP WORD INDEED", 30, 100)).toBe(
-      MIN_STRETCH,
-    );
-  });
 });
 
-describe("fitStretch", () => {
-  it("narrows in proportion to the overflow", () => {
-    expect(fitStretch(116, 300, 250)).toBeCloseTo(96.67, 2);
+describe("every label fits each stamp at or above its floor", () => {
+  const WORDS = [
+    "VERY STRONG",
+    "COMPETITIVE",
+    "LONG WAIT",
+    "NOT ELIGIBLE",
+    "NOT INVITED",
+    "TOO FEW TO COUNT",
+    "ON 3 STATE LISTS",
+  ];
+
+  it.each(WORDS)("%s fits the visa stamp's oval at the floor", (word) => {
+    const size = stampTextSize(
+      word,
+      VISA_STAMP.widths.oval.word,
+      VISA_STAMP.wordMax,
+      VISA_STAMP.floor,
+    );
+    expect(size).toBeGreaterThanOrEqual(VISA_STAMP.floor);
+    expect(estimatedWidth(word, size)).toBeLessThanOrEqual(
+      VISA_STAMP.widths.oval.word,
+    );
   });
 
-  it("never widens text that already fits", () => {
-    expect(fitStretch(116, 200, 250)).toBe(116);
-  });
+  const SHIFT_WORDS = LABEL_RANK.map((label) => stampName(label));
 
-  it("stops at the narrowest width", () => {
-    expect(fitStretch(80, 400, 100)).toBe(MIN_STRETCH);
+  it.each(SHIFT_WORDS)("90 %s fits a shift box at the floor", (word) => {
+    const text = `90 ${word}`.toUpperCase();
+    const size = stampTextSize(
+      text,
+      SHIFT_STAMP.textWidth,
+      SHIFT_STAMP.textMax,
+      SHIFT_STAMP.floor,
+    );
+    expect(estimatedWidth(text, size)).toBeLessThanOrEqual(
+      SHIFT_STAMP.textWidth,
+    );
   });
 });
 
@@ -159,12 +170,12 @@ describe("capArcText", () => {
     expect(capArcText("SUBCLASS 190 TAS", 22, 270, 2)).toBe("SUBCLASS 190 TAS");
   });
 
-  it("cuts a line too long for the arc even at the narrowest width", () => {
+  it("cuts a line too long for the arc even at the last-resort squeeze", () => {
     const long = "OCT 2026 • 85 POINTS • A VERY LONG EXTRA NOTE THAT RUNS ON";
     const capped = capArcText(long, 20, 240, 2);
     expect(capped.endsWith("…")).toBe(true);
     expect(capped.length).toBeLessThan(long.length);
-    const squeezed = estimatedWidth(capped, 20, MIN_STRETCH, 2) * ARC_SQUEEZE;
+    const squeezed = estimatedWidth(capped, 20, 2) * ARC_SQUEEZE;
     expect(squeezed).toBeLessThanOrEqual(240);
   });
 });

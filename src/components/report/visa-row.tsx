@@ -35,7 +35,7 @@ export function VisaRow({
                 top={card.top}
                 word={card.stampWord}
                 points={card.points}
-                label={card.label}
+                label={card.ink}
                 rotate={TILTS[i] ?? 0}
               />
             </div>

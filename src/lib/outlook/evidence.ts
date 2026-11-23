@@ -189,12 +189,20 @@ export function buildEvidence(
   const name = occupationName(input);
   const you = o.points.base;
   const visas = [o.v190, o.v491].filter((v): v is VisaLabel => v !== null);
+  // Off the 189 list, 189 history says nothing about the reader.
+  const offList = o.v189.offList;
+  const core189 = offList ? null : core;
+  const unavailable = `189 isn't available for ${name}: the Home Affairs list doesn't include it for 189.`;
   return {
-    rounds: core ? { you, rows: roundRows(core, you) } : null,
-    roundsEmpty: `No 189 round in the published results lists ${name}.`,
-    pool: core ? poolOf(input, core, you) : null,
-    poolEmpty: `SkillSelect hasn't published any 189 EOI counts for ${name}.`,
-    cohort: core ? cohortOf(input, core) : null,
+    rounds: core189 ? { you, rows: roundRows(core189, you) } : null,
+    roundsEmpty: offList
+      ? unavailable
+      : `No 189 round in the published results lists ${name}.`,
+    pool: core189 ? poolOf(input, core189, you) : null,
+    poolEmpty: offList
+      ? unavailable
+      : `SkillSelect hasn't published any 189 EOI counts for ${name}.`,
+    cohort: core189 ? cohortOf(input, core189) : null,
     states: core ? visas.map((visa) => stateTable(input, visa)) : [],
     statesEmpty: `No state invitations are published for ${name}.`,
   };

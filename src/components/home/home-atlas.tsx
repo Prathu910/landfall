@@ -45,9 +45,12 @@ const visas = [
 export function HomeAtlas({
   initialCore,
   provenance,
+  listed189Codes,
 }: {
   initialCore: OccupationCore;
   provenance: HomeAtlasProvenance;
+  /** Codes on the Home Affairs 189 list; null when the list can't be read. */
+  listed189Codes: readonly string[] | null;
 }) {
   const [code, setCode] = useState(initialCore.code);
   const [basePoints, setBasePoints] = useState(70);
@@ -67,7 +70,14 @@ export function HomeAtlas({
         ? load.core
         : null;
   const view = core
-    ? buildHomeAtlas(core, basePoints, visa, state, provenance)
+    ? buildHomeAtlas(
+        core,
+        basePoints,
+        visa,
+        state,
+        provenance,
+        listed189Codes ? listed189Codes.includes(code) : null,
+      )
     : null;
   function chooseState(selected: StateCode) {
     setState(selected);

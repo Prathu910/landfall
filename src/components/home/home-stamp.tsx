@@ -3,39 +3,61 @@
 import { useId } from "react";
 import { stampName, type OutlookLabel } from "@/lib/outlook/labels";
 import { InkFilter } from "@/components/report/ink-filter";
+import {
+  BIG_STAMP,
+  VISA_STAMP,
+  longestLine,
+  stampLines,
+  stampTextSize,
+} from "@/lib/outlook/stamp-geometry";
 import styles from "./home-stamp.module.css";
 
 type StampProps = {
   label: OutlookLabel;
+  /** The stamp's word when it isn't the label's own ("Not available"). */
+  word?: string;
   top: string;
   bottom: string;
   shape?: "round" | "rect" | "hex" | "oval";
   rotate?: number;
 };
 
-/** The approved homepage's stencil treatment is intentionally separate from report typography. */
+/**
+ * The homepage's stamps: the report's stencil face and fitting rules, in the
+ * homepage's own colours and frames.
+ */
 export function HomeStamp({
   label,
+  word: givenWord,
   top,
   bottom,
   shape = "round",
   rotate = -4,
 }: StampProps) {
   const id = useId();
-  const word = stampName(label).toUpperCase();
+  const name = givenWord ?? stampName(label);
+  const word = name.toUpperCase();
   const round = shape === "round";
-  const lines = round && word.length > 12 ? word.split(" ") : [word];
-  const width = round ? 250 : 168;
-  const size = Math.min(
-    round ? 56 : 30,
-    width / (Math.max(...lines.map((line) => line.length)) * 0.56),
-  );
+  const lines = round ? stampLines(word) : [word];
+  const size = round
+    ? stampTextSize(
+        longestLine(lines),
+        BIG_STAMP.wordWidth,
+        BIG_STAMP.wordMax,
+        BIG_STAMP.floor,
+      )
+    : stampTextSize(
+        word,
+        VISA_STAMP.widths.rect.word,
+        VISA_STAMP.wordMax,
+        VISA_STAMP.floor,
+      );
   const ink = { fill: "none", stroke: "currentColor" };
   return (
     <svg
       viewBox={round ? "-24 -24 368 368" : "-12 -12 244 184"}
       role="img"
-      aria-label={`${top}: ${stampName(label)}, ${bottom}`}
+      aria-label={`${top}: ${name}, ${bottom}`}
       className={`${styles.stamp} ${styles[label]}`}
     >
       <defs>
@@ -56,7 +78,7 @@ export function HomeStamp({
             <circle cx="160" cy="160" r="150" {...ink} strokeWidth="7" />
             <circle cx="160" cy="160" r="136" {...ink} strokeWidth="2.5" />
             <text
-              fontWeight="800"
+              fontWeight="900"
               fontSize="24"
               fill="currentColor"
               letterSpacing="2"
@@ -70,7 +92,7 @@ export function HomeStamp({
               </textPath>
             </text>
             <text
-              fontWeight="800"
+              fontWeight="900"
               fontSize="21"
               fill="currentColor"
               letterSpacing="2"
@@ -162,7 +184,7 @@ export function HomeStamp({
               x="110"
               y="58"
               textAnchor="middle"
-              fontWeight="800"
+              fontWeight="900"
               fontSize={Math.min(22, 150 / (top.length * 0.62))}
               fill="currentColor"
               letterSpacing="1"
@@ -183,7 +205,7 @@ export function HomeStamp({
               x="110"
               y="128"
               textAnchor="middle"
-              fontWeight="800"
+              fontWeight="900"
               fontSize="19"
               fill="currentColor"
             >

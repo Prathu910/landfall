@@ -48,6 +48,8 @@ function row(code: string, overrides: Partial<Row> = {}): Row {
   };
 }
 
+const ALL_THREE = { "189": true, "190": true, "491": true };
+
 const ORIGINAL_ELEVEN = [
   "261111",
   "261312",
@@ -65,16 +67,17 @@ const ORIGINAL_ELEVEN = [
 describe("parseFederalList", () => {
   const { entries, unlabelled } = parseFederalList(page);
 
-  it("lists Software Engineer as eligible for 190 and 491", () => {
-    expect(entries["261313"]).toEqual({ "190": true, "491": true });
+  it("lists Software Engineer as eligible for 189, 190 and 491", () => {
+    expect(entries["261313"]).toEqual(ALL_THREE);
   });
 
-  it("gives every entry both booleans", () => {
+  it("gives every entry all three booleans", () => {
     expect(Object.keys(entries).length).toBeGreaterThan(10);
     for (const entry of Object.values(entries)) {
-      expect(Object.keys(entry).sort()).toEqual(["190", "491"]);
-      expect(typeof entry["190"]).toBe("boolean");
-      expect(typeof entry["491"]).toBe("boolean");
+      expect(Object.keys(entry).sort()).toEqual(["189", "190", "491"]);
+      for (const visa of ["189", "190", "491"] as const) {
+        expect(typeof entry[visa]).toBe("boolean");
+      }
     }
   });
 
@@ -82,27 +85,47 @@ describe("parseFederalList", () => {
     expect(entries["999999"]).toBeUndefined();
   });
 
-  it("lists the eleven original occupations for both visas", () => {
+  it("lists the eleven original occupations for all three visas", () => {
     for (const code of ORIGINAL_ELEVEN) {
-      expect(entries[code], code).toEqual({ "190": true, "491": true });
+      expect(entries[code], code).toEqual(ALL_THREE);
     }
   });
 
   it("separates 491 state nomination from 190", () => {
-    expect(entries["231111"]).toEqual({ "190": false, "491": true });
+    expect(entries["231111"]).toEqual({
+      "189": false,
+      "190": false,
+      "491": true,
+    });
   });
 
-  it("keeps a listed occupation that is open to neither visa", () => {
-    expect(entries["411511"]).toEqual({ "190": false, "491": false });
+  it("separates 189 from 190 and 491", () => {
+    expect(entries["362212"]).toEqual({
+      "189": false,
+      "190": true,
+      "491": true,
+    });
+  });
+
+  it("keeps a listed occupation that is open to none of the visas", () => {
+    expect(entries["411511"]).toEqual({
+      "189": false,
+      "190": false,
+      "491": false,
+    });
   });
 
   it("keys entries by the ANZSCO 2013 code, not the 2022 one", () => {
-    expect(entries["342411"]).toEqual({ "190": true, "491": true });
+    expect(entries["342411"]).toEqual({
+      "189": false,
+      "190": true,
+      "491": true,
+    });
     expect(entries["362212"]).toBeDefined();
     expect(entries["362511"]).toBeUndefined();
   });
 
-  it("sets aside 190/491 rows that carry only a 2022-labelled code", () => {
+  it("sets aside 189/190/491 rows that carry only a 2022-labelled code", () => {
     expect(unlabelled.map((r) => r.occupation).sort()).toEqual([
       "Operating Theatre Technician",
       "Osteopath",
@@ -120,6 +143,21 @@ describe("parseFederalList", () => {
 
   it("throws when the page no longer carries the data field", () => {
     expect(() => parseFederalList("<html></html>")).toThrow(/review/);
+  });
+
+  it("throws on an unrecognised 189 visa label", () => {
+    const renamed = row("261313", {
+      visas: "189 - Skilled Independent visa (subclass 189);",
+    });
+    expect(() => parseFederalList(pageWith([renamed]))).toThrow(/189/);
+  });
+
+  it("throws when a caveat applies to 189", () => {
+    const caveated = row("261313", {
+      visacaveats:
+        "<div><ul><li>189 - Skilled Independent (subclass 189) - Points-Tested<br/><span>caveats apply</span></li></ul></div>",
+    });
+    expect(() => parseFederalList(pageWith([caveated]))).toThrow(/caveat/);
   });
 
   it("throws on an unrecognised 190 or 491 visa label", () => {
@@ -173,7 +211,12 @@ describe("buildFederalList", () => {
 
   it("maps a 2022-labelled row when the dashboard has that code and name", () => {
     const { list, unmatched } = buildFederalList(page, index, meta);
-    expect(list.entries["139914"]).toEqual({ "190": true, "491": true });
+    expect(list.entries["139914"]).toEqual({
+      "189": false,
+      "190": true,
+      "491": true,
+    });
+    expect(list.entries["252112"]).toEqual(ALL_THREE);
     expect(list.entries["139916"]).toBeUndefined();
     expect(list.entries["311214"]).toBeDefined();
     expect(list.entries["252112"]).toBeDefined();
@@ -193,18 +236,21 @@ describe("assertPlausible", () => {
     source: "https://example.gov.au/list",
     checkedAt: "2026-11-18",
     entries: {
-      "261313": { "190": true, "491": true },
-      "231111": { "190": false, "491": true },
-      "411511": { "190": false, "491": false },
+      "261313": ALL_THREE,
+      "231111": { "189": false, "190": false, "491": true },
+      "411511": { "189": false, "190": false, "491": false },
     },
   };
 
+  const floors = { "189": 1, "190": 1, "491": 2 };
+
   it("accepts a list with enough eligible codes for each visa", () => {
-    expect(() => assertPlausible(list, 1)).not.toThrow();
+    expect(() => assertPlausible(list, floors)).not.toThrow();
   });
 
-  it("throws when either visa has too few eligible codes", () => {
-    expect(() => assertPlausible(list, 2)).toThrow(/190/);
+  it("throws when any visa has too few eligible codes", () => {
+    expect(() => assertPlausible(list, { ...floors, "190": 2 })).toThrow(/190/);
+    expect(() => assertPlausible(list, { ...floors, "189": 2 })).toThrow(/189/);
   });
 });
 
@@ -220,7 +266,7 @@ describe("writeFederalList", () => {
     const list = {
       source: "https://example.gov.au/list",
       checkedAt: "2026-11-18",
-      entries: { "261313": { "190": true, "491": true } },
+      entries: { "261313": ALL_THREE },
     };
     writeFederalList(path, list);
     const text = readFileSync(path, "utf8");
