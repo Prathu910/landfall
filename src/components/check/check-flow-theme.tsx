@@ -15,6 +15,7 @@ const checkTheme = createTheme({
   components: {
     TextInput: { defaultProps: { classNames: inputClasses } },
     NumberInput: { defaultProps: { classNames: inputClasses } },
+    Textarea: { defaultProps: { classNames: inputClasses } },
     Select: {
       defaultProps: {
         classNames: {
