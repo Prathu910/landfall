@@ -5,14 +5,24 @@ import { localToday } from "../src/lib/migration";
 const WARN_AFTER_DAYS = 45;
 const LISTED = 20;
 
-/** Prints a warning for guide fees and rules older than 12 months. */
+/** Prints a warning for guide fees and rules older than 12 months, and for visa charges past the next 1 July. */
 async function checkGuide(today: string): Promise<void> {
   const { FEES } = await import("../src/data/guide/fees");
   const { GUIDE_STEPS } = await import("../src/data/guide/steps");
   const { POINTS_CHANGES } = await import("../src/data/guide/points-changes");
   const { VISA_GUIDES } = await import("../src/data/guide/visas");
-  const { guideDatedItems, staleGuideItems, GUIDE_MAX_AGE_DAYS } =
-    await import("../src/lib/guide/staleness");
+  const {
+    chargesOutdated,
+    guideDatedItems,
+    nextChargeChange,
+    staleGuideItems,
+    GUIDE_MAX_AGE_DAYS,
+  } = await import("../src/lib/guide/staleness");
+  if (chargesOutdated(FEES.feesAsAt, today)) {
+    console.warn(
+      `WARNING check-rule-staleness: the PR guide's visa charges are as at ${FEES.feesAsAt}, and Home Affairs changes them every 1 July (next: ${nextChargeChange(FEES.feesAsAt) ?? "unknown"}). Re-read the current visa pricing table and update FEES (docs/research/pr-guide-2026-11.md).`,
+    );
+  }
   const items = guideDatedItems({
     fees: FEES,
     steps: GUIDE_STEPS,

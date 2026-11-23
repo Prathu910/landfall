@@ -243,7 +243,7 @@ Federal eligibility comes only from the imported federal list, never from the da
 **Staleness.** Tests never read the clock; they use fixed dates.
 
 - At render time, a rule or list checked more than 60 days before the report's `asOf` counts as unverified, and its panel line says "Last checked {date}; may have changed".
-- At build time, `npm run build` runs `scripts/check-rule-staleness.ts`. It prints a `WARNING` naming the rules checked more than 45 days before today (the first 20, then a count). It never fails the build. The same script warns about PR guide fees and rules (`src/data/guide/`) checked more than 365 days before today.
+- At build time, `npm run build` runs `scripts/check-rule-staleness.ts`. It prints a `WARNING` naming the rules checked more than 45 days before today (the first 20, then a count). It never fails the build. The same script warns about PR guide fees and rules (`src/data/guide/`) checked more than 365 days before today, and once today reaches the 1 July after `FEES.feesAsAt`, because Home Affairs sets new visa charges every 1 July.
 
 **Monthly re-verify routine** (alongside the SkillSelect import):
 

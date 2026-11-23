@@ -8,8 +8,30 @@ import type {
   VisaGuide,
 } from "./types";
 
-/** Fees change every 1 July: anything older than this needs a fresh read. */
+/** Anything checked longer ago than this needs a fresh read. */
 export const GUIDE_MAX_AGE_DAYS = 365;
+
+const CALENDAR_DATE = /^(\d{4})-(\d{2})-(\d{2})$/;
+
+/** The first 1 July after `feesAsAt`, when visa charges next change; null when unreadable. */
+export function nextChargeChange(feesAsAt: string): string | null {
+  const match = CALENDAR_DATE.exec(feesAsAt);
+  if (!match) return null;
+  const year = Number(match[1]);
+  const beforeJuly = `${match[2]}-${match[3]}` < "07-01";
+  return `${beforeJuly ? year : year + 1}-07-01`;
+}
+
+/**
+ * True once `asOf` reaches the 1 July after `feesAsAt`: Home Affairs sets new
+ * visa charges every 1 July, so the checked-in ones may be out of date even if
+ * they were read recently. Unreadable dates count as outdated.
+ */
+export function chargesOutdated(feesAsAt: string, asOf: string): boolean {
+  const next = nextChargeChange(feesAsAt);
+  if (!next || !CALENDAR_DATE.test(asOf)) return true;
+  return asOf >= next;
+}
 
 export type DatedItem = {
   id: string;

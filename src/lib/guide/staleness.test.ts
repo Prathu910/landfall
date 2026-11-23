@@ -3,7 +3,13 @@ import { FEES } from "../../data/guide/fees";
 import { GUIDE_STEPS } from "../../data/guide/steps";
 import { POINTS_CHANGES } from "../../data/guide/points-changes";
 import { VISA_GUIDES } from "../../data/guide/visas";
-import { feeItems, guideDatedItems, staleGuideItems } from "./staleness";
+import {
+  chargesOutdated,
+  feeItems,
+  guideDatedItems,
+  nextChargeChange,
+  staleGuideItems,
+} from "./staleness";
 
 describe("staleGuideItems", () => {
   const items = [
@@ -23,6 +29,30 @@ describe("staleGuideItems", () => {
         "2026-11-23",
       ),
     ).toHaveLength(1);
+  });
+});
+
+describe("visa charge changes", () => {
+  it("finds the next 1 July after the date the charges took effect", () => {
+    expect(nextChargeChange("2026-07-01")).toBe("2027-07-01");
+    expect(nextChargeChange("2026-06-30")).toBe("2026-07-01");
+    expect(nextChargeChange("2026-12-31")).toBe("2027-07-01");
+    expect(nextChargeChange("2027-01-01")).toBe("2027-07-01");
+  });
+  it("treats an unreadable date as having no known next change", () => {
+    expect(nextChargeChange("1 Jul 2026")).toBeNull();
+  });
+  it("flags the charges from that 1 July, not before", () => {
+    expect(chargesOutdated("2026-07-01", "2027-06-30")).toBe(false);
+    expect(chargesOutdated("2026-07-01", "2027-07-01")).toBe(true);
+    expect(chargesOutdated("2026-07-01", "2028-01-15")).toBe(true);
+  });
+  it("flags unreadable dates rather than passing them as current", () => {
+    expect(chargesOutdated("2026/07/01", "2026-11-23")).toBe(true);
+    expect(chargesOutdated("2026-07-01", "")).toBe(true);
+  });
+  it("leaves the checked-in charges current on the day they were checked", () => {
+    expect(chargesOutdated(FEES.feesAsAt, "2026-11-23")).toBe(false);
   });
 });
 
