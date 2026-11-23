@@ -15,7 +15,14 @@
 .button[aria-expanded="true"] {
   background: var(--brand-sage);
 }
+.anchor {
+  position: relative;
+}
 .popover {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 248px;
   padding: calc(var(--brand-unit) * 3.5);
   border: var(--brand-rule-width) solid var(--brand-line);
   border-radius: calc(var(--brand-unit) * 3);
