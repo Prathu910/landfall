@@ -140,6 +140,21 @@ export function combinedWait(o: ProfileOutlook): string | null {
   return groups.map((g) => `${joinAnd(g.visas)}: ${g.text}.`).join(" ");
 }
 
+/**
+ * What reaching 65 means for 189. It opens 189 only when 189 is inviting the
+ * occupation; otherwise the reader can submit an EOI, but nothing more
+ * (ruling R34).
+ */
+function openerOutcome(after: OutlookLabel): string {
+  const submit = ", so you can submit an EOI, though";
+  if (after === "not-invited")
+    return `${submit} 189 isn't inviting your occupation.`;
+  if (after === "no-data") {
+    return `${submit} there isn't enough published 189 data to read your position.`;
+  }
+  return ", which opens 189.";
+}
+
 /** The best-route line for a combined stamp when 189 isn't eligible yet. */
 export function notEligibleBest(o: ProfileOutlook, improve: Improve): string {
   const reasons = o.points.ineligibleReasons;
@@ -148,7 +163,8 @@ export function notEligibleBest(o: ProfileOutlook, improve: Improve): string {
     return `None: 189, 190 and 491 all ${ageRule(reasons)}.`;
   const opener = improve.opener;
   if (opener) {
-    return `None yet. ${capital(moveLabel(opener))} would take you to ${opener.to.points} points, which opens 189.`;
+    const reach = `None yet. ${capital(moveLabel(opener))} would take you to ${opener.to.points} points`;
+    return `${reach}${openerOutcome(opener.to.label)}`;
   }
   if (blocker === "expired") {
     return `None yet. Renew ${expiredPhrase(reasons)} first: it's a basic requirement.`;

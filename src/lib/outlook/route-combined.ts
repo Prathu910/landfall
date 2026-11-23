@@ -1,4 +1,4 @@
-import { blockerOf, expiredItems } from "./eligibility";
+import { AGE_UNDER, blockerOf, expiredItems } from "./eligibility";
 import type { OutlookInput, ProfileOutlook } from "./evaluate-profile";
 import type { Improve } from "./improve";
 import { MIN_POINTS } from "./label-189";
@@ -51,6 +51,12 @@ function renewTitle(reasons: string[]): string {
   return english ? "Retake your English test" : "Renew your skills assessment";
 }
 
+function ageNeed(reasons: string[]): string {
+  return reasons.includes(AGE_UNDER)
+    ? "they need you to be 18 or over"
+    : "they need you to be under 45";
+}
+
 /**
  * Below 65 or missing a basic requirement, with no state route to take:
  * the change that opens 189 leads (spec 6.8 "Below 65"). Age can't be
@@ -66,7 +72,11 @@ export function notEligible(
   if (blocker === "age") {
     return [
       ...start,
-      dated("Points-tested visas closed", "they need you to be under 45", null),
+      dated(
+        "Points-tested visas closed",
+        ageNeed(o.points.ineligibleReasons),
+        null,
+      ),
       dated(
         "Talk to a registered migration agent",
         "about visas without this age limit",

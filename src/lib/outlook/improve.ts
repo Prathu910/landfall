@@ -1,4 +1,5 @@
 import type { Visa } from "../data/types";
+import { ageRule, blockerOf } from "./eligibility";
 import type { Profile } from "../migration";
 import { evaluateProfile } from "./evaluate-profile";
 import type { OutlookInput, ProfileOutlook } from "./evaluate-profile";
@@ -70,8 +71,15 @@ function rankOf(label: OutlookLabel): number {
   return LABEL_RANK.indexOf(label);
 }
 
+// A change that still leaves the reader short of 65 goes after every change
+// that reaches it, even one into an occupation 189 isn't inviting (R34).
+function shortOf65(move: Move): number {
+  return move.to.label === "not-eligible" ? 1 : 0;
+}
+
 function compareMoves(a: Move, b: Move): number {
   return (
+    shortOf65(a) - shortOf65(b) ||
     rankOf(a.to.label) - rankOf(b.to.label) ||
     b.to.points - a.to.points ||
     LEAD_TIME[a.id] - LEAD_TIME[b.id]
@@ -201,6 +209,10 @@ function modeOf(input: OutlookInput, base: ProfileOutlook): Improve["mode"] {
 
 function bannerOf(mode: Improve["mode"], base: ProfileOutlook): string | null {
   if (mode === "protect") return BANNERS.protect;
+  // Age closes every points-tested visa, so moves that add points can't help.
+  if (blockerOf(base.points) === "age") {
+    return `Points can't change this: 189, 190 and 491 all ${ageRule(base.points.ineligibleReasons)}.`;
+  }
   if (mode !== "points-not-problem") return null;
   if (base.stamp.kind !== "combined") return BANNERS.closed189;
   return base.stamp.label === "not-invited"

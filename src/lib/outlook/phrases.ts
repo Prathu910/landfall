@@ -61,11 +61,21 @@ export function capital(text: string): string {
   return text[0].toUpperCase() + text.slice(1);
 }
 
-/** Lower-cases a leading capital, except in an acronym ("EOI", "WA's") or "English". */
+// Names that keep their capitals mid-sentence: the English levels and the
+// Professional Year program.
+const PROPER_STARTS = [
+  "English",
+  "Competent English",
+  "Proficient English",
+  "Superior English",
+  "Professional Year",
+];
+
+/** Lower-cases a leading capital, except in an acronym ("EOI", "WA's") or a proper name. */
 export function lowerFirst(text: string): string {
   const [first, second] = text;
   if (second !== undefined && second !== second.toLowerCase()) return text;
-  if (text.startsWith("English")) return text;
+  if (PROPER_STARTS.some((name) => text.startsWith(name))) return text;
   return (first ?? "").toLowerCase() + text.slice(1);
 }
 

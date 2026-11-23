@@ -5,6 +5,8 @@ import {
 } from "../../data/load-server";
 import type { OccupationCore, OccupationDetail } from "../../data/types";
 import type { Profile } from "../../migration";
+import { LABEL_RANK } from "../labels";
+import type { OutlookLabel } from "../labels";
 import { checkRead } from "../read-contract";
 import { buildOutlookView } from "../view";
 import type { OccupationState, ReportOutlookView } from "../view";
@@ -29,6 +31,9 @@ const LODGED_ON = "2026-02-10";
 // "about 0"), or a value that leaked through as text.
 const BAD_TEXT = /\b0–|\b0 to \d|\babout 0\b|NaN|undefined|Infinity/;
 const NO_VISA_INVITING = /No visa is inviting/;
+const OPENS_189 = /opens 189/;
+// After a change, 189 still has nothing to open (ruling R34).
+const STILL_CLOSED = ["not-invited", "no-data"];
 
 type Loaded = { code: string; state: OccupationState };
 
@@ -66,6 +71,12 @@ function viewOf(profile: Profile, occupation: OccupationState) {
   return view;
 }
 
+const rank = (label: OutlookLabel) => LABEL_RANK.indexOf(label);
+
+function liftsAny(view: ReportOutlookView): boolean {
+  return view.improve.moves.some((m) => rank(m.to.label) < rank(m.from.label));
+}
+
 /** Each problem as "code: what", so a failure lists every case at once. */
 function problemsOf(code: string, view: ReportOutlookView): string[] {
   const problems: string[] = [];
@@ -78,6 +89,14 @@ function problemsOf(code: string, view: ReportOutlookView): string[] {
     if (move.to.label === move.from.label) {
       problems.push(`${code}: best move ${move.id} keeps ${move.to.label}`);
     }
+  }
+  const opener = view.improve.opener;
+  const closed = opener !== null && STILL_CLOSED.includes(opener.to.label);
+  if (closed && stringsOf(view).some((t) => OPENS_189.test(t))) {
+    problems.push(`${code}: says ${opener.id} opens 189 (${opener.to.label})`);
+  }
+  if (/biggest jump/i.test(view.templateRead) && !liftsAny(view)) {
+    problems.push(`${code}: the read names a biggest jump that lifts nothing`);
   }
   const notInvited =
     view.stamp.kind === "combined" && view.stamp.label === "not-invited";

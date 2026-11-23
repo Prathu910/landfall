@@ -56,7 +56,7 @@ describe("under 65 with no 189 data (Aquaculture Farmer at 55)", () => {
 
   it("leads the best line and route with the change that crosses 65", () => {
     expect(view.headline.best).toBe(
-      "None yet. Superior English would take you to 75 points, which opens 189.",
+      "None yet. Superior English would take you to 75 points, so you can submit an EOI, though there isn't enough published 189 data to read your position.",
     );
     expect(steps(view)).toEqual([
       "Today [21 Nov 2026]",
@@ -70,6 +70,19 @@ describe("under 65 with no 189 data (Aquaculture Farmer at 55)", () => {
     expect(view.improve.mode).toBe("plain");
     expect(view.improveLabels).toBe(false);
     expect(view.templateRead).not.toMatch(/Not enough data/);
+  });
+});
+
+describe("a reader under 18", () => {
+  const view = reportFor({ ...PLANNER, dob: "2010-01-01" });
+
+  it("names the 18-or-over rule in the route and the banner", () => {
+    expect(steps(view)[1]).toBe(
+      "Points-tested visas closed [they need you to be 18 or over]",
+    );
+    expect(view.improve.banner).toBe(
+      "Points can't change this: 189, 190 and 491 all need you to be 18 or over when you're invited.",
+    );
   });
 });
 
@@ -97,8 +110,55 @@ describe("an expired English test", () => {
   });
 });
 
+describe("under 65 in an occupation 189 isn't inviting (Management Accountant, ruling R34)", () => {
+  const at60 = reportFor({
+    ...PLANNER,
+    occupation: "221112",
+    overseasYears: 3,
+  });
+  const at55 = reportFor({
+    ...PLANNER,
+    occupation: "221112",
+    overseasYears: 0,
+  });
+
+  it("never says a change opens 189", () => {
+    expect(at60.headline.best).toBe(
+      "None yet. Superior English would take you to 80 points, so you can submit an EOI, though 189 isn't inviting your occupation.",
+    );
+    expect(JSON.stringify(at60)).not.toMatch(/opens 189/);
+  });
+
+  it("calls no change the biggest jump when none lifts the label", () => {
+    expect(at60.templateRead).not.toMatch(/biggest jump/);
+    expect(at60.templateRead).toMatch(
+      /Superior English would take you to 80 points, so you could submit an EOI, though 189 isn't inviting Management Accountant\./,
+    );
+  });
+
+  it("lists changes that reach 65 before ones that leave you short of it", () => {
+    // "Both together" always closes the list.
+    const reaches = at55.improve.moves
+      .filter((m) => m.id !== "combined")
+      .map((m) => m.to.label !== "not-eligible");
+    expect(reaches[0]).toBe(true);
+    expect(reaches).toEqual([...reaches].sort((a, b) => Number(b) - Number(a)));
+  });
+
+  it("keeps the capitals of move names in the next steps", () => {
+    expect(at60.templateRead).toMatch(/Next steps: Superior English \(/);
+    expect(at60.templateRead).not.toMatch(/superior English/);
+  });
+});
+
 describe("a reader aged 45 or over", () => {
   const view = reportFor({ ...PLANNER, dob: "1980-01-01" });
+
+  it("says above the changes that points can't fix age", () => {
+    expect(view.improve.banner).toBe(
+      "Points can't change this: 189, 190 and 491 all need you to be under 45 when you're invited.",
+    );
+  });
 
   it("says points can't change it, with no biggest jump", () => {
     expect(view.headline.h1).toBe(

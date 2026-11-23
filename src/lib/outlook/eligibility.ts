@@ -9,7 +9,7 @@ export type Blocker = "age" | "expired" | "points";
 
 // Reasons as calculatePoints words them in `ineligibleReasons`.
 const AGE_OVER = "age 45 or over";
-const AGE_UNDER = "age under 18";
+export const AGE_UNDER = "age under 18";
 const EXPIRED: Record<string, string> = {
   "English test expired": "English test",
   "skills assessment expired": "skills assessment",

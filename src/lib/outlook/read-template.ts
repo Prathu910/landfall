@@ -1,5 +1,6 @@
 import { DEADLINE } from "./facts";
 import { MIN_POINTS } from "./label-189";
+import { LABEL_RANK, labelName } from "./labels";
 import { lowerFirst, theStateName } from "./phrases";
 import { MAX_WORDS, wordCount } from "./read-contract";
 import type { ReportFacts } from "./read-contract";
@@ -29,12 +30,28 @@ function stateBackup(facts: ReportFacts): Visa | null {
 // "Not enough data" is no reading, so a sentence never quotes it as one.
 const NO_READING = ["Not enough data", "Too few to count"];
 
+// Display names, best first (labels.ts LABEL_RANK), so the read can tell a
+// change that lifts the 189 label from one that only moves it sideways.
+const RANKED_NAMES = LABEL_RANK.map((label) => labelName(label));
+
+function lifts(from: string, to: string): boolean {
+  const rank = (name: string) => RANKED_NAMES.indexOf(name);
+  return rank(to) !== -1 && rank(to) < rank(from);
+}
+
 function gainSentence(facts: ReportFacts, change: Change): string {
   const added = change.toPoints - change.fromPoints;
   const v189 = facts.visas[0];
   // A change that leaves the label as it is was never the biggest jump.
   if (change.toLabel === v189.label) {
     return `${change.title} would take you to ${change.toPoints}, and 189 would still be ${change.toLabel}.`;
+  }
+  // Reaching 65 in an occupation 189 isn't inviting lifts nothing (R34).
+  if (!lifts(v189.label, change.toLabel)) {
+    const reach = `${change.title} would take you to ${change.toPoints} points, so you could submit an EOI, though`;
+    return change.toLabel === labelName("not-invited")
+      ? `${reach} 189 isn't inviting ${facts.occupation}.`
+      : `${reach} there isn't enough published 189 data to read it.`;
   }
   return `Your biggest jump is ${change.title}: it adds ${added} points and puts you at ${change.toPoints}, which reads as ${change.toLabel} for 189.`;
 }
