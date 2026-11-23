@@ -38,6 +38,21 @@ export type ReportFacts = {
 export const READ_BANNED =
   /\b(guarantee\w*|definitely|will be invited|chances? of|likely to be invited|some invitations|a few|per ?cent)\b|%/i;
 
+/**
+ * Off the Home Affairs 189 list, a read must never say a change opens 189 or
+ * that a 189 EOI can be submitted. The facts mark that case with the 189
+ * visa's label, NOT_AVAILABLE_189 (label-189.ts NOT_AVAILABLE).
+ */
+export const OFF_LIST_READ_BANNED =
+  /\bopens? 189\b|\bsubmit\w*\b[^.]*\b189 EOI\b/i;
+export const NOT_AVAILABLE_189 = "Not available";
+
+function offList189(facts: ReportFacts): boolean {
+  return facts.visas.some(
+    (v) => v.visa === "189" && v.label === NOT_AVAILABLE_189,
+  );
+}
+
 export const MIN_WORDS = 40;
 export const MAX_WORDS = 110;
 const NUMBER_TOKEN = /\d[\d,]*(\.\d+)?/g;
@@ -93,6 +108,9 @@ export function checkRead(
   facts: ReportFacts,
 ): { ok: true } | { ok: false; reason: "number" | "banned" | "length" } {
   if (READ_BANNED.test(text)) return { ok: false, reason: "banned" };
+  if (offList189(facts) && OFF_LIST_READ_BANNED.test(text)) {
+    return { ok: false, reason: "banned" };
+  }
   // An exact date is a number the facts never hold.
   if (DAY_DATE.test(text)) return { ok: false, reason: "number" };
   const allowed = allowedNumbers(facts);

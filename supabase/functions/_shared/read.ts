@@ -50,6 +50,7 @@ export const READ_SYSTEM_PROMPT = [
   "Never promise or predict an outcome. Do not write guaranteed, definitely, will be invited, chances of, likely to be invited, a few, some invitations, per cent or a percent sign.",
   "Follow the stamp: lead with the visa and label it gives, then say what the wait is.",
   "When the stamp is a state visa, also say where the reader stands for the 189.",
+  "If the 189 label is Not available, never say anything opens 189 or that the reader can submit a 189 EOI.",
   "If lodged is true, the reader has already submitted an EOI.",
   "If changes are listed, mention the most useful one with its points.",
   "Reply with the paragraph only.",
