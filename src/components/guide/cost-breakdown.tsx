@@ -39,11 +39,12 @@ export function CostBreakdown({
   feesAsAt: string;
 }) {
   return (
-    <div className={styles.breakdown} aria-live="polite">
+    <div className={styles.breakdown}>
       <p className={styles.asAt}>
         Fees as at {formatDate(feesAsAt)}. Visa charges change every 1 July.
       </p>
-      <div className={styles.totals}>
+      {/* Only the totals are announced, not the whole table on every change. */}
+      <div className={styles.totals} aria-live="polite" aria-atomic="true">
         {estimate.totals.map((total) => (
           <p key={total.currency} className={styles.total}>
             <span className={styles.totalLabel}>
