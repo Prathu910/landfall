@@ -206,3 +206,9 @@ Also planned:
 | 22 Nov 2026 | Founder authorized the occupation-page redesign via subagent as the next step: update the occupation directory and shared detail template to the approved passport-style identity while preserving static SEO content, indexability rules, source data and occupation-specific check links. State and supporting-page redesigns follow separately. |
 
 | 23 Nov 2026 | Stamps use the stencil face everywhere, superseding ruling R22. The founder chose the homepage's Big Shoulders Stencil look, so the report's stamps (screen and print) now match it. The face is self-hosted once through `@fontsource/big-shoulders-stencil-display` (weight 900) and set by the `--font-stamp` token; the homepage's duplicate TTF is removed. |
+
+| 23 Nov 2026 | Occupation pages lead with a **189 verdict strip** under the direct answer: the 189 label at common scores (for example 65 Long wait, 70 Competitive, 75 Strong) by the report's own rules, or one line for a not-invited, no-data or too-few occupation, with a "Check my points" link to `/check/?occupation=<code>`. Code decides every label; metadata, JSON-LD and the sitemap are unchanged. |
+
+| 23 Nov 2026 | **189 eligibility comes from the Home Affairs list.** `npm run data:state-lists -- --only federal` records each code's 189 (Points-Tested) listing beside 190 and 491 in `src/data/state-rules/federal-occupations.json`. An occupation page whose occupation is off the 189 list says 189 isn't available (a neutral "Not available" stamp, naming 190 and/or 491 when the list has them) instead of a 189 label. The report's 189 label for these occupations is unchanged until the founder decides. |
+
+| 23 Nov 2026 | **The site is light only.** It declares `color-scheme: only light` (CSS and the viewport meta) so Chrome auto-dark, Samsung Internet and other forced-dark modes don't invert the passport palette; the theme colour matches the white header. |
