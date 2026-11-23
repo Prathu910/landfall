@@ -1,0 +1,199 @@
+.card {
+  scroll-margin-top: calc(var(--site-header-height) + var(--brand-unit) * 4);
+  padding: calc(var(--brand-unit) * 7);
+  border: var(--brand-rule-width) solid var(--rule);
+  border-radius: calc(var(--brand-unit) * 3);
+  background: var(--card);
+}
+.card:target {
+  border-color: var(--slate);
+  box-shadow: 0 0 0 calc(var(--brand-unit) / 2) var(--slate);
+}
+.top {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--brand-unit) * 4);
+}
+/* A small ink stamp, in the stamps' stencil face. */
+.code {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: calc(var(--brand-unit) * 14);
+  height: calc(var(--brand-unit) * 14);
+  border: calc(var(--brand-unit) / 2) solid var(--brand-green);
+  border-radius: 50%;
+  outline: var(--brand-rule-width) dashed var(--brand-green);
+  outline-offset: calc(var(--brand-unit) * -2);
+  color: var(--brand-green);
+  font: 900 1.125rem/1 var(--font-stamp);
+  letter-spacing: 0.04em;
+  transform: rotate(-6deg);
+}
+.top h2 {
+  font-size: 1.5rem;
+  font-weight: 650;
+  letter-spacing: -0.035em;
+  line-height: 1.15;
+}
+.system {
+  margin-top: var(--brand-unit);
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+.facts {
+  display: grid;
+  margin: calc(var(--brand-unit) * 6) 0 0;
+  border-top: var(--brand-rule-width) solid var(--rule);
+}
+.facts > div {
+  display: grid;
+  grid-template-columns: minmax(9rem, 13rem) minmax(0, 1fr);
+  gap: calc(var(--brand-unit) * 2) calc(var(--brand-unit) * 5);
+  padding: calc(var(--brand-unit) * 3.5) 0;
+  border-bottom: var(--brand-rule-width) solid var(--rule);
+}
+.facts dt {
+  color: var(--muted);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+.facts dd {
+  margin: 0;
+  font-size: 0.9375rem;
+}
+.facts ul {
+  display: grid;
+  gap: calc(var(--brand-unit) * 2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.facts li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: calc(var(--brand-unit) * 1) calc(var(--brand-unit) * 2.5);
+}
+.status {
+  display: inline-block;
+  padding: calc(var(--brand-unit) / 2) calc(var(--brand-unit) * 2.5);
+  border: var(--brand-rule-width) solid currentcolor;
+  border-radius: var(--brand-pill);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+.status[data-status="open"] {
+  background: var(--label-strong-bg);
+  color: var(--label-strong-ink);
+}
+.status[data-status="restricted"] {
+  background: var(--label-competitive-bg);
+  color: var(--label-competitive-ink);
+}
+.status[data-status="closed"] {
+  background: var(--label-no-data-bg);
+  color: var(--label-no-data-ink);
+}
+/* Our check is still running: not a verdict on the reader (as on the occupation pages). */
+.status[data-status="checking"] {
+  border-style: dashed;
+  background: var(--card);
+  color: var(--status-unverified-fg);
+}
+.status[data-status="list"] {
+  border-color: var(--rule);
+  background: var(--brand-sage);
+  color: var(--ink);
+  font-weight: 500;
+  white-space: normal;
+}
+.more {
+  border-bottom: var(--brand-rule-width) solid var(--rule);
+}
+.more summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(var(--brand-unit) * 3);
+  min-height: var(--brand-target);
+  padding: calc(var(--brand-unit) * 2) 0;
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+}
+.more summary::-webkit-details-marker {
+  display: none;
+}
+.more summary:hover {
+  color: var(--slate);
+}
+.chevron {
+  transition: transform 0.2s;
+}
+.more[open] .chevron {
+  transform: rotate(180deg);
+}
+.moreBody {
+  padding-bottom: calc(var(--brand-unit) * 5);
+}
+.moreBody p {
+  color: var(--muted);
+  line-height: 1.7;
+}
+.moreBody h3 {
+  margin: calc(var(--brand-unit) * 4) 0 calc(var(--brand-unit) * 1.5);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(var(--brand-unit) * 2) calc(var(--brand-unit) * 5);
+  padding-top: calc(var(--brand-unit) * 4);
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+.foot a {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--brand-unit) * 1.5);
+  min-height: var(--brand-target);
+  color: var(--slate);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: var(--brand-unit);
+}
+.foot a:hover {
+  color: var(--ink);
+}
+@media screen and (max-width: 600px) {
+  .card {
+    padding: calc(var(--brand-unit) * 5);
+  }
+  .facts > div {
+    grid-template-columns: minmax(0, 1fr);
+    gap: calc(var(--brand-unit) * 1.5);
+  }
+  .system,
+  .facts dd {
+    font-size: 1rem;
+  }
+}
+@media print {
+  .card {
+    break-inside: avoid;
+    padding: calc(var(--brand-unit) * 4);
+  }
+  .card:target {
+    box-shadow: none;
+  }
+  .chevron {
+    display: none;
+  }
+}

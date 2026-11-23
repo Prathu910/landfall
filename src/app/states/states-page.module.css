@@ -1,0 +1,111 @@
+.layout {
+  display: grid;
+  grid-template-columns: minmax(17rem, 21rem) minmax(0, 1fr);
+  gap: calc(var(--brand-unit) * 10);
+  align-items: start;
+}
+.side {
+  position: sticky;
+  top: calc(var(--site-header-height) + var(--brand-unit) * 6);
+  display: grid;
+  gap: calc(var(--brand-unit) * 4);
+}
+.mapPanel {
+  padding: calc(var(--brand-unit) * 3);
+  border: var(--brand-rule-width) solid var(--rule);
+  border-radius: calc(var(--brand-unit) * 3);
+  background: var(--card);
+}
+.jump {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: calc(var(--brand-unit) * 2);
+}
+.jump a {
+  display: grid;
+  place-items: center;
+  min-height: var(--brand-target);
+  border: var(--brand-rule-width) solid var(--rule);
+  border-radius: var(--brand-pill);
+  background: var(--card);
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+}
+.jump a:hover {
+  border-color: var(--slate);
+  background: var(--check-green-soft);
+}
+.jump abbr {
+  text-decoration: none;
+}
+.notice {
+  display: flex;
+  gap: calc(var(--brand-unit) * 3);
+  padding: calc(var(--brand-unit) * 4);
+  border-left: calc(var(--brand-unit) / 2 * 1.5) solid var(--slate);
+  border-radius: 0 calc(var(--brand-unit) * 2) calc(var(--brand-unit) * 2) 0;
+  background: var(--card);
+  color: var(--muted);
+  font-size: 0.875rem;
+  line-height: 1.65;
+}
+.notice svg {
+  margin-top: calc(var(--brand-unit) * 0.75);
+  color: var(--slate);
+}
+.notice p + p {
+  margin-top: calc(var(--brand-unit) * 2);
+}
+.notice a {
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: var(--brand-unit);
+}
+.cards {
+  display: grid;
+  gap: calc(var(--brand-unit) * 5);
+  min-width: 0;
+}
+/* Tablets and phones: the jump links replace the map, above the cards. */
+@media screen and (max-width: 1023px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: calc(var(--brand-unit) * 6);
+  }
+  .side {
+    position: static;
+  }
+  .mapPanel {
+    display: none;
+  }
+  .jump {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+  }
+}
+@media screen and (max-width: 600px) {
+  .jump {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .notice {
+    font-size: 1rem;
+  }
+}
+@media print {
+  .layout {
+    display: block;
+  }
+  .side {
+    position: static;
+  }
+  .mapPanel,
+  .jump {
+    display: none;
+  }
+  .notice {
+    margin-bottom: calc(var(--brand-unit) * 5);
+  }
+}
