@@ -2,14 +2,22 @@ import { describe, expect, it } from "vitest";
 import { occupationIndex } from "../../components/data/occupation-index";
 import { stateRuleData } from "../../components/data/state-rule-data";
 import { loadOccupationCore, loadOccupationDetail } from "../data/load-server";
+import type { OccupationCore } from "../data/types";
 import { BANNED_COPY } from "../report/copy";
 import { cohortNote, cohortRows, roundsNote } from "./charts";
 import { occupationFaq } from "./faq";
 import { stateRows } from "./states";
 import { occupationSummary, statusChips } from "./summary";
+import { occupationVerdict } from "./verdict";
 
 /** "65 to 65 points" or "80–80": a single value printed as a range. */
 const REPEATED_RANGE = /\b(\d+)(?: to |–)\1\b/;
+
+function verdictStrings(core: OccupationCore): string[] {
+  const verdict = occupationVerdict(core);
+  if (verdict.kind === "closed") return [verdict.name, verdict.text];
+  return [verdict.note, ...verdict.cells.map((c) => `${c.points}: ${c.name}`)];
+}
 
 function pageStrings(code: string): string[] {
   const core = loadOccupationCore(code)!;
@@ -22,6 +30,7 @@ function pageStrings(code: string): string[] {
       (f) => [f.question, f.answer],
     ),
     roundsNote(core.rounds189),
+    ...verdictStrings(core),
     ...(cohorts ? [cohortNote(core.name, cohorts)] : []),
   ];
 }
