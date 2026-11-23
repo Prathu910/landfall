@@ -1,5 +1,19 @@
 # Resume here
 
+## Polish and occupation verdict strip (23 November 2026)
+
+Branch `roadmap/polish-and-occupation-verdict` (from `main` 257b44e; not merged, not pushed, not deployed).
+
+- **R34 fixed.** The "opens 189" best line now says reaching 65 lets the reader submit an EOI, though 189 isn't inviting the occupation (or has too little data); the template read calls a change the biggest jump only when it lifts the 189 label; changes that still leave the reader under 65 sort last; readers under 18 or 45+ get a banner; the under-18 route step names the 18-or-over rule; "Next steps" keeps "Superior English" and "Professional Year" capitalised. The sweep tests flag both contradictions.
+- **One stamp face.** Every stamp (homepage, report screen and print) uses Big Shoulders Stencil Display 900 from `@fontsource/big-shoulders-stencil-display` through `--font-stamp` (founder decision, superseding R22). The face has no width axis, so `stamp-geometry.ts` lost its stretch logic.
+- **`/sample/`** has a page head (a styled paragraph, so the report's headline stays the one h1) on the check's sage desk.
+- **Homepage on phones:** bytes at load 2.06 MB to 1.59 MB (duplicate Archivo removed, passport SVGs refitted from about 100 KB to 39 KB each and lazy-loaded, hidden occupation options no longer server-rendered: HTML 290 KB to 171 KB).
+- **Wording:** homepage shift stamps spell labels in full; the map writes "under 58" and notes an under count may be zero; occupation pages lost their all-caps eyebrows.
+- **Occupation verdict strip:** under each occupation page's direct answer, the 189 label at common scores (e.g. 65 Long wait, 70 Competitive, 75 Strong, 80+ Very strong) by the report's rules, or one line for not-invited / no-data / too-few occupations, with a Check my points link. Metadata, JSON-LD, sitemap and robots are unchanged (compared against a `main` build).
+- **Found and fixed:** on phones a shown report scrolled sideways by 5px (14px at 600px) on `/check/` and `/sample/`; both pages now keep the gutter the report sheet cancels.
+
+Follow-ups (not done): Mantine's full stylesheet (about 250 KB uncompressed) loads on every page; header and footer links prefetch other routes' code and data as they scroll into view (about 1.2 MB more after a full scroll on the homepage, including a 215 KB `/sample/` payload); `public/report-passport.svg` (223 KB, used by reports and `/occupations/`) could get the same curve refit.
+
 ## Occupation pages redesigned (22 November 2026)
 
 The directory and all 479 generated detail pages now follow the approved passport-style identity. Preview `/occupations/` and `/occupations/registered-nurses-nec-254499/` on the local dev server. Search, visa pool tabs, round/cohort/state evidence, FAQ and related links are restyled; a scoped points preview keeps the existing occupation-only check URL contract. Federal-list chips now say membership rather than implying eligibility.
