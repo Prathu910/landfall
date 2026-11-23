@@ -58,7 +58,9 @@ function VisaChecks({ checks }: { checks: BasicCheck[] }) {
       <caption className="sr-only">Checks for each visa</caption>
       <thead>
         <tr>
-          <td />
+          <th scope="col">
+            <span className="sr-only">Check</span>
+          </th>
           {VISAS.map((visa) => (
             <th key={visa} scope="col">
               {visa}
@@ -76,11 +78,13 @@ function VisaChecks({ checks }: { checks: BasicCheck[] }) {
               );
               if (!check) return <td key={visa} />;
               return (
-                <td key={visa} data-status={check.status} title={check.detail}>
+                <td key={visa} data-status={check.status}>
                   <StatusIcon status={check.status} />
                   <span className={styles.cellText}>
                     {STATUS_TEXT[check.status]}
                   </span>
+                  {/* Read out, not shown: e.g. "62 points: 3 short." */}
+                  <span className="sr-only">: {check.detail}</span>
                 </td>
               );
             })}

@@ -112,7 +112,7 @@
   border-collapse: collapse;
   font-size: 0.875rem;
 }
-.visaChecks thead td,
+.visaChecks thead th:first-child,
 .visaChecks tbody th {
   width: 40%;
   overflow-wrap: anywhere;
