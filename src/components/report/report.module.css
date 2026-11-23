@@ -48,19 +48,13 @@
   }
 }
 
-/* Phones: the sheet runs edge to edge, cancelling the .container padding
-   from globals.css (30px, then 21px at 480px and below). */
+/* Phones: the sheet runs edge to edge, cancelling the page gutter
+   (--page-gutter in globals.css). */
 @media screen and (max-width: 720px) {
   .page {
-    margin: 8px -30px 40px;
+    margin: 8px calc(-1 * var(--page-gutter)) 40px;
     border-radius: 0;
     font-size: 16px;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .page {
-    margin-inline: -21px;
   }
 }
 

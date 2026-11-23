@@ -69,7 +69,7 @@
 .page:not(:has([data-points-check])) .breadcrumb {
   display: none;
 }
-@media (max-width: 760px) {
+@media screen and (max-width: 760px) {
   .page {
     padding-top: calc(var(--check-unit) * 5);
   }
@@ -84,17 +84,12 @@
     margin-top: calc(var(--check-unit) * 4);
   }
 }
-/* The report sheet runs edge to edge on phones by cancelling a 30px (then
-   21px) gutter (report.module.css), so the page keeps exactly that gutter. */
-@media (max-width: 720px) {
+/* The report sheet runs edge to edge on phones by cancelling the page gutter
+   (report.module.css), so the page keeps exactly that gutter. */
+@media screen and (max-width: 720px) {
   .inner {
     width: auto;
-    margin-inline: 30px;
-  }
-}
-@media (max-width: 480px) {
-  .inner {
-    margin-inline: 21px;
+    margin-inline: var(--page-gutter);
   }
 }
 @media print {

@@ -85,7 +85,7 @@
   outline: 3px solid var(--focus-ring);
   outline-offset: 2px;
 }
-@media (max-width: 600px) {
+@media screen and (max-width: 600px) {
   .strip {
     padding: calc(var(--brand-unit) * 5);
   }
