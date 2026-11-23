@@ -5,15 +5,15 @@ import { useEffect } from "react";
 import { themeColorFor } from "@/lib/brand/viewport";
 import { printLight } from "./print-light";
 
+/** Sets each theme-color tag, touching only those that differ (no loop). */
 function setThemeColor(choice: Parameters<typeof themeColorFor>[0]) {
   document
     .querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]')
-    .forEach((meta) =>
-      meta.setAttribute(
-        "content",
-        themeColorFor(choice, meta.getAttribute("media")),
-      ),
-    );
+    .forEach((meta) => {
+      const content = themeColorFor(choice, meta.getAttribute("media"));
+      if (meta.getAttribute("content") !== content)
+        meta.setAttribute("content", content);
+    });
 }
 
 /**
@@ -25,8 +25,19 @@ export function ThemeSync() {
   const { colorScheme } = useMantineColorScheme();
 
   useEffect(() => {
-    setThemeColor(colorScheme);
-    return () => setThemeColor("auto");
+    const apply = () => setThemeColor(colorScheme);
+    apply();
+    // A client-side navigation re-renders the tags with the device colours.
+    const observer = new MutationObserver(apply);
+    observer.observe(document.head, {
+      childList: true,
+      subtree: true,
+      attributeFilter: ["content"],
+    });
+    return () => {
+      observer.disconnect();
+      setThemeColor("auto");
+    };
   }, [colorScheme]);
 
   useEffect(() => {
