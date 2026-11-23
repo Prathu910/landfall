@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { coreFixture } from "../data/__fixtures__/occupation";
 import type { OccupationCore } from "../data/types";
+import { NOT_AVAILABLE, OFF_LIST_WHY } from "../outlook/label-189";
 import { buildHomeAtlas } from "./atlas";
 
 const provenance = {
@@ -138,5 +139,26 @@ describe("homepage atlas evidence", () => {
     expect(view.higherText).toBe("Not published");
     expect(view.latestRound).toContain("Not listed");
     expect(view.latestRound).not.toContain("0 points");
+  });
+
+  it("says 189 is not available for an occupation off the Home Affairs 189 list", () => {
+    const view = buildHomeAtlas(core, 85, "189", "NSW", provenance, false);
+    expect(view.label).toBe("not-open");
+    expect(view.labelText).toBe(NOT_AVAILABLE);
+    expect(view.stampWord).toBe(NOT_AVAILABLE);
+    expect(view.explanation).toBe(OFF_LIST_WHY);
+  });
+
+  it("lets the published data decide 189 when the list is listed or unreadable", () => {
+    const listed = buildHomeAtlas(core, 85, "189", "NSW", provenance, true);
+    const unread = buildHomeAtlas(core, 85, "189", "NSW", provenance, null);
+    expect(listed).toEqual(unread);
+    expect(listed.label).not.toBe("not-open");
+    expect(listed.stampWord).not.toBe(NOT_AVAILABLE);
+  });
+
+  it("keeps the 189 list out of the 190 and 491 stamps", () => {
+    const view = buildHomeAtlas(core, 80, "190", "NSW", provenance, false);
+    expect(view.stampWord).not.toBe(NOT_AVAILABLE);
   });
 });

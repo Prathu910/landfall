@@ -9,6 +9,7 @@ import { EXAMPLE_PROFILES } from "@/lib/outlook/examples";
 import { SAMPLE_AS_OF } from "@/lib/sample";
 import { buildHomeExample } from "@/lib/home/example";
 import { buildHomeAtlas } from "@/lib/home/atlas";
+import { listed189, listed189Codes } from "@/lib/occupation-page/summary";
 import { formatMonth } from "@/lib/report/copy";
 import { HomeAction } from "@/components/home/controls/home-action";
 import { HomePassport } from "@/components/home/home-passport";
@@ -34,7 +35,15 @@ export default function Home() {
     throw new Error(
       "The homepage nurse example needs its published occupation snapshot.",
     );
-  const national = buildHomeAtlas(core, 70, "189", "NSW", provenance);
+  const { federal } = stateRuleData;
+  const national = buildHomeAtlas(
+    core,
+    70,
+    "189",
+    "NSW",
+    provenance,
+    listed189(core.code, federal),
+  );
   const vic = buildHomeAtlas(core, 70, "190", "VIC", provenance);
   const nt = buildHomeAtlas(core, 70, "491", "NT", provenance);
   const example = buildHomeExample({
@@ -101,7 +110,11 @@ export default function Home() {
               published invitation evidence, state by state.
             </p>
           </div>
-          <HomeAtlas initialCore={core} provenance={provenance} />
+          <HomeAtlas
+            initialCore={core}
+            provenance={provenance}
+            listed189Codes={listed189Codes(federal)}
+          />
         </div>
       </section>
       <HomeReportExample example={example} date={date} />

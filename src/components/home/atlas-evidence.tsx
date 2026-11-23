@@ -46,6 +46,7 @@ export function AtlasEvidence({
       <div className={`big atlas-stamp${!state ? " national-stamp" : ""}`}>
         <HomeStamp
           label={view.label}
+          word={view.stampWord}
           shape={state ? (view.visa === "190" ? "hex" : "oval") : "round"}
           top={state ? `${view.visa} ${view.state}` : "SUBCLASS 189"}
           bottom={

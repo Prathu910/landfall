@@ -16,6 +16,8 @@ import type { FederalList } from "../state-outlook/rules-types";
 import {
   has189Rounds,
   likeTheseSentence,
+  listed189,
+  listed189Codes,
   mostCommonScore,
   occupationSummary,
   poolSentence,
@@ -212,5 +214,20 @@ describe("banned copy", () => {
       ];
       for (const s of strings) expect(s).not.toMatch(BANNED_COPY);
     }
+  });
+});
+
+describe("listed189Codes", () => {
+  it("lists exactly the codes the federal list flags for 189", () => {
+    const codes = listed189Codes(federal)!;
+    expect(codes).toContain("254499");
+    expect(codes).not.toContain("121212");
+    for (const code of Object.keys(federal.entries)) {
+      expect(codes.includes(code)).toBe(listed189(code, federal));
+    }
+  });
+
+  it("is null when the federal list can't be read", () => {
+    expect(listed189Codes(null)).toBeNull();
   });
 });

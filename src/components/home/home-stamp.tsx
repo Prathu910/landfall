@@ -14,6 +14,8 @@ import styles from "./home-stamp.module.css";
 
 type StampProps = {
   label: OutlookLabel;
+  /** The stamp's word when it isn't the label's own ("Not available"). */
+  word?: string;
   top: string;
   bottom: string;
   shape?: "round" | "rect" | "hex" | "oval";
@@ -26,13 +28,15 @@ type StampProps = {
  */
 export function HomeStamp({
   label,
+  word: givenWord,
   top,
   bottom,
   shape = "round",
   rotate = -4,
 }: StampProps) {
   const id = useId();
-  const word = stampName(label).toUpperCase();
+  const name = givenWord ?? stampName(label);
+  const word = name.toUpperCase();
   const round = shape === "round";
   const lines = round ? stampLines(word) : [word];
   const size = round
@@ -53,7 +57,7 @@ export function HomeStamp({
     <svg
       viewBox={round ? "-24 -24 368 368" : "-12 -12 244 184"}
       role="img"
-      aria-label={`${top}: ${stampName(label)}, ${bottom}`}
+      aria-label={`${top}: ${name}, ${bottom}`}
       className={`${styles.stamp} ${styles[label]}`}
     >
       <defs>

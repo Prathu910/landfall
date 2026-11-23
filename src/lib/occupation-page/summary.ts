@@ -146,6 +146,17 @@ export function listed189(
   return federal ? federal.entries[code]?.["189"] === true : null;
 }
 
+/**
+ * Every code the federal list flags for 189, for a client that checks codes
+ * without importing the list; null when the list can't be read.
+ */
+export function listed189Codes(federal: FederalList | null): string[] | null {
+  if (!federal) return null;
+  return Object.keys(federal.entries).filter(
+    (code) => federal.entries[code]["189"] === true,
+  );
+}
+
 export function occupationSummary(
   core: OccupationCore,
   detail: OccupationDetail | null,

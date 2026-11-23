@@ -28,6 +28,7 @@ export function HomePassport({
           <HomeStamp
             shape="rect"
             label={national.label}
+            word={national.stampWord}
             top="189 ANY STATE"
             bottom="70 PTS"
             rotate={-6}
@@ -35,6 +36,7 @@ export function HomePassport({
           <HomeStamp
             shape="hex"
             label={vic.label}
+            word={vic.stampWord}
             top="190 VIC"
             bottom="75 PTS"
             rotate={7}
@@ -42,6 +44,7 @@ export function HomePassport({
           <HomeStamp
             shape="oval"
             label={nt.label}
+            word={nt.stampWord}
             top="491 NT"
             bottom="85 PTS"
             rotate={-3}
@@ -57,6 +60,7 @@ export function HomePassport({
         <div className="big">
           <HomeStamp
             label={national.label}
+            word={national.stampWord}
             top="SUBCLASS 189"
             bottom={`${date.toUpperCase()} • 70 POINTS`}
           />
