@@ -1,6 +1,7 @@
+import Link from "next/link";
+import { ChevronRight, FileText } from "lucide-react";
 import { SampleTabs } from "@/components/report/sample-tabs";
 import type { SampleExample } from "@/components/report/sample-tabs";
-import styles from "@/components/report/sample-tabs.module.css";
 import { toOccupationEvidence } from "@/lib/data/legacy";
 import {
   loadManifest,
@@ -11,6 +12,7 @@ import { reportSource } from "@/lib/data/report-source";
 import type { OccupationCore, OccupationDetail } from "@/lib/data/types";
 import { EXAMPLES } from "@/lib/outlook/examples";
 import { SAMPLE_AS_OF, SAMPLE_COMPARISON } from "@/lib/sample";
+import styles from "./sample-page.module.css";
 export const metadata = { title: "Explore the sample report" };
 
 function requireCore(code: string): OccupationCore {
@@ -48,19 +50,36 @@ export default function SamplePage() {
   const first = examples[0].occupation;
   if (first.status !== "ready") throw new Error("Sample needs a core");
   return (
-    <main id="main" className="container">
-      {/* The report's own headline is the page's one h1. */}
-      <p className={styles.intro}>
-        Four fictional people, one for each kind of result. The points
-        calculations and official occupation snapshot are real. Your own report
-        uses your answers.
-      </p>
-      <SampleTabs
-        examples={examples}
-        asOf={SAMPLE_AS_OF}
-        initialComparison={toOccupationEvidence(requireCore(SAMPLE_COMPARISON))}
-        source={reportSource(first.core.asAt, loadManifest())}
-      />
+    <main id="main" className={styles.page}>
+      <div className={styles.inner}>
+        <nav className={styles.breadcrumb} aria-label="Breadcrumb">
+          <Link href="/">Home</Link>
+          <ChevronRight size={12} aria-hidden />
+          <span aria-current="page">Sample reports</span>
+        </nav>
+        <header className={styles.heading}>
+          <div>
+            <p className={styles.context}>
+              <FileText size={16} aria-hidden /> Example reports
+            </p>
+            {/* Looks like the page title; the report's headline stays the one h1. */}
+            <p className={styles.title}>Four people, four kinds of result.</p>
+          </div>
+          <p className={styles.description}>
+            Four fictional people, one for each kind of result. The points
+            calculations and official occupation snapshot are real. Your own
+            report uses your answers.
+          </p>
+        </header>
+        <SampleTabs
+          examples={examples}
+          asOf={SAMPLE_AS_OF}
+          initialComparison={toOccupationEvidence(
+            requireCore(SAMPLE_COMPARISON),
+          )}
+          source={reportSource(first.core.asAt, loadManifest())}
+        />
+      </div>
     </main>
   );
 }
