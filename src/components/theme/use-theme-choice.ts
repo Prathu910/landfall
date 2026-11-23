@@ -1,13 +1,8 @@
 "use client";
 
 import { useMantineColorScheme } from "@mantine/core";
-import { useEffect, useSyncExternalStore } from "react";
-import { THEME_COLOR } from "@/lib/brand/viewport";
-import {
-  resolveTheme,
-  type ResolvedTheme,
-  type ThemeChoice,
-} from "@/lib/brand/theme";
+import { useSyncExternalStore } from "react";
+import { resolveTheme, type ThemeChoice } from "@/lib/brand/theme";
 
 const DEVICE_DARK = "(prefers-color-scheme: dark)";
 const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
@@ -36,19 +31,6 @@ function easeThemeSwitch() {
   );
 }
 
-/**
- * The browser bar follows the device through the media-tagged theme-color
- * tags; a manual choice that differs from the device overrides both.
- */
-function syncThemeColor(forced: ResolvedTheme | null) {
-  document.querySelectorAll('meta[name="theme-color"]').forEach((meta) => {
-    const own = meta.getAttribute("media")?.includes("dark")
-      ? THEME_COLOR.dark
-      : THEME_COLOR.light;
-    meta.setAttribute("content", forced ? THEME_COLOR[forced] : own);
-  });
-}
-
 export function useThemeChoice() {
   // keepTransitions: our own class eases the switch (or skips it under
   // reduced motion) instead of Mantine's blanket transition kill.
@@ -61,10 +43,6 @@ export function useThemeChoice() {
     serverDevice,
   );
   const resolved = resolveTheme(colorScheme, deviceDark);
-
-  useEffect(() => {
-    syncThemeColor(colorScheme === "auto" ? null : resolved);
-  }, [colorScheme, resolved]);
 
   function choose(next: ThemeChoice) {
     if (resolveTheme(next, deviceDark) !== resolved) easeThemeSwitch();

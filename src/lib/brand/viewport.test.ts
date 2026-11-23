@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { SHELL_PALETTE, SHELL_PALETTE_DARK } from "./palette";
-import { SITE_VIEWPORT } from "./viewport";
+import { SITE_VIEWPORT, THEME_COLOR, themeColorFor } from "./viewport";
 
 const globals = readFileSync(
   new URL("../../app/globals.css", import.meta.url),
@@ -31,5 +31,21 @@ describe("SITE_VIEWPORT", () => {
       },
     ]);
     expect(header).toMatch(/\.header \{[^}]*background: var\(--brand-paper\);/);
+  });
+});
+
+describe("themeColorFor", () => {
+  const LIGHT_TAG = "(prefers-color-scheme: light)";
+  const DARK_TAG = "(prefers-color-scheme: dark)";
+  it("keeps each tag's own colour for System", () => {
+    expect(themeColorFor("auto", LIGHT_TAG)).toBe(THEME_COLOR.light);
+    expect(themeColorFor("auto", DARK_TAG)).toBe(THEME_COLOR.dark);
+    expect(themeColorFor("auto", null)).toBe(THEME_COLOR.light);
+  });
+  it("sets both tags to a saved Light or Dark, whatever the device", () => {
+    for (const media of [LIGHT_TAG, DARK_TAG]) {
+      expect(themeColorFor("dark", media)).toBe(THEME_COLOR.dark);
+      expect(themeColorFor("light", media)).toBe(THEME_COLOR.light);
+    }
   });
 });

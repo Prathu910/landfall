@@ -9,6 +9,7 @@ import { DatesProvider } from "@mantine/dates";
 import { MotionConfig } from "motion/react";
 import { INK_RAMP, NIGHT_RAMP } from "@/lib/brand/palette";
 import { THEME_STORAGE_KEY } from "@/lib/brand/theme";
+import { ThemeSync } from "@/components/theme/theme-sync";
 
 const theme = createTheme({
   respectReducedMotion: true,
@@ -75,6 +76,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       colorSchemeManager={colorSchemeManager}
       cssVariablesResolver={resolveCssVariables}
     >
+      <ThemeSync />
       <DatesProvider settings={{ locale: "en", firstDayOfWeek: 1 }}>
         <MotionConfig reducedMotion="user">{children}</MotionConfig>
       </DatesProvider>
