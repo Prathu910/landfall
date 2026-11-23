@@ -28,7 +28,7 @@ export function OccupationEvidenceFooter({
           </p>
         </div>
         <Link href={`/check/?occupation=${code}`}>
-          Check my points, free <span aria-hidden="true">↗</span>
+          Check my points, free <span aria-hidden="true">→</span>
         </Link>
       </aside>
       <footer className={styles.sources}>

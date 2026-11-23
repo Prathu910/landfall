@@ -53,7 +53,7 @@ export function OccupationVerdict({ verdict }: { verdict: Verdict }) {
         </div>
       )}
       <Link className={styles.check} href={verdict.checkHref}>
-        Check my points <span aria-hidden="true">↗</span>
+        Check my points <span aria-hidden="true">→</span>
       </Link>
     </section>
   );
