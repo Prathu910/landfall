@@ -10,9 +10,6 @@
   gap: calc(var(--brand-unit) * 10);
   --focus-ring: var(--focus-ring-on-dark);
 }
-.bottomCta .sectionLabel {
-  color: var(--brand-on-dark);
-}
 .bottomCta p:last-child {
   max-width: 38rem;
   color: var(--brand-on-dark);
@@ -54,14 +51,6 @@
   padding-block: var(--brand-unit);
 }
 
-.sectionLabel {
-  color: var(--brand-on-dark);
-  font-size: 0.75rem;
-  line-height: 1.5;
-  letter-spacing: 0.1em;
-  font-weight: 650;
-  margin-bottom: calc(var(--brand-unit) * 3);
-}
 .bottomCta h2 {
   font-size: clamp(1.75rem, 2.8vw, 2.25rem);
   line-height: 1.12;

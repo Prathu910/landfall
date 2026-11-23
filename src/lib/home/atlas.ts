@@ -28,6 +28,11 @@ export type HomeAtlasMonth = {
   masked: boolean;
 };
 
+/** An "under N" month: a masked range that starts at zero. */
+function mayBeZero(month: HomeAtlasMonth): boolean {
+  return month.masked && month.count?.min === 0;
+}
+
 type PublishedMonth = { month: string; count: Interval; text: string };
 
 type AtlasCommon = {
@@ -150,7 +155,7 @@ export function buildHomeAtlas(
     explanation:
       evidence.notPublished.length === 6
         ? "No monthly state evidence is published in this snapshot window."
-        : "The stamp summarises published invitation evidence at your points. Patterned bars show ranges; their height marks the upper bound.",
+        : `The stamp summarises published invitation evidence at your points. Patterned bars show ranges; their height marks the upper bound.${months.some(mayBeZero) ? " An “under” count may be zero." : ""}`,
     caveat:
       STATE_CAVEAT +
       (visa === "491"

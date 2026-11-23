@@ -106,9 +106,7 @@ export function AtlasEvidence({
                 aria-label={`${month.label}: ${month.text}${month.masked ? `; range; bar shows upper bound${month.count?.min === 0 ? "; may include zero" : ""}` : ""}`}
               >
                 <span className="month-number">
-                  {month.count
-                    ? month.text.replace(/^under\s+(\d+)$/i, "<$1")
-                    : "—"}
+                  {month.count ? month.text : "—"}
                 </span>
                 <span
                   className={`month-bar${!month.count ? " missing" : month.masked ? " masked" : ""}`}

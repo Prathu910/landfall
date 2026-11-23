@@ -114,9 +114,6 @@ export default async function OccupationPage({ params }: Props) {
         </nav>
         <header className={styles.header}>
           <div>
-            <p className={shell.eyebrow}>
-              AUSTRALIAN SKILLED MIGRATION · OCCUPATION RECORD
-            </p>
             <h1 className={styles.title}>{name}</h1>
             <p className={styles.code}>ANZSCO {code}</p>
             <p className={styles.subtitle}>
@@ -125,11 +122,11 @@ export default async function OccupationPage({ params }: Props) {
           </div>
           <dl className={styles.recordDate}>
             <div>
-              <dt>DATA SNAPSHOT</dt>
+              <dt>Data snapshot</dt>
               <dd>{formatMonth(core.asAt)}</dd>
             </div>
             <div>
-              <dt>LAST UPDATED</dt>
+              <dt>Last updated</dt>
               <dd>{formatDate(manifest.checkedAt)}</dd>
             </div>
           </dl>
@@ -149,7 +146,6 @@ export default async function OccupationPage({ params }: Props) {
           </aside>
           <div className={styles.main}>
             <section aria-labelledby="pool-heading" className={styles.block}>
-              <p className={styles.sectionLabel}>THE PUBLISHED POOL</p>
               <h2 id="pool-heading">Where the points sit.</h2>
               <p className={styles.sectionIntro}>
                 Submitted EOIs by points score, as at {formatMonth(core.asAt)}.
@@ -162,7 +158,6 @@ export default async function OccupationPage({ params }: Props) {
                 aria-labelledby="rounds-heading"
                 className={styles.block}
               >
-                <p className={styles.sectionLabel}>NATIONAL INVITATIONS</p>
                 <h2 id="rounds-heading">Recent 189 rounds.</h2>
                 <p className={styles.sectionIntro}>
                   Published minimum points for this occupation. “Not listed” is
@@ -179,9 +174,6 @@ export default async function OccupationPage({ params }: Props) {
                 aria-labelledby="cohort-heading"
                 className={styles.block}
               >
-                <p className={styles.sectionLabel}>
-                  FOLLOW THE SUBMISSION MONTHS
-                </p>
                 <h2 id="cohort-heading">Where recent 189 EOIs stand.</h2>
                 <p className={styles.sectionIntro}>
                   {cohortNote(name, cohorts)}
@@ -198,7 +190,7 @@ export default async function OccupationPage({ params }: Props) {
               </section>
             )}
             <section aria-labelledby="states-heading" className={styles.block}>
-              <p className={styles.sectionLabel}>190 & PROVISIONAL 491</p>
+              <p className={styles.sectionLabel}>190 and provisional 491</p>
               <h2 id="states-heading">Look at the state evidence.</h2>
               <p className={styles.sectionIntro}>
                 A list entry is one part of the rules, not a finding that you
@@ -217,7 +209,6 @@ export default async function OccupationPage({ params }: Props) {
               </details>
             </section>
             <section aria-labelledby="faq-heading" className={styles.block}>
-              <p className={styles.sectionLabel}>THE USEFUL DETAILS</p>
               <h2 id="faq-heading">Common questions.</h2>
               <OccupationFaq items={faq} />
             </section>

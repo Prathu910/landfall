@@ -8,11 +8,9 @@
   break-inside: avoid;
 }
 .eyebrow {
-  margin-bottom: calc(var(--brand-unit) * 5);
-  font: 650 0.75rem/1.5 var(--brand-font);
+  margin-bottom: calc(var(--brand-unit) * 4);
+  font: 650 1rem/1.5 var(--brand-font);
   color: var(--slate);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
 }
 .chips {
   list-style: none;

@@ -91,6 +91,16 @@ describe("homepage atlas evidence", () => {
     expect(view.caveat).toContain("Historical evidence, not eligibility");
   });
 
+  it("says an under count may be zero only when a month shows one", () => {
+    const masked = buildHomeAtlas(core, 80, "190", "NSW", provenance);
+    const exact = buildHomeAtlas(core, 75, "491", "NSW", provenance);
+    if (masked.kind !== "state" || exact.kind !== "state") {
+      throw new Error("expected state");
+    }
+    expect(masked.explanation).toMatch(/An “under” count may be zero\.$/);
+    expect(exact.explanation).not.toMatch(/may be zero/);
+  });
+
   it("reports an unfetched state as no data without inventing a zero count", () => {
     const view = buildHomeAtlas(core, 75, "190", "WA", provenance);
     if (view.kind !== "state") throw new Error("expected state");

@@ -44,8 +44,7 @@
 }
 .recordDate dt {
   color: var(--muted);
-  font-size: 0.75rem;
-  letter-spacing: 0.08em;
+  font-size: 0.875rem;
 }
 .recordDate dd {
   margin: var(--brand-unit) 0 0;
@@ -75,13 +74,13 @@
   margin-bottom: calc(var(--brand-unit) * 10);
   border-bottom: var(--brand-rule-width) solid var(--rule);
 }
+/* Sentence case, untracked: a label that says which visas a section covers. */
 .sectionLabel {
   color: var(--slate);
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   line-height: 1.5;
-  letter-spacing: 0.1em;
-  font-weight: 650;
-  margin-bottom: calc(var(--brand-unit) * 3);
+  font-weight: 600;
+  margin-bottom: calc(var(--brand-unit) * 2);
 }
 .block h2 {
   font-size: clamp(1.75rem, 2.8vw, 2.25rem);

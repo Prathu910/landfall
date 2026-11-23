@@ -31,7 +31,6 @@ export function OccupationCheck({
   const view = previews.find((preview) => preview.points === points)?.view;
   return (
     <section className={styles.card} aria-labelledby="occupation-check-heading">
-      <p className={styles.eyebrow}>YOUR NEXT STEP</p>
       <h2 id="occupation-check-heading">Put your points in context.</h2>
       <p className={styles.occupation}>
         {name}

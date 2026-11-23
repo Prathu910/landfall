@@ -1135,11 +1135,11 @@
   font-size: var(--homepage-size-12);
   line-height: 1.4;
 }
+/* "under 58" may wrap to two centred lines in a narrow column. */
 .home :global(.month-number) {
   font-size: var(--homepage-size-12);
   color: var(--homepage-ink);
-  white-space: nowrap;
-  letter-spacing: -0var (--homepage-size-4);
+  text-align: center;
 }
 .home :global(.month-bar) {
   width: 100%;

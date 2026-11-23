@@ -3,6 +3,13 @@
 import { useId } from "react";
 import { stampName, type OutlookLabel } from "@/lib/outlook/labels";
 import { InkFilter } from "@/components/report/ink-filter";
+import {
+  BIG_STAMP,
+  VISA_STAMP,
+  longestLine,
+  stampLines,
+  stampTextSize,
+} from "@/lib/outlook/stamp-geometry";
 import styles from "./home-stamp.module.css";
 
 type StampProps = {
@@ -13,7 +20,10 @@ type StampProps = {
   rotate?: number;
 };
 
-/** The approved homepage's stencil treatment is intentionally separate from report typography. */
+/**
+ * The homepage's stamps: the report's stencil face and fitting rules, in the
+ * homepage's own colours and frames.
+ */
 export function HomeStamp({
   label,
   top,
@@ -24,12 +34,20 @@ export function HomeStamp({
   const id = useId();
   const word = stampName(label).toUpperCase();
   const round = shape === "round";
-  const lines = round && word.length > 12 ? word.split(" ") : [word];
-  const width = round ? 250 : 168;
-  const size = Math.min(
-    round ? 56 : 30,
-    width / (Math.max(...lines.map((line) => line.length)) * 0.56),
-  );
+  const lines = round ? stampLines(word) : [word];
+  const size = round
+    ? stampTextSize(
+        longestLine(lines),
+        BIG_STAMP.wordWidth,
+        BIG_STAMP.wordMax,
+        BIG_STAMP.floor,
+      )
+    : stampTextSize(
+        word,
+        VISA_STAMP.widths.rect.word,
+        VISA_STAMP.wordMax,
+        VISA_STAMP.floor,
+      );
   const ink = { fill: "none", stroke: "currentColor" };
   return (
     <svg
