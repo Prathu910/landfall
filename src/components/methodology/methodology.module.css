@@ -1,0 +1,267 @@
+.layout {
+  display: grid;
+  grid-template-columns: minmax(13rem, 16rem) minmax(0, 1fr);
+  gap: calc(var(--brand-unit) * 10);
+  align-items: start;
+}
+.contents {
+  position: sticky;
+  top: calc(var(--site-header-height) + var(--brand-unit) * 6);
+  padding: calc(var(--brand-unit) * 5);
+  border: var(--brand-rule-width) solid var(--rule);
+  border-radius: calc(var(--brand-unit) * 3);
+  background: var(--card);
+}
+.contentsTitle {
+  margin-bottom: calc(var(--brand-unit) * 2);
+  color: var(--muted);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.contents ol {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.contents a {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--brand-unit) * 3);
+  min-height: var(--brand-target);
+  border-bottom: var(--brand-rule-width) solid var(--rule);
+  font-size: 0.9375rem;
+  font-weight: 500;
+}
+.contents li:last-child a {
+  border-bottom: 0;
+}
+.contents a span {
+  color: var(--slate);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.contents a:hover {
+  color: var(--slate);
+}
+.content {
+  display: grid;
+  gap: calc(var(--brand-unit) * 5);
+  min-width: 0;
+}
+.section {
+  scroll-margin-top: calc(var(--site-header-height) + var(--brand-unit) * 4);
+  padding: calc(var(--brand-unit) * 8);
+  border: var(--brand-rule-width) solid var(--rule);
+  border-radius: calc(var(--brand-unit) * 3);
+  background: var(--card);
+}
+.section h2 {
+  margin-bottom: calc(var(--brand-unit) * 4);
+  font-size: clamp(1.5rem, 2.6vw, 1.875rem);
+  font-weight: 650;
+  letter-spacing: -0.04em;
+  line-height: 1.15;
+}
+.section p,
+.section li,
+.section dd {
+  max-width: 68ch;
+  color: var(--muted);
+  line-height: 1.75;
+}
+.section p + p,
+.section p + ul,
+.section ul + p {
+  margin-top: calc(var(--brand-unit) * 4);
+}
+.section a:not([class]) {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: calc(var(--brand-unit) * 0.75);
+}
+/* The label rules: a ruled list with each label name set in ink. */
+.section ul {
+  max-width: 68ch;
+  margin-bottom: 0;
+  padding: 0;
+  list-style: none;
+  border-top: var(--brand-rule-width) solid var(--rule);
+}
+.section ul li {
+  padding: calc(var(--brand-unit) * 3) 0;
+  border-bottom: var(--brand-rule-width) solid var(--rule);
+}
+.section ul li strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+.sources {
+  width: 100%;
+  margin-top: calc(var(--brand-unit) * 6);
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+.sources thead th {
+  padding: 0 calc(var(--brand-unit) * 3) calc(var(--brand-unit) * 2) 0;
+  border-bottom: var(--brand-rule-width) solid var(--ink);
+  color: var(--muted);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-align: left;
+}
+.sources tbody th,
+.sources td {
+  padding: calc(var(--brand-unit) * 3.5) calc(var(--brand-unit) * 3)
+    calc(var(--brand-unit) * 3.5) 0;
+  border-bottom: var(--brand-rule-width) solid var(--rule);
+  text-align: left;
+  vertical-align: top;
+}
+.sources tbody th {
+  width: 30%;
+  font-weight: 600;
+}
+.sources td {
+  color: var(--muted);
+}
+.sources td:last-child {
+  padding-right: 0;
+  text-align: right;
+  white-space: nowrap;
+}
+.sources a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--brand-unit);
+  min-height: calc(var(--brand-unit) * 6);
+  color: var(--slate);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: var(--brand-unit);
+}
+.definitions {
+  display: grid;
+  margin: 0;
+  border-top: var(--brand-rule-width) solid var(--rule);
+}
+.definitions > div {
+  display: grid;
+  grid-template-columns: minmax(10rem, 14rem) minmax(0, 1fr);
+  gap: calc(var(--brand-unit) * 2) calc(var(--brand-unit) * 6);
+  padding: calc(var(--brand-unit) * 4) 0;
+  border-bottom: var(--brand-rule-width) solid var(--rule);
+}
+.definitions dt strong {
+  font-weight: 600;
+}
+.definitions dd {
+  margin: 0;
+}
+.privacy {
+  position: relative;
+  border-left: calc(var(--brand-unit) * 1) solid var(--slate);
+}
+.privacyMark {
+  position: absolute;
+  top: calc(var(--brand-unit) * 8);
+  right: calc(var(--brand-unit) * 8);
+  color: var(--slate);
+}
+.privacy h2 {
+  padding-right: calc(var(--brand-unit) * 10);
+}
+.privacy a {
+  color: var(--ink);
+  text-decoration: underline;
+}
+@media screen and (max-width: 1023px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: calc(var(--brand-unit) * 5);
+  }
+  .contents {
+    position: static;
+  }
+  .contents ol {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: calc(var(--brand-unit) * 6);
+  }
+  .contents li:nth-last-child(2) a {
+    border-bottom: 0;
+  }
+}
+@media screen and (max-width: 600px) {
+  .contents ol {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .contents li:nth-last-child(2) a {
+    border-bottom: var(--brand-rule-width) solid var(--rule);
+  }
+  .section {
+    padding: calc(var(--brand-unit) * 5);
+  }
+  .privacyMark {
+    top: calc(var(--brand-unit) * 5);
+    right: calc(var(--brand-unit) * 5);
+  }
+  .contents a,
+  .sources,
+  .section p,
+  .section li,
+  .section dd {
+    font-size: 1rem;
+  }
+  /* Phones: each source stacks into name, coverage and link. */
+  .sources thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+  }
+  .sources tr {
+    display: grid;
+    gap: var(--brand-unit);
+    padding: calc(var(--brand-unit) * 3.5) 0;
+    border-bottom: var(--brand-rule-width) solid var(--rule);
+  }
+  .sources tbody th,
+  .sources td,
+  .sources td:last-child {
+    width: auto;
+    padding: 0;
+    border: 0;
+    text-align: left;
+  }
+  .sources tbody tr:first-child {
+    border-top: var(--brand-rule-width) solid var(--ink);
+  }
+  .definitions > div {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--brand-unit);
+  }
+}
+@media print {
+  .layout {
+    display: block;
+  }
+  .contents {
+    display: none;
+  }
+  .section {
+    margin-bottom: calc(var(--brand-unit) * 4);
+    padding: calc(var(--brand-unit) * 4) 0;
+    border: 0;
+    border-top: var(--brand-rule-width) solid var(--rule);
+    border-radius: 0;
+  }
+  .privacyMark {
+    display: none;
+  }
+  .sources tr,
+  .definitions > div {
+    break-inside: avoid;
+  }
+}
