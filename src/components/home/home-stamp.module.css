@@ -1,5 +1,5 @@
 .stamp {
-  font-family: "Homepage Stencil", sans-serif;
+  font-family: var(--font-stamp);
   width: 100%;
   height: auto;
   overflow: visible;

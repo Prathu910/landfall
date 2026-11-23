@@ -65,7 +65,7 @@ Then, to turn it on:
 
 The read token lives in memory only (never localStorage or the URL); the report allows at most 3 `write-read` calls per token.
 
-**Rulings the founder should know.** R22: stamps use Archivo (the font in the mockups the founder approved), not the spec's Big Shoulders Stencil; restoring the stencil look is one token and one dependency. R25: the route line shows only at 1024 px and wider; tablets and phones get a vertical route list. R27: the print `@page` margins (14/14/18 mm) apply to every route. R26: the old "Useful definitions" glossary now lives on the methodology page.
+**Rulings the founder should know.** R22 (stamps in Archivo) was superseded on 23 Nov 2026: every stamp now uses the Big Shoulders Stencil face. R25: the route line shows only at 1024 px and wider; tablets and phones get a vertical route list. R27: the print `@page` margins (14/14/18 mm) apply to every route. R26: the old "Useful definitions" glossary now lives on the methodology page.
 
 **Where the real rules engine's states differ from the approved mockups** (spec section 9 accepts this; the stamp labels are unaffected unless noted). Mockup copy was hand-written; the engine names the state its evidence and rules support:
 

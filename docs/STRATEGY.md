@@ -204,3 +204,5 @@ Also planned:
 | 22 Nov 2026 | Founder authorized the next shared-brand redesign via subagent: logo, favicon, header and footer to match the approved Direction A+ homepage and redesigned points check. Preserve the MigrateLens name, navigation and disclosures; implement locally for review. Other page redesigns and deployment remain separate. |
 
 | 22 Nov 2026 | Founder authorized the occupation-page redesign via subagent as the next step: update the occupation directory and shared detail template to the approved passport-style identity while preserving static SEO content, indexability rules, source data and occupation-specific check links. State and supporting-page redesigns follow separately. |
+
+| 23 Nov 2026 | Stamps use the stencil face everywhere, superseding ruling R22. The founder chose the homepage's Big Shoulders Stencil look, so the report's stamps (screen and print) now match it. The face is self-hosted once through `@fontsource/big-shoulders-stencil-display` (weight 900) and set by the `--font-stamp` token; the homepage's duplicate TTF is removed. |

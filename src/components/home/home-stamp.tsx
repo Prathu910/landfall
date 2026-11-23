@@ -56,7 +56,7 @@ export function HomeStamp({
             <circle cx="160" cy="160" r="150" {...ink} strokeWidth="7" />
             <circle cx="160" cy="160" r="136" {...ink} strokeWidth="2.5" />
             <text
-              fontWeight="800"
+              fontWeight="900"
               fontSize="24"
               fill="currentColor"
               letterSpacing="2"
@@ -70,7 +70,7 @@ export function HomeStamp({
               </textPath>
             </text>
             <text
-              fontWeight="800"
+              fontWeight="900"
               fontSize="21"
               fill="currentColor"
               letterSpacing="2"
@@ -162,7 +162,7 @@ export function HomeStamp({
               x="110"
               y="58"
               textAnchor="middle"
-              fontWeight="800"
+              fontWeight="900"
               fontSize={Math.min(22, 150 / (top.length * 0.62))}
               fill="currentColor"
               letterSpacing="1"
@@ -183,7 +183,7 @@ export function HomeStamp({
               x="110"
               y="128"
               textAnchor="middle"
-              fontWeight="800"
+              fontWeight="900"
               fontSize="19"
               fill="currentColor"
             >

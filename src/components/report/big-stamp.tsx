@@ -10,7 +10,6 @@ import {
   capArcText,
   longestLine,
   stampLines,
-  stampStretch,
   stampTextSize,
   viewBoxAttr,
 } from "@/lib/outlook/stamp-geometry";
@@ -39,13 +38,11 @@ function ArcText({
   hanging: boolean;
 }) {
   const capped = capArcText(text, size, arcWidth, ARC_SPACING);
-  const stretch = stampStretch(capped, size, arcWidth, ARC_SPACING);
   return (
     <text
       className={styles.text}
-      fontWeight={800}
+      fontWeight={900}
       fontSize={size}
-      fontStretch={`${stretch}%`}
       fill="currentColor"
       letterSpacing={ARC_SPACING}
     >
@@ -175,7 +172,6 @@ export function BigStamp({
             data-fit={BIG_STAMP.wordWidth}
             fontWeight={900}
             fontSize={size}
-            fontStretch={`${stampStretch(line, size, BIG_STAMP.wordWidth, WORD_SPACING)}%`}
             fill="currentColor"
             letterSpacing={WORD_SPACING}
           >

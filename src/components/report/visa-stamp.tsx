@@ -5,7 +5,6 @@ import { labelName, stampName } from "@/lib/outlook/labels";
 import type { OutlookLabel } from "@/lib/outlook/labels";
 import {
   VISA_STAMP,
-  stampStretch,
   stampTextSize,
   viewBoxAttr,
 } from "@/lib/outlook/stamp-geometry";
@@ -112,7 +111,7 @@ export function VisaStamp({
     className: styles.text,
     x: 110,
     textAnchor: "middle",
-    fontWeight: 800,
+    fontWeight: 900,
     fontSize: edgeSize,
     fill: "currentColor",
   } as const;
@@ -135,7 +134,6 @@ export function VisaStamp({
           {...edgeText}
           y={TOP_BASELINE}
           data-fit={widths.top}
-          fontStretch={`${stampStretch(top, edgeSize, widths.top, TOP_SPACING)}%`}
           letterSpacing={TOP_SPACING}
         >
           {top}
@@ -148,17 +146,11 @@ export function VisaStamp({
           data-fit={widths.word}
           fontWeight={900}
           fontSize={size}
-          fontStretch={`${stampStretch(stampWord, size, widths.word)}%`}
           fill="currentColor"
         >
           {stampWord}
         </text>
-        <text
-          {...edgeText}
-          y={BOTTOM_BASELINE}
-          data-fit={widths.bottom}
-          fontStretch={`${stampStretch(bottom, edgeSize, widths.bottom)}%`}
-        >
+        <text {...edgeText} y={BOTTOM_BASELINE} data-fit={widths.bottom}>
           {bottom}
         </text>
       </g>

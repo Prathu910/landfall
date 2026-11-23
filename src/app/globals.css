@@ -38,7 +38,8 @@
   --label-no-data-ink: #586470;
   --label-no-data-bg: #e8ecef;
   --font-report: "Archivo Variable", "Inter", Arial, sans-serif;
-  --font-stamp: "Archivo Variable", "Inter", Arial, sans-serif;
+  --font-stamp:
+    "Big Shoulders Stencil Display", "Archivo Variable", Arial, sans-serif;
   --focus-ring: #2e4a7d;
   --focus-ring-on-dark: #f3eee3;
   --muted-on-dark: #d6cfbf;
