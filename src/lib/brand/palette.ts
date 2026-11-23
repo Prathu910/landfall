@@ -90,6 +90,23 @@ export const LABEL_PAIRS = {
   noData: { ink: "#586470", bg: "#E8ECEF" },
 } as const;
 
+/**
+ * Chart marks (`--chart-*`): the EOI outcome segments, the masked hatch and
+ * the quiet segment. Each mark is a graphical object, so it needs 3:1 on the
+ * card it sits on (WCAG 1.4.11); `maskedB` is only the gap between stripes.
+ * The light quiet segment stays as approved (2:1, always labelled in text).
+ */
+export const CHART = {
+  invited: "#3B6551",
+  lodged: "#315C87",
+  submitted: "#A85A14",
+  hold: "#948B77",
+  closed: "#4A463E",
+  maskedA: "#7A8882",
+  maskedB: "#E3E9E5",
+  quiet: "#B9AF9A",
+} as const;
+
 /** The warm tint behind a "?" line. Distinct from brand saffron. */
 export const QUESTION_LINE = { fg: "#1B1A17", bg: "#F6DDB5" } as const;
 /** Focus ring colours. Dark containers switch to the on-dark ring. */

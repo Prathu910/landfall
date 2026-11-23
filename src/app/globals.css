@@ -96,8 +96,17 @@
   --input-border: light-dark(#7f918a, #62757f);
   /* Shadows: ink-tinted by day, plain black at night. */
   --shadow-ink: light-dark(#12202c, #000000);
-  /* The quiet chart segment (lower scores, closed EOIs). */
-  --chart-quiet: light-dark(#b9af9a, #5e584d);
+  /* The quiet chart segment (lower scores, closed EOIs); 3:1 on the card at night. */
+  --chart-quiet: light-dark(#b9af9a, #77705f);
+  /* Categorical chart marks (EOI outcomes by month): each 3:1 on the card
+     in its theme (WCAG 1.4.11). Masked counts hatch masked-a over masked-b. */
+  --chart-invited: light-dark(#3b6551, #93c8aa);
+  --chart-lodged: light-dark(#315c87, #6f9fdc);
+  --chart-submitted: light-dark(#a85a14, #d9973f);
+  --chart-hold: light-dark(#948b77, #77705f);
+  --chart-closed: light-dark(#4a463e, #c6beae);
+  --chart-masked-a: light-dark(#7a8882, #8a9c94);
+  --chart-masked-b: light-dark(#e3e9e5, #26343d);
   /* Soft report hairlines (table rows, chart frames). */
   --rule-soft: light-dark(#ece7dc, #24303a);
   /* Security print: sage in daylight, UV sage and violet at night. */
@@ -844,6 +853,13 @@ svg {
     --input-border: #7f918a;
     --shadow-ink: #12202c;
     --chart-quiet: #b9af9a;
+    --chart-invited: #3b6551;
+    --chart-lodged: #315c87;
+    --chart-submitted: #a85a14;
+    --chart-hold: #948b77;
+    --chart-closed: #4a463e;
+    --chart-masked-a: #7a8882;
+    --chart-masked-b: #e3e9e5;
     --rule-soft: #ece7dc;
     --guilloche-a: #bcd0c4;
     --guilloche-b: #d6e1da;

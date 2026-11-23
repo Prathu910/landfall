@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { contrastRatio } from "./contrast";
 import {
+  CHART,
   CHECK_PALETTE,
   DEEP_PANEL,
   FOCUS_RING,
@@ -15,6 +16,7 @@ import {
   STATUS,
 } from "./palette";
 import {
+  CHART_DARK,
   CHECK_PALETTE_DARK,
   FOCUS_RING_DARK,
   HOMEPAGE_TEXT_DARK,
@@ -247,6 +249,75 @@ describe("outlook label pairs", () => {
       .map((file) => readFileSync(file, "utf8"))
       .join("\n");
     expect(css).not.toMatch(/Homepage Stencil|big-shoulders-stencil\.ttf/);
+  });
+});
+
+describe("chart marks", () => {
+  /** The EOI outcome segments in the order a cohort bar draws them. */
+  const SEGMENTS = [
+    "invited",
+    "lodged",
+    "submitted",
+    "hold",
+    "closed",
+  ] as const;
+  const MARKS = [...SEGMENTS, "maskedA"] as const;
+  const THEMES = [
+    ["light", CHART, [PALETTE.card, SHELL_PALETTE.paper]],
+    ["dark", CHART_DARK, [PALETTE_DARK.card, SHELL_PALETTE_DARK.paper]],
+  ] as const;
+
+  for (const [theme, chart, cards] of THEMES) {
+    it(`gives every ${theme} mark 3:1 on the cards it sits on`, () => {
+      for (const key of MARKS)
+        for (const card of cards)
+          expect(
+            contrastRatio(chart[key], card),
+            `${theme} ${key} on ${card}`,
+          ).toBeGreaterThanOrEqual(3);
+    });
+    it(`keeps the ${theme} segments apart and the hatch visible`, () => {
+      expect(new Set(SEGMENTS.map((key) => chart[key])).size).toBe(
+        SEGMENTS.length,
+      );
+      for (let index = 1; index < SEGMENTS.length; index++) {
+        const pair = `${SEGMENTS[index - 1]}|${SEGMENTS[index]}`;
+        expect(
+          contrastRatio(chart[SEGMENTS[index - 1]], chart[SEGMENTS[index]]),
+          `${theme} ${pair}`,
+        ).toBeGreaterThan(1);
+      }
+      expect(
+        contrastRatio(chart.maskedA, chart.maskedB),
+        `${theme} hatch`,
+      ).toBeGreaterThanOrEqual(3);
+    });
+  }
+  it("lifts the quiet segment to 3:1 on the night card and surface", () => {
+    for (const bg of [PALETTE_DARK.card, PALETTE_DARK.surface])
+      expect(contrastRatio(CHART_DARK.quiet, bg), bg).toBeGreaterThanOrEqual(3);
+  });
+  it("mirrors the chart tokens in globals.css", () => {
+    for (const [key, value] of Object.entries(CHART)) {
+      const dark = CHART_DARK[key as keyof typeof CHART];
+      expectToken(`chart-${kebab(key)}`, value, dark);
+    }
+  });
+  it("draws data marks with chart tokens, not hairline or page colours", () => {
+    const read = (file: string) =>
+      readFileSync(`src/components/${file}.module.css`, "utf8");
+    // The hairline and surface tokens vanish on the night card.
+    expect(read("occupation/cohort-bars")).not.toMatch(
+      /var\(--(brand-[\w-]+|rule|surface)\)/,
+    );
+    for (const file of ["occupation/cohort-bars"]) {
+      const hatches = read(file).match(/repeating-linear-gradient\([^;]+;/g);
+      expect(hatches, file).not.toBeNull();
+      for (const hatch of hatches ?? []) {
+        expect(hatch, file).toContain("var(--chart-masked-a)");
+        expect(hatch, file).toContain("var(--chart-masked-b)");
+      }
+    }
   });
 });
 

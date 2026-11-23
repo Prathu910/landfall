@@ -3,6 +3,7 @@
  * same roles and keys, each the dark half of a `light-dark()` token.
  */
 import type {
+  CHART,
   CHECK_PALETTE,
   FOCUS_RING,
   HOMEPAGE_TEXT,
@@ -89,6 +90,18 @@ export const LABEL_PAIRS_DARK = {
   notOpen: { ink: "#F68D80", bg: "#381916" },
   noData: { ink: "#B0BCC7", bg: "#1F2931" },
 } as const satisfies Twin<typeof LABEL_PAIRS, { ink: string; bg: string }>;
+
+/** Lifted off the night card; lodged is a deeper blue than invited's green, so the two differ in lightness too. */
+export const CHART_DARK = {
+  invited: "#93C8AA",
+  lodged: "#6F9FDC",
+  submitted: "#D9973F",
+  hold: "#77705F",
+  closed: "#C6BEAE",
+  maskedA: "#8A9C94",
+  maskedB: "#26343D",
+  quiet: "#77705F",
+} as const satisfies Twin<typeof CHART, string>;
 
 export const QUESTION_LINE_DARK = { fg: "#ECE6D8", bg: "#3B2D17" } as const;
 
