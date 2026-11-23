@@ -3,9 +3,8 @@ import { join, relative } from "node:path";
 import { describe, expect, it } from "vitest";
 
 // Only upright faces are loaded (src/app/layout.tsx), so any italic would be
-// synthesized by the browser. The vendored Stageshow kit is excluded (B1).
+// synthesized by the browser.
 const ROOT = process.cwd();
-const EXCLUDED = "src/components/stageshow-kit/";
 
 function walk(dir: string): string[] {
   return readdirSync(dir).flatMap((name) => {
@@ -17,7 +16,7 @@ function walk(dir: string): string[] {
 function sources(pattern: RegExp): { file: string; text: string }[] {
   return walk(join(ROOT, "src"))
     .map((path) => relative(ROOT, path))
-    .filter((file) => pattern.test(file) && !file.startsWith(EXCLUDED))
+    .filter((file) => pattern.test(file))
     .filter((file) => !file.endsWith(".test.ts"))
     .map((file) => ({ file, text: readFileSync(join(ROOT, file), "utf8") }));
 }

@@ -580,30 +580,6 @@
     margin-bottom: var(--homepage-size-22);
     font-size: var(--homepage-size-16);
   }
-  .home :global(.doors) {
-    grid-template-columns: 1fr;
-    gap: var(--homepage-size-12);
-  }
-  .home :global(.door) {
-    grid-template-columns: 1fr;
-    padding: var(--homepage-size-18);
-  }
-  .home :global(.door > div:last-child) {
-    position: absolute;
-    right: var(--homepage-size-12);
-    top: var(--homepage-size-12);
-  }
-  .home :global(.door svg) {
-    width: var(--homepage-size-104);
-  }
-  .home :global(.door .tag) {
-    display: block;
-    min-height: var(--homepage-size-64);
-    padding-right: var(--homepage-size-110);
-  }
-  .home :global(.door h3) {
-    font-size: var(--homepage-size-21);
-  }
   .home :global(.desk) {
     grid-template-columns: 1fr;
     gap: var(--homepage-size-8);
