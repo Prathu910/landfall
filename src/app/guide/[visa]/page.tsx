@@ -2,13 +2,16 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { BadgeCheck } from "lucide-react";
 import { stateRuleData } from "@/components/data/state-rule-data";
-import { CostEstimator } from "@/components/guide/cost-estimator";
 import { GuideAnswer } from "@/components/guide/guide-answer";
 import { GuideContents } from "@/components/guide/guide-contents";
 import page from "@/components/guide/guide-page.module.css";
 import { GuideSources } from "@/components/guide/guide-sources";
 import { GuideTimeline } from "@/components/guide/guide-timeline";
-import { QuickCheck } from "@/components/guide/quick-check";
+import {
+  LazyCostEstimator,
+  LazyQuickCheck,
+  LazyStateCostEstimator,
+} from "@/components/guide/lazy-tools";
 import { VisaCards } from "@/components/guide/visa-cards";
 import { VisaCompare } from "@/components/guide/visa-compare";
 import { VisaRules } from "@/components/guide/visa-rules";
@@ -196,7 +199,7 @@ export default async function VisaGuidePage({ params }: Props) {
             <Link href="/occupations/">every occupation</Link>.
           </p>
           <div className={page.panel}>
-            <QuickCheck
+            <LazyQuickCheck
               buildDate={buildDate}
               focusVisa={visa}
               evidenceAnchor={guide.evidenceAnchor}
@@ -210,7 +213,11 @@ export default async function VisaGuidePage({ params }: Props) {
             couldn’t read a page, we show no figure and link it instead.
           </p>
           <div className={page.panel}>
-            <CostEstimator buildDate={buildDate} visa={visa} />
+            {nominated ? (
+              <LazyStateCostEstimator buildDate={buildDate} visa={visa} />
+            ) : (
+              <LazyCostEstimator buildDate={buildDate} visa={visa} />
+            )}
           </div>
         </section>
         <section id="faq" className={page.section} aria-labelledby="faq-h">
