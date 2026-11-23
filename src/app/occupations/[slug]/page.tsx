@@ -52,6 +52,7 @@ import {
 } from "@/lib/occupation-page/summary";
 import { occupationVerdict } from "@/lib/occupation-page/verdict";
 import { formatMonth } from "@/lib/report/copy";
+import { serializeJsonLd } from "@/lib/seo/json-ld";
 import { SITE_INDEXABLE } from "@/lib/site";
 import styles from "./page.module.css";
 
@@ -87,10 +88,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         ? { index: false, follow: false }
         : undefined,
   };
-}
-
-function jsonLd(value: object): string {
-  return JSON.stringify(value).replace(/</g, "\\u003c");
 }
 
 export default async function OccupationPage({ params }: Props) {
@@ -242,7 +239,7 @@ export default async function OccupationPage({ params }: Props) {
             <script
               key={i}
               type="application/ld+json"
-              dangerouslySetInnerHTML={{ __html: jsonLd(obj) }}
+              dangerouslySetInnerHTML={{ __html: serializeJsonLd(obj) }}
             />
           ),
         )}
