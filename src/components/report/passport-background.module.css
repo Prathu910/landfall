@@ -19,3 +19,16 @@
   height: calc(100% + 20pt);
   opacity: 0.45;
 }
+
+.artwork.day {
+  display: var(--theme-day-display);
+}
+.artwork.uv {
+  opacity: calc(var(--guilloche-opacity) * 0.5);
+  user-select: none;
+}
+@media print {
+  .artwork.day {
+    display: block;
+  }
+}

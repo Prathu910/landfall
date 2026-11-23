@@ -3,6 +3,9 @@
   width: 100%;
   height: auto;
   overflow: visible;
+  /* At night the ink sits on the paper with a faint halo (tokens.md). */
+  filter: var(--stamp-glow);
+  mix-blend-mode: var(--stamp-blend);
 }
 .very-strong,
 .strong {
