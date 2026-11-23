@@ -67,7 +67,6 @@ export const FEES: FeeCatalogue = {
       id: "acs",
       label: "ACS (ICT occupations)",
       amount: audRange(1136, 1498),
-      tax: "Excludes GST",
       note: "Post Australian Study to General Skills pathway.",
       source: "https://www.acs.org.au/msa/infohub/fees-and-payment.html",
       checkedAt: CHECKED,
