@@ -4,26 +4,27 @@ import { describe, expect, it } from "vitest";
 import { contrastRatio } from "./contrast";
 import {
   CHECK_PALETTE,
-  CHECK_PALETTE_DARK,
   DEEP_PANEL,
   FOCUS_RING,
-  FOCUS_RING_DARK,
   HOMEPAGE_TEXT,
-  HOMEPAGE_TEXT_DARK,
   INPUT_BORDER,
   LABEL_PAIRS,
-  LABEL_PAIRS_DARK,
   PALETTE,
-  PALETTE_DARK,
   QUESTION_LINE,
-  QUESTION_LINE_DARK,
   SHELL_PALETTE,
-  SHELL_PALETTE_DARK,
   STATUS,
-  STATUS_DARK,
-  TEXT_PAIRS,
-  TEXT_PAIRS_DARK,
 } from "./palette";
+import {
+  CHECK_PALETTE_DARK,
+  FOCUS_RING_DARK,
+  HOMEPAGE_TEXT_DARK,
+  LABEL_PAIRS_DARK,
+  PALETTE_DARK,
+  QUESTION_LINE_DARK,
+  SHELL_PALETTE_DARK,
+  STATUS_DARK,
+} from "./palette-dark";
+import { TEXT_PAIRS, TEXT_PAIRS_DARK } from "./text-pairs";
 import { lightFallback } from "./light-fallback";
 import { LIGHT_DARK_PROBE } from "./theme";
 

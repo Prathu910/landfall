@@ -1,5 +1,6 @@
 import type { Viewport } from "next";
-import { SHELL_PALETTE, SHELL_PALETTE_DARK } from "./palette";
+import { SHELL_PALETTE } from "./palette";
+import { SHELL_PALETTE_DARK } from "./palette-dark";
 import type { ThemeChoice } from "./theme";
 
 /** The browser bar runs into the sticky header: white by day, night card at night. */

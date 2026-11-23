@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { SHELL_PALETTE, SHELL_PALETTE_DARK } from "./palette";
+import { SHELL_PALETTE } from "./palette";
+import { SHELL_PALETTE_DARK } from "./palette-dark";
 import { SITE_VIEWPORT, THEME_COLOR, themeColorFor } from "./viewport";
 
 const globals = readFileSync(

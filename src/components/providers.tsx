@@ -7,7 +7,8 @@ import {
 } from "@mantine/core";
 import { DatesProvider } from "@mantine/dates";
 import { MotionConfig } from "motion/react";
-import { INK_RAMP, NIGHT_RAMP } from "@/lib/brand/palette";
+import { INK_RAMP } from "@/lib/brand/palette";
+import { NIGHT_RAMP } from "@/lib/brand/palette-dark";
 import { LIGHT_DARK_PROBE, THEME_STORAGE_KEY } from "@/lib/brand/theme";
 import { ThemeSync } from "@/components/theme/theme-sync";
 
