@@ -26,3 +26,10 @@ export function resolveTheme(
 export function deviceThemeNote(deviceDark: boolean): string {
   return deviceDark ? "Dark now" : "Light now";
 }
+
+/**
+ * The feature test for `light-dark()` (Safari 17.5, Chrome 123, Firefox
+ * 120). Browsers without it get only the light design: the head script, the
+ * Mantine provider and the `@supports not` block in globals.css all use it.
+ */
+export const LIGHT_DARK_PROBE = "light-dark(#000, #fff)";

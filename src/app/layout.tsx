@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { ColorSchemeScript } from "@mantine/core";
 import "@fontsource/newsreader/latin-600.css";
 import "@fontsource/inter/latin-400.css";
 import "@fontsource/inter/latin-500.css";
@@ -11,6 +10,7 @@ import "@mantine/dates/styles.css";
 import "./globals.css";
 import { SITE_VIEWPORT } from "@/lib/brand/viewport";
 import { THEME_STORAGE_KEY } from "@/lib/brand/theme";
+import { themeScript } from "@/lib/brand/theme-script";
 import { SITE_INDEXABLE, SITE_URL } from "@/lib/site";
 import { Providers } from "@/components/providers";
 import { SiteHeader } from "@/components/site-header";
@@ -62,9 +62,8 @@ export default function RootLayout({
     // React must accept the attribute it did not render.
     <html lang="en-AU" data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
-        <ColorSchemeScript
-          defaultColorScheme="auto"
-          localStorageKey={THEME_STORAGE_KEY}
+        <script
+          dangerouslySetInnerHTML={{ __html: themeScript(THEME_STORAGE_KEY) }}
         />
       </head>
       <body>
