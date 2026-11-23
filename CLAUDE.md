@@ -33,7 +33,7 @@ Both dev and build use webpack on purpose. A stale Turbopack dev bundle once cau
 
 ## Architecture
 
-- **Static export only.** `next.config.ts` sets `output: "export"` and `trailingSlash: true`. Internal links therefore end in `/` (`/check/`, `/sample/`). Next.js server-only features (route handlers, server actions, dynamic rendering) will not work in this phase. Supabase Edge Functions run separately from this static export.
+- **Static export only.** `next.config.ts` sets `output: "export"`, `trailingSlash: true` and `experimental.cssChunking: false` (the default merger put other routes' CSS on every page; see `docs/HANDOFF.md`). The root `not-found.tsx` loads on every route, so it imports nothing from other routes' components. Internal links therefore end in `/` (`/check/`, `/sample/`). Next.js server-only features (route handlers, server actions, dynamic rendering) will not work in this phase. Supabase Edge Functions run separately from this static export.
 - **Pure domain layer in `src/lib/`.** Keep it separate from the UI and test it directly.
   - `migration.ts`: the `Profile` type, `calculatePoints(profile, asOf)` and `buildTimeline(profile, asOf)`. All dates are `YYYY-MM-DD` calendar strings, parsed and calculated in UTC so the host time zone never matters. Only `localToday()` reads the browser's local date. Every calculation takes an explicit `asOf`: the check flow uses `localToday()`, and the sample page pins `"2026-11-17"`.
   - `pool.ts`: SkillSelect counts. A published `"<20"` becomes the interval `{min: 0, max: 19}`, and all arithmetic is on intervals (`comparePool`, `formatInterval`). Never collapse a masked count to a single number.
