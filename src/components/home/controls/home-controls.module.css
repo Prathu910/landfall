@@ -22,8 +22,8 @@
 }
 .primary:hover {
   color: var(--homepage-paper);
-  background: var(--homepage-color-1f3446);
-  border-color: var(--homepage-color-1f3446);
+  background: var(--homepage-ink-hover);
+  border-color: var(--homepage-ink-hover);
 }
 .secondary {
   background: transparent;
@@ -89,8 +89,8 @@
 .segments,
 .points {
   font-family: inherit;
-  background: var(--homepage-color-fff9);
-  border: 1px solid var(--homepage-color-ccd6ce);
+  background: var(--homepage-control-fill);
+  border: 1px solid var(--homepage-control-edge);
   padding: var(--homepage-size-4);
   gap: var(--homepage-size-3);
   min-width: 0;
@@ -121,7 +121,7 @@
 }
 .segmentLabel:hover {
   color: var(--homepage-ink);
-  background: var(--homepage-color-fff9);
+  background: var(--homepage-control-fill);
 }
 .segmentLabel[data-active] {
   color: var(--homepage-paper);
@@ -134,7 +134,7 @@
 }
 .points .segmentLabel {
   font-size: var(--homepage-size-16);
-  border: 1px solid var(--homepage-color-c8d2cb);
+  border: 1px solid var(--homepage-segment-edge);
   border-radius: var(--homepage-size-8);
   min-height: var(--homepage-size-50);
   padding-inline: var(--homepage-size-8);

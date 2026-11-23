@@ -8,7 +8,7 @@
 }
 .face {
   fill: var(--brand-paper);
-  stroke: var(--homepage-color-92a396);
+  stroke: var(--homepage-map-edge-strong);
   stroke-width: 1.5;
   transition: fill 0.15s;
 }
@@ -17,7 +17,7 @@
 }
 .connector {
   fill: none;
-  stroke: var(--homepage-color-92a396);
+  stroke: var(--homepage-map-edge-strong);
   stroke-width: 1.2;
   pointer-events: none;
 }

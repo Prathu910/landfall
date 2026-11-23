@@ -139,8 +139,7 @@ describe("globals.css", () => {
     }
     for (const [key, value] of Object.entries(HOMEPAGE_TEXT)) {
       const dark = HOMEPAGE_TEXT_DARK[key as keyof typeof HOMEPAGE_TEXT];
-      const name = key.replace(/^color/, "color-").toLowerCase();
-      expectToken(`homepage-${name}`, value, dark);
+      expectToken(`homepage-${kebab(key)}`, value, dark);
     }
     expectToken("input-border", INPUT_BORDER.light, INPUT_BORDER.dark);
   });
@@ -193,6 +192,10 @@ describe("globals.css", () => {
     expect(globals).toMatch(
       /@media print \{\s*:root,\s*:root\[data-mantine-color-scheme\] \{\s*color-scheme: light;/,
     );
+  });
+  it("names homepage colours by role, not by a light hex", () => {
+    // A hex name reads wrong once the token has a dark value.
+    expect(globals).not.toMatch(/--homepage-color-/);
   });
   it("leaves no old palette behind", () => {
     const old =

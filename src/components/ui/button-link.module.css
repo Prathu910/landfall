@@ -22,8 +22,8 @@
     transform 0.15s;
 }
 .action:hover {
-  background: var(--homepage-color-1f3446);
-  border-color: var(--homepage-color-1f3446);
+  background: var(--homepage-ink-hover);
+  border-color: var(--homepage-ink-hover);
   color: var(--homepage-paper);
 }
 .action:active {

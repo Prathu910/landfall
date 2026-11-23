@@ -40,15 +40,15 @@ type Theme = {
 const HOMEPAGE_INKS = [
   "ink",
   "muted",
-  "color2a3946",
-  "color34424e",
-  "color52665b",
-  "color5b6c63",
+  "lede",
+  "answer",
+  "mapInstruction",
+  "mapLabel",
   "focus",
   "competitive",
   "strong",
-  "color815c32",
-  "colorA23b39",
+  "longWait",
+  "notInvited",
 ] as const;
 
 function textPairs(theme: Theme): TextPair[] {

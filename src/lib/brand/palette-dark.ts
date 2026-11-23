@@ -59,15 +59,15 @@ export const HOMEPAGE_TEXT_DARK = {
   desk: "#0E1820",
   ink: "#ECE6D8",
   muted: "#A5B3B9",
-  color2a3946: "#DCD6C8",
-  color34424e: "#CFD7D9",
-  color52665b: "#A8C0B2",
-  color5b6c63: "#9FB4A9",
+  lede: "#DCD6C8",
+  answer: "#CFD7D9",
+  mapInstruction: "#A8C0B2",
+  mapLabel: "#9FB4A9",
   focus: "#93AAFF",
   competitive: "#EBB959",
   strong: "#6FD49C",
-  color815c32: "#E2B57A",
-  colorA23b39: "#F3958C",
+  longWait: "#E2B57A",
+  notInvited: "#F3958C",
 } as const satisfies Twin<typeof HOMEPAGE_TEXT, string>;
 
 export const STATUS_DARK = {

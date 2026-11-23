@@ -55,15 +55,15 @@ export const HOMEPAGE_TEXT = {
   desk: "#eef2f0",
   ink: "#12202c",
   muted: "#52606b",
-  color2a3946: "#2a3946",
-  color34424e: "#34424e",
-  color52665b: "#52665b",
-  color5b6c63: "#5b6c63",
+  lede: "#2a3946",
+  answer: "#34424e",
+  mapInstruction: "#52665b",
+  mapLabel: "#5b6c63",
   focus: "#2446d6",
   competitive: "#996000",
   strong: "#0f6b3c",
-  color815c32: "#815c32",
-  colorA23b39: "#a23b39",
+  longWait: "#815c32",
+  notInvited: "#a23b39",
 } as const;
 
 /** Report status chips. Every status also shows its label, never colour alone. */

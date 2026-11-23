@@ -15,12 +15,12 @@
   color: var(--homepage-competitive);
 }
 .long-wait {
-  color: var(--homepage-color-815c32);
+  color: var(--homepage-long-wait);
 }
 .not-eligible,
 .not-open,
 .not-invited {
-  color: var(--homepage-color-a23b39);
+  color: var(--homepage-not-invited);
 }
 .no-data {
   color: var(--homepage-muted);
