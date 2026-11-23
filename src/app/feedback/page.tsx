@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { MessageSquareText } from "lucide-react";
-import { CheckFlowTheme } from "@/components/check/check-flow-theme";
 import { FeedbackForm } from "@/components/feedback/feedback-form";
+import { FormTheme } from "@/components/forms/form-theme-provider";
 import shell from "@/components/info-page/info-page.module.css";
 import { PageHead } from "@/components/info-page/page-head";
 export const metadata: Metadata = {
@@ -21,9 +21,9 @@ export default function FeedbackPage() {
           title="Help shape MigrateLens"
           intro="What worked, what needs improving, and what would you like to see next? We welcome your suggestions, feedback and ideas."
         />
-        <CheckFlowTheme>
+        <FormTheme>
           <FeedbackForm />
-        </CheckFlowTheme>
+        </FormTheme>
       </div>
     </main>
   );
