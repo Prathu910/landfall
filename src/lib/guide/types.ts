@@ -55,3 +55,48 @@ export type FeeCatalogue = {
 
 /** A dated, sourced statement in the guide (a rule, a step, a reform note). */
 export type SourcedText = { text: string; source: string; checkedAt: string };
+
+/** A rule with a short name, e.g. "Age": "Under 45 when invited". */
+export type GuideRule = SourcedText & { label: string };
+
+/** How long a step takes: only an officially published period, else "varies". */
+export type StepDuration =
+  ({ kind: "published" } & SourcedText) | { kind: "varies"; text: string };
+
+export type GuideStep = {
+  id: string;
+  title: string;
+  /** Two or three words for the overview strip. */
+  short: string;
+  /** Visas the step applies to; state nomination is 190 and 491 only. */
+  appliesTo: Visa[];
+  what: string;
+  rule: SourcedText;
+  who: string;
+  link: { href: string; text: string };
+  onshore: string;
+  offshore: string;
+  duration: StepDuration;
+};
+
+/** Announced, said or published: never modelled until published. */
+export type PointsChange = SourcedText & {
+  status: "announced" | "said" | "published" | "not-published";
+  date: string;
+  title: string;
+};
+
+export type VisaGuide = {
+  visa: Visa;
+  name: string;
+  kind: "permanent" | "provisional";
+  /** One sentence: what the visa is. */
+  what: string;
+  suits: { onshore: string; offshore: string };
+  requirements: GuideRule[];
+  nomination: GuideRule[];
+  /** What comes after the grant (travel, the 191 pathway). */
+  after: GuideRule[];
+  /** The occupation page section that shows this visa's evidence. */
+  evidenceAnchor: string;
+};

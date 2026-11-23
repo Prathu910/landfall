@@ -5,13 +5,13 @@ import type {
   FeeCatalogue,
   VisaCharges,
 } from "../../lib/guide/types";
+import { GUIDE_CHECKED_AT, SOURCES } from "./sources";
 
 // Hand-sourced from the official pages on 23 Nov 2026; the research notes are
 // docs/research/pr-guide-2026-11.md. Fees change (visa charges every 1 July):
 // re-read each source and update `checkedAt` together with the amount.
-const CHECKED = "2026-11-23";
-const PRICING =
-  "https://immi.homeaffairs.gov.au/visas/getting-a-visa/fees-and-charges/current-visa-pricing";
+const CHECKED = GUIDE_CHECKED_AT;
+const PRICING = SOURCES.pricing;
 
 const aud = (amount: number): FeeAmount => ({
   kind: "fixed",
@@ -285,10 +285,10 @@ export const FEES: FeeCatalogue = {
     label: "Health examinations",
     amount: {
       kind: "varies",
-      reason: "Panel clinics set their own prices; Home Affairs lists none.",
+      reason:
+        "Clinics set their own prices; Home Affairs publishes no fixed price.",
     },
-    source:
-      "https://immi.homeaffairs.gov.au/help-support/meeting-our-requirements/health",
+    source: SOURCES.health,
     checkedAt: CHECKED,
   },
   translations: {
@@ -298,8 +298,7 @@ export const FEES: FeeCatalogue = {
       kind: "varies",
       reason: "Priced per document by the translator.",
     },
-    source:
-      "https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/skilled-independent-189/points-tested",
+    source: SOURCES.visa189,
     checkedAt: CHECKED,
   },
 };

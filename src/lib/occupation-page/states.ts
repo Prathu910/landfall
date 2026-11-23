@@ -53,7 +53,7 @@ function listedCohorts(
   return cohorts;
 }
 
-type Membership = {
+export type Membership = {
   listed: Cohort[] | null;
   /** Some stream is judged against an imported list. */
   checked: boolean;
@@ -61,7 +61,8 @@ type Membership = {
   unchecked: boolean;
 };
 
-function membership(
+/** Whether a state's imported lists name the code for a visa, and for whom. */
+export function listMembership(
   state: StateCode,
   visa: StateVisa,
   code: string,
@@ -130,8 +131,8 @@ export function stateRows(
   data: StateRuleData,
 ): StateRow[] {
   return STATE_ORDER.map((state) => {
-    const m190 = membership(state, "190", code, data);
-    const m491 = membership(state, "491", code, data);
+    const m190 = listMembership(state, "190", code, data);
+    const m491 = listMembership(state, "491", code, data);
     const base = {
       state,
       name: STATE_NAMES[state],
