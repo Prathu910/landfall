@@ -1,5 +1,5 @@
 "use client";
-import { Checkbox, NativeSelect, Select } from "@mantine/core";
+import { Checkbox, NativeSelect } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { FormTheme } from "@/components/forms/form-theme-provider";
 import { FEES } from "@/data/guide/fees";
@@ -88,47 +88,47 @@ export function CostEstimator({
             onChange={(e) => set({ partner: e.currentTarget.checked })}
           />
           <div className={styles.pair}>
-            <Select
+            <NativeSelect
               label="Children under 18"
               data={COUNTS(5)}
               value={String(choices.childrenUnder18)}
-              onChange={(v) => set({ childrenUnder18: Number(v ?? 0) })}
-              allowDeselect={false}
-              comboboxProps={{ withinPortal: false }}
+              onChange={(e) =>
+                set({ childrenUnder18: Number(e.currentTarget.value) })
+              }
             />
-            <Select
+            <NativeSelect
               label="Children 18 or over"
               data={COUNTS(3)}
               value={String(choices.children18Plus)}
-              onChange={(v) => set({ children18Plus: Number(v ?? 0) })}
-              allowDeselect={false}
-              comboboxProps={{ withinPortal: false }}
+              onChange={(e) =>
+                set({ children18Plus: Number(e.currentTarget.value) })
+              }
             />
           </div>
-          <Select
+          <NativeSelect
             label="Skills assessing body"
             data={BODIES}
             value={choices.assessingBody ?? ""}
-            onChange={(v) => set({ assessingBody: v || null })}
-            allowDeselect={false}
-            comboboxProps={{ withinPortal: false }}
+            onChange={(e) =>
+              set({ assessingBody: e.currentTarget.value || null })
+            }
           />
-          <Select
+          <NativeSelect
             label="English test"
             data={TESTS}
             value={choices.englishTest ?? ""}
-            onChange={(v) => set({ englishTest: v || null })}
-            allowDeselect={false}
-            comboboxProps={{ withinPortal: false }}
+            onChange={(e) =>
+              set({ englishTest: e.currentTarget.value || null })
+            }
           />
           {choices.visa !== "189" && (
-            <Select
+            <NativeSelect
               label="Nominating state or territory"
               data={STATES}
               value={choices.state ?? ""}
-              onChange={(v) => set({ state: (v as StateCode) || null })}
-              allowDeselect={false}
-              comboboxProps={{ withinPortal: false }}
+              onChange={(e) =>
+                set({ state: (e.currentTarget.value as StateCode) || null })
+              }
             />
           )}
           <Checkbox
