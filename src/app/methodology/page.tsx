@@ -8,8 +8,10 @@ import {
   methodSources,
 } from "@/components/methodology/method-content";
 import { MethodPrivacy } from "@/components/methodology/method-privacy";
+import { occupationIndex } from "@/components/data/occupation-index";
 import { MethodSources } from "@/components/methodology/method-sources";
 import styles from "@/components/methodology/methodology.module.css";
+import { coverageSentence, snapshotCoverage } from "@/lib/data/coverage";
 import { loadManifest } from "@/lib/data/load-server";
 import { METHOD_LIMITS, METHOD_LINES } from "@/lib/outlook/method";
 const manifest = loadManifest();
@@ -41,6 +43,7 @@ export default function MethodologyPage() {
           <div className={styles.content}>
             <MethodSources
               sources={methodSources(manifest.sources.dashboard)}
+              coverage={coverageSentence(snapshotCoverage(occupationIndex))}
             />
             <section id="pool" className={styles.section}>
               <h2>How to read the pool</h2>

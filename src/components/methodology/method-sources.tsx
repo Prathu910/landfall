@@ -2,14 +2,21 @@ import { ArrowUpRight } from "lucide-react";
 import type { MethodSource } from "./method-content";
 import styles from "./methodology.module.css";
 
-export function MethodSources({ sources }: { sources: MethodSource[] }) {
+export function MethodSources({
+  sources,
+  coverage,
+}: {
+  sources: MethodSource[];
+  /** From coverageSentence: counted from the occupation index at build. */
+  coverage: string;
+}) {
   return (
     <section id="sources" className={styles.section}>
       <h2>Our sources</h2>
       <p>
-        We use public government information and keep the data date visible. The
-        current occupation import covers 11 occupations; it is a checked-in
-        snapshot, not a live connection to SkillSelect.
+        We use public government information and keep the data date visible.{" "}
+        {coverage} it is a checked-in snapshot, not a live connection to
+        SkillSelect.
       </p>
       <table className={styles.sources}>
         <thead>
