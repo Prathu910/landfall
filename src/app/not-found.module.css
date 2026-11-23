@@ -1,4 +1,17 @@
+/* Its own copy of the supporting pages' sage desk: the root not-found loads
+   on every route, so it must not pull in the shared info-page styles. */
+.page {
+  background: var(--brand-sage);
+  color: var(--brand-ink);
+  font: 400 1rem/1.6 var(--brand-font);
+  padding: calc(var(--brand-unit) * 8) 0 calc(var(--brand-unit) * 20);
+}
+.page h1 {
+  font-family: var(--brand-font);
+}
 .wrap {
+  width: min(100% - 5rem, 75rem);
+  margin-inline: auto;
   display: grid;
   grid-template-columns: auto minmax(0, 32rem);
   gap: calc(var(--brand-unit) * 12);
@@ -15,7 +28,7 @@
 }
 .wrap p {
   margin: calc(var(--brand-unit) * 4) 0 calc(var(--brand-unit) * 7);
-  color: var(--muted);
+  color: var(--brand-muted);
   font-size: 1.125rem;
 }
 /* A passport stamp in the stamps' stencil face. */
@@ -57,5 +70,19 @@
   }
   .stamp {
     width: calc(var(--brand-unit) * 36);
+  }
+}
+@media screen and (max-width: 760px) {
+  .page {
+    padding-top: calc(var(--brand-unit) * 5);
+  }
+  .wrap {
+    width: calc(100% - 2rem);
+  }
+}
+@media print {
+  .page {
+    padding: 0;
+    background: white;
   }
 }

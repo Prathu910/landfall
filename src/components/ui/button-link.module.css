@@ -1,0 +1,46 @@
+/* A plain link styled as the primary pill action (the homepage action's
+   look, without Mantine or the homepage's control styles). */
+.action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--homepage-size-50);
+  padding: var(--homepage-size-12) var(--homepage-size-24);
+  border: 2px solid var(--homepage-ink);
+  border-radius: 999px;
+  background: var(--homepage-ink);
+  color: var(--homepage-paper);
+  font-family: inherit;
+  font-size: var(--homepage-size-17);
+  font-weight: 650;
+  line-height: 1.3;
+  text-align: center;
+  text-decoration: none;
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    transform 0.15s;
+}
+.action:hover {
+  background: var(--homepage-color-1f3446);
+  border-color: var(--homepage-color-1f3446);
+  color: var(--homepage-paper);
+}
+.action:active {
+  transform: translateY(1px);
+}
+.action:focus-visible {
+  outline: 3px solid var(--homepage-focus);
+  outline-offset: 3px;
+}
+@media (max-width: 760px) {
+  .action {
+    width: 100%;
+    font-size: var(--homepage-size-15);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .action {
+    transition: none;
+  }
+}
