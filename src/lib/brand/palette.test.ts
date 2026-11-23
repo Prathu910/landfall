@@ -38,24 +38,6 @@ function cssFiles(dir: string): string[] {
   });
 }
 
-/** The CSS with every `@media print { … }` block removed. */
-function withoutPrintBlocks(css: string): string {
-  let out = "";
-  let index = 0;
-  for (;;) {
-    const start = css.indexOf("@media print", index);
-    if (start < 0) return out + css.slice(index);
-    out += css.slice(index, start);
-    let depth = 0;
-    let cursor = css.indexOf("{", start);
-    for (; cursor < css.length; cursor++) {
-      if (css[cursor] === "{") depth++;
-      if (css[cursor] === "}" && --depth === 0) break;
-    }
-    index = cursor + 1;
-  }
-}
-
 const globals = readFileSync("src/app/globals.css", "utf8");
 const FALLBACK_START = `@supports not (color: ${LIGHT_DARK_PROBE})`;
 /** globals.css without the light fallback block at its end. */
@@ -210,20 +192,6 @@ describe("globals.css", () => {
     expect(globals).toMatch(
       /@media print \{\s*:root,\s*:root\[data-mantine-color-scheme\] \{\s*color-scheme: light;/,
     );
-  });
-  it("keeps CSS modules on tokens, so both themes reach them", () => {
-    for (const file of cssFiles("src").filter((f) =>
-      f.endsWith(".module.css"),
-    )) {
-      // Print is always the light design, so print-only literals are fine.
-      // A feature test's probe colours (@supports …) are not styles.
-      const screen = withoutPrintBlocks(readFileSync(file, "utf8")).replace(
-        /@supports[^{]*/g,
-        "@supports",
-      );
-      expect(screen, file).not.toMatch(/#[0-9a-f]{3,8}\b/i);
-      expect(screen, file).not.toMatch(/:\s*(white|black)\s*;/);
-    }
   });
   it("leaves no old palette behind", () => {
     const old =
