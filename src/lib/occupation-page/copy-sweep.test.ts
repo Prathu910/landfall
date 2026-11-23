@@ -14,8 +14,8 @@ import { occupationVerdict } from "./verdict";
 const REPEATED_RANGE = /\b(\d+)(?: to |–)\1\b/;
 
 function verdictStrings(core: OccupationCore): string[] {
-  const verdict = occupationVerdict(core);
-  if (verdict.kind === "closed") return [verdict.name, verdict.text];
+  const verdict = occupationVerdict(core, stateRuleData.federal);
+  if (verdict.kind !== "scores") return [verdict.name, verdict.text];
   return [verdict.note, ...verdict.cells.map((c) => `${c.points}: ${c.name}`)];
 }
 
@@ -54,5 +54,19 @@ describe("every occupation page's copy", () => {
         .map((s) => `${code}: ${s}`),
     );
     expect(problems).toEqual([]);
+  });
+
+  it("says 189 isn't available, never no data, off the federal 189 list", () => {
+    const entries = stateRuleData.federal!.entries;
+    const offList = codes.filter((code) => !entries[code]?.["189"]);
+    expect(offList.length).toBeGreaterThan(0);
+    const wrong = offList.filter((code) => {
+      const verdict = occupationVerdict(
+        loadOccupationCore(code)!,
+        stateRuleData.federal,
+      );
+      return verdict.kind !== "unavailable";
+    });
+    expect(wrong).toEqual([]);
   });
 });

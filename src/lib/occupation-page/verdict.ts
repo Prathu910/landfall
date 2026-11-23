@@ -2,10 +2,14 @@ import type { OccupationCore } from "../data/types";
 import { MIN_POINTS, label189 } from "../outlook/label-189";
 import { labelName } from "../outlook/labels";
 import type { OutlookLabel } from "../outlook/labels";
+import type { FederalList } from "../state-outlook/rules-types";
+
+type FederalEntry = FederalList["entries"][string];
 
 /**
  * The 189 label at a few scores, by the report's own rules (label-189.ts),
- * for the strip near the top of each occupation page.
+ * for the strip near the top of each occupation page. An occupation the
+ * federal list doesn't have for 189 gets one line instead.
  */
 
 export type VerdictCell = { points: string; label: OutlookLabel; name: string };
@@ -18,7 +22,8 @@ export type OccupationVerdict =
       name: string;
       text: string;
       checkHref: string;
-    };
+    }
+  | { kind: "unavailable"; name: string; text: string; checkHref: string };
 
 const STEP = 5;
 /** The strip shows at least 65 to 90, the scores most readers hold. */
@@ -84,8 +89,38 @@ function closedText(label: OutlookLabel, tooFew: boolean): string {
     : "No published 189 pool or invitation round lists this occupation, so there is no 189 outlook to show at any score.";
 }
 
-export function occupationVerdict(core: OccupationCore): OccupationVerdict {
+/** "190 and 491", "491" or "" for the state visas the federal list has. */
+function stateVisasOf(entry: FederalEntry | undefined) {
+  const visas = (["190", "491"] as const).filter((visa) => entry?.[visa]);
+  return visas.join(" and ");
+}
+
+function unavailableText(entry: FederalEntry | undefined) {
+  const visas = stateVisasOf(entry);
+  const lead = visas
+    ? `189 isn't available for this occupation; ${visas} may be, with state or territory nomination.`
+    : "189 isn't available for this occupation, and nor are 190 and 491.";
+  return `${lead} The Home Affairs skilled occupation list doesn't include it for 189, so a higher score doesn't change this.`;
+}
+
+/**
+ * The federal list decides 189 eligibility (a missing code is not on it). With
+ * no readable list, the published 189 data alone decides the verdict.
+ */
+export function occupationVerdict(
+  core: OccupationCore,
+  federal: FederalList | null,
+): OccupationVerdict {
   const checkHref = `/check/?occupation=${core.code}`;
+  const entry = federal?.entries[core.code];
+  if (federal && !entry?.["189"]) {
+    return {
+      kind: "unavailable",
+      name: "Not available",
+      text: unavailableText(entry),
+      checkHref,
+    };
+  }
   const atPassMark = labelAt(core, MIN_POINTS);
   // Not invited or no data at 65 stays so at every score (label-189.ts).
   if (atPassMark.label === "not-invited" || atPassMark.label === "no-data") {

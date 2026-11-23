@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { coreFixture } from "../data/__fixtures__/occupation";
 import type { OccupationCore } from "../data/types";
-import { occupationVerdict } from "./verdict";
+import type { FederalList } from "../state-outlook/rules-types";
+import { occupationVerdict as verdictWith } from "./verdict";
 
 const rounds = (cutoffs: (number | null)[]) =>
   cutoffs.map((cutoff, i) => ({
@@ -22,6 +23,23 @@ const regular: OccupationCore = {
   },
   rounds189: rounds([80, 75, 70, 70]),
 };
+
+type Entry = FederalList["entries"][string];
+
+function federalWith(code: string, entry: Entry): FederalList {
+  return {
+    source: "https://immi.example.gov.au/list",
+    checkedAt: "2026-11-23",
+    entries: { [code]: entry },
+  };
+}
+
+const ON_189: Entry = { "189": true, "190": true, "491": true };
+
+/** The verdict for an occupation the federal list has for 189. */
+function occupationVerdict(core: OccupationCore) {
+  return verdictWith(core, federalWith(core.code, ON_189));
+}
 
 describe("occupationVerdict", () => {
   it("shows the 189 label where it changes, from 65 up", () => {
@@ -107,5 +125,74 @@ describe("occupationVerdict", () => {
       name: "Too few to count",
       text: "Every published 189 count for this occupation is under 20 (so may be zero): too few to read at any score.",
     });
+  });
+
+  it("falls back to the published data when the federal list is missing", () => {
+    const verdict = verdictWith({ ...regular, pool: {}, rounds189: [] }, null);
+    expect(verdict).toMatchObject({ kind: "closed", label: "no-data" });
+  });
+});
+
+describe("occupationVerdict for an occupation not on the 189 list", () => {
+  const unlisted = { ...regular, pool: {}, rounds189: [] };
+  const LIST_LINE =
+    " The Home Affairs skilled occupation list doesn't include it for 189, so a higher score doesn't change this.";
+
+  it("says 189 isn't available and that 190 and 491 may be", () => {
+    const federal = federalWith(unlisted.code, {
+      "189": false,
+      "190": true,
+      "491": true,
+    });
+    expect(verdictWith(unlisted, federal)).toEqual({
+      kind: "unavailable",
+      name: "Not available",
+      text:
+        "189 isn't available for this occupation; 190 and 491 may be, with state or territory nomination." +
+        LIST_LINE,
+      checkHref: "/check/?occupation=254499",
+    });
+  });
+
+  it("names only the visas the federal list has", () => {
+    const only491 = federalWith(unlisted.code, {
+      "189": false,
+      "190": false,
+      "491": true,
+    });
+    expect(verdictWith(unlisted, only491)).toMatchObject({
+      text:
+        "189 isn't available for this occupation; 491 may be, with state or territory nomination." +
+        LIST_LINE,
+    });
+    const none = federalWith(unlisted.code, {
+      "189": false,
+      "190": false,
+      "491": false,
+    });
+    expect(verdictWith(unlisted, none)).toMatchObject({
+      text:
+        "189 isn't available for this occupation, and nor are 190 and 491." +
+        LIST_LINE,
+    });
+  });
+
+  it("treats a code missing from the federal list as not on it", () => {
+    const other = federalWith("261313", ON_189);
+    expect(verdictWith(unlisted, other)).toMatchObject({
+      kind: "unavailable",
+      text:
+        "189 isn't available for this occupation, and nor are 190 and 491." +
+        LIST_LINE,
+    });
+  });
+
+  it("puts the federal list ahead of older 189 data", () => {
+    const federal = federalWith(regular.code, {
+      "189": false,
+      "190": true,
+      "491": true,
+    });
+    expect(verdictWith(regular, federal).kind).toBe("unavailable");
   });
 });

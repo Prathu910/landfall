@@ -4,6 +4,9 @@ import type { OutlookLabel } from "@/lib/outlook/labels";
 import type { OccupationVerdict as Verdict } from "@/lib/occupation-page/verdict";
 import styles from "./occupation-verdict.module.css";
 
+/** A visa the occupation can't use takes the neutral grey of "no data". */
+const NEUTRAL: OutlookLabel = "no-data";
+
 function inkOf(label: OutlookLabel): CSSProperties {
   return {
     "--stamp-ink": `var(--label-${label}-ink)`,
@@ -40,7 +43,10 @@ export function OccupationVerdict({ verdict }: { verdict: Verdict }) {
         </>
       ) : (
         <div className={styles.closed}>
-          <p className={styles.stamp} style={inkOf(verdict.label)}>
+          <p
+            className={styles.stamp}
+            style={inkOf(verdict.kind === "closed" ? verdict.label : NEUTRAL)}
+          >
             <span className={styles.label}>{verdict.name}</span>
           </p>
           <p className={styles.text}>{verdict.text}</p>

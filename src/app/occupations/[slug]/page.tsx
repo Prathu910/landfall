@@ -138,7 +138,9 @@ export default async function OccupationPage({ params }: Props) {
           sentences={sentences}
           sourceLine={sourceLine(core)}
         />
-        <OccupationVerdict verdict={occupationVerdict(core)} />
+        <OccupationVerdict
+          verdict={occupationVerdict(core, stateRuleData.federal)}
+        />
         <OccupationSectionNav
           hasRounds={has189Rounds(core)}
           hasCohorts={Boolean(cohorts)}
