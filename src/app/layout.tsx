@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "@fontsource/newsreader/latin-600.css";
 import "@fontsource/inter/latin-400.css";
 import "@fontsource/inter/latin-500.css";
@@ -8,10 +8,13 @@ import "@fontsource/big-shoulders-stencil-display/latin-900";
 import "@mantine/core/styles.css";
 import "@mantine/dates/styles.css";
 import "./globals.css";
+import { SITE_VIEWPORT } from "@/lib/brand/viewport";
 import { SITE_INDEXABLE, SITE_URL } from "@/lib/site";
 import { Providers } from "@/components/providers";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+
+export const viewport: Viewport = SITE_VIEWPORT;
 
 export const metadata: Metadata = {
   title: {

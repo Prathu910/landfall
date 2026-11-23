@@ -1,4 +1,6 @@
 :root {
+  /* Light only: no browser auto-dark or forced inversion (see SITE_VIEWPORT). */
+  color-scheme: light;
   --ink: #1b1a17;
   --newsprint: #f3eee3;
   --card: #fbf8f2;
