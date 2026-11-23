@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
 import { occupationIndex } from "@/components/data/occupation-index";
-import { stateRuleData } from "@/components/data/state-rule-data";
 import { FormTheme } from "@/components/forms/form-theme-provider";
 import { pathFit, type PickerSituation } from "@/lib/guide/path-fit";
 import { pickerView } from "@/lib/guide/picker-view";
@@ -9,6 +8,7 @@ import { GuideOccupationSelect } from "./guide-occupation-select";
 import { GuideSituation } from "./guide-situation";
 import { useGuideAnswers, useOccupationFromUrl } from "./guide-store";
 import { StateFitTable } from "./state-fit-table";
+import { useStateRuleData } from "./use-state-rule-data";
 import styles from "./path-picker.module.css";
 
 /** "Which path fits you?": visas and state lists for one occupation and situation. */
@@ -22,7 +22,12 @@ export function PathPicker() {
       : state
         ? { kind: "onshore", state }
         : null;
-  const fit = entry && where ? pathFit(entry.code, where, stateRuleData) : null;
+  // The state lists load only once there is an occupation to look up.
+  const ruleData = useStateRuleData(Boolean(entry));
+  const fit =
+    entry && where && ruleData.status === "ready"
+      ? pathFit(entry.code, where, ruleData.data)
+      : null;
   const view = fit && entry && where ? pickerView(fit, entry, where) : null;
   return (
     <FormTheme>
@@ -34,9 +39,13 @@ export function PathPicker() {
         <div className={styles.result} aria-live="polite">
           {!view ? (
             <p className={styles.empty}>
-              {entry && !where
-                ? "Choose the state you live in to see which state lists fit you."
-                : "Choose your occupation to see which visas it can use and which states list it."}
+              {!entry
+                ? "Choose your occupation to see which visas it can use and which states list it."
+                : !where
+                  ? "Choose the state you live in to see which state lists fit you."
+                  : ruleData.status === "failed"
+                    ? "We couldn’t load the state lists. Reload the page to try again."
+                    : "Loading published data…"}
             </p>
           ) : (
             <>

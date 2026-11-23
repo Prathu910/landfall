@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { stateRuleData } from "@/components/data/state-rule-data";
+import { federalList } from "@/components/data/federal-list";
 import { FormTheme } from "@/components/forms/form-theme-provider";
 import type { Visa } from "@/lib/data/types";
 import {
@@ -39,7 +39,7 @@ export function QuickCheck({
     setAsOf(localToday());
   }, []);
   const merged = { ...answers, occupation };
-  const result = quickCheck(merged, asOf, stateRuleData.federal);
+  const result = quickCheck(merged, asOf, federalList);
   return (
     <FormTheme>
       <div className={styles.quick}>
