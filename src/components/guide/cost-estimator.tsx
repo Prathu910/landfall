@@ -34,7 +34,7 @@ const STATES = [
 
 type Choices = Omit<CostInput, "situation">;
 
-/** The cost estimator over the hand-sourced fees (src/data/guide/fees.ts). */
+/** The cost estimator over the hand-sourced fees (`FEES`, src/data/guide/fees.ts). */
 export function CostEstimator({
   buildDate,
   visa = "189",
