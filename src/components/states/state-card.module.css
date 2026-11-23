@@ -1,5 +1,4 @@
 .card {
-  scroll-margin-top: calc(var(--site-header-height) + var(--brand-unit) * 4);
   padding: calc(var(--brand-unit) * 7);
   border: var(--brand-rule-width) solid var(--rule);
   border-radius: calc(var(--brand-unit) * 3);
