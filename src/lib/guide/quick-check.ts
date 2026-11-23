@@ -62,6 +62,8 @@ export type BasicCheck = {
 
 export type QuickResult = {
   points: Record<Visa, number>;
+  /** False until age, English, qualification and partner are answered. */
+  answered: boolean;
   categories: PointCategory[];
   checks: BasicCheck[];
   /** Visas for which every basic checked here is met. Not visa eligibility. */
@@ -154,7 +156,7 @@ function assessmentCheck(assessment: QuickAnswers["assessment"]): BasicCheck {
     source: SOURCES.skillsAssessment,
   };
   if (assessment === null)
-    return { ...base, status: "unknown", detail: "Tell us about it." };
+    return { ...base, status: "unknown", detail: "Choose an answer." };
   if (assessment === "not-yet")
     return {
       ...base,
@@ -256,6 +258,7 @@ export function quickCheck(
   );
   return {
     points,
+    answered,
     categories: result.categories,
     checks,
     visasMeetingBasics,

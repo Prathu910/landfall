@@ -1,0 +1,152 @@
+.estimator {
+  display: grid;
+  grid-template-columns: minmax(0, 22rem) minmax(0, 1fr);
+  gap: calc(var(--brand-unit) * 8);
+  align-items: start;
+}
+.controls {
+  display: grid;
+  gap: calc(var(--brand-unit) * 4);
+}
+.pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: calc(var(--brand-unit) * 3);
+}
+.tally {
+  display: none;
+}
+.breakdown {
+  min-width: 0;
+  padding: calc(var(--brand-unit) * 6);
+  border: var(--brand-rule-width) solid var(--rule);
+  border-radius: calc(var(--brand-unit) * 3);
+  background: var(--check-soft);
+}
+.asAt {
+  display: inline-block;
+  margin: 0 0 calc(var(--brand-unit) * 4);
+  padding: calc(var(--brand-unit) * 1.5) calc(var(--brand-unit) * 3);
+  border: calc(var(--brand-unit) * 0.5) solid var(--ink);
+  border-radius: calc(var(--brand-unit) * 1.5);
+  background: var(--card);
+  font-weight: 650;
+}
+.totals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--brand-unit) * 3) calc(var(--brand-unit) * 8);
+}
+.total {
+  display: grid;
+  margin: 0;
+}
+.totalLabel {
+  color: var(--muted);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.totalValue {
+  font: 900 2.25rem / 1.1 var(--font-stamp);
+  letter-spacing: 0.02em;
+  overflow-wrap: anywhere;
+}
+.fine {
+  margin: calc(var(--brand-unit) * 2) 0 calc(var(--brand-unit) * 4);
+  color: var(--muted);
+  font-size: 0.8125rem;
+}
+.lines {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+.lines th,
+.lines td {
+  padding: calc(var(--brand-unit) * 2.5) 0;
+  border-bottom: var(--brand-rule-width) solid var(--rule);
+  text-align: left;
+  vertical-align: top;
+}
+.lines thead th {
+  color: var(--muted);
+  font-size: 0.8125rem;
+}
+.lines tbody th {
+  font-weight: 600;
+  padding-right: calc(var(--brand-unit) * 4);
+}
+.lines td,
+.lines thead th:last-child {
+  text-align: right;
+  white-space: nowrap;
+  font-weight: 650;
+}
+.lineNote {
+  display: block;
+  color: var(--muted);
+  font-size: 0.8125rem;
+  font-weight: 400;
+}
+.source {
+  display: block;
+  width: fit-content;
+  margin-top: calc(var(--brand-unit) * 1);
+  color: var(--slate);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: var(--brand-unit);
+}
+.unpricedHeading {
+  margin: calc(var(--brand-unit) * 6) 0 calc(var(--brand-unit) * 3);
+  font-size: 1rem;
+}
+.unpriced {
+  display: grid;
+  gap: calc(var(--brand-unit) * 3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.9375rem;
+}
+.unpricedLabel {
+  display: block;
+}
+@media screen and (max-width: 860px) {
+  /* Flex, not grid: a grid item's sticky range is its own grid area. */
+  .estimator {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--brand-unit) * 6);
+  }
+  .tally {
+    display: block;
+    align-self: stretch;
+    position: sticky;
+    bottom: calc(var(--brand-unit) * 2);
+    z-index: 2;
+    margin: 0;
+    padding: calc(var(--brand-unit) * 3) calc(var(--brand-unit) * 4);
+    border-radius: var(--brand-pill);
+    background: var(--brand-ink);
+    color: var(--brand-paper);
+    font-weight: 650;
+    text-align: center;
+    overflow-wrap: anywhere;
+  }
+}
+@media screen and (max-width: 600px) {
+  .tally {
+    display: none;
+  }
+  .breakdown {
+    padding: calc(var(--brand-unit) * 4);
+  }
+  .totalValue {
+    font-size: 1.875rem;
+  }
+  .lines td {
+    white-space: normal;
+  }
+}

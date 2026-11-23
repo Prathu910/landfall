@@ -1,0 +1,31 @@
+.rules {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: calc(var(--brand-unit) * 3);
+  margin: 0;
+}
+.rule {
+  padding: calc(var(--brand-unit) * 4) calc(var(--brand-unit) * 5);
+  border: var(--brand-rule-width) solid var(--rule);
+  border-left: calc(var(--brand-unit) * 0.75) solid var(--ink);
+  border-radius: calc(var(--brand-unit) * 2);
+  background: var(--card);
+}
+.rule dt {
+  font-weight: 650;
+}
+.rule dd {
+  margin: calc(var(--brand-unit) * 1) 0 0;
+  font-size: 0.9375rem;
+}
+.source {
+  color: var(--slate);
+  font-size: 0.8125rem;
+  text-decoration: underline;
+  text-underline-offset: var(--brand-unit);
+}
+@media screen and (max-width: 760px) {
+  .rules {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

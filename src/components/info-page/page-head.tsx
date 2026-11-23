@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ChevronRight, type LucideIcon } from "lucide-react";
-import type { ReactNode } from "react";
+import { Fragment, type ReactNode } from "react";
 import styles from "./info-page.module.css";
 
 /** A supporting page's head: breadcrumb, eyebrow, the page's one h1 and intro. */
@@ -11,8 +11,11 @@ export function PageHead({
   title,
   intro,
   meta = [],
+  trail = [],
 }: {
   crumb: string;
+  /** Pages between Home and this one, e.g. the guide above a visa page. */
+  trail?: { href: string; label: string }[];
   eyebrow: string;
   icon: LucideIcon;
   title: string;
@@ -24,6 +27,12 @@ export function PageHead({
       <nav className={styles.crumb} aria-label="Breadcrumb">
         <Link href="/">Home</Link>
         <ChevronRight size={12} aria-hidden />
+        {trail.map((step) => (
+          <Fragment key={step.href}>
+            <Link href={step.href}>{step.label}</Link>
+            <ChevronRight size={12} aria-hidden />
+          </Fragment>
+        ))}
         <span aria-current="page">{crumb}</span>
       </nav>
       <header className={styles.head}>

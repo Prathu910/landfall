@@ -1,0 +1,72 @@
+.wrap {
+  border: var(--brand-rule-width) solid var(--rule);
+  border-radius: calc(var(--brand-unit) * 3);
+  background: var(--card);
+  overflow: hidden;
+}
+.table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+.table th,
+.table td {
+  padding: calc(var(--brand-unit) * 3) calc(var(--brand-unit) * 4);
+  border-bottom: var(--brand-rule-width) solid var(--rule);
+  text-align: left;
+  vertical-align: top;
+}
+.table tbody tr:last-child th,
+.table tbody tr:last-child td {
+  border-bottom: 0;
+}
+.table thead th {
+  font: 900 1.5rem / 1 var(--font-stamp);
+}
+.table thead a {
+  color: var(--slate);
+  text-decoration: underline;
+  text-underline-offset: var(--brand-unit);
+}
+.table tbody th {
+  color: var(--muted);
+  font-weight: 600;
+  width: 26%;
+}
+.table [data-current] {
+  background: var(--check-soft);
+}
+@media screen and (max-width: 700px) {
+  .table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+  .table,
+  .table tbody,
+  .table tr,
+  .table th,
+  .table td {
+    display: block;
+    width: auto;
+  }
+  .table tr {
+    padding: calc(var(--brand-unit) * 3) calc(var(--brand-unit) * 4);
+    border-bottom: var(--brand-rule-width) solid var(--rule);
+  }
+  .table tbody th,
+  .table td {
+    padding: calc(var(--brand-unit) * 0.5) 0;
+    border: 0;
+  }
+  .table tbody th {
+    color: var(--ink);
+  }
+  .table td::before {
+    content: attr(data-label) ": ";
+    font-weight: 650;
+  }
+}

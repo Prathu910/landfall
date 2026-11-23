@@ -11,12 +11,18 @@ import type {
 /** Fees change every 1 July: anything older than this needs a fresh read. */
 export const GUIDE_MAX_AGE_DAYS = 365;
 
-export type DatedItem = { id: string; checkedAt: string; source: string };
+export type DatedItem = {
+  id: string;
+  checkedAt: string;
+  source: string;
+  label?: string;
+};
 
 const dated = (fee: Fee): DatedItem => ({
   id: fee.id,
   checkedAt: fee.checkedAt,
   source: fee.source,
+  label: fee.label,
 });
 
 /** Every fee in the catalogue, including each visa's four charges. */

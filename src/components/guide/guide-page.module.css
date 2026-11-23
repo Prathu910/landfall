@@ -1,0 +1,186 @@
+/* Sections of the PR guide pages, on the info-page shell's sage desk. */
+.answer {
+  padding: calc(var(--brand-unit) * 6) calc(var(--brand-unit) * 8);
+  border: var(--brand-rule-width) solid var(--rule);
+  border-left: calc(var(--brand-unit) * 1.5) solid var(--ink);
+  border-radius: calc(var(--brand-unit) * 3);
+  background: var(--card);
+}
+.answerHeading {
+  margin: 0 0 calc(var(--brand-unit) * 2);
+  color: var(--slate);
+  font-size: 0.875rem;
+  font-weight: 650;
+}
+.answerText {
+  max-width: 50rem;
+  margin: 0;
+  font-size: 1.125rem;
+  line-height: 1.6;
+}
+.dates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--brand-unit) * 3) calc(var(--brand-unit) * 8);
+  margin: calc(var(--brand-unit) * 5) 0 0;
+}
+.dates div {
+  display: flex;
+  gap: calc(var(--brand-unit) * 2);
+  align-items: baseline;
+}
+.dates dt {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+.dates dd {
+  margin: 0;
+  font-weight: 650;
+}
+.caveat {
+  margin: calc(var(--brand-unit) * 4) 0 0;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+.caveat a,
+.prose a {
+  color: var(--slate);
+  text-decoration: underline;
+  text-underline-offset: var(--brand-unit);
+}
+.section {
+  margin-top: calc(var(--brand-unit) * 14);
+  scroll-margin-top: 112px;
+}
+.section > h2 {
+  margin: 0 0 calc(var(--brand-unit) * 2);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 650;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+.sectionIntro {
+  max-width: 46rem;
+  margin: 0 0 calc(var(--brand-unit) * 6);
+  color: var(--muted);
+}
+.panel {
+  padding: calc(var(--brand-unit) * 6);
+  border: var(--brand-rule-width) solid var(--rule);
+  border-radius: calc(var(--brand-unit) * 3);
+  background: var(--card);
+}
+.subhead {
+  margin: calc(var(--brand-unit) * 8) 0 calc(var(--brand-unit) * 3);
+  font-size: 1.125rem;
+  font-weight: 650;
+}
+.prose {
+  max-width: 46rem;
+}
+.prose p {
+  margin: 0 0 calc(var(--brand-unit) * 3);
+}
+.suits {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: calc(var(--brand-unit) * 3);
+  margin: 0;
+}
+.suits div {
+  padding: calc(var(--brand-unit) * 4) calc(var(--brand-unit) * 5);
+  border: var(--brand-rule-width) solid var(--rule);
+  border-radius: calc(var(--brand-unit) * 2);
+  background: var(--card);
+}
+.suits dt {
+  font-weight: 650;
+}
+.suits dd {
+  margin: calc(var(--brand-unit) * 1) 0 0;
+  font-size: 0.9375rem;
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: calc(var(--brand-unit) * 4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--brand-unit) * 2);
+  height: 100%;
+  padding: calc(var(--brand-unit) * 5);
+  border: var(--brand-rule-width) solid var(--rule);
+  border-radius: calc(var(--brand-unit) * 3);
+  background: var(--card);
+  color: var(--ink);
+}
+.card:hover {
+  border-color: var(--ink);
+}
+.cardVisa {
+  font: 900 2.25rem / 1 var(--font-stamp);
+}
+.cardName {
+  font-weight: 650;
+}
+.cardText {
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+.cardLink {
+  margin-top: auto;
+  color: var(--slate);
+  font-weight: 600;
+}
+.sources {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: calc(var(--brand-unit) * 2) calc(var(--brand-unit) * 8);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.9375rem;
+}
+.sources li {
+  display: flex;
+  flex-direction: column;
+  padding: calc(var(--brand-unit) * 2) 0;
+  border-bottom: var(--brand-rule-width) solid var(--rule);
+}
+.sources a {
+  color: var(--slate);
+  text-decoration: underline;
+  text-underline-offset: var(--brand-unit);
+}
+.sourceDate {
+  color: var(--muted);
+  font-size: 0.8125rem;
+}
+@media screen and (max-width: 860px) {
+  .cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media screen and (max-width: 760px) {
+  .answer {
+    padding: calc(var(--brand-unit) * 5);
+  }
+  .answerText {
+    font-size: 1rem;
+  }
+  .section {
+    margin-top: calc(var(--brand-unit) * 10);
+  }
+  .panel {
+    padding: calc(var(--brand-unit) * 4);
+  }
+  .suits,
+  .sources {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

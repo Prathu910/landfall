@@ -1,0 +1,49 @@
+/* Segmented choices and field layout for the guide's interactive leaves, in
+   the points check's control style (forms/form-controls.module.css). */
+.field {
+  display: grid;
+  gap: calc(var(--check-unit) * 2);
+  min-width: 0;
+}
+.label {
+  margin: 0;
+  font: 600 0.875rem / 1.5 var(--check-font);
+  color: var(--check-ink);
+}
+.segmented {
+  background: var(--check-soft);
+  border: 1px solid var(--check-line);
+  border-radius: var(--check-pill);
+  padding: var(--check-unit);
+}
+.segmentControl {
+  min-width: 0;
+}
+.segmentLabel {
+  min-height: calc(var(--check-unit) * 11);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-inline: calc(var(--check-unit) * 2);
+  border-radius: var(--check-pill);
+  color: var(--check-muted);
+  font: 600 0.875rem / 1.3 var(--check-font);
+  white-space: normal;
+  text-align: center;
+}
+.segmentLabel[data-active] {
+  color: var(--check-paper);
+}
+.segmentIndicator {
+  background: var(--check-ink);
+  border-radius: var(--check-pill);
+}
+.situation {
+  display: grid;
+  gap: calc(var(--check-unit) * 4);
+}
+@media (prefers-reduced-motion: reduce) {
+  .segmentIndicator {
+    transition: none;
+  }
+}

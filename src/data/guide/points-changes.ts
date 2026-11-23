@@ -34,7 +34,7 @@ export const POINTS_CHANGES: PointsChange[] = [
   {
     status: "not-published",
     date: GUIDE_CHECKED_AT,
-    title: "Not yet published",
+    title: "A new points table",
     text: "A new points table, its start date and any transition rules for existing EOIs had not been published when we checked.",
     source: SOURCES.pointsTable,
     checkedAt,

@@ -1,0 +1,37 @@
+.contents {
+  margin-top: calc(var(--brand-unit) * 6);
+}
+.title {
+  margin: 0 0 calc(var(--brand-unit) * 2);
+  color: var(--muted);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.contents ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--brand-unit) * 2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.contents a {
+  display: inline-flex;
+  align-items: center;
+  min-height: calc(var(--brand-unit) * 10);
+  padding: calc(var(--brand-unit) * 1.5) calc(var(--brand-unit) * 4);
+  border: var(--brand-rule-width) solid var(--rule);
+  border-radius: var(--brand-pill);
+  background: var(--card);
+  color: var(--ink);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.contents a:hover {
+  border-color: var(--ink);
+}
+@media print {
+  .contents {
+    display: none;
+  }
+}

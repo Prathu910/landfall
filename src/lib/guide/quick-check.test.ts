@@ -112,6 +112,8 @@ describe("quickCheck basic requirements", () => {
 
   it("treats an unanswered question as unknown and meets no visa", () => {
     const result = quickCheck(EMPTY_ANSWERS, AS_OF, federal);
+    expect(result.answered).toBe(false);
+    expect(quickCheck(READY, AS_OF, federal).answered).toBe(true);
     expect(result.checks.every((c) => c.status === "unknown")).toBe(true);
     expect(result.visasMeetingBasics).toEqual([]);
   });

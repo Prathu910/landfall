@@ -1,0 +1,62 @@
+/* The step from the guide to the personal check, on ink. */
+.block {
+  padding: calc(var(--brand-unit) * 6);
+  border-radius: calc(var(--brand-unit) * 3);
+  background: var(--brand-ink);
+  color: var(--brand-paper);
+}
+.lede,
+.text {
+  margin: 0;
+  color: var(--brand-on-dark);
+}
+.mark {
+  margin: calc(var(--brand-unit) * 2) 0;
+  font: 900 2rem / 1.05 var(--font-stamp);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.mark span {
+  display: inline-block;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--brand-unit) * 3) calc(var(--brand-unit) * 5);
+  align-items: center;
+  margin-top: calc(var(--brand-unit) * 5);
+}
+.primary {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--brand-unit) * 2);
+  min-height: var(--brand-target);
+  padding: calc(var(--brand-unit) * 2) calc(var(--brand-unit) * 5);
+  border-radius: var(--brand-pill);
+  background: var(--brand-paper);
+  color: var(--brand-ink);
+  font-weight: 650;
+}
+.secondary {
+  color: var(--brand-paper);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: var(--brand-unit);
+}
+.primary:focus-visible,
+.secondary:focus-visible {
+  outline: 3px solid var(--focus-ring-on-dark);
+  outline-offset: 3px;
+}
+@media screen and (max-width: 600px) {
+  .block {
+    padding: calc(var(--brand-unit) * 5);
+  }
+  .mark {
+    font-size: 1.75rem;
+  }
+  .primary {
+    width: 100%;
+    justify-content: center;
+  }
+}

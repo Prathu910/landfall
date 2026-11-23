@@ -41,3 +41,27 @@ export const PAGE_UPDATED: Partial<Record<keyof typeof SOURCES, string>> = {
   skillsAssessment: "2026-10-12",
   pricing: "2026-07-01",
 };
+
+/** How each official page is named in the guide's sources list. */
+export const SOURCE_LABELS: Record<keyof typeof SOURCES, string> = {
+  visa189: "Home Affairs: Skilled Independent visa (189), Points-tested",
+  visa190: "Home Affairs: Skilled Nominated visa (190)",
+  visa491: "Home Affairs: Skilled Work Regional (Provisional) visa (491)",
+  visa191: "Home Affairs: Permanent Residence (Skilled Regional) visa (191)",
+  pointsTable: "Home Affairs: points table (189)",
+  pointsTable190: "Home Affairs: points table (190)",
+  pointsTable491: "Home Affairs: points table (491)",
+  occupationList: "Home Affairs: skilled occupation list",
+  skillsAssessment: "Home Affairs: skills assessment",
+  competentEnglish: "Home Affairs: competent English",
+  skillSelect: "Home Affairs: SkillSelect",
+  health: "Home Affairs: health requirement",
+  character: "Home Affairs: character requirement",
+  regionalAreas: "Home Affairs: designated regional areas",
+  pricing: "Home Affairs: current visa pricing table",
+  pricingEstimator: "Home Affairs: Visa Pricing Estimator",
+  processingTimes: "Home Affairs: visa processing times guide",
+  whoCanHelp: "Home Affairs: who can help with your application",
+  budget: "Budget Paper No. 2, 2026–27",
+  ministerSpeech: "Minister for Home Affairs: National Press Club, 17 Sep 2026",
+};
