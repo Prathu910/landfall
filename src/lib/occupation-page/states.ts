@@ -18,7 +18,7 @@ export type StateRow = {
   href: string | null;
 };
 
-const ORDER: StateCode[] = [
+export const STATE_ORDER: StateCode[] = [
   "NSW",
   "VIC",
   "QLD",
@@ -89,7 +89,8 @@ function membership(
   return { listed: listed ? [...found] : null, checked, unchecked };
 }
 
-function openTo(cohorts: Cohort[], state: StateCode): string {
+/** Who a set of cohorts covers, e.g. "Living in QLD or offshore". */
+export function openTo(cohorts: Cohort[], state: StateCode): string {
   const parts = COHORT_ORDER.filter((c) => cohorts.includes(c)).map((c) =>
     c === "living-in-state"
       ? `Living in ${state}`
@@ -128,7 +129,7 @@ export function stateRows(
   core: OccupationCore,
   data: StateRuleData,
 ): StateRow[] {
-  return ORDER.map((state) => {
+  return STATE_ORDER.map((state) => {
     const m190 = membership(state, "190", code, data);
     const m491 = membership(state, "491", code, data);
     const base = {
