@@ -119,7 +119,7 @@ export const GUIDE_STEPS: GuideStep[] = [
       source: SOURCES.visa190,
       checkedAt,
     },
-    who: "The state or territory migration agency",
+    who: "The state or territory government nominating you",
     link: { href: "/states/", text: "State programs on MigrateLens" },
     onshore:
       "Many states have streams for people already living or working in that state.",

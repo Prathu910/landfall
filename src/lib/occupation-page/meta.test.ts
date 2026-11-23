@@ -105,6 +105,16 @@ describe("sitemapEntries", () => {
     expect(urls).toContain(SITE_URL + occupationPath(core));
     expect(urls).not.toContain(SITE_URL + occupationPath(maskedCore));
   });
+  it("lists the PR guide and its three visa pages", () => {
+    for (const path of [
+      "/guide/",
+      "/guide/189/",
+      "/guide/190/",
+      "/guide/491/",
+    ]) {
+      expect(urls).toContain(SITE_URL + path);
+    }
+  });
   it("ends every URL in a slash and dates it", () => {
     for (const e of entries) {
       expect(e.url.endsWith("/")).toBe(true);

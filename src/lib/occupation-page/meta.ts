@@ -2,12 +2,17 @@ import { cohortWindowStart } from "../data/months";
 import type { OccupationCore, OccupationIndexEntry } from "../data/types";
 import { SITE_NAME, SITE_URL } from "../site";
 import { formatMonth } from "../report/copy";
+import { breadcrumbLd, faqPageLd } from "../seo/json-ld";
 import type { Faq } from "./faq";
 import { occupationPath } from "./slug";
 
 const LICENSE = "https://creativecommons.org/licenses/by/3.0/au/";
 const STATIC_PAGES = [
   "/",
+  "/guide/",
+  "/guide/189/",
+  "/guide/190/",
+  "/guide/491/",
   "/sample/",
   "/states/",
   "/methodology/",
@@ -80,28 +85,12 @@ export function occupationJsonLd(
       publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
       dateModified: checkedAt,
     },
-    {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      mainEntity: faq.map((f) => ({
-        "@type": "Question",
-        name: f.question,
-        acceptedAnswer: { "@type": "Answer", text: f.answer },
-      })),
-    },
-    {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        { name: SITE_NAME, item: `${SITE_URL}/` },
-        { name: "Occupations", item: `${SITE_URL}/occupations/` },
-        { name: core.name, item: url },
-      ].map((entry, i) => ({
-        "@type": "ListItem",
-        position: i + 1,
-        ...entry,
-      })),
-    },
+    faqPageLd(faq),
+    breadcrumbLd([
+      { name: SITE_NAME, item: `${SITE_URL}/` },
+      { name: "Occupations", item: `${SITE_URL}/occupations/` },
+      { name: core.name, item: url },
+    ]),
   ];
 }
 
