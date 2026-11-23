@@ -16,6 +16,7 @@ import { HomePassport } from "@/components/home/home-passport";
 import { HomeAtlas } from "@/components/home/home-atlas";
 import { HomeReportExample } from "@/components/home/home-report-example";
 import { HomeConditions } from "@/components/home/home-conditions";
+import { HomeGuideLink } from "@/components/home/home-guide-link";
 import { HomeQuestions } from "@/components/home/home-questions";
 import { HomeFinal } from "@/components/home/home-final";
 import styles from "./home.module.css";
@@ -118,6 +119,7 @@ export default function Home() {
         </div>
       </section>
       <HomeReportExample example={example} date={date} />
+      <HomeGuideLink />
       <HomeConditions date={longDate} />
       <HomeQuestions />
       <HomeFinal />

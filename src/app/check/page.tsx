@@ -47,6 +47,10 @@ export default function CheckPage() {
                 </li>
               ))}
             </ul>
+            <p className={styles.guideLink}>
+              New to the process?{" "}
+              <Link href="/guide/">Read the step-by-step PR guide</Link>
+            </p>
           </div>
         </header>
         <CheckFlow source={reportSource(manifest.asAt, manifest)} />

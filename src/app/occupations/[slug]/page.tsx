@@ -8,6 +8,7 @@ import { OccupationCheckPanel } from "@/components/occupation/occupation-check-p
 import shell from "@/components/occupation/occupation-shell.module.css";
 import { CohortBars } from "@/components/occupation/cohort-bars";
 import { OccupationFaq } from "@/components/occupation/occupation-faq";
+import { OccupationHowToApply } from "@/components/occupation/occupation-how-to-apply";
 import { OccupationSummary } from "@/components/occupation/occupation-summary";
 import { OccupationVerdict } from "@/components/occupation/occupation-verdict";
 import { PoolTabs } from "@/components/occupation/pool-tabs";
@@ -20,6 +21,7 @@ import {
   loadOccupationDetail,
 } from "@/lib/data/load-server";
 import type { OccupationCore, Visa } from "@/lib/data/types";
+import { applyLinks } from "@/lib/guide/apply-links";
 import { formatDate } from "@/lib/migration";
 import {
   cohortNote,
@@ -141,6 +143,7 @@ export default async function OccupationPage({ params }: Props) {
         <OccupationVerdict
           verdict={occupationVerdict(core, stateRuleData.federal)}
         />
+        <OccupationHowToApply links={applyLinks(code, stateRuleData.federal)} />
         <OccupationSectionNav
           hasRounds={has189Rounds(core)}
           hasCohorts={Boolean(cohorts)}

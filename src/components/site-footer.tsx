@@ -27,6 +27,7 @@ export function SiteFooter() {
             <div>
               <h2>Explore</h2>
               <Link href="/check/">Check my points</Link>
+              <Link href="/guide/">PR guide: 189, 190, 491</Link>
               <Link href="/sample/">Sample report</Link>
               <Link href="/occupations/">Occupations</Link>
               <Link href="/states/">States</Link>

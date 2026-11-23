@@ -69,6 +69,11 @@ export default function SamplePage() {
             Four fictional people, one for each kind of result. The points
             calculations and official occupation snapshot are real. Your own
             report uses your answers.
+            <span className={styles.guideLink}>
+              {" "}
+              New to skilled PR?{" "}
+              <Link href="/guide/">Read the step-by-step guide</Link>.
+            </span>
           </p>
         </header>
         <SampleTabs

@@ -69,6 +69,17 @@
 .page:not(:has([data-points-check])) .breadcrumb {
   display: none;
 }
+.guideLink {
+  margin: calc(var(--check-unit) * 4) 0 0;
+  font-size: var(--check-text-sm);
+  color: var(--check-muted);
+}
+.guideLink a {
+  color: var(--check-green);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: var(--check-unit);
+}
 @media screen and (max-width: 760px) {
   .page {
     padding-top: calc(var(--check-unit) * 5);
