@@ -1,5 +1,5 @@
 "use client";
-import { Checkbox, Select } from "@mantine/core";
+import { Checkbox, NativeSelect } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { FormTheme } from "@/components/forms/form-theme-provider";
 import { FEES } from "@/data/guide/fees";
@@ -34,7 +34,7 @@ const STATES = [
 
 type Choices = Omit<CostInput, "situation">;
 
-/** The cost estimator over the hand-sourced fees (src/data/guide/fees.ts). */
+/** The cost estimator over the hand-sourced fees (`FEES`, src/data/guide/fees.ts). */
 export function CostEstimator({
   buildDate,
   visa = "189",
@@ -53,7 +53,7 @@ export function CostEstimator({
     englishTest: null,
     naati: false,
     state: null,
-    australianPoliceCheck: false,
+    australianPoliceChecks: 0,
   });
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- the reader's local date is only known after hydration
@@ -61,6 +61,11 @@ export function CostEstimator({
   }, []);
   const set = (patch: Partial<Choices>) =>
     setChoices((c) => ({ ...c, ...patch }));
+  const applicants =
+    1 +
+    (choices.partner ? 1 : 0) +
+    choices.childrenUnder18 +
+    choices.children18Plus;
   const estimate = estimateCosts({ ...choices, situation }, FEES, asOf);
   return (
     <FormTheme>
@@ -83,47 +88,47 @@ export function CostEstimator({
             onChange={(e) => set({ partner: e.currentTarget.checked })}
           />
           <div className={styles.pair}>
-            <Select
+            <NativeSelect
               label="Children under 18"
               data={COUNTS(5)}
               value={String(choices.childrenUnder18)}
-              onChange={(v) => set({ childrenUnder18: Number(v ?? 0) })}
-              allowDeselect={false}
-              comboboxProps={{ withinPortal: false }}
+              onChange={(e) =>
+                set({ childrenUnder18: Number(e.currentTarget.value) })
+              }
             />
-            <Select
+            <NativeSelect
               label="Children 18 or over"
               data={COUNTS(3)}
               value={String(choices.children18Plus)}
-              onChange={(v) => set({ children18Plus: Number(v ?? 0) })}
-              allowDeselect={false}
-              comboboxProps={{ withinPortal: false }}
+              onChange={(e) =>
+                set({ children18Plus: Number(e.currentTarget.value) })
+              }
             />
           </div>
-          <Select
+          <NativeSelect
             label="Skills assessing body"
             data={BODIES}
             value={choices.assessingBody ?? ""}
-            onChange={(v) => set({ assessingBody: v || null })}
-            allowDeselect={false}
-            comboboxProps={{ withinPortal: false }}
+            onChange={(e) =>
+              set({ assessingBody: e.currentTarget.value || null })
+            }
           />
-          <Select
+          <NativeSelect
             label="English test"
             data={TESTS}
             value={choices.englishTest ?? ""}
-            onChange={(v) => set({ englishTest: v || null })}
-            allowDeselect={false}
-            comboboxProps={{ withinPortal: false }}
+            onChange={(e) =>
+              set({ englishTest: e.currentTarget.value || null })
+            }
           />
           {choices.visa !== "189" && (
-            <Select
+            <NativeSelect
               label="Nominating state or territory"
               data={STATES}
               value={choices.state ?? ""}
-              onChange={(v) => set({ state: (v as StateCode) || null })}
-              allowDeselect={false}
-              comboboxProps={{ withinPortal: false }}
+              onChange={(e) =>
+                set({ state: (e.currentTarget.value as StateCode) || null })
+              }
             />
           )}
           <Checkbox
@@ -131,11 +136,13 @@ export function CostEstimator({
             checked={choices.naati}
             onChange={(e) => set({ naati: e.currentTarget.checked })}
           />
-          <Checkbox
-            label="12 months or more in Australia (AFP police check)"
-            checked={choices.australianPoliceCheck}
+          <NativeSelect
+            label="Australian police checks (AFP)"
+            description="One for each applicant aged 16 or over who has spent a total of 12 months or more in Australia in the last 10 years since turning 16."
+            data={COUNTS(applicants)}
+            value={String(Math.min(choices.australianPoliceChecks, applicants))}
             onChange={(e) =>
-              set({ australianPoliceCheck: e.currentTarget.checked })
+              set({ australianPoliceChecks: Number(e.currentTarget.value) })
             }
           />
         </div>

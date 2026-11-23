@@ -21,8 +21,11 @@ export type CostInput = {
   naati: boolean;
   /** The nominating state for 190 or 491, or null when not chosen. */
   state: StateCode | null;
-  /** True when the reader has spent 12 months or more in Australia. */
-  australianPoliceCheck: boolean;
+  /**
+   * Applicants aged 16 or over with a total of 12 months or more in Australia
+   * in the last 10 years since turning 16: each needs an AFP check.
+   */
+  australianPoliceChecks: number;
 };
 
 export type CostLine = {
@@ -139,9 +142,12 @@ function chosenLines(
   if (input.visa !== "189" && input.state) {
     lines.push(line(catalogue.stateNomination[input.state], 1, input, asOf));
   }
-  if (input.australianPoliceCheck) {
-    lines.push(line(catalogue.afpCheck, 1 + adults, input, asOf));
-  }
+  // Any applicant can be 16 or over (under-18s include 16 and 17 year olds).
+  const checks = Math.min(
+    count(input.australianPoliceChecks),
+    1 + adults + children,
+  );
+  if (checks > 0) lines.push(line(catalogue.afpCheck, checks, input, asOf));
   return lines;
 }
 

@@ -135,6 +135,11 @@
     text-align: center;
     overflow-wrap: anywhere;
   }
+  /* Focused fields scroll clear of the sticky total (WCAG 2.4.11); see
+     quick-check.module.css. */
+  :global(html):has(.estimator) {
+    scroll-padding-bottom: calc(var(--brand-unit) * 24);
+  }
 }
 @media screen and (max-width: 600px) {
   .tally {

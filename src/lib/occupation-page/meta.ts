@@ -7,12 +7,10 @@ import type { Faq } from "./faq";
 import { occupationPath } from "./slug";
 
 const LICENSE = "https://creativecommons.org/licenses/by/3.0/au/";
+/** The PR guide's pages, dated by the day their official sources were read. */
+const GUIDE_PATHS = ["/guide/", "/guide/189/", "/guide/190/", "/guide/491/"];
 const STATIC_PAGES = [
   "/",
-  "/guide/",
-  "/guide/189/",
-  "/guide/190/",
-  "/guide/491/",
   "/sample/",
   "/states/",
   "/methodology/",
@@ -94,20 +92,27 @@ export function occupationJsonLd(
   ];
 }
 
+/** `checkedAt` dates the data pages; `guideCheckedAt` dates the PR guide. */
 export function sitemapEntries(
   cores: OccupationCore[],
   index: OccupationIndexEntry[],
   checkedAt: string,
+  guideCheckedAt: string,
 ): { url: string; lastModified: string }[] {
   const withData = new Set(index.filter((e) => e.hasData).map((e) => e.code));
-  const paths = [
-    ...STATIC_PAGES,
-    ...cores
-      .filter((c) => withData.has(c.code) && isIndexable(c))
-      .map((c) => occupationPath(c)),
-  ];
-  return paths.map((path) => ({
+  const [home, ...rest] = STATIC_PAGES;
+  const dated = (path: string, lastModified: string) => ({
     url: SITE_URL + path,
-    lastModified: checkedAt,
-  }));
+    lastModified,
+  });
+  return [
+    dated(home, checkedAt),
+    ...GUIDE_PATHS.map((path) => dated(path, guideCheckedAt)),
+    ...[
+      ...rest,
+      ...cores
+        .filter((c) => withData.has(c.code) && isIndexable(c))
+        .map((c) => occupationPath(c)),
+    ].map((path) => dated(path, checkedAt)),
+  ];
 }

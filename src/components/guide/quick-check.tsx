@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { stateRuleData } from "@/components/data/state-rule-data";
+import { federalList } from "@/components/data/federal-list";
 import { FormTheme } from "@/components/forms/form-theme-provider";
 import type { Visa } from "@/lib/data/types";
 import {
@@ -39,7 +39,7 @@ export function QuickCheck({
     setAsOf(localToday());
   }, []);
   const merged = { ...answers, occupation };
-  const result = quickCheck(merged, asOf, stateRuleData.federal);
+  const result = quickCheck(merged, asOf, federalList);
   return (
     <FormTheme>
       <div className={styles.quick}>
@@ -47,12 +47,12 @@ export function QuickCheck({
           answers={merged}
           onChange={(patch) => setAnswers((a) => ({ ...a, ...patch }))}
         />
-        {/* Phones: the running total stays in view while answering; the
-            full result (announced politely) follows the form. */}
+        {/* Phones: the running total stays in view, on one line, while
+            answering; the full result (announced politely) follows the form. */}
         <p className={styles.tally} aria-hidden="true">
           {result.answered
-            ? `Your points: ${result.points["189"]} (189) · ${result.points["190"]} (190) · ${result.points["491"]} (491)`
-            : "Answer the questions to see your points"}
+            ? `189: ${result.points["189"]} · 190: ${result.points["190"]} · 491: ${result.points["491"]}`
+            : "Answer to see your points"}
         </p>
         <QuickCheckResult
           result={result}

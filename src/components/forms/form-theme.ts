@@ -13,6 +13,7 @@ export const inputClasses = {
 export const formComponents: MantineThemeComponents = {
   TextInput: { defaultProps: { classNames: inputClasses } },
   Textarea: { defaultProps: { classNames: inputClasses } },
+  NativeSelect: { defaultProps: { classNames: inputClasses } },
   Select: {
     defaultProps: {
       classNames: {

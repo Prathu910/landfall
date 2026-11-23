@@ -1,15 +1,17 @@
 import type { Metadata } from "next";
 import { Route } from "lucide-react";
 import { stateRuleData } from "@/components/data/state-rule-data";
-import { CostEstimator } from "@/components/guide/cost-estimator";
 import { GuideAnswer } from "@/components/guide/guide-answer";
 import { GuideContents } from "@/components/guide/guide-contents";
 import page from "@/components/guide/guide-page.module.css";
 import { GuideSources } from "@/components/guide/guide-sources";
 import { GuideTimeline } from "@/components/guide/guide-timeline";
+import {
+  LazyCostEstimator,
+  LazyHubQuickCheck,
+} from "@/components/guide/lazy-tools";
 import { PathPicker } from "@/components/guide/path-picker";
 import { PointsChanges } from "@/components/guide/points-changes";
-import { QuickCheck } from "@/components/guide/quick-check";
 import { VisaCards } from "@/components/guide/visa-cards";
 import { VisaCompare } from "@/components/guide/visa-compare";
 import shell from "@/components/info-page/info-page.module.css";
@@ -123,7 +125,7 @@ export default function GuideHubPage() {
             occupation list and 65 points.
           </p>
           <div className={page.panel}>
-            <QuickCheck buildDate={buildDate} />
+            <LazyHubQuickCheck buildDate={buildDate} />
           </div>
         </section>
         <section id="costs" className={page.section} aria-labelledby="costs-h">
@@ -134,7 +136,7 @@ export default function GuideHubPage() {
             it instead.
           </p>
           <div className={page.panel}>
-            <CostEstimator buildDate={buildDate} />
+            <LazyCostEstimator buildDate={buildDate} />
           </div>
         </section>
         <section

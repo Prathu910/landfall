@@ -12,7 +12,8 @@
   --mantine-primary-color-light: var(--check-green-soft);
 }
 .scope button,
-.scope input {
+.scope input,
+.scope select {
   font-family: var(--check-font);
 }
 .input {

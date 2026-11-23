@@ -15,6 +15,13 @@ export function federalCounts(
   return { "189": count("189"), "190": count("190"), "491": count("491") };
 }
 
+/**
+ * The three 191 requirements from the Home Affairs 191 page, as one clause
+ * for answers that say how a 491 holder reaches permanent residence.
+ */
+export const PATHWAY_191 =
+  "after holding the 491 for at least 3 years, with ATO notices of assessment for 3 income years out of the 5 on the visa (there is no minimum income) and its conditions met, including living, working and studying in a designated regional area, you can apply for the permanent 191";
+
 /** A visa charge is one fixed amount for everyone, wherever they are. */
 const fee = (f: Fee) => ("kind" in f.amount ? formatFeeAmount(f.amount) : "");
 
@@ -53,8 +60,7 @@ export function hubFaq(
     },
     {
       question: "What is the difference between the 190 and the 491?",
-      answer:
-        "The 190 is permanent and its nomination adds 5 points. The 491 is a 5-year provisional visa for designated regional areas; its nomination adds 15 points, and after holding it for 3 years you can apply for the permanent 191.",
+      answer: `The 190 is permanent and its nomination adds 5 points. The 491 is a 5-year provisional visa for designated regional areas; its nomination adds 15 points, and ${PATHWAY_191}.`,
     },
     {
       question: "How much does a skilled visa cost?",
@@ -117,8 +123,7 @@ export function visaFaq(
     "491": [
       {
         question: "Is the 491 a PR visa?",
-        answer:
-          "No. It is a 5-year provisional visa. After holding it for at least 3 years, with ATO notices of assessment for three income years, you can apply for the permanent 191.",
+        answer: `No. It is a 5-year provisional visa. ${PATHWAY_191[0].toUpperCase()}${PATHWAY_191.slice(1)}.`,
       },
       {
         question: "Where can I live on a 491?",
