@@ -70,7 +70,7 @@ scripts/         Reproducible importers. The only writers of generated data.
   - No readable text below 12px, including labels, captions and legal notes.
   - Contrast meets WCAG 2.2 AA (4.5:1 for normal text).
 - **CSS Modules for new components**, kept next to the component (`pool-section.module.css`). `globals.css` holds only tokens, resets, typography primitives and layout primitives. Move feature styles out of it when you touch them.
-- **Brand tokens.** Colours come from the tokens in `globals.css`, which `src/lib/brand/palette.ts` mirrors; its test checks contrast (AA) and the mirror, so change both together. Saffron is never text. A new dark container must use `--focus-ring-on-dark`, because the default slate ring fails on ink.
+- **Brand tokens.** Colours come from the tokens in `globals.css`, which `src/lib/brand/palette.ts` mirrors; its test checks contrast (AA) and the mirror, so change both together. Saffron is never text. A new dark container must use `--focus-ring-on-dark`, because the default slate ring fails on ink. Every colour token has a light and a dark value (`light-dark()`); give a new one both, mirror both in `palette.ts`, and check the page in both themes.
 - **12px floor.** `src/app/css-floor.test.ts` (with `font-floor.ts`) fails on any font size under 12px in CSS, CSS modules, TSX and TS.
 - **Mantine** provides form controls and overlays. Don't add another component library.
 
