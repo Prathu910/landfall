@@ -4,7 +4,7 @@ import styles from "./home-guide-link.module.css";
 /** The homepage's one entry point into the PR guide. */
 export function HomeGuideLink() {
   return (
-    <section className="band" aria-labelledby="guide-link-h">
+    <section className={styles.section} aria-labelledby="guide-link-h">
       <div className="wrap">
         <Link className={styles.link} href="/guide/">
           <span className={styles.kicker} id="guide-link-h">

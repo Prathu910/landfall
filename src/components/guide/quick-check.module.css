@@ -107,9 +107,15 @@
 }
 .visaChecks {
   width: 100%;
+  table-layout: fixed;
   margin: 0 0 calc(var(--brand-unit) * 4);
   border-collapse: collapse;
   font-size: 0.875rem;
+}
+.visaChecks thead td,
+.visaChecks tbody th {
+  width: 40%;
+  overflow-wrap: anywhere;
 }
 .visaChecks th,
 .visaChecks td {
@@ -175,6 +181,10 @@
 @media screen and (max-width: 600px) {
   .form {
     grid-template-columns: minmax(0, 1fr);
+  }
+  .visaChecks th,
+  .visaChecks td {
+    padding: calc(var(--brand-unit) * 2) calc(var(--brand-unit) * 1);
   }
   .result {
     padding: calc(var(--brand-unit) * 4);

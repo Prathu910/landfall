@@ -1,3 +1,6 @@
+.section {
+  padding: var(--homepage-size-24) 0;
+}
 .link {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
@@ -13,6 +16,7 @@
   border-color: var(--homepage-ink);
 }
 .kicker {
+  color: var(--homepage-ink);
   font-weight: 700;
 }
 .text {
@@ -20,10 +24,14 @@
   font-size: var(--homepage-size-15);
 }
 .cta {
+  color: var(--brand-green);
   font-weight: 650;
   white-space: nowrap;
 }
 @media screen and (max-width: 760px) {
+  .section {
+    padding: var(--homepage-size-24) 0;
+  }
   .link {
     grid-template-columns: minmax(0, 1fr);
     padding: var(--homepage-size-18);

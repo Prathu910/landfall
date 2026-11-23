@@ -25,6 +25,7 @@
 .links a {
   display: inline-flex;
   align-items: center;
+  gap: calc(var(--brand-unit) * 1.5);
   min-height: calc(var(--brand-unit) * 8);
   color: var(--ink);
   font-weight: 600;
