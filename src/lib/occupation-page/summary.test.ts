@@ -123,6 +123,26 @@ describe("occupationSummary", () => {
     expect(lines.some((l) => l.startsWith("189 "))).toBe(false);
     expect(lines.some((l) => l.includes("EOIs submitted"))).toBe(false);
   });
+  it("says an occupation is off the Home Affairs 189 list instead of an empty pool", () => {
+    const farmer = loadOccupationCore("121111")!;
+    const lines = occupationSummary(farmer, null, federal);
+    expect(lines[0]).toMatch(
+      /^Aquaculture Farmer isn't on the Home Affairs list for 189; the 491 pool holds /,
+    );
+    expect(lines.join(" ")).not.toMatch(/No 189 EOIs are waiting/);
+    // Without a readable list, the published data alone is described.
+    expect(occupationSummary(farmer, null, null)[0]).toMatch(
+      /^No 189 EOIs are waiting in the published pool for Aquaculture Farmer/,
+    );
+  });
+  it("keeps every sentence for an occupation on the 189 list", () => {
+    expect(occupationSummary(core253914, null, federal)).toEqual(
+      occupationSummary(core253914, null),
+    );
+    expect(occupationSummary(core261313, detail261313, federal)).toEqual(
+      occupationSummary(core261313, detail261313),
+    );
+  });
   it("gives two or three sentences with detail", () => {
     const lines = occupationSummary(core261313, detail261313);
     expect(lines.length).toBeGreaterThanOrEqual(2);

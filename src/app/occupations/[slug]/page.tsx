@@ -45,6 +45,7 @@ import {
 import { invitedHeading, stateRows } from "@/lib/occupation-page/states";
 import {
   has189Rounds,
+  listed189,
   occupationSummary,
   sourceLine,
   statusChips,
@@ -77,7 +78,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const detail = loadOccupationDetail(core.code);
   return {
     title: pageTitle(core),
-    description: pageDescription(occupationSummary(core, detail)),
+    description: pageDescription(
+      occupationSummary(core, detail, stateRuleData.federal),
+    ),
     alternates: { canonical: occupationPath(core) },
     robots:
       !SITE_INDEXABLE || !isIndexable(core)
@@ -96,7 +99,7 @@ export default async function OccupationPage({ params }: Props) {
   const detail = loadOccupationDetail(code);
   const manifest = loadManifest();
   const rows = stateRows(code, core, stateRuleData);
-  const sentences = occupationSummary(core, detail);
+  const sentences = occupationSummary(core, detail, stateRuleData.federal);
   const faq = occupationFaq(core, rows);
   const cohorts = cohortRows(detail, core.asAt);
   const pools = Object.fromEntries(
@@ -147,7 +150,10 @@ export default async function OccupationPage({ params }: Props) {
         />
         <div className={styles.grid}>
           <aside className={styles.side}>
-            <OccupationCheckPanel core={core} />
+            <OccupationCheckPanel
+              core={core}
+              listed189={listed189(code, stateRuleData.federal)}
+            />
           </aside>
           <div className={styles.main}>
             <section aria-labelledby="pool-heading" className={styles.block}>

@@ -100,8 +100,16 @@ function otherPools(core: OccupationCore): string {
   return parts.length ? `; ${parts.join(" and ")}.` : ".";
 }
 
-export function poolSentence(name: string, core: OccupationCore): string {
+/** `offList`: the Home Affairs list leaves the occupation off 189. */
+export function poolSentence(
+  name: string,
+  core: OccupationCore,
+  offList = false,
+): string {
   const pool = core.pool["189"];
+  if (!pool && offList) {
+    return `${name} isn't on the Home Affairs list for 189${otherPools(core)}`;
+  }
   if (!pool) {
     return `No 189 EOIs are waiting in the published pool for ${name}${otherPools(core)}`;
   }
@@ -127,11 +135,24 @@ export function likeTheseSentence(
   return result.kind === "ready" ? result.sentence : null;
 }
 
+/**
+ * The federal list's 189 flag for a code (a missing code is off the list),
+ * or null when the list can't be read.
+ */
+export function listed189(
+  code: string,
+  federal: FederalList | null,
+): boolean | null {
+  return federal ? federal.entries[code]?.["189"] === true : null;
+}
+
 export function occupationSummary(
   core: OccupationCore,
   detail: OccupationDetail | null,
+  federal: FederalList | null = null,
 ): string[] {
   const { name } = core;
+  const offList = listed189(core.code, federal) === false;
   // Without a 189 pool the page leads with 190/491; recent 189 rounds follow.
   const sentences: (string | null)[] = core.pool["189"]
     ? [
@@ -140,7 +161,7 @@ export function occupationSummary(
         likeTheseSentence(name, core, detail),
       ]
     : [
-        poolSentence(name, core),
+        poolSentence(name, core, offList),
         has189Rounds(core) ? roundsSentence(name, core.rounds189) : null,
       ];
   return sentences.filter((s): s is string => s !== null);

@@ -3,9 +3,16 @@ import { TRY_IT_POINTS, buildTryIt } from "@/lib/home/try-it";
 import { OccupationCheck } from "./occupation-check";
 
 /** Project the existing calculations to only the fields this client leaf renders. */
-export function OccupationCheckPanel({ core }: { core: OccupationCore }) {
+export function OccupationCheckPanel({
+  core,
+  listed189,
+}: {
+  core: OccupationCore;
+  /** The federal list's 189 flag; null when it can't be read. */
+  listed189: boolean | null;
+}) {
   const previews = TRY_IT_POINTS.map((points) => {
-    const view = buildTryIt(core, points);
+    const view = buildTryIt(core, points, listed189);
     if (view.kind === "none") return { points, view };
     const { kind, higher, same, note, source } = view;
     return { points, view: { kind, higher, same, note, source } };
