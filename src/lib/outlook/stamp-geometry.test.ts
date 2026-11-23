@@ -131,7 +131,12 @@ describe("every label fits each stamp at or above its floor", () => {
   ];
 
   it.each(WORDS)("%s fits the visa stamp's oval at the floor", (word) => {
-    const size = stampTextSize(word, 156, VISA_STAMP.wordMax, VISA_STAMP.floor);
+    const size = stampTextSize(
+      word,
+      VISA_STAMP.widths.oval.word,
+      VISA_STAMP.wordMax,
+      VISA_STAMP.floor,
+    );
     expect(size).toBeGreaterThanOrEqual(VISA_STAMP.floor);
     expect(estimatedWidth(word, size)).toBeLessThanOrEqual(
       VISA_STAMP.widths.oval.word,
