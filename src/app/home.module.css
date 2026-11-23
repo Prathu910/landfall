@@ -17,7 +17,7 @@
 .home :global(h2),
 .home :global(h3) {
   font-stretch: 118%;
-  font-weight: 750;
+  font-weight: var(--headline-wght);
   letter-spacing: -0.012em;
   margin: 0;
   line-height: 1.1;
@@ -54,7 +54,7 @@
   gap: var(--homepage-size-10);
   color: var(--homepage-ink);
   text-decoration: none;
-  font-weight: 750;
+  font-weight: var(--headline-wght);
   font-stretch: 112%;
   font-size: var(--homepage-size-19);
 }
@@ -171,6 +171,10 @@
   object-fit: cover;
   opacity: 0.75;
   pointer-events: none;
+}
+/* At night the UV linework keeps each panel's daylight strength. */
+.home :global(.pp .guill.guill-uv) {
+  opacity: calc(var(--guilloche-opacity) * 0.75);
 }
 .home :global(.pp > *:not(.guill)) {
   position: relative;
@@ -402,7 +406,7 @@
   height: var(--homepage-size-34);
   border-radius: 50%;
   border: var(--homepage-size-2) solid var(--homepage-ink);
-  font-weight: 750;
+  font-weight: var(--headline-wght);
   font-stretch: 112%;
   font-size: var(--homepage-size-15);
 }
@@ -472,19 +476,6 @@
 .home :global(.final p) {
   color: var(--homepage-muted);
   margin: var(--homepage-size-10) 0 var(--homepage-size-22);
-}
-.home :global(footer) {
-  background: var(--homepage-ink);
-  color: var(--homepage-color-cbd3da);
-  font-size: var(--homepage-size-14);
-  padding: var(--homepage-size-26) 0;
-}
-.home :global(footer b) {
-  color: var(--homepage-paper);
-}
-.home :global(footer p) {
-  margin: 0;
-  max-width: 80ch;
 }
 @media (max-width: 900px) {
   .home :global(.hero) {
@@ -682,7 +673,7 @@
   inset: var(--homepage-size-5) var(--homepage-size-5) -5px;
   border: var(--homepage-size-1) solid var(--homepage-color-d0d9d3);
   border-radius: var(--homepage-size-18);
-  background: white;
+  background: var(--homepage-paper);
   z-index: -1;
   transform: rotate(-1.5deg);
 }
@@ -747,9 +738,9 @@
   width: 100%;
   height: var(--homepage-size-50);
   color: var(--homepage-ink);
-  background: white;
+  background: var(--homepage-paper);
   padding: var(--homepage-size-10) var(--homepage-size-12);
-  border: var(--homepage-size-1) solid var(--homepage-color-c8d2cb);
+  border: var(--homepage-size-1) solid var(--input-border);
   border-radius: var(--homepage-size-8);
 }
 .home :global(.atlas-controls .pts) {
@@ -816,7 +807,7 @@
 }
 .home :global(.visa-selector button[aria-pressed="true"]) {
   background: var(--homepage-ink);
-  color: white;
+  color: var(--homepage-paper);
   box-shadow: 0 var(--homepage-size-1) var(--homepage-size-3)
     var(--homepage-color-12202c22);
 }
@@ -903,7 +894,7 @@
   font-size: var(--homepage-size-12);
   line-height: 1.5;
   text-align: center;
-  color: var(--homepage-color-7a8d80);
+  color: var(--homepage-color-5b6c63);
 }
 .home :global(.map-instruction) {
   position: absolute;
@@ -940,7 +931,7 @@
 }
 .home :global(.state-picker button[aria-pressed="true"]) {
   background: var(--homepage-ink);
-  color: white;
+  color: var(--homepage-paper);
   border-color: var(--homepage-ink);
 }
 .home :global(.map-note) {
@@ -963,6 +954,9 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
+}
+.home :global(.atlas-passport > .guill.guill-uv) {
+  opacity: calc(var(--guilloche-opacity) * 0.38);
 }
 .home :global(.atlas-passport > .guill) {
   position: absolute;
@@ -1004,7 +998,7 @@
   line-height: 1.15;
 }
 .home :global(#atlas-state-code) {
-  color: var(--homepage-color-728778);
+  color: var(--homepage-color-5b6c63);
   border: var(--homepage-size-1) solid var(--homepage-color-bdcbbf);
   border-radius: 50%;
   width: var(--homepage-size-43);

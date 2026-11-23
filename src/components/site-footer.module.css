@@ -1,6 +1,7 @@
 .footer {
   padding-block: calc(var(--brand-unit) * 14) calc(var(--brand-unit) * 7);
-  background: var(--brand-ink);
+  color-scheme: light;
+  background: var(--brand-deep, var(--brand-ink));
   color: var(--brand-paper);
   font-family: var(--brand-font);
   --focus-ring: var(--focus-ring-on-dark);

@@ -28,7 +28,8 @@ export function LogoMark({
       {title ? <title>{title}</title> : null}
       <g
         fill="none"
-        stroke={reversed ? MARK_COLOURS.reversed : MARK_COLOURS.ink}
+        // The lockup sets the colour, so the mark turns ivory at night.
+        stroke={reversed ? MARK_COLOURS.reversed : "currentColor"}
         strokeWidth={MARK_STROKE}
         strokeLinecap="round"
         strokeLinejoin="round"

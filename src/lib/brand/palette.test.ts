@@ -4,13 +4,25 @@ import { describe, expect, it } from "vitest";
 import { contrastRatio } from "./contrast";
 import {
   CHECK_PALETTE,
-  SHELL_PALETTE,
+  CHECK_PALETTE_DARK,
+  DEEP_PANEL,
   FOCUS_RING,
+  FOCUS_RING_DARK,
+  HOMEPAGE_TEXT,
+  HOMEPAGE_TEXT_DARK,
+  INPUT_BORDER,
   LABEL_PAIRS,
+  LABEL_PAIRS_DARK,
   PALETTE,
+  PALETTE_DARK,
   QUESTION_LINE,
+  QUESTION_LINE_DARK,
+  SHELL_PALETTE,
+  SHELL_PALETTE_DARK,
   STATUS,
+  STATUS_DARK,
   TEXT_PAIRS,
+  TEXT_PAIRS_DARK,
 } from "./palette";
 
 const kebab = (name: string) =>
@@ -24,9 +36,44 @@ function cssFiles(dir: string): string[] {
   });
 }
 
+/** The CSS with every `@media print { … }` block removed. */
+function withoutPrintBlocks(css: string): string {
+  let out = "";
+  let index = 0;
+  for (;;) {
+    const start = css.indexOf("@media print", index);
+    if (start < 0) return out + css.slice(index);
+    out += css.slice(index, start);
+    let depth = 0;
+    let cursor = css.indexOf("{", start);
+    for (; cursor < css.length; cursor++) {
+      if (css[cursor] === "{") depth++;
+      if (css[cursor] === "}" && --depth === 0) break;
+    }
+    index = cursor + 1;
+  }
+}
+
 const globals = readFileSync("src/app/globals.css", "utf8");
-const hasLabelToken = (name: string, value: string) =>
-  new RegExp(`--label-${name}:\\s*${value}\\b`, "i").test(globals);
+
+/** `#abc` and `#AABBCC` compare equal. */
+function normalise(hex: string): string {
+  const h = hex.trim().toLowerCase().replace("#", "");
+  return `#${h.length === 3 || h.length === 4 ? [...h].map((c) => c + c).join("") : h}`;
+}
+
+/** The light and dark values of `--name: light-dark(light, dark)` in globals.css. */
+function token(name: string): [string, string] | undefined {
+  const match = new RegExp(
+    `--${name}:\\s*light-dark\\(\\s*(#[0-9a-f]+)\\s*,\\s*(#[0-9a-f]+)\\s*\\)`,
+    "i",
+  ).exec(globals);
+  return match ? [normalise(match[1]), normalise(match[2])] : undefined;
+}
+
+function expectToken(name: string, light: string, dark: string) {
+  expect(token(name), name).toEqual([normalise(light), normalise(dark)]);
+}
 
 describe("contrastRatio", () => {
   it("measures black on white as 21", () => {
@@ -38,48 +85,115 @@ describe("contrastRatio", () => {
 });
 
 describe("text pairs", () => {
-  it("every text pair passes AA", () => {
-    for (const pair of TEXT_PAIRS) {
-      const min = pair.large ? 3 : 4.5;
-      expect(contrastRatio(pair.fg, pair.bg), pair.name).toBeGreaterThanOrEqual(
-        min,
-      );
+  for (const [theme, pairs] of [
+    ["light", TEXT_PAIRS],
+    ["dark", TEXT_PAIRS_DARK],
+  ] as const) {
+    it(`every ${theme} text pair passes AA`, () => {
+      for (const pair of pairs) {
+        const min = pair.large ? 3 : 4.5;
+        expect(
+          contrastRatio(pair.fg, pair.bg),
+          `${theme}: ${pair.name}`,
+        ).toBeGreaterThanOrEqual(min);
+      }
+    });
+  }
+  it("covers the palette on both surfaces, reversed text and every status", () => {
+    for (const pairs of [TEXT_PAIRS, TEXT_PAIRS_DARK]) {
+      const names = pairs.map((p) => p.name);
+      for (const key of ["ink", "saffronText", "slate", "muted", "mutedSoft"]) {
+        expect(names).toContain(`${key} on newsprint`);
+        expect(names).toContain(`${key} on card`);
+      }
+      expect(names).toContain("newsprint on ink");
+      expect(names).toContain("shell paper on deep");
+      for (const key of Object.keys(STATUS))
+        expect(names).toContain(`status ${key}`);
+      expect(names).toContain("question line");
+      expect(names).toContain("homepage muted on desk");
     }
   });
-  it("covers the palette on both surfaces, reversed text and every status", () => {
-    const names = TEXT_PAIRS.map((p) => p.name);
-    for (const key of ["ink", "saffronText", "slate", "muted", "mutedSoft"]) {
-      expect(names).toContain(`${key} on newsprint`);
-      expect(names).toContain(`${key} on card`);
-    }
-    expect(names).toContain("newsprint on ink");
-    for (const key of Object.keys(STATUS))
-      expect(names).toContain(`status ${key}`);
-    expect(names).toContain("question line");
+  it("gives input borders 3:1 on every input surface in both themes", () => {
+    for (const bg of [CHECK_PALETTE.paper, CHECK_PALETTE.soft, PALETTE.card])
+      expect(contrastRatio(INPUT_BORDER.light, bg), bg).toBeGreaterThanOrEqual(
+        3,
+      );
+    for (const bg of [
+      CHECK_PALETTE_DARK.paper,
+      CHECK_PALETTE_DARK.soft,
+      PALETTE_DARK.card,
+    ])
+      expect(contrastRatio(INPUT_BORDER.dark, bg), bg).toBeGreaterThanOrEqual(
+        3,
+      );
   });
 });
 
 describe("globals.css", () => {
-  const hasToken = (name: string, value: string) =>
-    new RegExp(`--${name}:\\s*${value}\\b`, "i").test(globals);
-  it("mirrors the palette", () => {
+  it("mirrors the palette in both themes", () => {
     for (const [key, value] of Object.entries(PALETTE)) {
-      expect(hasToken(kebab(key), value), key).toBe(true);
+      expectToken(kebab(key), value, PALETTE_DARK[key as keyof typeof PALETTE]);
     }
     for (const [key, value] of Object.entries(SHELL_PALETTE)) {
-      expect(hasToken(`brand-${kebab(key)}`, value), key).toBe(true);
+      const dark = SHELL_PALETTE_DARK[key as keyof typeof SHELL_PALETTE];
+      expectToken(`brand-${kebab(key)}`, value, dark);
     }
     for (const [key, value] of Object.entries(CHECK_PALETTE)) {
-      expect(hasToken(`check-${kebab(key)}`, value), key).toBe(true);
+      const dark = CHECK_PALETTE_DARK[key as keyof typeof CHECK_PALETTE];
+      expectToken(`check-${kebab(key)}`, value, dark);
     }
+    for (const [key, value] of Object.entries(HOMEPAGE_TEXT)) {
+      const dark = HOMEPAGE_TEXT_DARK[key as keyof typeof HOMEPAGE_TEXT];
+      const name = key.replace(/^color/, "color-").toLowerCase();
+      expectToken(`homepage-${name}`, value, dark);
+    }
+    expectToken("input-border", INPUT_BORDER.light, INPUT_BORDER.dark);
   });
   it("mirrors the status colours", () => {
     for (const [key, { fg, bg }] of Object.entries(STATUS)) {
-      expect(hasToken(`status-${kebab(key)}-fg`, fg), key).toBe(true);
-      expect(hasToken(`status-${kebab(key)}-bg`, bg), key).toBe(true);
+      const dark = STATUS_DARK[key as keyof typeof STATUS];
+      expectToken(`status-${kebab(key)}-fg`, fg, dark.fg);
+      expectToken(`status-${kebab(key)}-bg`, bg, dark.bg);
     }
-    expect(hasToken("question-fg", QUESTION_LINE.fg)).toBe(true);
-    expect(hasToken("question-bg", QUESTION_LINE.bg)).toBe(true);
+    expectToken("question-fg", QUESTION_LINE.fg, QUESTION_LINE_DARK.fg);
+    expectToken("question-bg", QUESTION_LINE.bg, QUESTION_LINE_DARK.bg);
+  });
+  it("gives every colour token a dark value", () => {
+    // Plain values switch in the screen-only theme blocks instead.
+    const switched = new Set(["--brand-deep"]);
+    const declarations = [
+      ...globals.matchAll(/^\s*(--[\w-]+):\s*([^;]+);/gm),
+    ].filter(([, , value]) => /#[0-9a-f]{3,8}\b/i.test(value));
+    expect(declarations.length).toBeGreaterThan(100);
+    for (const [, name, value] of declarations) {
+      if (switched.has(name)) continue;
+      expect(value, name).toMatch(/light-dark\(/);
+    }
+  });
+  it("deepens the always-dark panels only at night", () => {
+    const night = globals.match(/--brand-deep: (#[0-9a-f]+);/gi) ?? [];
+    // Once for the reader's choice, once for no-JS visitors on a dark device.
+    expect(night).toEqual([
+      `--brand-deep: ${DEEP_PANEL.brand.dark.toLowerCase()};`,
+      `--brand-deep: ${DEEP_PANEL.brand.dark.toLowerCase()};`,
+    ]);
+    expect(DEEP_PANEL.ink.dark).toBe(DEEP_PANEL.brand.dark);
+  });
+  it("keeps print light", () => {
+    expect(globals).toMatch(
+      /@media print \{\s*:root,\s*:root\[data-mantine-color-scheme\] \{\s*color-scheme: light;/,
+    );
+  });
+  it("keeps CSS modules on tokens, so both themes reach them", () => {
+    for (const file of cssFiles("src").filter((f) =>
+      f.endsWith(".module.css"),
+    )) {
+      // Print is always the light design, so print-only literals are fine.
+      const screen = withoutPrintBlocks(readFileSync(file, "utf8"));
+      expect(screen, file).not.toMatch(/#[0-9a-f]{3,8}\b/i);
+      expect(screen, file).not.toMatch(/:\s*(white|black)\s*;/);
+    }
   });
   it("leaves no old palette behind", () => {
     const old =
@@ -102,10 +216,20 @@ describe("outlook label pairs", () => {
       ).toBeGreaterThanOrEqual(4.5);
     }
   });
+  it("every dark ink passes AA on its tint, the report sheet and the shell paper", () => {
+    for (const [key, { ink, bg }] of Object.entries(LABEL_PAIRS_DARK)) {
+      for (const surface of [bg, PALETTE_DARK.card, SHELL_PALETTE_DARK.paper])
+        expect(
+          contrastRatio(ink, surface),
+          `${key} on ${surface}`,
+        ).toBeGreaterThanOrEqual(4.5);
+    }
+  });
   it("mirrors the label tokens and fonts in globals.css", () => {
     for (const [key, { ink, bg }] of Object.entries(LABEL_PAIRS)) {
-      expect(hasLabelToken(`${kebab(key)}-ink`, ink), key).toBe(true);
-      expect(hasLabelToken(`${kebab(key)}-bg`, bg), key).toBe(true);
+      const dark = LABEL_PAIRS_DARK[key as keyof typeof LABEL_PAIRS];
+      expectToken(`label-${kebab(key)}-ink`, ink, dark.ink);
+      expectToken(`label-${kebab(key)}-bg`, bg, dark.bg);
     }
     expect(globals).toMatch(/--font-report:[^;]*Archivo Variable/);
     // Founder decision, 23 Nov 2026 (supersedes R22): every stamp, on the
@@ -125,26 +249,34 @@ describe("outlook label pairs", () => {
 });
 
 describe("focus rings", () => {
-  it("shows on newsprint and card, and on-dark shows on ink", () => {
-    expect(
-      contrastRatio(FOCUS_RING.onLight, PALETTE.newsprint),
-    ).toBeGreaterThanOrEqual(3);
-    expect(
-      contrastRatio(FOCUS_RING.onLight, PALETTE.card),
-    ).toBeGreaterThanOrEqual(3);
+  it("shows on newsprint and card, and on-dark shows on ink, in both themes", () => {
+    for (const [ring, palette] of [
+      [FOCUS_RING, PALETTE],
+      [FOCUS_RING_DARK, PALETTE_DARK],
+    ] as const) {
+      expect(
+        contrastRatio(ring.onLight, palette.newsprint),
+      ).toBeGreaterThanOrEqual(3);
+      expect(contrastRatio(ring.onLight, palette.card)).toBeGreaterThanOrEqual(
+        3,
+      );
+    }
     expect(
       contrastRatio(FOCUS_RING.onDark, PALETTE.ink),
+    ).toBeGreaterThanOrEqual(3);
+    expect(
+      contrastRatio(FOCUS_RING.onDark, DEEP_PANEL.brand.dark),
     ).toBeGreaterThanOrEqual(3);
   });
   it("needs the override: the light ring is invisible on ink", () => {
     expect(contrastRatio(FOCUS_RING.onLight, PALETTE.ink)).toBeLessThan(3);
   });
   it("mirrors the ring tokens in globals.css", () => {
-    expect(globals).toMatch(
-      new RegExp(`--focus-ring:\\s*${FOCUS_RING.onLight}`, "i"),
-    );
-    expect(globals).toMatch(
-      new RegExp(`--focus-ring-on-dark:\\s*${FOCUS_RING.onDark}`, "i"),
+    expectToken("focus-ring", FOCUS_RING.onLight, FOCUS_RING_DARK.onLight);
+    expectToken(
+      "focus-ring-on-dark",
+      FOCUS_RING.onDark,
+      FOCUS_RING_DARK.onDark,
     );
   });
 });

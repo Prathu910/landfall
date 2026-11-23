@@ -1,6 +1,7 @@
 .footer {
   padding: 20px 52px;
-  background: var(--ink);
+  color-scheme: light;
+  background: var(--brand-deep, var(--ink));
   color: var(--muted-on-dark);
   font-size: 14px;
 }

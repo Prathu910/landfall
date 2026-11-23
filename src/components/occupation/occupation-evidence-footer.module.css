@@ -1,7 +1,8 @@
 .bottomCta {
   margin-top: calc(var(--brand-unit) * 12);
   padding: calc(var(--brand-unit) * 10);
-  background: var(--ink);
+  color-scheme: light;
+  background: var(--brand-deep, var(--ink));
   color: var(--card);
   border-radius: calc(var(--brand-unit) * 3);
   display: flex;

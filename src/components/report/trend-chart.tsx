@@ -28,8 +28,8 @@ export function TrendChart({ rows }: { rows: TrendEvidence[] }) {
       >
         <defs>
           <linearGradient id="trend-fill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#D9731A" stopOpacity=".22" />
-            <stop offset="100%" stopColor="#D9731A" stopOpacity="0" />
+            <stop offset="0%" stopColor="var(--saffron)" stopOpacity=".22" />
+            <stop offset="100%" stopColor="var(--saffron)" stopOpacity="0" />
           </linearGradient>
         </defs>
         {[30, 85, 140].map((n) => (
@@ -39,7 +39,7 @@ export function TrendChart({ rows }: { rows: TrendEvidence[] }) {
             x2="580"
             y1={n}
             y2={n}
-            stroke="#ECE7DC"
+            stroke="var(--rule-soft)"
             strokeDasharray="3 5"
           />
         ))}
@@ -47,7 +47,7 @@ export function TrendChart({ rows }: { rows: TrendEvidence[] }) {
         <motion.path
           d={path}
           fill="none"
-          stroke="#6B6558"
+          stroke="var(--muted-soft)"
           strokeWidth="2.5"
           initial={false}
           animate={{ pathLength: 1 }}
@@ -65,8 +65,8 @@ export function TrendChart({ rows }: { rows: TrendEvidence[] }) {
               cx={x(i)}
               cy={y(r.total.max)}
               r={selected === i ? 5 : 3}
-              fill={selected === i ? "#1B1A17" : "#FBF8F2"}
-              stroke="#6B6558"
+              fill={selected === i ? "var(--ink)" : "var(--card)"}
+              stroke="var(--muted-soft)"
               strokeWidth="2"
             />
             {(i === 0 || i === rows.length - 1 || i % 3 === 0) && (
@@ -76,7 +76,7 @@ export function TrendChart({ rows }: { rows: TrendEvidence[] }) {
                 textAnchor={
                   i === 0 ? "start" : i === rows.length - 1 ? "end" : "middle"
                 }
-                fill="#6B6558"
+                fill="var(--muted-soft)"
                 fontSize="12"
               >
                 {new Date(r.date + "T00:00:00Z").toLocaleDateString("en-GB", {

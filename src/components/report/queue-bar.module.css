@@ -17,10 +17,10 @@
   background: var(--ink);
 }
 .same {
-  background: #d9731a;
+  background: var(--saffron);
 }
 .lower {
-  background: #b9af9a;
+  background: var(--chart-quiet);
 }
 .legend {
   display: flex;

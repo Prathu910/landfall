@@ -1,13 +1,21 @@
 import type { Viewport } from "next";
-import { SHELL_PALETTE } from "./palette";
+import { SHELL_PALETTE, SHELL_PALETTE_DARK } from "./palette";
+
+/** The browser bar runs into the sticky header: white by day, night card at night. */
+export const THEME_COLOR = {
+  light: SHELL_PALETTE.paper,
+  dark: SHELL_PALETTE_DARK.paper,
+} as const;
 
 /**
- * The site is designed light only. "only light" (not plain "light", which
- * still allows forced dark) stops Chrome's auto-dark and Samsung Internet
- * from inverting the pages, and the theme colour matches the
- * white sticky header so the phone's browser bar runs into it.
+ * Light and dark (founder decision, 23 Nov 2026, superseding "only light").
+ * The browser follows the device until the reader picks a theme in the
+ * header; then the theme control rewrites both theme-color tags.
  */
 export const SITE_VIEWPORT = {
-  colorScheme: "only light",
-  themeColor: SHELL_PALETTE.paper,
+  colorScheme: "light dark",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: THEME_COLOR.light },
+    { media: "(prefers-color-scheme: dark)", color: THEME_COLOR.dark },
+  ],
 } as const satisfies Viewport;

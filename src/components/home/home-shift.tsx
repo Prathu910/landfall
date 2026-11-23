@@ -43,7 +43,7 @@ export function HomeShift({
               width="118"
               height="50"
               rx="8"
-              fill="white"
+              fill="var(--homepage-paper)"
               stroke="currentColor"
               strokeWidth="3"
             />

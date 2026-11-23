@@ -45,7 +45,7 @@
   font-family: inherit;
   font-size: var(--homepage-size-15);
   color: var(--homepage-ink);
-  border: 1px solid var(--homepage-color-c8d2cb);
+  border: 1px solid var(--input-border);
   border-radius: var(--homepage-size-8);
   background: var(--homepage-paper);
 }
@@ -65,7 +65,8 @@
   border: 1px solid var(--homepage-rule);
   background: var(--homepage-paper);
   border-radius: var(--homepage-size-12);
-  box-shadow: 0 12px 28px #12202c20;
+  box-shadow: 0 12px 28px
+    color-mix(in srgb, var(--shadow-ink) 12.55%, transparent);
 }
 .option {
   font-size: var(--homepage-size-14);
@@ -128,7 +129,8 @@
 .indicator {
   background: var(--homepage-ink);
   border-radius: 999px;
-  box-shadow: 0 1px 3px #12202c22;
+  box-shadow: 0 1px 3px
+    color-mix(in srgb, var(--shadow-ink) 13.33%, transparent);
 }
 .points .segmentLabel {
   font-size: var(--homepage-size-16);

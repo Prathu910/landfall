@@ -1,65 +1,67 @@
 :root {
-  /* Light only: no browser auto-dark or forced inversion (see SITE_VIEWPORT). */
-  color-scheme: only light;
+  /* Light and dark ("passport at night", 23 Nov 2026). Every colour token is
+     light-dark(light, dark); the scheme follows the device until the reader
+     picks one, which sets data-mantine-color-scheme on <html>. */
+  color-scheme: light dark;
   /* The page side gutter: /check/ and /sample/ keep it, and the report sheet cancels it to run edge to edge on phones. */
   --page-gutter: 48px;
-  --ink: #1b1a17;
-  --newsprint: #f3eee3;
-  --card: #fbf8f2;
-  --surface: #ece7dc;
-  --saffron: #d9731a;
-  --saffron-text: #a04e0c;
-  --slate: #2e4a7d;
-  --muted: #4a463e;
-  --muted-soft: #6b6558;
-  --rule: #ddd4c2;
-  --status-strongest-fg: #1f5136;
-  --status-strongest-bg: #ddebdf;
-  --status-watching-fg: #2e4a7d;
-  --status-watching-bg: #e4e9f2;
-  --status-needs-answers-fg: #4a463e;
-  --status-needs-answers-bg: #fbf8f2;
-  --status-unverified-fg: #2e4a7d;
-  --status-unverified-bg: #fbf8f2;
-  --status-not-open-fg: #8a2e22;
-  --status-not-open-bg: #f5deda;
-  --question-fg: #1b1a17;
-  --question-bg: #f6ddb5;
-  --label-very-strong-ink: #0f6b3c;
-  --label-very-strong-bg: #d6efe0;
-  --label-strong-ink: #1e7a4c;
-  --label-strong-bg: #e5f3ea;
-  --label-competitive-ink: #996000;
-  --label-competitive-bg: #fbefd6;
-  --label-long-wait-ink: #be3f0b;
-  --label-long-wait-bg: #fde8db;
-  --label-not-invited-ink: #b42318;
-  --label-not-invited-bg: #fce5e3;
-  --label-not-eligible-ink: #5b3f9e;
-  --label-not-eligible-bg: #ece6f8;
-  --label-not-open-ink: #b42318;
-  --label-not-open-bg: #fce5e3;
-  --label-no-data-ink: #586470;
-  --label-no-data-bg: #e8ecef;
+  --ink: light-dark(#1b1a17, #ece6d8);
+  --newsprint: light-dark(#f3eee3, #11191f);
+  --card: light-dark(#fbf8f2, #172028);
+  --surface: light-dark(#ece7dc, #0c141a);
+  --saffron: light-dark(#d9731a, #e58a3a);
+  --saffron-text: light-dark(#a04e0c, #f0a35e);
+  --slate: light-dark(#2e4a7d, #a3bdeb);
+  --muted: light-dark(#4a463e, #c6beae);
+  --muted-soft: light-dark(#6b6558, #a69e8f);
+  --rule: light-dark(#ddd4c2, #2e3a43);
+  --status-strongest-fg: light-dark(#1f5136, #a3dab9);
+  --status-strongest-bg: light-dark(#ddebdf, #16342a);
+  --status-watching-fg: light-dark(#2e4a7d, #adc4ee);
+  --status-watching-bg: light-dark(#e4e9f2, #1a2840);
+  --status-needs-answers-fg: light-dark(#4a463e, #c6beae);
+  --status-needs-answers-bg: light-dark(#fbf8f2, #172028);
+  --status-unverified-fg: light-dark(#2e4a7d, #adc4ee);
+  --status-unverified-bg: light-dark(#fbf8f2, #172028);
+  --status-not-open-fg: light-dark(#8a2e22, #f4a79b);
+  --status-not-open-bg: light-dark(#f5deda, #3a1c19);
+  --question-fg: light-dark(#1b1a17, #ece6d8);
+  --question-bg: light-dark(#f6ddb5, #3b2d17);
+  --label-very-strong-ink: light-dark(#0f6b3c, #6fd49c);
+  --label-very-strong-bg: light-dark(#d6efe0, #0f2d20);
+  --label-strong-ink: light-dark(#1e7a4c, #a6d9bb);
+  --label-strong-bg: light-dark(#e5f3ea, #152b22);
+  --label-competitive-ink: light-dark(#996000, #ebb959);
+  --label-competitive-bg: light-dark(#fbefd6, #2f2412);
+  --label-long-wait-ink: light-dark(#be3f0b, #f5965f);
+  --label-long-wait-bg: light-dark(#fde8db, #361d11);
+  --label-not-invited-ink: light-dark(#b42318, #f68d80);
+  --label-not-invited-bg: light-dark(#fce5e3, #381916);
+  --label-not-eligible-ink: light-dark(#5b3f9e, #beabf3);
+  --label-not-eligible-bg: light-dark(#ece6f8, #251e3e);
+  --label-not-open-ink: light-dark(#b42318, #f68d80);
+  --label-not-open-bg: light-dark(#fce5e3, #381916);
+  --label-no-data-ink: light-dark(#586470, #b0bcc7);
+  --label-no-data-bg: light-dark(#e8ecef, #1f2931);
   --font-report: "Archivo Variable", "Inter", Arial, sans-serif;
   --font-stamp:
     "Big Shoulders Stencil Display", "Archivo Variable", Arial, sans-serif;
-  --focus-ring: #2e4a7d;
-  --focus-ring-on-dark: #f3eee3;
-  --muted-on-dark: #d6cfbf;
-  --saffron-on-dark: #f0a35e;
+  --focus-ring: light-dark(#2e4a7d, #a3bdeb);
+  --focus-ring-on-dark: light-dark(#f3eee3, #f3eee3);
+  --muted-on-dark: light-dark(#d6cfbf, #cbc4b4);
+  --saffron-on-dark: light-dark(#f0a35e, #f0a35e);
   --serif: "Newsreader", Georgia, serif;
   --sans: "Inter", Arial, sans-serif;
   /* Shared chrome follows the approved passport identity without recolouring page bodies. */
-  --brand-ink: #12202c;
-  --brand-paper: #ffffff;
-  --brand-sage: #eef2f0;
-  --brand-muted: #52616a;
-  --brand-line: #d5ded8;
-  --brand-green: #3b6551;
-  --brand-on-dark: #c4d0d0;
-  --brand-dark-line: #41525b;
-  --brand-focus: #315c87;
+  --brand-ink: light-dark(#12202c, #ece6d8);
+  --brand-paper: light-dark(#ffffff, #14212b);
+  --brand-sage: light-dark(#eef2f0, #0e1820);
+  --brand-muted: light-dark(#52616a, #a5b3b9);
+  --brand-line: light-dark(#d5ded8, #2a3a44);
+  --brand-green: light-dark(#3b6551, #93c8aa);
+  --brand-on-dark: light-dark(#c4d0d0, #b9c7c7);
+  --brand-dark-line: light-dark(#41525b, #22323c);
+  --brand-focus: light-dark(#315c87, #98bce6);
   --brand-font: "Archivo Variable", "Inter", Arial, sans-serif;
   --brand-unit: 4px;
   --brand-rule-width: 1px;
@@ -76,6 +78,118 @@
   --brand-size-24: 24px;
   /* Sticky report chips sit just under the sticky site header. */
   --site-header-height: 88px;
+}
+/* The reader's choice wins over the device; print is always the light design. */
+:root[data-mantine-color-scheme="light"] {
+  color-scheme: light;
+}
+:root[data-mantine-color-scheme="dark"] {
+  color-scheme: dark;
+}
+/* Role tokens for dark mode (tokens.md, 23 Nov 2026). */
+:root {
+  /* Primary buttons: ink in light, ivory in dark. */
+  --brand-ink-fill: light-dark(#12202c, #ece6d8);
+  --brand-on-fill: light-dark(#ffffff, #0e1820);
+  --brand-ink-fill-hover: light-dark(#1f3446, #d3ccbc);
+  /* Form control borders: 3:1 on every input surface (the hairline is not). */
+  --input-border: light-dark(#7f918a, #62757f);
+  /* Shadows: ink-tinted by day, plain black at night. */
+  --shadow-ink: light-dark(#12202c, #000000);
+  /* The quiet chart segment (lower scores, closed EOIs). */
+  --chart-quiet: light-dark(#b9af9a, #5e584d);
+  /* Soft report hairlines (table rows, chart frames). */
+  --rule-soft: light-dark(#ece7dc, #24303a);
+  /* Security print: sage in daylight, UV sage and violet at night. */
+  --guilloche-a: light-dark(#bcd0c4, #7fb89a);
+  --guilloche-b: light-dark(#d6e1da, #a99ad8);
+  /* A 1px top highlight on raised cards: elevation by light, not shadow. */
+  --elevate-edge: light-dark(transparent, #ece6d814);
+}
+/* Always-dark panels (site footer, the guide and occupation calls to action,
+   the report footer) keep color-scheme: light inside, so their text tokens
+   resolve to the light design's on-ink values in both themes. Their
+   background is var(--brand-deep, <their light ink>): --brand-deep is set
+   only at night, so daylight keeps each panel's own ink unchanged. */
+/* Non-colour switches. Light values here; the dark values are set twice
+   below, once for the reader's choice and once for visitors without
+   JavaScript whose device is dark. Screen only, so print stays light. */
+:root {
+  --guilloche-opacity: 1;
+  --theme-day-display: block;
+  --theme-uv-display: none;
+  --stamp-glow: none;
+  --stamp-blend: normal;
+  --headline-wght: 750;
+}
+@media screen and (prefers-color-scheme: dark) {
+  :root:not([data-mantine-color-scheme="light"]) {
+    --brand-deep: #08121a;
+    --guilloche-opacity: 0.3;
+    --theme-day-display: none;
+    --theme-uv-display: block;
+    --stamp-glow: drop-shadow(
+      0 0 6px color-mix(in oklab, currentColor 22%, transparent)
+    );
+    --stamp-blend: screen;
+    --headline-wght: 720;
+  }
+}
+@media screen {
+  :root[data-mantine-color-scheme="dark"] {
+    --brand-deep: #08121a;
+    --guilloche-opacity: 0.3;
+    --theme-day-display: none;
+    --theme-uv-display: block;
+    --stamp-glow: drop-shadow(
+      0 0 6px color-mix(in oklab, currentColor 22%, transparent)
+    );
+    --stamp-blend: screen;
+    --headline-wght: 720;
+  }
+}
+@media print {
+  :root,
+  :root[data-mantine-color-scheme] {
+    color-scheme: light;
+  }
+}
+/* A theme switch eases colours for 200ms, then the security print wakes
+   80ms later, like UV ink under the lamp. Only while switching, never on
+   load, and never under reduced motion (the class is not added then). */
+html.theme-switching *,
+html.theme-switching *::before,
+html.theme-switching *::after {
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    fill 0.2s ease,
+    stroke 0.2s ease,
+    box-shadow 0.2s ease,
+    outline-color 0.2s ease !important;
+}
+html.theme-switching .guill-uv {
+  animation: guilloche-wake 0.45s ease 0.08s both;
+}
+@keyframes guilloche-wake {
+  from {
+    opacity: 0;
+  }
+}
+/* The security print under the UV lamp: the same artwork as a mask,
+   coloured by the guilloche tokens. Hidden in light, where the original
+   image shows unchanged. */
+.guill-uv {
+  display: var(--theme-uv-display);
+  opacity: var(--guilloche-opacity);
+  background-image: linear-gradient(
+    115deg,
+    var(--guilloche-a) 35%,
+    var(--guilloche-b)
+  );
+  -webkit-mask: var(--guill-src) center / cover no-repeat;
+  mask: var(--guill-src) center / cover no-repeat;
 }
 * {
   box-sizing: border-box;
@@ -165,7 +279,7 @@ svg {
   top: -70px;
   left: 20px;
   background: var(--ink);
-  color: #fbf8f2;
+  color: var(--card);
   padding: 12px;
   z-index: 1000;
 }
@@ -183,44 +297,44 @@ svg {
 .data-caption {
   font-size: 12px;
   line-height: 1.85;
-  color: #6b6558;
+  color: var(--muted-soft);
   margin-top: 14px;
 }
 /* Interior pages and Mantine controls */
 .source-link {
-  color: #1b1a17;
+  color: var(--ink);
   text-decoration: underline;
   text-underline-offset: 3px;
 }
 .report-empty {
   padding: 24px;
-  border: 1px dashed #ddd4c2;
+  border: 1px dashed var(--rule);
   border-radius: 10px;
-  background: #fbf8f2;
+  background: var(--card);
   font-size: 13px;
-  color: #6b6558;
+  color: var(--muted-soft);
   display: flex;
   align-items: flex-start;
   gap: 12px;
 }
 .mantine-Input-input {
-  border-color: #ddd4c2;
-  background: #fbf8f2;
-  color: #1b1a17;
+  border-color: var(--input-border);
+  background: var(--card);
+  color: var(--ink);
   transition:
     border-color 0.18s,
     box-shadow 0.18s;
 }
 .mantine-Input-input:focus {
-  box-shadow: 0 0 0 3px #1b1a1710;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 6.3%, transparent);
 }
 .mantine-InputWrapper-label {
-  color: #1b1a17;
+  color: var(--ink);
   font-size: 13px;
   font-weight: 500;
 }
 .mantine-InputWrapper-description {
-  color: #6b6558;
+  color: var(--muted-soft);
   font-size: 12px;
   line-height: 1.7;
   margin-top: 5px;
@@ -231,10 +345,10 @@ svg {
   border-radius: 6px;
 }
 .mantine-Combobox-option[data-combobox-selected] {
-  background: #1b1a17;
+  background: var(--ink);
 }
 .mantine-Checkbox-label {
-  color: #1b1a17;
+  color: var(--ink);
   font-size: 13px;
 }
 .mantine-Accordion-item {
@@ -258,7 +372,7 @@ svg {
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.12em;
-  color: #6b6558;
+  color: var(--muted-soft);
   margin-bottom: 10px;
 }
 /* Report workspace */
@@ -275,15 +389,15 @@ svg {
 }
 .report-section > p {
   font-size: 12px;
-  color: #6b6558;
+  color: var(--muted-soft);
   line-height: 1.9;
   margin-bottom: 20px;
 }
 .trend-chart {
-  border: 1px solid #ece7dc;
+  border: 1px solid var(--rule-soft);
   border-radius: 10px;
   padding: 15px;
-  background: #fbf8f2;
+  background: var(--card);
 }
 .trend-chart > svg {
   width: 100%;
@@ -294,7 +408,7 @@ svg {
   display: flex;
   justify-content: space-between;
   font-size: 12px;
-  color: #6b6558;
+  color: var(--muted-soft);
   margin-top: 10px;
   gap: 15px;
 }
@@ -308,16 +422,16 @@ svg {
   letter-spacing: 0.04em;
   text-align: left;
   font-weight: 500;
-  color: #6b6558;
-  background: #f3eee3;
+  color: var(--muted-soft);
+  background: var(--newsprint);
 }
 .rounds-table th,
 .rounds-table td {
   padding: 12px;
-  border-bottom: 1px solid #ece7dc;
+  border-bottom: 1px solid var(--rule-soft);
 }
 .rounds-table td:last-child {
-  color: #6b6558;
+  color: var(--muted-soft);
 }
 .compare-grid {
   display: grid;
@@ -327,8 +441,8 @@ svg {
 }
 .compare-card {
   padding: 17px;
-  background: #f3eee3;
-  border: 1px solid #ece7dc;
+  background: var(--newsprint);
+  border: 1px solid var(--rule-soft);
   border-radius: 10px;
 }
 .compare-card h3 {
@@ -337,7 +451,7 @@ svg {
 }
 .compare-card > span {
   font-size: 12px;
-  color: #6b6558;
+  color: var(--muted-soft);
 }
 .compare-card > strong {
   display: block;
@@ -349,7 +463,7 @@ svg {
 .compare-card > small {
   display: block;
   font-size: 12px;
-  color: #6b6558;
+  color: var(--muted-soft);
 }
 .report-accordion {
   margin-top: 20px;
@@ -435,7 +549,7 @@ svg {
     content-visibility: visible !important;
   }
   body {
-    background: #fbf8f2;
+    background: var(--card);
     font-size: 12px;
   }
   .site-header,
@@ -495,8 +609,8 @@ svg {
   --homepage-size-50: 50px;
   --homepage-size-24: 24px;
   --homepage-size-999: 999px;
-  --homepage-paper: #fff;
-  --homepage-color-1f3446: #1f3446;
+  --homepage-paper: light-dark(#fff, #14212b);
+  --homepage-color-1f3446: light-dark(#1f3446, #d3ccbc);
   --homepage-size-2: 2px;
   --homepage-size-48: 48px;
   --homepage-size-40: 40px;
@@ -504,13 +618,13 @@ svg {
   --homepage-size-56: 56px;
   --homepage-size-20: 20px;
   --homepage-size-28: 28px;
-  --homepage-color-2a3946: #2a3946;
+  --homepage-color-2a3946: light-dark(#2a3946, #dcd6c8);
   --homepage-size-12: 12px;
   --homepage-size-14: 14px;
-  --homepage-color-c7d1cb: #c7d1cb;
-  --homepage-color-12202c55: #12202c55;
+  --homepage-color-c7d1cb: light-dark(#c7d1cb, #2c3d47);
+  --homepage-color-12202c55: light-dark(#12202c55, #00000088);
   --homepage-size-1: 1px;
-  --homepage-color-b9c4be: #b9c4be;
+  --homepage-color-b9c4be: light-dark(#b9c4be, #3a4d57);
   --homepage-size-380: 380px;
   --homepage-size-13: 13px;
   --homepage-size-8: 8px;
@@ -523,18 +637,18 @@ svg {
   --homepage-size-210: 210px;
   --homepage-size-4: 4px;
   --homepage-size-560: 560px;
-  --homepage-color-12202c66: #12202c66;
-  --homepage-color-dce3df: #dce3df;
+  --homepage-color-12202c66: light-dark(#12202c66, #00000099);
+  --homepage-color-dce3df: light-dark(#dce3df, #1b2a33);
   --homepage-size-2-5: 2.5px;
   --homepage-size-30: 30px;
   --homepage-size-34: 34px;
   --homepage-size-760: 760px;
   --homepage-size-1-5: 1.5px;
-  --homepage-color-34424e: #34424e;
+  --homepage-color-34424e: light-dark(#34424e, #cfd7d9);
   --homepage-size-200: 200px;
   --homepage-size-36: 36px;
   --homepage-size-46: 46px;
-  --homepage-color-cbd3da: #cbd3da;
+  --homepage-color-cbd3da: light-dark(#cbd3da, #3a4a54);
   --homepage-size-26: 26px;
   --homepage-size-44: 44px;
   --homepage-size-230: 230px;
@@ -544,59 +658,57 @@ svg {
   --homepage-size-21: 21px;
   --homepage-size-220: 220px;
   --homepage-size-140: 140px;
-  --homepage-muted: #52606b;
+  --homepage-muted: light-dark(#52606b, #a5b3b9);
   --homepage-size-9: 9px;
-  --homepage-color-61776b: #61776b;
+  --homepage-color-61776b: light-dark(#61776b, #9db7a8);
   --homepage-size-52: 52px;
   --homepage-size-38: 38px;
   --homepage-size-70: 70px;
-  --homepage-color-12202c44: #12202c44;
+  --homepage-color-12202c44: light-dark(#12202c44, #00000077);
   --homepage-size-54: 54px;
   --homepage-size-5: 5px;
-  --homepage-color-d0d9d3: #d0d9d3;
+  --homepage-color-d0d9d3: light-dark(#d0d9d3, #2b3b45);
   --homepage-size-25: 25px;
   --homepage-size-62: 62px;
-  --homepage-rule: #d8dfdb;
+  --homepage-rule: light-dark(#d8dfdb, #26363f);
   --homepage-size-45: 45px;
-  --homepage-color-ffffff88: #ffffff88;
+  --homepage-color-ffffff88: light-dark(#ffffff88, #14212b88);
   --homepage-size-11: 11px;
-  --homepage-ink: #12202c;
-  --homepage-color-c8d2cb: #c8d2cb;
+  --homepage-ink: light-dark(#12202c, #ece6d8);
+  --homepage-color-c8d2cb: light-dark(#c8d2cb, #2e3f49);
   --homepage-size-7: 7px;
-  --homepage-color-e8eeea: #e8eeea;
+  --homepage-color-e8eeea: light-dark(#e8eeea, #192731);
   --homepage-size-23: 23px;
-  --homepage-color-f8fbf8: #f8fbf8;
-  --homepage-color-fff9: #fff9;
-  --homepage-color-ccd6ce: #ccd6ce;
+  --homepage-color-f8fbf8: light-dark(#f8fbf8, #16242e);
+  --homepage-color-fff9: light-dark(#fff9, #14212b99);
+  --homepage-color-ccd6ce: light-dark(#ccd6ce, #2e3f48);
   --homepage-size-39: 39px;
-  --homepage-color-12202c22: #12202c22;
+  --homepage-color-12202c22: light-dark(#12202c22, #00000055);
   --homepage-size-33: 33px;
-  --homepage-color-adbbb2: #adbbb2;
-  --homepage-color-dbe6de: #dbe6de;
-  --homepage-color-5b7365: #5b7365;
-  --homepage-color-c8dacf: #c8dacf;
-  --homepage-color-466553: #466553;
-  --homepage-focus: #2446d6;
-  --homepage-color-5b6c63: #5b6c63;
-  --homepage-desk: #eef2f0;
-  --homepage-color-7a8d80: #7a8d80;
-  --homepage-color-52665b: #52665b;
-  --homepage-color-fff8: #fff8;
+  --homepage-color-adbbb2: light-dark(#adbbb2, #3e5560);
+  --homepage-color-dbe6de: light-dark(#dbe6de, #1f3139);
+  --homepage-color-5b7365: light-dark(#5b7365, #7fa593);
+  --homepage-color-c8dacf: light-dark(#c8dacf, #1d3a2f);
+  --homepage-color-466553: light-dark(#466553, #93c8aa);
+  --homepage-focus: light-dark(#2446d6, #93aaff);
+  --homepage-color-5b6c63: light-dark(#5b6c63, #9fb4a9);
+  --homepage-desk: light-dark(#eef2f0, #0e1820);
+  --homepage-color-52665b: light-dark(#52665b, #a8c0b2);
+  --homepage-color-fff8: light-dark(#fff8, #14212b88);
   --homepage-size-43: 43px;
   --homepage-size-42: 42px;
   --homepage-size-440: 440px;
-  --homepage-color-cbd5cd: #cbd5cd;
+  --homepage-color-cbd5cd: light-dark(#cbd5cd, #2e3e47);
   --homepage-size-27: 27px;
-  --homepage-color-728778: #728778;
-  --homepage-color-bdcbbf: #bdcbbf;
-  --homepage-color-f8faf8: #f8faf8;
+  --homepage-color-bdcbbf: light-dark(#bdcbbf, #35494f);
+  --homepage-color-f8faf8: light-dark(#f8faf8, #16242e);
   --homepage-size-155: 155px;
   --homepage-size-218: 218px;
   --homepage-size-80: 80px;
-  --homepage-color-8fa99a: #8fa99a;
-  --homepage-color-9ab2a1: #9ab2a1;
-  --homepage-color-e1e9e3: #e1e9e3;
-  --homepage-color-a3b8aa: #a3b8aa;
+  --homepage-color-8fa99a: light-dark(#8fa99a, #5e7d6d);
+  --homepage-color-9ab2a1: light-dark(#9ab2a1, #55705f);
+  --homepage-color-e1e9e3: light-dark(#e1e9e3, #1c2b33);
+  --homepage-color-a3b8aa: light-dark(#a3b8aa, #47604f);
   --homepage-size-730: 730px;
   --homepage-size-168: 168px;
   --homepage-size-285: 285px;
@@ -619,35 +731,37 @@ svg {
 /* Homepage illustration inks and source geometry tones. */
 :root {
   --homepage-cobalt: var(--homepage-focus);
-  --homepage-co: #996000;
-  --homepage-competitive: #996000;
-  --homepage-strong: #0f6b3c;
-  --homepage-color-815c32: #815c32;
-  --homepage-color-a23b39: #a23b39;
-  --homepage-color-eef3ee: #eef3ee;
-  --homepage-color-607a68: #607a68;
-  --homepage-color-a9b9ac: #a9b9ac;
-  --homepage-color-c0cec3: #c0cec3;
-  --homepage-color-d3dfd5: #d3dfd5;
-  --homepage-color-92a396: #92a396;
+  --homepage-co: light-dark(#996000, #ebb959);
+  --homepage-competitive: light-dark(#996000, #ebb959);
+  --homepage-strong: light-dark(#0f6b3c, #6fd49c);
+  --homepage-color-815c32: light-dark(#815c32, #e2b57a);
+  --homepage-color-a23b39: light-dark(#a23b39, #f3958c);
+  --homepage-color-eef3ee: light-dark(#eef3ee, #17252e);
+  --homepage-color-607a68: light-dark(#607a68, #000000);
+  --homepage-color-a9b9ac: light-dark(#a9b9ac, #081016);
+  --homepage-color-c0cec3: light-dark(#c0cec3, #0c161d);
+  --homepage-color-d3dfd5: light-dark(#d3dfd5, #122029);
+  --homepage-color-92a396: light-dark(#92a396, #58707a);
 }
 /* Approved passport-style points check; only check components consume these tokens. */
 :root {
-  --check-ink: #12202c;
-  --check-muted: #52616a;
-  --check-sage: #eef2f0;
-  --check-paper: #ffffff;
-  --check-line: #d5ded8;
-  --check-soft: #f7f9f7;
-  --check-green: #3b6551;
-  --check-green-soft: #e6eee8;
-  --check-focus: #315c87;
-  --check-error: #b42318;
+  --check-ink: light-dark(#12202c, #ece6d8);
+  --check-muted: light-dark(#52616a, #a5b3b9);
+  --check-sage: light-dark(#eef2f0, #0e1820);
+  --check-paper: light-dark(#ffffff, #14212b);
+  --check-line: light-dark(#d5ded8, #2a3a44);
+  --check-soft: light-dark(#f7f9f7, #112029);
+  --check-green: light-dark(#3b6551, #93c8aa);
+  --check-green-soft: light-dark(#e6eee8, #18302a);
+  --check-focus: light-dark(#315c87, #98bce6);
+  --check-error: light-dark(#b42318, #f68d80);
   --check-radius: 0.625rem;
   --check-pill: 6rem;
   --check-unit: 0.25rem;
   --check-font: "Archivo Variable", Arial, sans-serif;
-  --check-shadow: 0 1.5rem 4rem -2.5rem #12202c35;
+  --check-shadow:
+    0 1.5rem 4rem -2.5rem light-dark(#12202c35, #000000c0),
+    inset 0 1px 0 var(--elevate-edge);
   --check-text-sm: 0.8125rem;
   --check-text: 1rem;
 }

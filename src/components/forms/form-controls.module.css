@@ -19,7 +19,7 @@
   min-height: calc(var(--check-unit) * 13);
   height: auto;
   background: var(--check-paper);
-  border: 1px solid var(--check-line);
+  border: 1px solid var(--input-border);
   border-radius: var(--check-radius);
   color: var(--check-ink);
   font-size: var(--check-text);
@@ -70,7 +70,9 @@
   border: 1px solid var(--check-line);
   border-radius: calc(var(--check-unit) * 3);
   background: var(--check-paper);
-  box-shadow: 0 1rem 3rem -1rem #12202c35;
+  box-shadow:
+    0 1rem 3rem -1rem color-mix(in srgb, var(--shadow-ink) 20.78%, transparent),
+    inset 0 1px 0 var(--elevate-edge);
 }
 .option {
   border-radius: calc(var(--check-unit) * 2);
@@ -107,12 +109,13 @@
   background: var(--check-ink);
   color: var(--check-paper);
   border-color: var(--check-ink);
-  box-shadow: 0 2px 1px #12202c10;
+  box-shadow: 0 2px 1px color-mix(in srgb, var(--shadow-ink) 6.27%, transparent);
 }
 .button:not([data-variant="subtle"]):hover:not(:disabled) {
   background: var(--check-green);
   border-color: var(--check-green);
-  box-shadow: 0 4px 12px #12202c18;
+  box-shadow: 0 4px 12px
+    color-mix(in srgb, var(--shadow-ink) 9.41%, transparent);
 }
 .button[data-variant="subtle"] {
   color: var(--check-muted);
@@ -145,6 +148,9 @@
 .checkbox:focus-within {
   outline: 2px solid var(--check-focus);
   outline-offset: var(--check-unit);
+}
+.checkboxInput {
+  border-color: var(--input-border);
 }
 .checkboxInput:checked {
   border-color: var(--check-ink);
