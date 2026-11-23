@@ -262,9 +262,10 @@ export const FEES: FeeCatalogue = {
   },
   afpCheck: {
     id: "afp",
-    label: "Australian police check (AFP), each adult",
+    label:
+      "Australian police check (AFP), each applicant aged 16 or over with 12 months or more in Australia",
     amount: aud(57),
-    note: "Needed after 12 months or more in Australia in the last 10 years since turning 16.",
+    note: "Home Affairs asks for one if you've spent a total of 12 months or more in Australia in the last 10 years since you turned 16.",
     source: "https://www.afp.gov.au/our-services/national-police-checks",
     checkedAt: CHECKED,
   },

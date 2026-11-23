@@ -1,5 +1,5 @@
 "use client";
-import { Checkbox, Select } from "@mantine/core";
+import { Checkbox, NativeSelect, Select } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { FormTheme } from "@/components/forms/form-theme-provider";
 import { FEES } from "@/data/guide/fees";
@@ -53,7 +53,7 @@ export function CostEstimator({
     englishTest: null,
     naati: false,
     state: null,
-    australianPoliceCheck: false,
+    australianPoliceChecks: 0,
   });
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- the reader's local date is only known after hydration
@@ -61,6 +61,11 @@ export function CostEstimator({
   }, []);
   const set = (patch: Partial<Choices>) =>
     setChoices((c) => ({ ...c, ...patch }));
+  const applicants =
+    1 +
+    (choices.partner ? 1 : 0) +
+    choices.childrenUnder18 +
+    choices.children18Plus;
   const estimate = estimateCosts({ ...choices, situation }, FEES, asOf);
   return (
     <FormTheme>
@@ -131,11 +136,13 @@ export function CostEstimator({
             checked={choices.naati}
             onChange={(e) => set({ naati: e.currentTarget.checked })}
           />
-          <Checkbox
-            label="12 months or more in Australia (AFP police check)"
-            checked={choices.australianPoliceCheck}
+          <NativeSelect
+            label="Australian police checks (AFP)"
+            description="One for each applicant aged 16 or over who has spent a total of 12 months or more in Australia in the last 10 years since turning 16."
+            data={COUNTS(applicants)}
+            value={String(Math.min(choices.australianPoliceChecks, applicants))}
             onChange={(e) =>
-              set({ australianPoliceCheck: e.currentTarget.checked })
+              set({ australianPoliceChecks: Number(e.currentTarget.value) })
             }
           />
         </div>

@@ -20,7 +20,7 @@ const BASE: CostInput = {
   englishTest: null,
   naati: false,
   state: null,
-  australianPoliceCheck: false,
+  australianPoliceChecks: 0,
 };
 const aud = (estimate: ReturnType<typeof estimateCosts>) =>
   estimate.totals.find((t) => t.currency === "AUD");
@@ -157,20 +157,43 @@ describe("estimateCosts", () => {
     expect(aud(visa491)?.max).toBe(6140 + 394);
   });
 
-  it("counts one Australian police check per adult applicant", () => {
+  it("prices one Australian police check per person the reader counts", () => {
     const estimate = estimateCosts(
       {
         ...BASE,
         partner: true,
-        children18Plus: 1,
-        australianPoliceCheck: true,
+        childrenUnder18: 1,
+        australianPoliceChecks: 2,
       },
       FEES,
       AS_OF,
     );
     const afp = estimate.lines.find((l) => l.id === "afp");
-    expect(afp?.quantity).toBe(3);
-    expect(afp?.total).toEqual({ kind: "fixed", currency: "AUD", amount: 171 });
+    expect(afp?.quantity).toBe(2);
+    expect(afp?.total).toEqual({ kind: "fixed", currency: "AUD", amount: 114 });
+  });
+
+  it("counts police checks for a 16 or 17 year old, but never more than the applicants", () => {
+    const family = { ...BASE, partner: true, childrenUnder18: 1 };
+    const all = estimateCosts(
+      { ...family, australianPoliceChecks: 3 },
+      FEES,
+      AS_OF,
+    );
+    expect(all.lines.find((l) => l.id === "afp")?.quantity).toBe(3);
+    const tooMany = estimateCosts(
+      { ...family, australianPoliceChecks: 9 },
+      FEES,
+      AS_OF,
+    );
+    expect(tooMany.lines.find((l) => l.id === "afp")?.quantity).toBe(3);
+    const none = estimateCosts(BASE, FEES, AS_OF);
+    expect(none.lines.find((l) => l.id === "afp")).toBeUndefined();
+  });
+
+  it("labels the check with the Home Affairs rule", () => {
+    expect(FEES.afpCheck.label).toMatch(/aged 16 or over/);
+    expect(FEES.afpCheck.label).toMatch(/12 months or more in Australia/);
   });
 
   it("ignores negative or fractional child counts", () => {
