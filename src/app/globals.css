@@ -1,7 +1,7 @@
 :root {
   /* Light only: no browser auto-dark or forced inversion (see SITE_VIEWPORT). */
   color-scheme: only light;
-  /* The page's side gutter; .container and the edge-to-edge report sheet share it. */
+  /* The page side gutter: /check/ and /sample/ keep it, and the report sheet cancels it to run edge to edge on phones. */
   --page-gutter: 48px;
   --ink: #1b1a17;
   --newsprint: #f3eee3;
@@ -160,11 +160,6 @@ em {
 svg {
   flex-shrink: 0;
 }
-.container {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 var(--page-gutter);
-}
 .skip-link {
   position: fixed;
   top: -70px;
@@ -185,72 +180,11 @@ svg {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
 }
-.button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 18px;
-  background: var(--ink);
-  color: #fbf8f2;
-  border: 1px solid var(--ink);
-  border-radius: 9px;
-  padding: 16px 22px;
-  min-height: 52px;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1.4;
-  box-shadow: 0 3px 4px #1b1a170b;
-  transition:
-    transform 0.2s,
-    box-shadow 0.2s,
-    background 0.2s;
-}
-.button:hover {
-  transform: translateY(-2px);
-  background: #2e2c27;
-  border-color: #2e2c27;
-  box-shadow: 0 8px 20px #1b1a171b;
-}
-.button svg {
-  transition: transform 0.2s;
-}
-.button:hover svg {
-  transform: translate(2px, -2px);
-}
-.button-accent {
-  background: var(--saffron);
-  border-color: var(--saffron);
-  color: var(--ink);
-}
-.button-accent:hover {
-  background: #ece7dc;
-  border-color: #ece7dc;
-}
-.final-cta {
-  --focus-ring: var(--focus-ring-on-dark);
-}
 .data-caption {
   font-size: 12px;
   line-height: 1.85;
   color: #6b6558;
   margin-top: 14px;
-}
-.final-cta {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  background: #1b1a17;
-  color: #f3eee3;
-  text-align: center;
-  padding: 90px 0;
-}
-.final-cta h2 {
-  font-size: 59px;
-}
-.final-cta p {
-  font-size: 14px;
-  color: #b9af9a;
-  margin: 24px 0 28px;
 }
 /* Interior pages and Mantine controls */
 .page-actions {
@@ -534,12 +468,6 @@ svg {
   :root {
     --site-header-height: 74px;
   }
-  .final-cta {
-    padding-block: 65px;
-  }
-  .final-cta h2 {
-    font-size: 50px;
-  }
   .report-section {
     scroll-margin-top: 138px;
   }
@@ -553,17 +481,6 @@ svg {
   }
   h2 {
     font-size: 36px;
-  }
-  .final-cta {
-    padding-block: 55px;
-  }
-  .final-cta h2 {
-    font-size: 45px;
-  }
-  .final-cta p {
-    font-size: 12px;
-    max-width: 300px;
-    margin-inline: auto;
   }
   .report-section h2 {
     font-size: 26px;
@@ -637,13 +554,8 @@ svg {
   .site-header,
   .site-footer,
   .skip-link,
-  .no-print,
-  .final-cta {
+  .no-print {
     display: none !important;
-  }
-  .container {
-    max-width: none;
-    padding: 0;
   }
   .trend-chart,
   .compare-card,
@@ -671,7 +583,6 @@ svg {
 /* Readable body text on phones: running copy is at least 16px. */
 @media screen and (max-width: 720px) {
   body,
-  .final-cta p,
   .report-empty,
   .report-section > p,
   .scenario-card p,

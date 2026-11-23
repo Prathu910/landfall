@@ -1,8 +1,7 @@
 "use client";
 import { useMemo } from "react";
-import Link from "next/link";
 import { Button } from "@mantine/core";
-import { ArrowRight, Pencil } from "lucide-react";
+import { Pencil } from "lucide-react";
 import type { Profile } from "@/lib/migration";
 import type { ReportSource } from "@/lib/data/report-source";
 import type { OccupationCore, OccupationIndexEntry } from "@/lib/data/types";
@@ -28,6 +27,7 @@ import { PointsPage } from "./report/points-page";
 import { PrintReport } from "./report/print-report";
 import { ReportFooter } from "./report/report-footer";
 import { RouteSection } from "./report/route-section";
+import { SampleCta } from "./report/sample-cta";
 import { SectionChips } from "./report/section-chips";
 import section from "./report/section.module.css";
 import { useOurRead } from "./report/use-our-read";
@@ -111,20 +111,6 @@ function Toolbar({ sample, onEdit }: Pick<Props, "sample" | "onEdit">) {
           Edit answers
         </Button>
       )}
-    </div>
-  );
-}
-
-function SampleCta() {
-  return (
-    <div className="final-cta no-print">
-      <div className="container">
-        <h2>Check your own points</h2>
-        <p>The free check builds this report from your own answers.</p>
-        <Link className="button button-accent" href="/check/">
-          Start my free check <ArrowRight size={17} />
-        </Link>
-      </div>
     </div>
   );
 }
