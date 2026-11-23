@@ -1,4 +1,5 @@
 import { HomeStamp } from "./home-stamp";
+import { Guilloche } from "./guilloche";
 import type { HomeAtlasView } from "@/lib/home/atlas";
 
 export function HomePassport({
@@ -18,20 +19,7 @@ export function HomePassport({
       aria-label="An example report, opened like a passport"
     >
       <div className="pp left">
-        {/* A local decorative asset preserves the approved passport security linework. */}
-        <svg
-          className="guill"
-          viewBox="0 0 600 520"
-          preserveAspectRatio="xMidYMid slice"
-          aria-hidden="true"
-        >
-          <image
-            href="/home/passport-left.svg"
-            width="600"
-            height="520"
-            preserveAspectRatio="xMidYMid slice"
-          />
-        </svg>
+        <Guilloche src="/home/passport-left.svg" />
         <div className="pp-h">
           <b>Your three visas</b>
           <span>{date}</span>
@@ -61,19 +49,7 @@ export function HomePassport({
         </div>
       </div>
       <div className="pp">
-        <svg
-          className="guill"
-          viewBox="0 0 600 520"
-          preserveAspectRatio="xMidYMid slice"
-          aria-hidden="true"
-        >
-          <image
-            href="/home/passport-right.svg"
-            width="600"
-            height="520"
-            preserveAspectRatio="xMidYMid slice"
-          />
-        </svg>
+        <Guilloche src="/home/passport-right.svg" />
         <div className="pp-h">
           <b>Your outlook</b>
           <span>Example</span>

@@ -1,4 +1,5 @@
 import type { HomeAtlasView } from "@/lib/home/atlas";
+import { Guilloche } from "./guilloche";
 import { formatMonth } from "@/lib/report/copy";
 import { fullReportHref } from "./try-it-href";
 import { HomeStamp } from "./home-stamp";
@@ -23,19 +24,7 @@ export function AtlasEvidence({
       data-atlas-evidence
       data-snapshot={view.provenance.snapshotId}
     >
-      <svg
-        className="guill"
-        viewBox="0 0 600 520"
-        preserveAspectRatio="xMidYMid slice"
-        aria-hidden="true"
-      >
-        <image
-          href="/home/passport-evidence.svg"
-          width="600"
-          height="520"
-          preserveAspectRatio="xMidYMid slice"
-        />
-      </svg>
+      <Guilloche src="/home/passport-evidence.svg" />
       <div className="passport-topline">
         <span>Published invitation evidence</span>
         <span>{formatMonth(view.provenance.asAt)}</span>
