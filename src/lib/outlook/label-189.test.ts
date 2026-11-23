@@ -199,3 +199,47 @@ describe("label189 edge cases", () => {
     );
   });
 });
+
+describe("label189 for an occupation off the Home Affairs 189 list", () => {
+  const farmer = core("121111");
+  const offList = (points: number, eligible: boolean | null = true) =>
+    label189({ points, eligible, core: farmer, listed189: false });
+
+  it("is not open at any score, without asking to confirm dates", () => {
+    for (const points of [55, 65, 80, 100]) {
+      const r = offList(points);
+      expect(r.label).toBe("not-open");
+      expect(r.offList).toBe(true);
+    }
+    expect(offList(80, null).why).toBe(
+      "This occupation isn't on the Home Affairs list for 189, so 189 isn't available at any score.",
+    );
+  });
+  it("says so even for an occupation with no published data", () => {
+    const r = label189({
+      points: 75,
+      eligible: true,
+      core: null,
+      listed189: false,
+    });
+    expect(r).toMatchObject({ label: "not-open", offList: true, ahead: null });
+  });
+  it("still names a failed basic requirement first", () => {
+    const r = offList(80, false);
+    expect(r.label).toBe("not-eligible");
+    expect(r.offList).toBe(true);
+  });
+  it("reads the published data alone when the list is unreadable", () => {
+    const r = label189({
+      points: 80,
+      eligible: true,
+      core: farmer,
+      listed189: null,
+    });
+    expect(r).toMatchObject({ label: "no-data", offList: false });
+    expect(
+      label189({ points: 80, eligible: true, core: nurse, listed189: true })
+        .label,
+    ).toBe("very-strong");
+  });
+});

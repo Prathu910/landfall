@@ -143,15 +143,18 @@ describe("buildRoute", () => {
     });
   });
 
-  it("Sana: no data checks the listing state, then waits", () => {
+  // This helper loads Greenkeeper's core, whose states read "not invited";
+  // the product's no-core path is pinned in view.test.ts.
+  it("Sana: off the 189 list, keeps only the state visas in the EOI", () => {
     const route = run("nodata");
-    expect(titles(route)).toEqual([
-      "Today",
-      "Check WA's program",
-      "Submit EOI",
-      "Wait for a state",
+    expect(route.steps.map((s) => `${s.title} [${s.sub}]`)).toEqual([
+      "Today [21 Nov 2026]",
+      "Keep your EOI in [190 + 491]",
+      "Check other occupations [you could be assessed in]",
+      "Watch WA [they still list you]",
     ]);
-    expect(route.steps[0].label).toBe("no-data");
+    // 189 isn't available, so today carries no 189 label.
+    expect(route.steps[0].label).toBeNull();
   });
 
   it("Meera: a long 189 wait keeps 189 and adds the state", () => {

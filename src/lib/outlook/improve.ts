@@ -25,7 +25,8 @@ export type Move = {
   date: string | null;
 };
 export type Improve = {
-  mode: "improve" | "protect" | "points-not-problem" | "plain";
+  /** "off-list": the federal list closes 189, so points only help 190 and 491. */
+  mode: "improve" | "protect" | "points-not-problem" | "plain" | "off-list";
   banner: string | null;
   moves: Move[];
   losses: Loss[];
@@ -201,10 +202,23 @@ function plainLines(base: ProfileOutlook, scored: Scored[]): string[] {
 }
 
 function modeOf(input: OutlookInput, base: ProfileOutlook): Improve["mode"] {
+  if (base.v189.offList) return "off-list";
   if (no189Data(input.core)) return "plain";
   if (base.v189.label === "very-strong") return "protect";
   if (base.v189.label === "not-invited") return "points-not-problem";
   return "improve";
+}
+
+/** Which state visas the federal list still has the occupation for. */
+function offListBanner(base: ProfileOutlook): string {
+  const { federal190, federal491 } = base.listMembership;
+  const visas = [federal190 ? "190" : "", federal491 ? "491" : ""].filter(
+    Boolean,
+  );
+  if (visas.length === 0) {
+    return "Points won't change this: the Home Affairs list doesn't include this occupation for 189, 190 or 491.";
+  }
+  return `More points won't open 189: the Home Affairs list doesn't include this occupation for it. They still count for ${visas.join(" and ")}, with state nomination.`;
 }
 
 function bannerOf(mode: Improve["mode"], base: ProfileOutlook): string | null {
@@ -213,6 +227,7 @@ function bannerOf(mode: Improve["mode"], base: ProfileOutlook): string | null {
   if (blockerOf(base.points) === "age") {
     return `Points can't change this: 189, 190 and 491 all ${ageRule(base.points.ineligibleReasons)}.`;
   }
+  if (mode === "off-list") return offListBanner(base);
   if (mode !== "points-not-problem") return null;
   if (base.stamp.kind !== "combined") return BANNERS.closed189;
   return base.stamp.label === "not-invited"
@@ -229,8 +244,9 @@ export function buildImprove(
   // Each candidate is a full re-evaluation, so it runs once and only when
   // something reads it: shown moves, plain lines or the opener.
   const needOpener = base.v189.label === "not-eligible";
+  const plain = mode === "plain" || mode === "off-list";
   const scored =
-    shown || mode === "plain" || needOpener ? scoreCandidates(input, base) : [];
+    shown || plain || needOpener ? scoreCandidates(input, base) : [];
   const all =
     shown || needOpener
       ? buildMoves(input, base, scored, mode === "improve")
@@ -243,8 +259,9 @@ export function buildImprove(
       points: base.points.base,
       eligible: base.points.eligible,
       label: base.v189.label,
+      listed189: base.listMembership.federal189,
     }),
-    plain: mode === "plain" ? plainLines(base, scored) : [],
+    plain: plain ? plainLines(base, scored) : [],
     opener: openerOf(base, all),
   };
 }

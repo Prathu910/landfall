@@ -5,6 +5,7 @@ import { MIN_POINTS } from "./label-189";
 import { isLodged } from "./phrases";
 import {
   dated,
+  eoiVisas,
   improvementStep,
   lodgedStart,
   today,
@@ -18,7 +19,7 @@ import type { Dated } from "./route-steps";
 export function nothingSuits(input: OutlookInput, o: ProfileOutlook): Dated[] {
   return [
     today(input, o),
-    dated("Keep your EOI in", "189 + 190 + 491", null),
+    dated("Keep your EOI in", eoiVisas(o), null),
     dated("Check other occupations", "you could be assessed in", null),
     ...watchListing(o),
   ];
@@ -32,13 +33,17 @@ export function noData(input: OutlookInput, o: ProfileOutlook): Dated[] {
       : "Check state programs";
   // A lodged reader keeps the EOI they have rather than submitting again.
   const eoi = isLodged(input)
-    ? dated("Keep your EOI in", "189 + 190 + 491", null)
-    : dated("Submit EOI", "189 + 190 + 491", null);
+    ? dated("Keep your EOI in", eoiVisas(o), null)
+    : dated("Submit EOI", eoiVisas(o), null);
   return [
     today(input, o),
     dated(title, "190 and 491", null),
     eoi,
-    dated("Wait for a state", "or a 189 round", null),
+    dated(
+      "Wait for a state",
+      o.v189.offList ? "190 or 491" : "or a 189 round",
+      null,
+    ),
   ];
 }
 
@@ -106,12 +111,12 @@ export function notEligible(
     ? dated("Update your EOI", "the day results arrive", null)
     : dated(
         "Submit EOI",
-        `189 + 190 + 491, at ${opener.to.points} points`,
+        `${eoiVisas(o)}, at ${opener.to.points} points`,
         null,
       );
   return [
     ...start,
-    improvementStep(opener, blocker === "expired"),
+    improvementStep(opener, blocker === "expired", o.v189.offList),
     eoi,
     ...watchListing(o),
   ];

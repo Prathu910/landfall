@@ -59,9 +59,9 @@ describe("estimatedWait", () => {
     );
   });
 
-  it("sana, with no core, cannot be estimated", () => {
+  it("sana, off the 189 list with no core, has no 189 wait", () => {
     expect(wait("nodata", { core: null, detail: null })).toEqual({
-      text: "We can't estimate one without data.",
+      text: "189: not available for your occupation, so there's no 189 wait. 190 and 491: no data to estimate from.",
       pace: null,
     });
   });

@@ -34,6 +34,14 @@ const NO_VISA_INVITING = /No visa is inviting/;
 const OPENS_189 = /opens 189/;
 // After a change, 189 still has nothing to open (ruling R34).
 const STILL_CLOSED = ["not-invited", "no-data"];
+// Off the Home Affairs 189 list, nothing may suggest 189 is a data question,
+// that an EOI for it can be submitted, or that anything opens it.
+const OFF_LIST_BANNED = [
+  /not enough .*189 data|enough published 189 data/i,
+  /submit an EOI/i,
+  /opens 189|189 can open/i,
+  /\b189 \+|\+ 189\b|Keep 189 ticked/,
+];
 
 type Loaded = { code: string; state: OccupationState };
 
@@ -77,9 +85,29 @@ function liftsAny(view: ReportOutlookView): boolean {
   return view.improve.moves.some((m) => rank(m.to.label) < rank(m.from.label));
 }
 
+/** The founder's 23 Nov 2026 decision: the report says 189 isn't available. */
+function offListProblems(code: string, view: ReportOutlookView): string[] {
+  if (rules.federal?.entries[code]?.["189"] === true) return [];
+  const problems = stringsOf(view).flatMap((text) =>
+    OFF_LIST_BANNED.some((banned) => banned.test(text))
+      ? [`${code}: off the 189 list but says "${text}"`]
+      : [],
+  );
+  const card = view.visas[0];
+  if (
+    card.stampWord !== "Not available" ||
+    view.facts.visas[0].label !== "Not available"
+  ) {
+    problems.push(
+      `${code}: off the 189 list but its 189 stamp says ${card.stampWord}`,
+    );
+  }
+  return problems;
+}
+
 /** Each problem as "code: what", so a failure lists every case at once. */
 function problemsOf(code: string, view: ReportOutlookView): string[] {
-  const problems: string[] = [];
+  const problems: string[] = offListProblems(code, view);
   const read = checkRead(view.templateRead, view.facts);
   if (!read.ok) problems.push(`${code}: template read fails (${read.reason})`);
   for (const text of stringsOf(view)) {

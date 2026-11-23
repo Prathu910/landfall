@@ -38,19 +38,19 @@ describe("a combined long-wait stamp names each visa (Management Accountant at 6
   });
 });
 
-describe("under 65 with no 189 data (Aquaculture Farmer at 55)", () => {
+describe("under 65 with no 189 data (Pressure Welder at 55)", () => {
   const view = reportFor({
     ...PLANNER,
-    occupation: "121111",
+    occupation: "322312",
     overseasYears: 0,
   });
 
-  it("names the long wait, the points 189 needs and the closed visa", () => {
+  it("names the points 189 needs and each closed visa", () => {
     expect(view.headline.h1).toBe(
-      "491 is a long wait at your points, while 189 needs 10 more points and 190 isn't open to you.",
+      "189 needs 10 more points, while 190 isn't open to you and 491 isn't inviting your occupation.",
     );
     expect(view.wait).toBe(
-      "491: unlikely without more points. 189: not possible until you reach 65. 190: not open to you.",
+      "189: not possible until you reach 65. 190: not open to you. 491: no recent invitations.",
     );
   });
 
@@ -62,7 +62,7 @@ describe("under 65 with no 189 data (Aquaculture Farmer at 55)", () => {
       "Today [21 Nov 2026]",
       "Superior English [A new English test result at Superior level.]",
       "Submit EOI [189 + 190 + 491, at 75 points]",
-      "Watch QLD and WA [they still list you]",
+      "Watch NSW, QLD, SA and WA [they still list you]",
     ]);
   });
 
@@ -70,6 +70,67 @@ describe("under 65 with no 189 data (Aquaculture Farmer at 55)", () => {
     expect(view.improve.mode).toBe("plain");
     expect(view.improveLabels).toBe(false);
     expect(view.templateRead).not.toMatch(/Not enough data/);
+  });
+});
+
+describe("off the Home Affairs 189 list (Aquaculture Farmer at 55, founder 23 Nov 2026)", () => {
+  const view = reportFor({
+    ...PLANNER,
+    occupation: "121111",
+    overseasYears: 0,
+  });
+
+  it("says 189 isn't available, not that it needs points or data", () => {
+    expect(view.headline.h1).toBe(
+      "491 is a long wait at your points, while 189 isn't available for your occupation and 190 isn't open to you.",
+    );
+    expect(view.headline.fact).toBe(
+      "The Home Affairs list doesn't include Aquaculture Farmer for 189, and neither 190 nor 491 is Competitive or better for you.",
+    );
+    expect(view.wait).toBe(
+      "491: unlikely without more points. 189: not available for your occupation, so there's no 189 wait. 190: not open to you.",
+    );
+  });
+
+  it("stamps 189 Not available in neutral ink, as the occupation page does", () => {
+    expect(view.visas[0]).toMatchObject({
+      stampWord: "Not available",
+      label: "not-open",
+      ink: "no-data",
+      caption: "Not on the Home Affairs list for 189.",
+    });
+    expect(view.facts.visas[0].label).toBe("Not available");
+  });
+
+  it("points to 491 with nomination, never to a 189 EOI", () => {
+    expect(view.headline.best).toBe(
+      "None right now. More points could help 491, with state nomination. Watch QLD and WA, which still list your occupation.",
+    );
+    expect(view.improve.mode).toBe("off-list");
+    expect(view.improve.banner).toBe(
+      "More points won't open 189: the Home Affairs list doesn't include this occupation for it. They still count for 491, with state nomination.",
+    );
+    expect(steps(view)).toEqual([
+      "Today [21 Nov 2026]",
+      "Keep your EOI in [491]",
+      "Check other occupations [you could be assessed in]",
+      "Watch QLD and WA [they still list you]",
+    ]);
+    const all = JSON.stringify(view);
+    expect(all).not.toMatch(
+      /submit an EOI|opens 189|enough published 189 data/i,
+    );
+  });
+
+  it("shows no 189 charts and marks 189 on the points page", () => {
+    expect(view.cutoffs).toBeNull();
+    expect(view.queue).toBeNull();
+    expect(view.cutoffsEmpty).toBe(
+      "189 isn't available for Aquaculture Farmer, so there are no 189 cut-offs to show.",
+    );
+    expect(view.pointsPage.totals[0].label).toBe(
+      "189 Independent (not available for this occupation)",
+    );
   });
 });
 

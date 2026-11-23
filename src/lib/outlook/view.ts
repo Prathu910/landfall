@@ -63,7 +63,7 @@ export type OutlookView =
       queueEmpty: string | null;
       route: Route;
       improve: Improve;
-      /** False in plain mode: its moves and losses carry no-data labels the UI must not show. */
+      /** False in plain and off-list modes: their losses carry labels that mean nothing there. */
       improveLabels: boolean;
       facts: ReportFacts;
       templateRead: string;
@@ -152,15 +152,13 @@ function reportView(entered: OutlookInput): OutlookView {
   const month = dataMonth(input);
   const name = occupationName(input);
   const base = o.points.base;
-  const cutoffs = cutoffColumns(input.core, base, improve);
+  // Off the 189 list there is no 189 position to chart.
+  const offList = o.v189.offList;
+  const cutoffs = offList ? null : cutoffColumns(input.core, base, improve);
   const closed = o.v189.label === "not-invited";
-  const queue = queueView(
-    input.core,
-    input.detail,
-    base,
-    input.profile.eoiDate,
-    closed,
-  );
+  const queue = offList
+    ? null
+    : queueView(input.core, input.detail, base, input.profile.eoiDate, closed);
   return {
     kind: "report",
     headline: buildHeadline(input, o, improve),
@@ -173,14 +171,18 @@ function reportView(entered: OutlookInput): OutlookView {
     cutoffs,
     cutoffsEmpty: cutoffs
       ? null
-      : `No 189 round in the published results lists ${name}, so there are no cut-offs to show.`,
+      : offList
+        ? `189 isn't available for ${name}, so there are no 189 cut-offs to show.`
+        : `No 189 round in the published results lists ${name}, so there are no cut-offs to show.`,
     queue,
     queueEmpty: queue
       ? null
-      : `SkillSelect hasn't published any 189 EOI counts for ${name}, so there's no queue to show.`,
+      : offList
+        ? `189 isn't available for ${name}, so there's no 189 queue to show.`
+        : `SkillSelect hasn't published any 189 EOI counts for ${name}, so there's no queue to show.`,
     route,
     improve,
-    improveLabels: improve.mode !== "plain",
+    improveLabels: improve.mode !== "plain" && improve.mode !== "off-list",
     facts,
     templateRead: readTemplate(facts),
     points,
@@ -190,6 +192,7 @@ function reportView(entered: OutlookInput): OutlookView {
       occupation: name,
       asOf: input.asOf,
       month: dataMonthKey(input),
+      available189: !o.v189.offList,
     }),
     evidence: buildEvidence(input, o),
     methodLines: [...METHOD_LINES],

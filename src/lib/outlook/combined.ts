@@ -2,7 +2,7 @@ import type { Visa } from "../data/types";
 import { ageRule, blockerOf, expiredItems, expiredPhrase } from "./eligibility";
 import type { ProfileOutlook } from "./evaluate-profile";
 import type { Improve } from "./improve";
-import { MIN_POINTS } from "./label-189";
+import { MIN_POINTS, isOffList } from "./label-189";
 import { LABEL_RANK } from "./labels";
 import type { OutlookLabel } from "./labels";
 import { capital, joinAnd, moveLabel } from "./phrases";
@@ -37,9 +37,15 @@ function grouped(o: ProfileOutlook, textOf: (row: Row) => string): Group[] {
   return groups.sort((a, b) => rank(a) - rank(b));
 }
 
+/** 189 for an occupation the federal list leaves off it. */
+function offList189(o: ProfileOutlook, row: Row): boolean {
+  return row.visa === "189" && isOffList(o.v189);
+}
+
 function clause(o: ProfileOutlook, row: Row, many: boolean): string {
   const is = many ? "are" : "is";
   const isnt = many ? "aren't" : "isn't";
+  if (offList189(o, row)) return "isn't available for your occupation";
   switch (row.label) {
     case "long-wait":
       return `${is} a long wait at your points`;
@@ -87,7 +93,10 @@ export function combinedH1(o: ProfileOutlook): string {
   return labelSentence(o);
 }
 
-function waitPhrase(row: Row): string {
+function waitPhrase(o: ProfileOutlook, row: Row): string {
+  if (offList189(o, row)) {
+    return "not available for your occupation, so there's no 189 wait";
+  }
   switch (row.label) {
     case "long-wait":
       return "unlikely without more points";
@@ -131,21 +140,41 @@ export function combinedWait(o: ProfileOutlook): string | null {
     }
   }
   // Not invited keeps the spec 6.5 text ("No 189 invitations to measure.").
-  if (label === "not-open") {
+  if (label === "not-open" && !isOffList(o.v189)) {
     return "None of the three visas is open to you, so there's no wait to measure.";
   }
-  if (label !== "long-wait" && label !== "not-eligible") return null;
-  const groups = grouped(o, waitPhrase);
+  if (label !== "long-wait" && label !== "not-eligible" && label !== "not-open")
+    return null;
+  const groups = grouped(o, (row) => waitPhrase(o, row));
   if (groups.length === 1) return `${capital(groups[0].text)}.`;
   return groups.map((g) => `${joinAnd(g.visas)}: ${g.text}.`).join(" ");
+}
+
+/** Neither state visa has a reading: no core, or no published invitations. */
+export function statesHaveNoData(o: ProfileOutlook): boolean {
+  return [o.v190, o.v491].every((v) => (v?.label ?? "no-data") === "no-data");
+}
+
+/** "190 and 491", "491" or "" for the state visas the federal list has. */
+export function listedStateVisas(o: ProfileOutlook): string {
+  const { federal190, federal491 } = o.listMembership;
+  return joinAnd(
+    [federal190 ? "190" : "", federal491 ? "491" : ""].filter(Boolean),
+  );
 }
 
 /**
  * What reaching 65 means for 189. It opens 189 only when 189 is inviting the
  * occupation; otherwise the reader can submit an EOI, but nothing more
- * (ruling R34).
+ * (ruling R34). Off the federal 189 list it never opens 189.
  */
-function openerOutcome(after: OutlookLabel): string {
+function openerOutcome(o: ProfileOutlook, after: OutlookLabel): string {
+  if (o.v189.offList) {
+    const visas = listedStateVisas(o);
+    return visas
+      ? `, though 189 isn't available for your occupation; ${visas} may be, with state nomination.`
+      : ", though the Home Affairs list doesn't include your occupation for 189, 190 or 491.";
+  }
   const submit = ", so you can submit an EOI, though";
   if (after === "not-invited")
     return `${submit} 189 isn't inviting your occupation.`;
@@ -164,7 +193,7 @@ export function notEligibleBest(o: ProfileOutlook, improve: Improve): string {
   const opener = improve.opener;
   if (opener) {
     const reach = `None yet. ${capital(moveLabel(opener))} would take you to ${opener.to.points} points`;
-    return `${reach}${openerOutcome(opener.to.label)}`;
+    return `${reach}${openerOutcome(o, opener.to.label)}`;
   }
   if (blocker === "expired") {
     return `None yet. Renew ${expiredPhrase(reasons)} first: it's a basic requirement.`;

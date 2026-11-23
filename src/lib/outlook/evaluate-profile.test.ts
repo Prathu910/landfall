@@ -69,14 +69,21 @@ describe("evaluateProfile with no core", () => {
     rules: RULES,
   });
 
-  it("is combined no data with no 190 or 491 label", () => {
+  // Greenkeeper is off the Home Affairs 189 list, so 189 is "not open" even
+  // without published data, and that is the best label of the three.
+  it("is combined not open, from 189's list, with no 190 or 491 label", () => {
     expect(outlook.v190).toBeNull();
     expect(outlook.v491).toBeNull();
-    expect(outlook.stamp).toMatchObject({ kind: "combined", label: "no-data" });
+    expect(outlook.v189).toMatchObject({ label: "not-open", offList: true });
+    expect(outlook.stamp).toMatchObject({
+      kind: "combined",
+      label: "not-open",
+    });
   });
 
   it("reads list membership from the rules by occupation code", () => {
     expect(outlook.listMembership).toEqual({
+      federal189: false,
       federal190: true,
       federal491: true,
       states: ["WA"],
@@ -85,6 +92,19 @@ describe("evaluateProfile with no core", () => {
 });
 
 describe("evaluateProfile list membership", () => {
+  it("falls back on the published data when the federal list is unreadable", () => {
+    const outlook = evaluateProfile({
+      profile: SCENARIOS.nodata,
+      asOf: AS_OF,
+      core: null,
+      detail: null,
+      rules: { ...RULES, federal: null },
+    });
+    expect(outlook.listMembership.federal189).toBeNull();
+    expect(outlook.v189).toMatchObject({ label: "no-data", offList: false });
+    expect(outlook.stamp).toMatchObject({ kind: "combined", label: "no-data" });
+  });
+
   it("lists every state whose imported list holds the occupation", () => {
     expect(run("none").listMembership.states).toEqual(["SA", "WA"]);
   });

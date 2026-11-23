@@ -13,12 +13,14 @@ const TITLES: Record<Mode, string> = {
   protect: "Protect your points",
   "points-not-problem": "How to improve",
   plain: "How to improve",
+  "off-list": "How to improve",
 };
 const SUBS: Record<Mode, string> = {
   improve: "Each step, and what your outlook becomes after it.",
   protect: "You don't need more points. These dates could cost you some.",
   "points-not-problem": "What extra points would and wouldn't change.",
   plain: "Extra points still help, but without data we can't show how much.",
+  "off-list": "What extra points would and wouldn't change.",
 };
 const BANNER_LABEL: Partial<Record<Mode, OutlookLabel>> = {
   protect: "very-strong",

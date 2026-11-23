@@ -1,5 +1,5 @@
 import { DEADLINE } from "./facts";
-import { MIN_POINTS } from "./label-189";
+import { MIN_POINTS, NOT_AVAILABLE } from "./label-189";
 import { LABEL_RANK, labelName } from "./labels";
 import { lowerFirst, theStateName } from "./phrases";
 import { MAX_WORDS, wordCount } from "./read-contract";
@@ -27,8 +27,9 @@ function stateBackup(facts: ReportFacts): Visa | null {
   return named[0] ?? null;
 }
 
-// "Not enough data" is no reading, so a sentence never quotes it as one.
-const NO_READING = ["Not enough data", "Too few to count"];
+// "Not enough data" is no reading, so a sentence never quotes it as one;
+// nor is "Not available", which no change of points alters.
+const NO_READING = ["Not enough data", "Too few to count", NOT_AVAILABLE];
 
 // Display names, best first (labels.ts LABEL_RANK), so the read can tell a
 // change that lifts the 189 label from one that only moves it sideways.
@@ -123,7 +124,10 @@ function leadState(facts: ReportFacts): string[] {
     sentences.push(
       `More points won't fix this while 189 isn't inviting your occupation. ${v189.caption}`,
     );
-  } else if (v189.label === "Not eligible yet") {
+  } else if (
+    v189.label === "Not eligible yet" ||
+    v189.label === NOT_AVAILABLE
+  ) {
     sentences.push(v189.caption);
   } else {
     sentences.push(`For 189, ${lowerFirst(v189.caption)}`);
@@ -155,6 +159,13 @@ function leadCombined(facts: ReportFacts): string[] {
     ];
   }
   const first = gains(facts)[0];
+  if (v189.label === NOT_AVAILABLE) {
+    return [
+      `189 isn't available for ${facts.occupation}: it isn't on the Home Affairs list for 189.`,
+      "At your points, neither 190 nor 491 is Competitive or better.",
+      ...(first ? [gainSentence(facts, first)] : []),
+    ];
+  }
   return [
     `None of the three visas is Competitive or better at your ${v189.points} points.`,
     v189.caption,

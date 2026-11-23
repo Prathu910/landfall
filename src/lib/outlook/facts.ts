@@ -4,7 +4,7 @@ import { formatSummed } from "../report/copy";
 import { STATE_NAMES } from "../state-outlook/context";
 import type { OutlookInput, ProfileOutlook } from "./evaluate-profile";
 import type { Improve, Loss, Move } from "./improve";
-import { MIN_POINTS } from "./label-189";
+import { MIN_POINTS, NOT_AVAILABLE, name189 } from "./label-189";
 import { labelName } from "./labels";
 import {
   dataMonth,
@@ -103,7 +103,7 @@ function visas(input: OutlookInput, o: ProfileOutlook): Facts["visas"] {
   return [
     {
       visa: "189",
-      label: labelName(o.v189.label, o.v189.tooFew),
+      label: name189(o.v189),
       state: null,
       points: points.base,
       caption: caption189(input, o),
@@ -149,7 +149,8 @@ function counts(input: OutlookInput, o: ProfileOutlook): Count[] {
       numbers: v189.lastThree,
     });
   }
-  const recent = input.core?.rounds189.slice(0, 6) ?? [];
+  // Off the 189 list, 189 rounds are no measure of the reader.
+  const recent = v189.offList ? [] : (input.core?.rounds189.slice(0, 6) ?? []);
   if (recent.length > 0) {
     const enough = recent.filter(
       (r) => r.cutoff !== null && r.cutoff <= o.points.base,
@@ -217,23 +218,24 @@ function lossTitle(loss: Loss): string {
   return plain.startsWith("Your ") ? plain : `Your ${lowerFirst(plain)}`;
 }
 
-function lossChange(loss: Loss): Change {
+function lossChange(loss: Loss, offList: boolean): Change {
+  const notOpen = offList && loss.to.label === "not-open";
   return {
     title: lossTitle(loss),
     fromPoints: loss.from.points,
     toPoints: loss.to.points,
-    toLabel: labelName(loss.to.label),
+    toLabel: notOpen ? NOT_AVAILABLE : labelName(loss.to.label),
     month: longMonth(loss.date.slice(0, 7)),
   };
 }
 
 /** The biggest jump first, then the other moves, then dated losses by date. */
-function changes(improve: Improve): Change[] {
+function changes(improve: Improve, offList: boolean): Change[] {
   const best = improve.moves.filter((m) => m.best);
   const rest = improve.moves.filter((m) => !m.best);
   return [
     ...[...best, ...rest].map(moveChange),
-    ...improve.losses.map(lossChange),
+    ...improve.losses.map((loss) => lossChange(loss, offList)),
   ];
 }
 
@@ -249,7 +251,7 @@ export function buildFacts(
     points.subclass190 - points.base,
     points.subclass491 - points.base,
   ];
-  const list = changes(improve);
+  const list = changes(improve, o.v189.offList);
   const deltas = list.map((c) => Math.abs(c.toPoints - c.fromPoints));
   return {
     occupation: occupationName(input),

@@ -7,7 +7,15 @@ import { chooseStamp } from "./stamp";
 const POINTS = { base: 80, s190: 85, s491: 95 };
 
 function v189(label: OutlookLabel, tooFew = false): Label189 {
-  return { label, tooFew, lastThree: [], ahead: null, tied: null, why: "" };
+  return {
+    label,
+    tooFew,
+    offList: false,
+    lastThree: [],
+    ahead: null,
+    tied: null,
+    why: "",
+  };
 }
 
 function visa(

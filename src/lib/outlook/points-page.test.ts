@@ -102,6 +102,22 @@ describe("buildPointsPage rows", () => {
       { points: 85, label: "491 with nomination (+15)" },
     ]);
   });
+
+  it("marks 189 not available off the Home Affairs 189 list", () => {
+    const profile = SCENARIOS.middle;
+    const page = buildPointsPage({
+      profile,
+      points: calculatePoints(profile, AS_OF),
+      occupation: "Aquaculture Farmer",
+      asOf: AS_OF,
+      month: "2026-10",
+      available189: false,
+    });
+    expect(page.totals[0]).toEqual({
+      points: 70,
+      label: "189 Independent (not available for this occupation)",
+    });
+  });
 });
 
 describe("buildPointsPage passport line", () => {

@@ -165,6 +165,11 @@ describe("buildFacts", () => {
     const facts = factsFor("nodata");
     expect(facts.occupation).toBe("Greenkeeper");
     expect(facts.dataMonth).toBe("October 2026");
-    expect(facts.stamp.label).toBe("Not enough data");
+    // Greenkeeper is off the Home Affairs 189 list.
+    expect(facts.stamp.label).toBe("Not open to you");
+    expect(facts.visas[0].label).toBe("Not available");
+    expect(facts.visas[0].caption).toBe(
+      "This occupation isn't on the Home Affairs list for 189, so 189 isn't available at any score.",
+    );
   });
 });

@@ -13,7 +13,7 @@ import { bestLine } from "./headline-best";
 import { stampedState } from "./headline-context";
 import type { HeadlineCtx, Stamped } from "./headline-context";
 import type { Improve } from "./improve";
-import { CONFIRM, MIN_POINTS } from "./label-189";
+import { CONFIRM, MIN_POINTS, isOffList } from "./label-189";
 import { isAtLeast, labelName } from "./labels";
 import {
   capital,
@@ -63,7 +63,12 @@ function h1(ctx: HeadlineCtx): string {
     if (stamp.label === "not-invited") {
       return `None of the three visas is inviting ${name} right now.`;
     }
-    if (stamp.label === "long-wait" || stamp.label === "not-eligible") {
+    // Off the 189 list, each visa's own reason reads better than "yet".
+    if (
+      stamp.label === "long-wait" ||
+      stamp.label === "not-eligible" ||
+      isOffList(v189)
+    ) {
       return combinedH1(o);
     }
     return "None of the three visas is open to you yet.";
@@ -79,7 +84,7 @@ function h1(ctx: HeadlineCtx): string {
     return "You're on the edge for 189.";
   }
   const where = theState(stamped.state);
-  if (v189.label === "not-invited") {
+  if (v189.label === "not-invited" || isOffList(v189)) {
     return "Your way in is state nomination, not 189.";
   }
   if (v189.label === "not-eligible") {
@@ -146,6 +151,9 @@ function lodgedFact(ctx: HeadlineCtx): string | null {
 function position189(ctx: HeadlineCtx): string {
   const { input, o, name } = ctx;
   const { v189, points } = o;
+  if (isOffList(v189)) {
+    return `189 isn't available for ${name}: the Home Affairs list doesn't include it for 189.`;
+  }
   if (v189.label === "not-invited") {
     const last = lastListedMonth(input);
     const since = last ? `, since ${last}` : "";
@@ -193,15 +201,18 @@ function combinedFact(ctx: HeadlineCtx): string {
     return blockerFact(o.points.ineligibleReasons);
   }
   const last = lastListedMonth(input);
-  const lead =
-    v189.label === "not-invited"
+  const lead = isOffList(v189)
+    ? `The Home Affairs list doesn't include ${name} for 189`
+    : v189.label === "not-invited"
       ? `189 hasn't listed ${name} ${last ? `since ${last}` : "in any of the last 4 rounds"}`
       : `For 189, ${lowerFirst(withoutConfirm(v189.why)).replace(/\.$/, "")}`;
   const noneInvited =
     v190?.label === "not-invited" && v491?.label === "not-invited";
-  const states = noneInvited
-    ? "no state has invited it for 190 or 491 in the last 6 months"
-    : "neither 190 nor 491 is Competitive or better for you";
+  const states = !input.core
+    ? "SkillSelect hasn't published any state invitations for it"
+    : noneInvited
+      ? "no state has invited it for 190 or 491 in the last 6 months"
+      : "neither 190 nor 491 is Competitive or better for you";
   return `${lead}, and ${states}.`;
 }
 
@@ -231,10 +242,10 @@ function why(ctx: HeadlineCtx): string {
   if (stamped) {
     const state = STATE_NAMES[stamped.state];
     const evidence = visaWhy(ctx, stamped.visa);
-    return (
-      `Stamp shows your best visa. ${stamped.visa} ${state} is ${labelName(stamp.label)}: ${evidence}. ` +
-      `189 is ${labelName(v189.label, v189.tooFew)}: ${why189}`
-    );
+    const of189 = isOffList(v189)
+      ? `189: ${why189}`
+      : `189 is ${labelName(v189.label, v189.tooFew)}: ${why189}`;
+    return `Stamp shows your best visa. ${stamped.visa} ${state} is ${labelName(stamp.label)}: ${evidence}. ${of189}`;
   }
   const lead = "so the stamp covers all three.";
   if (stamp.label === "no-data") {

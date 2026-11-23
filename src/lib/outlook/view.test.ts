@@ -99,9 +99,10 @@ const ROWS: Row[] = [
   {
     id: "nodata",
     stamp: { kind: "combined" },
-    stampLabel: "no-data",
-    cards: ["no-data", "no-data", "no-data"],
-    wait: "We can't estimate one without data.",
+    // Greenkeeper is off the Home Affairs 189 list (23 Nov 2026).
+    stampLabel: "not-open",
+    cards: ["not-open", "no-data", "no-data"],
+    wait: "189: not available for your occupation, so there's no 189 wait. 190 and 491: no data to estimate from.",
     bestMove: null,
   },
   {
@@ -170,6 +171,7 @@ describe("buildOutlookView scenarios", () => {
         stampWord: "Very strong",
         points: 90,
         label: "very-strong",
+        ink: "very-strong",
         title: "189 Independent",
         caption: "No EOIs ahead of you.",
         flagText: null,
@@ -182,6 +184,7 @@ describe("buildOutlookView scenarios", () => {
         stampWord: "Strong",
         points: 95,
         label: "strong",
+        ink: "strong",
         title: "190 Nominated",
         caption:
           "New South Wales invited 327–346 EOIs at or below your points in October 2026.",
@@ -195,6 +198,7 @@ describe("buildOutlookView scenarios", () => {
         stampWord: "Strong",
         points: 105,
         label: "strong",
+        ink: "strong",
         title: "491 Regional",
         caption:
           "Victoria invited 98–136 EOIs at or below your points in October 2026.",
@@ -236,12 +240,14 @@ describe("buildOutlookView scenarios", () => {
   it("says when a state is named from its list (ruling R16)", () => {
     const cards = reportOf("nodata").visas;
     expect(cards.map((card) => [card.top, card.stampWord])).toEqual([
-      ["189 ANY STATE", "No data"],
+      ["189 ANY STATE", "Not available"],
       ["190 WA", "On WA list"],
       ["491 WA", "On WA list"],
     ]);
+    // Neutral, like the occupation page's "Not available" stamp.
+    expect(cards[0].ink).toBe("no-data");
     expect(cards.map((card) => card.caption)).toEqual([
-      "No published pool or rounds.",
+      "Not on the Home Affairs list for 189.",
       "Listed by Western Australia.",
       "Check Western Australia's regional program.",
     ]);
@@ -266,11 +272,11 @@ describe("buildOutlookView scenarios", () => {
     const nodata = reportOf("nodata");
     expect(nodata.cutoffs).toBeNull();
     expect(nodata.cutoffsEmpty).toBe(
-      "No 189 round in the published results lists Greenkeeper, so there are no cut-offs to show.",
+      "189 isn't available for Greenkeeper, so there are no 189 cut-offs to show.",
     );
     expect(nodata.queue).toBeNull();
     expect(nodata.queueEmpty).toBe(
-      "SkillSelect hasn't published any 189 EOI counts for Greenkeeper, so there's no queue to show.",
+      "189 isn't available for Greenkeeper, so there's no 189 queue to show.",
     );
   });
 
@@ -292,6 +298,17 @@ describe("buildOutlookView scenarios", () => {
 
   it("uses the not-moving queue when 189 isn't inviting", () => {
     expect(reportOf("none").queue?.aria).toContain("isn't being invited");
+  });
+
+  it("routes Sana (no core, off the 189 list) through the state lists", () => {
+    const steps = reportOf("nodata").route.steps;
+    expect(steps.map((s) => `${s.title} [${s.sub}]`)).toEqual([
+      "Today [21 Nov 2026]",
+      "Check WA's program [190 and 491]",
+      "Submit EOI [190 + 491]",
+      "Wait for a state [190 or 491]",
+    ]);
+    expect(steps[0].label).toBeNull();
   });
 
   it("renders plain mode label-free", () => {
