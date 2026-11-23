@@ -122,30 +122,34 @@
   --stamp-blend: normal;
   --headline-wght: 750;
 }
-@media screen and (prefers-color-scheme: dark) {
-  :root:not([data-mantine-color-scheme="light"]) {
-    --brand-deep: #08121a;
-    --guilloche-opacity: 0.3;
-    --theme-day-display: none;
-    --theme-uv-display: block;
-    --stamp-glow: drop-shadow(
-      0 0 6px color-mix(in oklab, currentColor 22%, transparent)
-    );
-    --stamp-blend: screen;
-    --headline-wght: 720;
+/* Browsers without light-dark() keep the light switches (see the
+   @supports not block at the end). */
+@supports (color: light-dark(#000, #fff)) {
+  @media screen and (prefers-color-scheme: dark) {
+    :root:not([data-mantine-color-scheme="light"]) {
+      --brand-deep: #08121a;
+      --guilloche-opacity: 0.3;
+      --theme-day-display: none;
+      --theme-uv-display: block;
+      --stamp-glow: drop-shadow(
+        0 0 6px color-mix(in oklab, currentColor 22%, transparent)
+      );
+      --stamp-blend: screen;
+      --headline-wght: 720;
+    }
   }
-}
-@media screen {
-  :root[data-mantine-color-scheme="dark"] {
-    --brand-deep: #08121a;
-    --guilloche-opacity: 0.3;
-    --theme-day-display: none;
-    --theme-uv-display: block;
-    --stamp-glow: drop-shadow(
-      0 0 6px color-mix(in oklab, currentColor 22%, transparent)
-    );
-    --stamp-blend: screen;
-    --headline-wght: 720;
+  @media screen {
+    :root[data-mantine-color-scheme="dark"] {
+      --brand-deep: #08121a;
+      --guilloche-opacity: 0.3;
+      --theme-day-display: none;
+      --theme-uv-display: block;
+      --stamp-glow: drop-shadow(
+        0 0 6px color-mix(in oklab, currentColor 22%, transparent)
+      );
+      --stamp-blend: screen;
+      --headline-wght: 720;
+    }
   }
 }
 @media print {
@@ -773,5 +777,140 @@ svg {
 @media screen and (max-width: 600px) {
   :root {
     --brand-gutter: 20px;
+  }
+}
+/* Before light-dark() (Safari 17.5, Chrome 123, Firefox 120) every token
+   above is invalid, so older browsers get the whole light design: each
+   colour token restated with its light value. Derived from the tokens by
+   lightFallback() (src/lib/brand/light-fallback.ts); palette.test.ts fails,
+   printing the expected list, if a token changes without this block. */
+@supports not (color: light-dark(#000, #fff)) {
+  :root,
+  :root[data-mantine-color-scheme] {
+    color-scheme: light;
+    --ink: #1b1a17;
+    --newsprint: #f3eee3;
+    --card: #fbf8f2;
+    --surface: #ece7dc;
+    --saffron: #d9731a;
+    --saffron-text: #a04e0c;
+    --slate: #2e4a7d;
+    --muted: #4a463e;
+    --muted-soft: #6b6558;
+    --rule: #ddd4c2;
+    --status-strongest-fg: #1f5136;
+    --status-strongest-bg: #ddebdf;
+    --status-watching-fg: #2e4a7d;
+    --status-watching-bg: #e4e9f2;
+    --status-needs-answers-fg: #4a463e;
+    --status-needs-answers-bg: #fbf8f2;
+    --status-unverified-fg: #2e4a7d;
+    --status-unverified-bg: #fbf8f2;
+    --status-not-open-fg: #8a2e22;
+    --status-not-open-bg: #f5deda;
+    --question-fg: #1b1a17;
+    --question-bg: #f6ddb5;
+    --label-very-strong-ink: #0f6b3c;
+    --label-very-strong-bg: #d6efe0;
+    --label-strong-ink: #1e7a4c;
+    --label-strong-bg: #e5f3ea;
+    --label-competitive-ink: #996000;
+    --label-competitive-bg: #fbefd6;
+    --label-long-wait-ink: #be3f0b;
+    --label-long-wait-bg: #fde8db;
+    --label-not-invited-ink: #b42318;
+    --label-not-invited-bg: #fce5e3;
+    --label-not-eligible-ink: #5b3f9e;
+    --label-not-eligible-bg: #ece6f8;
+    --label-not-open-ink: #b42318;
+    --label-not-open-bg: #fce5e3;
+    --label-no-data-ink: #586470;
+    --label-no-data-bg: #e8ecef;
+    --focus-ring: #2e4a7d;
+    --focus-ring-on-dark: #f3eee3;
+    --muted-on-dark: #d6cfbf;
+    --saffron-on-dark: #f0a35e;
+    --brand-ink: #12202c;
+    --brand-paper: #ffffff;
+    --brand-sage: #eef2f0;
+    --brand-muted: #52616a;
+    --brand-line: #d5ded8;
+    --brand-green: #3b6551;
+    --brand-on-dark: #c4d0d0;
+    --brand-dark-line: #41525b;
+    --brand-focus: #315c87;
+    --brand-ink-fill: #12202c;
+    --brand-on-fill: #ffffff;
+    --brand-ink-fill-hover: #1f3446;
+    --input-border: #7f918a;
+    --shadow-ink: #12202c;
+    --chart-quiet: #b9af9a;
+    --rule-soft: #ece7dc;
+    --guilloche-a: #bcd0c4;
+    --guilloche-b: #d6e1da;
+    --elevate-edge: transparent;
+    --homepage-paper: #fff;
+    --homepage-color-1f3446: #1f3446;
+    --homepage-color-2a3946: #2a3946;
+    --homepage-color-c7d1cb: #c7d1cb;
+    --homepage-color-12202c55: #12202c55;
+    --homepage-color-b9c4be: #b9c4be;
+    --homepage-color-12202c66: #12202c66;
+    --homepage-color-dce3df: #dce3df;
+    --homepage-color-34424e: #34424e;
+    --homepage-color-cbd3da: #cbd3da;
+    --homepage-muted: #52606b;
+    --homepage-color-61776b: #61776b;
+    --homepage-color-12202c44: #12202c44;
+    --homepage-color-d0d9d3: #d0d9d3;
+    --homepage-rule: #d8dfdb;
+    --homepage-color-ffffff88: #ffffff88;
+    --homepage-ink: #12202c;
+    --homepage-color-c8d2cb: #c8d2cb;
+    --homepage-color-e8eeea: #e8eeea;
+    --homepage-color-f8fbf8: #f8fbf8;
+    --homepage-color-fff9: #fff9;
+    --homepage-color-ccd6ce: #ccd6ce;
+    --homepage-color-12202c22: #12202c22;
+    --homepage-color-adbbb2: #adbbb2;
+    --homepage-color-dbe6de: #dbe6de;
+    --homepage-color-5b7365: #5b7365;
+    --homepage-color-c8dacf: #c8dacf;
+    --homepage-color-466553: #466553;
+    --homepage-focus: #2446d6;
+    --homepage-color-5b6c63: #5b6c63;
+    --homepage-desk: #eef2f0;
+    --homepage-color-52665b: #52665b;
+    --homepage-color-fff8: #fff8;
+    --homepage-color-cbd5cd: #cbd5cd;
+    --homepage-color-bdcbbf: #bdcbbf;
+    --homepage-color-f8faf8: #f8faf8;
+    --homepage-color-8fa99a: #8fa99a;
+    --homepage-color-9ab2a1: #9ab2a1;
+    --homepage-color-e1e9e3: #e1e9e3;
+    --homepage-color-a3b8aa: #a3b8aa;
+    --homepage-co: #996000;
+    --homepage-competitive: #996000;
+    --homepage-strong: #0f6b3c;
+    --homepage-color-815c32: #815c32;
+    --homepage-color-a23b39: #a23b39;
+    --homepage-color-eef3ee: #eef3ee;
+    --homepage-color-607a68: #607a68;
+    --homepage-color-a9b9ac: #a9b9ac;
+    --homepage-color-c0cec3: #c0cec3;
+    --homepage-color-d3dfd5: #d3dfd5;
+    --homepage-color-92a396: #92a396;
+    --check-ink: #12202c;
+    --check-muted: #52616a;
+    --check-sage: #eef2f0;
+    --check-paper: #ffffff;
+    --check-line: #d5ded8;
+    --check-soft: #f7f9f7;
+    --check-green: #3b6551;
+    --check-green-soft: #e6eee8;
+    --check-focus: #315c87;
+    --check-error: #b42318;
+    --check-shadow:
+      0 1.5rem 4rem -2.5rem #12202c35, inset 0 1px 0 var(--elevate-edge);
   }
 }

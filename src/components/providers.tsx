@@ -8,7 +8,7 @@ import {
 import { DatesProvider } from "@mantine/dates";
 import { MotionConfig } from "motion/react";
 import { INK_RAMP, NIGHT_RAMP } from "@/lib/brand/palette";
-import { THEME_STORAGE_KEY } from "@/lib/brand/theme";
+import { LIGHT_DARK_PROBE, THEME_STORAGE_KEY } from "@/lib/brand/theme";
 import { ThemeSync } from "@/components/theme/theme-sync";
 
 const theme = createTheme({
@@ -68,6 +68,11 @@ const colorSchemeManager = localStorageColorSchemeManager({
   key: THEME_STORAGE_KEY,
 });
 
+/** Browsers without light-dark() stay light (the CSS hides the control). */
+const lightOnly =
+  typeof window !== "undefined" &&
+  !window.CSS?.supports("color", LIGHT_DARK_PROBE);
+
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <MantineProvider
@@ -75,6 +80,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       defaultColorScheme="auto"
       colorSchemeManager={colorSchemeManager}
       cssVariablesResolver={resolveCssVariables}
+      forceColorScheme={lightOnly ? "light" : undefined}
     >
       <ThemeSync />
       <DatesProvider settings={{ locale: "en", firstDayOfWeek: 1 }}>

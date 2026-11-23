@@ -138,3 +138,10 @@
     display: none;
   }
 }
+/* Without light-dark() the site is light only, so there is no choice. */
+@supports not (color: light-dark(#000, #fff)) {
+  .button,
+  .segmentedBlock {
+    display: none;
+  }
+}

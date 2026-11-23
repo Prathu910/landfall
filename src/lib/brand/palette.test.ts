@@ -24,6 +24,8 @@ import {
   TEXT_PAIRS,
   TEXT_PAIRS_DARK,
 } from "./palette";
+import { lightFallback } from "./light-fallback";
+import { LIGHT_DARK_PROBE } from "./theme";
 
 const kebab = (name: string) =>
   name.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
@@ -55,6 +57,15 @@ function withoutPrintBlocks(css: string): string {
 }
 
 const globals = readFileSync("src/app/globals.css", "utf8");
+const FALLBACK_START = `@supports not (color: ${LIGHT_DARK_PROBE})`;
+/** globals.css without the light fallback block at its end. */
+const themed = globals.slice(0, globals.indexOf(FALLBACK_START));
+/** The declarations of the light fallback block, whitespace normalised. */
+const fallback = [
+  ...globals
+    .slice(globals.indexOf(FALLBACK_START))
+    .matchAll(/(--[\w-]+):\s*([^;{}]+);/g),
+].map(([, name, value]) => `${name}: ${value.replace(/\s+/g, " ").trim()};`);
 
 /** `#abc` and `#AABBCC` compare equal. */
 function normalise(hex: string): string {
@@ -163,13 +174,28 @@ describe("globals.css", () => {
     // Plain values switch in the screen-only theme blocks instead.
     const switched = new Set(["--brand-deep"]);
     const declarations = [
-      ...globals.matchAll(/^\s*(--[\w-]+):\s*([^;]+);/gm),
+      ...themed.matchAll(/^\s*(--[\w-]+):\s*([^;]+);/gm),
     ].filter(([, , value]) => /#[0-9a-f]{3,8}\b/i.test(value));
     expect(declarations.length).toBeGreaterThan(100);
     for (const [, name, value] of declarations) {
       if (switched.has(name)) continue;
       expect(value, name).toMatch(/light-dark\(/);
     }
+  });
+  it("gives browsers without light-dark() every token's light value", () => {
+    expect(globals.indexOf(FALLBACK_START)).toBeGreaterThan(0);
+    expect(globals.trimEnd().endsWith("}")).toBe(true);
+    // Regenerate with lightFallback(globals.css) if this fails.
+    expect(fallback).toEqual(lightFallback(themed));
+    expect(fallback.length).toBeGreaterThan(100);
+    expect(fallback).toContain(`--ink: ${PALETTE.ink.toLowerCase()};`);
+    expect(globals).toContain(`@supports (color: ${LIGHT_DARK_PROBE}) {`);
+    // Light only there, so the appearance control hides too.
+    const control = readFileSync(
+      "src/components/theme/theme-control.module.css",
+      "utf8",
+    );
+    expect(control).toContain(FALLBACK_START);
   });
   it("deepens the always-dark panels only at night", () => {
     const night = globals.match(/--brand-deep: (#[0-9a-f]+);/gi) ?? [];
@@ -190,7 +216,11 @@ describe("globals.css", () => {
       f.endsWith(".module.css"),
     )) {
       // Print is always the light design, so print-only literals are fine.
-      const screen = withoutPrintBlocks(readFileSync(file, "utf8"));
+      // A feature test's probe colours (@supports …) are not styles.
+      const screen = withoutPrintBlocks(readFileSync(file, "utf8")).replace(
+        /@supports[^{]*/g,
+        "@supports",
+      );
       expect(screen, file).not.toMatch(/#[0-9a-f]{3,8}\b/i);
       expect(screen, file).not.toMatch(/:\s*(white|black)\s*;/);
     }
