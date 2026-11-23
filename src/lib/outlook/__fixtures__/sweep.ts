@@ -43,6 +43,10 @@ const OFF_LIST_BANNED = [
   /\b189 \+|\+ 189\b|Keep 189 ticked/,
 ];
 
+// Off the 189 list, a claim that points help the state visas (headline-best,
+// improve banner) needs a state visa that invites or has too little data.
+const POINTS_HELP_STATES = /could help (190|491)|still count for (190|491)/;
+
 type Loaded = { code: string; state: OccupationState };
 
 // Loaded once: the rules and asOf are the same for every view.
@@ -93,6 +97,18 @@ function offListProblems(code: string, view: ReportOutlookView): string[] {
       ? [`${code}: off the 189 list but says "${text}"`]
       : [],
   );
+  const responds = view.visas
+    .slice(1)
+    .some(
+      (card) =>
+        card.label === "no-data" || rank(card.label) <= rank("long-wait"),
+    );
+  if (!responds) {
+    const claims = [view.headline.best ?? "", view.improve.banner ?? ""];
+    for (const text of claims.filter((t) => POINTS_HELP_STATES.test(t))) {
+      problems.push(`${code}: no state visa is inviting but says "${text}"`);
+    }
+  }
   const card = view.visas[0];
   if (
     card.stampWord !== "Not available" ||

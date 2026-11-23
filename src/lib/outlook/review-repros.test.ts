@@ -341,3 +341,25 @@ describe("the template read", () => {
     );
   });
 });
+
+describe("off the 189 list with no state visa inviting (Flower Grower at 70)", () => {
+  const view = reportFor({
+    ...PLANNER,
+    occupation: "121212",
+    english: "proficient",
+    overseasYears: 3,
+  });
+
+  it("says points aren't the issue instead of that they could help", () => {
+    expect(view.visas.slice(1).map((card) => card.label)).toEqual([
+      "not-invited",
+      "not-invited",
+    ]);
+    expect(view.headline.best).toBe(
+      "None right now. Points aren't what's holding you back. Watch WA, which still lists your occupation.",
+    );
+    expect(view.improve.banner).toBe(
+      "Points aren't what's holding you back. The Home Affairs list doesn't include this occupation for 189, and more points wouldn't change 190 or 491 right now.",
+    );
+  });
+});

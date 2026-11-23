@@ -74,8 +74,10 @@ function bestOffList(ctx: HeadlineCtx): string {
     return "None: the Home Affairs list doesn't include your occupation for 189, 190 or 491.";
   }
   const watch = watchStates(o.listMembership.states);
-  const points =
-    improve.plain.length > 0
+  // As on the list: when no state visa invites, points aren't the issue.
+  const points = !improve.pointsHelpStates
+    ? "Points aren't what's holding you back."
+    : improve.plain.length > 0
       ? `More points could help ${visas}, with state nomination.`
       : `${visas} need${visas.includes(" and ") ? "" : "s"} state nomination.`;
   return `None right now. ${points}${watch ? ` ${capital(watch)}.` : ""}`;

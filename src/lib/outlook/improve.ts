@@ -6,7 +6,7 @@ import type { OutlookInput, ProfileOutlook } from "./evaluate-profile";
 import { ENGLISH_MOVES, LEAD_TIME, candidates } from "./improve-candidates";
 import type { Candidate, MoveId, SingleId } from "./improve-candidates";
 import { CONFIRM, no189Data } from "./label-189";
-import { LABEL_RANK, labelName } from "./labels";
+import { LABEL_RANK, isAtLeast, labelName } from "./labels";
 import type { OutlookLabel } from "./labels";
 import { buildLosses } from "./losses";
 import type { Loss, Shift } from "./losses";
@@ -31,6 +31,12 @@ export type Improve = {
   moves: Move[];
   losses: Loss[];
   plain: string[];
+  /**
+   * Off the 189 list: true when more points could change 190 or 491, because
+   * one invites above the reader's score, has too little data to rule it out,
+   * or a change lifts one. False in every other mode.
+   */
+  pointsHelpStates: boolean;
   /**
    * For a reader not yet eligible for 189: the change that takes them to 65
    * or restores an expired test or assessment, also in plain mode. Null when
@@ -209,8 +215,25 @@ function modeOf(input: OutlookInput, base: ProfileOutlook): Improve["mode"] {
   return "improve";
 }
 
+/**
+ * True when 190 or 491 invites the occupation at some score, or has too
+ * little data to say it doesn't.
+ */
+function statesMayRespond(outlook: ProfileOutlook): boolean {
+  return [outlook.v190, outlook.v491].some(
+    (v) =>
+      v === null || v.label === "no-data" || isAtLeast(v.label, "long-wait"),
+  );
+}
+
+function pointsHelpStates(base: ProfileOutlook, scored: Scored[]): boolean {
+  return (
+    statesMayRespond(base) || scored.some((c) => statesMayRespond(c.outlook))
+  );
+}
+
 /** Which state visas the federal list still has the occupation for. */
-function offListBanner(base: ProfileOutlook): string {
+function offListBanner(base: ProfileOutlook, helps: boolean): string {
   const { federal190, federal491 } = base.listMembership;
   const visas = [federal190 ? "190" : "", federal491 ? "491" : ""].filter(
     Boolean,
@@ -218,16 +241,23 @@ function offListBanner(base: ProfileOutlook): string {
   if (visas.length === 0) {
     return "Points won't change this: the Home Affairs list doesn't include this occupation for 189, 190 or 491.";
   }
+  if (!helps) {
+    return `Points aren't what's holding you back. The Home Affairs list doesn't include this occupation for 189, and more points wouldn't change ${visas.join(" or ")} right now.`;
+  }
   return `More points won't open 189: the Home Affairs list doesn't include this occupation for it. They still count for ${visas.join(" and ")}, with state nomination.`;
 }
 
-function bannerOf(mode: Improve["mode"], base: ProfileOutlook): string | null {
+function bannerOf(
+  mode: Improve["mode"],
+  base: ProfileOutlook,
+  helps: boolean,
+): string | null {
   if (mode === "protect") return BANNERS.protect;
   // Age closes every points-tested visa, so moves that add points can't help.
   if (blockerOf(base.points) === "age") {
     return `Points can't change this: 189, 190 and 491 all ${ageRule(base.points.ineligibleReasons)}.`;
   }
-  if (mode === "off-list") return offListBanner(base);
+  if (mode === "off-list") return offListBanner(base, helps);
   if (mode !== "points-not-problem") return null;
   if (base.stamp.kind !== "combined") return BANNERS.closed189;
   return base.stamp.label === "not-invited"
@@ -251,9 +281,10 @@ export function buildImprove(
     shown || needOpener
       ? buildMoves(input, base, scored, mode === "improve")
       : [];
+  const helps = mode === "off-list" && pointsHelpStates(base, scored);
   return {
     mode,
-    banner: bannerOf(mode, base),
+    banner: bannerOf(mode, base, helps),
     moves: shown ? all : [],
     losses: buildLosses(input.profile, input.asOf, input.core, {
       points: base.points.base,
@@ -262,6 +293,7 @@ export function buildImprove(
       listed189: base.listMembership.federal189,
     }),
     plain: plain ? plainLines(base, scored) : [],
+    pointsHelpStates: helps,
     opener: openerOf(base, all),
   };
 }
