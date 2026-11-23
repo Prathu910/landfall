@@ -310,7 +310,7 @@ describe("chart marks", () => {
     expect(read("occupation/cohort-bars")).not.toMatch(
       /var\(--(brand-[\w-]+|rule|surface)\)/,
     );
-    for (const file of ["occupation/cohort-bars"]) {
+    for (const file of ["occupation/cohort-bars", "occupation/pool-tabs"]) {
       const hatches = read(file).match(/repeating-linear-gradient\([^;]+;/g);
       expect(hatches, file).not.toBeNull();
       for (const hatch of hatches ?? []) {
@@ -318,6 +318,8 @@ describe("chart marks", () => {
         expect(hatch, file).toContain("var(--chart-masked-b)");
       }
     }
+    for (const file of ["report/queue-squares", "report/evidence-tables"])
+      expect(read(file), file).not.toMatch(/color-mix\([^;]*--newsprint/);
   });
 });
 
