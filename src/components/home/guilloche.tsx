@@ -2,10 +2,11 @@ import Image from "next/image";
 import type { CSSProperties } from "react";
 
 /**
- * The passport security linework behind a homepage panel. A lazy image, so
- * panels below the fold fetch their artwork only when a phone scrolls near.
- * At night the image hides and the same file, as a mask, glows in the
- * guilloche tokens (`.guill-uv` in globals.css).
+ * The passport security linework behind a homepage panel. At night the image
+ * hides and the same file, as a mask, glows in the guilloche tokens
+ * (`.guill-uv` in globals.css). The image loads eagerly, because a hidden
+ * lazy image is never fetched and would print blank at night; it is fetched
+ * with CORS, like the mask, so the browser downloads the file once.
  */
 export function Guilloche({ src }: { src: string }) {
   const uv = { "--guill-src": `url(${src})` } as CSSProperties;
@@ -18,7 +19,8 @@ export function Guilloche({ src }: { src: string }) {
         aria-hidden="true"
         width={600}
         height={520}
-        loading="lazy"
+        loading="eager"
+        crossOrigin="anonymous"
         unoptimized
         style={{ display: "var(--theme-day-display)" } as CSSProperties}
       />

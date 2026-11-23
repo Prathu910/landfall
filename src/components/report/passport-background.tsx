@@ -7,7 +7,8 @@ const SRC = "/report-passport.svg";
 /**
  * The approved mockup's security lines, shared by the screen and PDF heroes.
  * At night the same file glows as a mask in the guilloche tokens; print
- * always uses the daylight image.
+ * always uses the daylight image. The image is fetched with CORS, like the
+ * mask, so the browser downloads the file once.
  */
 export function PassportBackground({ print = false }: { print?: boolean }) {
   const artwork = `${styles.artwork}${print ? ` ${styles.print}` : ""}`;
@@ -20,6 +21,7 @@ export function PassportBackground({ print = false }: { print?: boolean }) {
         width={900}
         height={520}
         loading="eager"
+        crossOrigin="anonymous"
         unoptimized
         className={`${artwork} ${styles.day}`}
       />
