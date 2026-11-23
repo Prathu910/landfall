@@ -135,7 +135,7 @@ export const GUIDE_STEPS: GuideStep[] = [
     title: "Receive an invitation",
     short: "Invitation",
     appliesTo: [...ALL],
-    what: "EOIs are ranked against each other. Home Affairs invites you when you score enough points and places are available for your occupation; you get an email from SkillSelect.",
+    what: "For the 189, EOIs are ranked against each other and Home Affairs invites you in a round when you score enough points and places are available for your occupation. For the 190 and 491, the invitation follows a state or territory's nomination: once a state nominates you, Home Affairs invites you. A 491 EOI sponsored by an eligible relative can be invited in a Home Affairs round. Either way, SkillSelect emails you.",
     rule: {
       text: "You must be under 45 when invited. An invitation doesn't mean the visa will be granted, and you'll be invited at most twice for the same EOI.",
       source: SOURCES.visa189,

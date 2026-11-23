@@ -118,3 +118,11 @@ describe("the 191 pathway", () => {
     expect(rules.map((r) => r.text).join(" ")).toContain("no minimum income");
   });
 });
+
+describe("the invitation step", () => {
+  it("says a 190 or 491 invitation follows a state's nomination", () => {
+    const step = GUIDE_STEPS.find((s) => s.id === "invitation");
+    expect(step?.what).toMatch(/190 and 491.*nominat/);
+    expect(step?.what).toMatch(/eligible relative/);
+  });
+});
