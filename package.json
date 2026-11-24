@@ -19,7 +19,8 @@
     "prebuild": "tsx scripts/copy-public-data.ts && tsx scripts/check-rule-staleness.ts",
     "backend:check": "deno task --config supabase/functions/deno.json check",
     "backend:test": "deno task --config supabase/functions/deno.json test",
-    "backend:test:sql": "python3 supabase/tests/postgres_test.py"
+    "backend:test:sql": "python3 supabase/tests/postgres_test.py",
+    "lighthouse": "tsx scripts/lighthouse/cli.ts"
   },
   "dependencies": {
     "@fontsource-variable/archivo": "5.3.0",
@@ -40,9 +41,11 @@
     "@types/node": "^25.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "chrome-launcher": "1.2.1",
     "deno": "2.9.6",
     "eslint": "9.39.5",
     "eslint-config-next": "16.4.6",
+    "lighthouse": "13.6.0",
     "prettier": "3.10.1",
     "supabase": "3.2.0",
     "tsx": "4.23.15",
