@@ -61,6 +61,7 @@ const LIGHTHOUSE_BIN = resolve(
 function toRunResult(lhr: {
   categories: Record<string, { score: number | null } | undefined>;
   audits: Record<string, { numericValue?: number } | undefined>;
+  environment?: { benchmarkIndex?: number };
 }): RunResult {
   const scores: Partial<Record<Category, number>> = {};
   for (const category of CATEGORIES) {
@@ -72,6 +73,7 @@ function toRunResult(lhr: {
     lcpMs: lhr.audits["largest-contentful-paint"]?.numericValue,
     tbtMs: lhr.audits["total-blocking-time"]?.numericValue,
     cls: lhr.audits["cumulative-layout-shift"]?.numericValue,
+    benchmarkIndex: lhr.environment?.benchmarkIndex,
   };
 }
 
@@ -242,6 +244,9 @@ async function main(): Promise<void> {
   }
   const summaries = cells.map(summariseCell);
   console.log(`\nMedian of ${runs} run(s), ${baseUrl}\n`);
+  console.log(
+    "CPU is Lighthouse's benchmark index: if a row's is far below the others, the machine was busy; re-run that page before trusting its Performance score.\n",
+  );
   console.log(formatTable(summaries));
   if (args.json) writeFileSync(args.json, JSON.stringify(summaries, null, 2));
   const failing = summaries.filter((summary) => summary.failures.length > 0);

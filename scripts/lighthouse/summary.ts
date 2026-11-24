@@ -16,6 +16,8 @@ export interface RunResult {
   lcpMs?: number;
   tbtMs?: number;
   cls?: number;
+  /** Lighthouse's CPU benchmark; a low value means the machine was busy. */
+  benchmarkIndex?: number;
 }
 
 /** A row of the table: one page in one form factor and colour scheme. */
@@ -36,6 +38,7 @@ export interface CellSummary {
   lcpMs?: number;
   tbtMs?: number;
   cls?: number;
+  benchmarkIndex?: number;
   failures: Category[];
 }
 
@@ -68,6 +71,7 @@ export function summariseCell(cell: Cell): CellSummary {
     lcpMs: median(present(cell.runs.map((run) => run.lcpMs))),
     tbtMs: median(present(cell.runs.map((run) => run.tbtMs))),
     cls: median(present(cell.runs.map((run) => run.cls))),
+    benchmarkIndex: median(present(cell.runs.map((run) => run.benchmarkIndex))),
     failures,
   };
 }
@@ -103,6 +107,7 @@ export function formatTable(summaries: readonly CellSummary[]): string {
     "LCP",
     "TBT",
     "CLS",
+    "CPU",
   ];
   const rows = summaries.map((summary) => [
     summary.page,
@@ -112,6 +117,9 @@ export function formatTable(summaries: readonly CellSummary[]): string {
     msText(summary.lcpMs),
     msText(summary.tbtMs),
     summary.cls === undefined ? "–" : summary.cls.toFixed(3),
+    summary.benchmarkIndex === undefined
+      ? "–"
+      : String(Math.round(summary.benchmarkIndex)),
   ]);
   const widths = header.map((title, column) =>
     Math.max(title.length, ...rows.map((row) => row[column].length)),
