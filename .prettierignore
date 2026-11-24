@@ -10,6 +10,7 @@ docs/original-references/
 src/data/*.json
 src/data/occupations/
 src/data/sample/
+src/data/updates/
 src/data/state-rules/lists/
 data/raw/
 

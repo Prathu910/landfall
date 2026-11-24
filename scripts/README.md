@@ -22,6 +22,10 @@ The importer:
 
 After an import, run `npm run check` and `npm run build`, then commit `data/raw/` and `src/data/` together.
 
+## Monthly recap facts
+
+`npm run updates:generate -- --month YYYY-MM --section round --round YYYY-MM-DD` and `-- --month YYYY-MM --section data [--spotlight <code>] [--previous-manifest <file>]` write `src/data/updates/<month>.json` (`scripts/updates/generate.ts`), the only writer of that folder. Each run replaces only its own section, keeps `firstGeneratedAt` and sets `updatedAt`; `--today YYYY-MM-DD` overrides the Sydney date. It exits 1 if the round is not in `rounds.json` or not in `--month`, if `--section data` is asked for a month other than `manifest.asAt`, or if the merged file fails `isRecapFacts`. `--previous-manifest` must be the previous month's manifest (for the occupations added and removed); a rerun of the same month (such as `--spotlight` swapping the pick) without it keeps the lists the first run recorded and never treats this month's own manifest as the previous one. `src/lib/updates/load-server.ts` reads the files (`listRecapMonths`, `loadRecap`).
+
 ## State nomination lists and rule staleness
 
 `npm run data:state-lists` (optionally `-- --only federal|wa|sa|qld|nsw --checked-at YYYY-MM-DD`) re-imports the state occupation lists and the federal occupation list into `src/data/state-rules/` (`scripts/state-lists/`). `scripts/check-rule-staleness.ts` runs before every build and prints a warning, never a failure, for state rules checked more than 45 days ago. Sources and the monthly re-verify routine are under "State rules" in [`docs/DATA.md`](../docs/DATA.md).

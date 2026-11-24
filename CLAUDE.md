@@ -27,6 +27,7 @@ npm run lighthouse   # after a build: every SEO page type, mobile + desktop, mus
 npm run og:image     # regenerate public/og.png (headless Chrome; scripts/og-image/; set CHROME_PATH if needed)
 npm run data:import -- --as-at YYYY-MM   # SkillSelect import (network); see docs/DATA.md
 npm run data:generate -- --as-at YYYY-MM # rebuild src/data from data/raw, no network
+npm run updates:generate -- --month YYYY-MM --section round --round YYYY-MM-DD   # or --section data; writes src/data/updates/
 python3 -m http.server 3017 --bind 127.0.0.1 --directory out   # serve the production build
 ```
 
