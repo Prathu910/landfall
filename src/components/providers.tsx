@@ -18,7 +18,7 @@ const theme = createTheme({
   primaryShade: { light: 9, dark: 0 },
   autoContrast: true,
   defaultRadius: "md",
-  fontFamily: "Inter, Arial, sans-serif",
+  fontFamily: 'Inter, "Inter Fallback", Arial, sans-serif',
   headings: { fontFamily: "Newsreader, Georgia, serif", fontWeight: "600" },
   colors: { ink: [...INK_RAMP], dark: [...NIGHT_RAMP] },
   components: {

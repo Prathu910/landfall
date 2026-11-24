@@ -43,15 +43,17 @@
   --label-not-open-bg: light-dark(#fce5e3, #381916);
   --label-no-data-ink: light-dark(#586470, #b0bcc7);
   --label-no-data-bg: light-dark(#e8ecef, #1f2931);
-  --font-report: "Archivo Variable", "Inter", Arial, sans-serif;
+  --font-report:
+    "Archivo Variable", "Archivo Fallback", "Inter", Arial, sans-serif;
   --font-stamp:
-    "Big Shoulders Stencil Display", "Archivo Variable", Arial, sans-serif;
+    "Big Shoulders Stencil Display", "Archivo Variable", "Archivo Fallback",
+    Arial, sans-serif;
   --focus-ring: light-dark(#2e4a7d, #a3bdeb);
   --focus-ring-on-dark: light-dark(#f3eee3, #f3eee3);
   --muted-on-dark: light-dark(#d6cfbf, #cbc4b4);
   --saffron-on-dark: light-dark(#f0a35e, #f0a35e);
   --serif: "Newsreader", Georgia, serif;
-  --sans: "Inter", Arial, sans-serif;
+  --sans: "Inter", "Inter Fallback", Arial, sans-serif;
   /* Shared chrome follows the approved passport identity without recolouring page bodies. */
   --brand-ink: light-dark(#12202c, #ece6d8);
   --brand-paper: light-dark(#ffffff, #14212b);
@@ -62,7 +64,8 @@
   --brand-on-dark: light-dark(#c4d0d0, #b9c7c7);
   --brand-dark-line: light-dark(#41525b, #22323c);
   --brand-focus: light-dark(#315c87, #98bce6);
-  --brand-font: "Archivo Variable", "Inter", Arial, sans-serif;
+  --brand-font:
+    "Archivo Variable", "Archivo Fallback", "Inter", Arial, sans-serif;
   --brand-unit: 4px;
   --brand-rule-width: 1px;
   --brand-target: 44px;
@@ -214,6 +217,26 @@ html.theme-switching[data-mantine-color-scheme="dark"] .guill-layer {
   mask: var(--guill-src) var(--guill-fit) no-repeat;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
+}
+/* Metric-matched fallbacks: until a web font arrives, text sets in local
+   Arial scaled to that face's width and line metrics, so the swap doesn't
+   rewrap lines (Lighthouse found a 0.038 layout shift on /sample/).
+   Measured in Chrome against the latin files, 24 Nov 2026. */
+@font-face {
+  font-family: "Archivo Fallback";
+  src: local("Arial");
+  size-adjust: 98.4%;
+  ascent-override: 89.4%;
+  descent-override: 21.3%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Inter Fallback";
+  src: local("Arial");
+  size-adjust: 106.2%;
+  ascent-override: 91.3%;
+  descent-override: 22.6%;
+  line-gap-override: 0%;
 }
 * {
   box-sizing: border-box;
@@ -789,7 +812,7 @@ svg {
   --check-radius: 0.625rem;
   --check-pill: 6rem;
   --check-unit: 0.25rem;
-  --check-font: "Archivo Variable", Arial, sans-serif;
+  --check-font: "Archivo Variable", "Archivo Fallback", Arial, sans-serif;
   --check-shadow:
     0 1.5rem 4rem -2.5rem light-dark(#12202c35, #000000c0),
     inset 0 1px 0 var(--elevate-edge);
