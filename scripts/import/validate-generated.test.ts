@@ -2,9 +2,11 @@ import { describe, expect, it } from "vitest";
 import type { Manifest } from "../../src/lib/data/types";
 import { generate, type GeneratedData } from "./generate";
 import {
+  buildNovemberRawFixture,
   buildRawFixture,
   fixtureInput,
   HEADERS,
+  novemberInput,
   NURSE,
   SOFTWARE_ENGINEER,
   writeFixtureView,
@@ -188,6 +190,88 @@ describe("validateGenerated", () => {
     expect(issues[0]).toMatch(/^254499: core file is \d+ bytes, over 51200$/);
     expect(issues[1]).toMatch(
       /^261313: detail file is \d+ bytes, over 256000$/,
+    );
+  });
+});
+
+describe("validateGenerated with dropped occupations", () => {
+  function dropped() {
+    const old = valid();
+    const previous = {
+      manifest: old.manifest,
+      core: (code: string) => old.cores.find((c) => c.code === code) ?? null,
+      detail: (code: string) =>
+        old.details.find((d) => d.code === code) ?? null,
+    };
+    const data = generate({
+      ...novemberInput,
+      rawRoot: buildNovemberRawFixture(),
+      previous,
+    });
+    return { data, old };
+  }
+
+  it("allows an older snapshot id only with lastAsAt", () => {
+    const { data } = dropped();
+    expect(validateGenerated(data, null)).toEqual([]);
+    const unmarked = {
+      ...data,
+      index: data.index.map(({ code, name, hasData }) => ({
+        code,
+        name,
+        hasData,
+      })),
+    };
+    expect(validateGenerated(unmarked, null)).toEqual([
+      "254499: core snapshot skillselect-2026-10-31 does not match skillselect-2026-11-30",
+      "254499: detail snapshot skillselect-2026-10-31 does not match skillselect-2026-11-30",
+    ]);
+  });
+
+  it("counts current codes only for the 10% drop check", () => {
+    const { data, old } = dropped();
+    // 10 current codes before; 1 now. Carried codes must not hide the fall.
+    const many = {
+      ...old.manifest,
+      occupations: Array.from({ length: 10 }, (_, i) => ({
+        ...old.manifest.occupations[0],
+        code: String(100000 + i),
+      })),
+    };
+    const issues = validateGenerated(data, many);
+    expect(issues).toEqual([
+      "Occupation count fell from 10 to 1 (more than 10%)",
+    ]);
+  });
+
+  it("rejects a code missing from the same month with no earlier mark", () => {
+    const old = valid();
+    const previous = {
+      manifest: old.manifest,
+      core: (code: string) => old.cores.find((c) => c.code === code) ?? null,
+      detail: (code: string) =>
+        old.details.find((d) => d.code === code) ?? null,
+    };
+    const manifest = {
+      ...old.manifest,
+      occupations: [
+        ...old.manifest.occupations,
+        { ...old.manifest.occupations[0], code: "999999" },
+      ],
+    };
+    const core = { ...old.cores[0], code: "999999" };
+    const detail = { ...old.details[0], code: "999999" };
+    const data = generate({
+      ...fixtureInput,
+      rawRoot: buildRawFixture(),
+      previous: {
+        manifest,
+        core: (c) => (c === "999999" ? core : previous.core(c)),
+        detail: (c) => (c === "999999" ? detail : previous.detail(c)),
+      },
+    });
+    expect(validateGenerated(data, null)).toContainEqual(
+      expect.stringMatching(/^999999: lastAsAt 2026-10 is not before 2026-10/),
     );
   });
 });

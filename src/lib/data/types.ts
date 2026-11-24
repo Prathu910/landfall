@@ -77,6 +77,13 @@ export type OccupationIndexEntry = {
   code: string;
   name: string;
   hasData: boolean;
+  /**
+   * Set only on an occupation that dropped out of the SkillSelect data: the
+   * last month it was published. Its files hold that month's figures.
+   */
+  lastAsAt?: MonthKey;
+  /** The date the data was last checked while this occupation was still in it. */
+  lastCheckedAt?: string; // YYYY-MM-DD
 };
 export type Manifest = {
   schemaVersion: 1;

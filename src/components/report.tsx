@@ -63,8 +63,13 @@ function occupationState(
   if (status === "loading") return { status: "loading" };
   if (status !== "ready" || !core) {
     // A fetch that failed must not read as "SkillSelect published nothing".
-    const failed = unavailableReason(code, occupationIndex) === "loadFailed";
-    return failed ? { status: "load-failed" } : { status: "unavailable" };
+    const reason = unavailableReason(code, occupationIndex);
+    if (typeof reason === "object") {
+      return { status: "dropped", note: reason.note };
+    }
+    return reason === "loadFailed"
+      ? { status: "load-failed" }
+      : { status: "unavailable" };
   }
   return {
     status: "ready",

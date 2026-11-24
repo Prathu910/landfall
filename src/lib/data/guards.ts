@@ -155,6 +155,18 @@ export function isOccupationDetail(v: unknown): v is OccupationDetail {
   );
 }
 
+/** lastAsAt and lastCheckedAt come together, or not at all. */
+function validDropMarks(o: Obj): boolean {
+  const { lastAsAt, lastCheckedAt } = o;
+  if (lastAsAt === undefined && lastCheckedAt === undefined) return true;
+  return (
+    isStr(lastAsAt) &&
+    isMonth(lastAsAt) &&
+    isStr(lastCheckedAt) &&
+    DATE_RE.test(lastCheckedAt)
+  );
+}
+
 export function isManifest(v: unknown): v is Manifest {
   if (!isObj(v)) return false;
   if (
@@ -184,6 +196,7 @@ export function isManifest(v: unknown): v is Manifest {
       typeof o.hasData !== "boolean" ||
       !(o.group === null || isStr(o.group)) ||
       !byVisa(isCountText)(o.totals) ||
+      !validDropMarks(o) ||
       seen.has(o.code)
     ) {
       return false;

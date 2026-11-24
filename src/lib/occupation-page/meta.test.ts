@@ -106,6 +106,20 @@ describe("sitemapEntries", () => {
     expect(urls).toContain(SITE_URL + occupationPath(core));
     expect(urls).not.toContain(SITE_URL + occupationPath(maskedCore));
   });
+  it("dates a dropped occupation's sitemap entry by lastCheckedAt and keeps it listed", () => {
+    const marked = frozenIndex().map((e) =>
+      e.code === core.code
+        ? { ...e, lastAsAt: "2026-09", lastCheckedAt: "2026-10-20" }
+        : e,
+    );
+    const dropped = sitemapEntries(
+      [core],
+      marked,
+      "2026-11-17",
+      "2026-11-23",
+    ).find((e) => e.url === SITE_URL + occupationPath(core));
+    expect(dropped?.lastModified).toBe("2026-10-20");
+  });
   it("lists the PR guide and its three visa pages", () => {
     for (const path of [
       "/guide/",
@@ -130,5 +144,22 @@ describe("sitemapEntries", () => {
     expect(dated.map((e) => e.lastModified)).toEqual(
       Array(4).fill("2026-11-23"),
     );
+  });
+});
+
+describe("a dropped occupation's own snapshot", () => {
+  const old = {
+    ...core,
+    asAt: "2026-09",
+    snapshotId: "skillselect-2026-09-30",
+  };
+  it("takes its title and coverage from its core, not the current month", () => {
+    expect(pageTitle(old)).toMatch(/Sep 2026$/);
+    const dataset = occupationJsonLd(old, faq, summary, "2026-10-20")[0] as {
+      temporalCoverage: string;
+      dateModified: string;
+    };
+    expect(dataset.temporalCoverage.endsWith("/2026-09")).toBe(true);
+    expect(dataset.dateModified).toBe("2026-10-20");
   });
 });

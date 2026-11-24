@@ -70,6 +70,27 @@ export function formatMonth(month: MonthKey): string {
   return `${MONTH_NAMES[Number(m) - 1]} ${year}`;
 }
 
+const LONG_MONTH_NAMES = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
+/** "2026-11" becomes "November 2026". */
+export function formatLongMonth(month: MonthKey): string {
+  const [year, m] = month.split("-");
+  return `${LONG_MONTH_NAMES[Number(m) - 1]} ${year}`;
+}
+
 /** For an EOI month later than the snapshot's as-at month. */
 export function afterSnapshotText(month: MonthKey, asAt: MonthKey): string {
   return `Your EOI month (${formatMonth(month)}) is after this snapshot (as at ${formatMonth(asAt)}), so it isn't in the published data yet.`;

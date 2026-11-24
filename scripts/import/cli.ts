@@ -2,11 +2,11 @@
 //        npm run data:generate -- --as-at YYYY-MM [--checked-at YYYY-MM-DD] [--rounds-html <dir>]
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { isManifest } from "../../src/lib/data/guards";
-import type { Manifest, MonthKey } from "../../src/lib/data/types";
+import type { MonthKey } from "../../src/lib/data/types";
 import { generate, writeGenerated, type GeneratedData } from "./generate";
 import { readRoundsFile } from "./generate-rounds";
 import { fetchViews } from "./import-fetch";
+import { readPreviousData } from "./previous-data";
 import { PAGE_READ_BUDGET, planFetches, type ImportMode } from "./import-plan";
 import { openQlikSession } from "./qlik-client";
 import { readRawView, writeRawView, type RawViewFile } from "./raw-store";
@@ -94,12 +94,6 @@ export function parseArgs(argv: string[]): CliArgs {
 
 function readJson(path: string): unknown {
   return existsSync(path) ? JSON.parse(readFileSync(path, "utf8")) : undefined;
-}
-
-/** The legacy src/data files are not manifests, so they never count as one. */
-function readPreviousManifest(): Manifest | null {
-  const value = readJson(join(OUT_ROOT, "manifest.json"));
-  return isManifest(value) ? value : null;
 }
 
 /** --generate-only rebuilds from the rounds stored by the last import. */
@@ -245,14 +239,17 @@ async function main(): Promise<void> {
       await fetchRaw(args);
     }
     printSkipped(rounds);
+    // Every mode that writes src/data carries dropped occupations forward.
+    const previous = readPreviousData(OUT_ROOT);
     const data = generate({
+      previous,
       rawRoot: RAW_ROOT,
       asAt: args.asAt,
       checkedAt: args.checkedAt,
       rounds,
       importVersion: IMPORT_VERSION,
     });
-    const issues = validateGenerated(data, readPreviousManifest());
+    const issues = validateGenerated(data, previous?.manifest ?? null);
     report(data, issues);
     if (issues.length > 0) {
       console.log(`Not written: ${OUT_ROOT} is unchanged`);

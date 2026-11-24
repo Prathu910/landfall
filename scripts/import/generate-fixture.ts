@@ -231,3 +231,56 @@ export const fixtureInput = {
   rounds: { rounds: fixtureRounds, skipped: fixtureSkippedRounds },
   importVersion: "test-1",
 };
+
+function writeNovemberWithoutNurse(root: string): void {
+  const m = "11/2026";
+  const empty = (header: string[], partition?: Record<string, string>) => ({
+    partition,
+    header,
+    rows: [] as string[][],
+  });
+  writeFixtureView(root, "status-history", "2026-11", [
+    {
+      header: HEADERS.byOccupation,
+      rows: [[m, V189, SOFTWARE_ENGINEER, "SUBMITTED", "160"]],
+    },
+  ]);
+  writeFixtureView(root, "pool-by-score", "2026-11", [
+    {
+      header: HEADERS.byScore,
+      rows: [[m, V189, SOFTWARE_ENGINEER, "SUBMITTED", "95", "160"]],
+    },
+  ]);
+  writeFixtureView(root, "invited-by-score", "2026-11", [
+    empty(HEADERS.byScore),
+  ]);
+  writeFixtureView(root, "cohorts", "2026-11", [empty(HEADERS.bySubmitted)]);
+  writeFixtureView(root, "cohorts-by-score", "2026-11", [
+    empty(HEADERS.bySubmitted, { score: "90" }),
+  ]);
+  writeFixtureView(root, "state-pool", "2026-11", [
+    empty(HEADERS.byScore, { state: "VIC" }),
+  ]);
+  writeFixtureView(root, "state-invited", "2026-11", [
+    empty(HEADERS.byScore, { state: "VIC" }),
+  ]);
+  writeFixtureView(root, "invited-profile", "2026-11", [
+    empty(HEADERS.byEnglish, { attribute: "english" }),
+  ]);
+  writeFixtureView(root, "invited-profile-state", "2026-11", [
+    empty(HEADERS.byEnglish, { state: "VIC", attribute: "english" }),
+  ]);
+}
+
+/** The fixture plus a 2026-11 month in which the nurse has dropped out. */
+export function buildNovemberRawFixture(): string {
+  const root = buildRawFixture();
+  writeNovemberWithoutNurse(root);
+  return root;
+}
+
+export const novemberInput = {
+  ...fixtureInput,
+  asAt: "2026-11",
+  checkedAt: "2026-12-17",
+};

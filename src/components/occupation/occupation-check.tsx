@@ -22,10 +22,13 @@ export function OccupationCheck({
   code,
   name,
   previews,
+  figuresFrom,
 }: {
   code: string;
   name: string;
   previews: PointPreview[];
+  /** The data month, for an occupation that has dropped out of the data. */
+  figuresFrom?: string;
 }) {
   const [points, setPoints] = useState(TRY_IT_DEFAULT);
   const view = previews.find((preview) => preview.points === points)?.view;
@@ -76,6 +79,7 @@ export function OccupationCheck({
           <p>{view?.message ?? "No published 189 data for this occupation."}</p>
         )}
       </div>
+      {figuresFrom && <p className={styles.note}>Figures from {figuresFrom}</p>}
       <a href={fullReportHref(code)} className={styles.cta}>
         Check my points, free <ArrowUpRight size={19} aria-hidden="true" />
       </a>

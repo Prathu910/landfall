@@ -6,10 +6,13 @@ import { OccupationCheck } from "./occupation-check";
 export function OccupationCheckPanel({
   core,
   listed189,
+  figuresFrom,
 }: {
   core: OccupationCore;
   /** The federal list's 189 flag; null when it can't be read. */
   listed189: boolean | null;
+  /** The data month, for an occupation that has dropped out of the data. */
+  figuresFrom?: string;
 }) {
   const previews = TRY_IT_POINTS.map((points) => {
     const view = buildTryIt(core, points, listed189);
@@ -18,6 +21,11 @@ export function OccupationCheckPanel({
     return { points, view: { kind, higher, same, note, source } };
   });
   return (
-    <OccupationCheck code={core.code} name={core.name} previews={previews} />
+    <OccupationCheck
+      code={core.code}
+      name={core.name}
+      previews={previews}
+      figuresFrom={figuresFrom}
+    />
   );
 }

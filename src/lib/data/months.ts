@@ -14,6 +14,11 @@ function monthAt(index: number): MonthKey {
  * built from the calendar, never from the keys a record happens to hold: a
  * record has no key for a month that was not fetched.
  */
+/** The month after `month`. */
+export function nextMonth(month: MonthKey): MonthKey {
+  return monthAt(monthIndex(month) + 1);
+}
+
 export function calendarMonths(asAt: MonthKey, count: number): MonthKey[] {
   const end = monthIndex(asAt);
   return Array.from({ length: Math.max(0, count) }, (_, i) =>

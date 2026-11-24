@@ -15,7 +15,14 @@ function inkOf(label: OutlookLabel): CSSProperties {
 }
 
 /** The 189 label at common scores, as stamps, near the top of the page. */
-export function OccupationVerdict({ verdict }: { verdict: Verdict }) {
+export function OccupationVerdict({
+  verdict,
+  figuresFrom,
+}: {
+  verdict: Verdict;
+  /** The data month, for an occupation that has dropped out of the data. */
+  figuresFrom?: string;
+}) {
   return (
     <section className={styles.strip} aria-labelledby="verdict-heading">
       <h2 id="verdict-heading" className={styles.heading}>
@@ -52,6 +59,7 @@ export function OccupationVerdict({ verdict }: { verdict: Verdict }) {
           <p className={styles.text}>{verdict.text}</p>
         </div>
       )}
+      {figuresFrom && <p className={styles.note}>Figures from {figuresFrom}</p>}
       <Link className={styles.check} href={verdict.checkHref}>
         Check my points <span aria-hidden="true">→</span>
       </Link>

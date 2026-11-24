@@ -44,6 +44,17 @@ export type GenerateInput = {
   importVersion: string;
   /** Ignore raw revisions fetched after this date (YYYY-MM-DD). */
   revisionsUpTo?: string;
+  /**
+   * The data now in src/data. An occupation in it but absent from the new
+   * data is carried forward unchanged, marked with lastAsAt/lastCheckedAt.
+   */
+  previous?: PreviousData | null;
+};
+
+export type PreviousData = {
+  manifest: Manifest;
+  core(code: string): OccupationCore | null;
+  detail(code: string): OccupationDetail | null;
 };
 
 const VISAS: Visa[] = ["189", "190", "491"];
@@ -118,6 +129,40 @@ function manifestEntry(core: OccupationCore): Manifest["occupations"][number] {
   };
 }
 
+type ManifestEntry = Manifest["occupations"][number];
+
+/** Carries every previous occupation missing from the new data, marked. */
+function carriedForward(
+  previous: PreviousData,
+  currentCodes: Set<string>,
+): { entry: ManifestEntry; core: OccupationCore; detail: OccupationDetail }[] {
+  return previous.manifest.occupations
+    .filter((old) => !currentCodes.has(old.code))
+    .map((old) => {
+      const core = previous.core(old.code);
+      const detail = previous.detail(old.code);
+      if (!core || !detail) {
+        throw new Error(`${old.code}: previous data files are missing`);
+      }
+      return {
+        entry: {
+          ...old,
+          lastAsAt: old.lastAsAt ?? previous.manifest.asAt,
+          lastCheckedAt: old.lastCheckedAt ?? previous.manifest.checkedAt,
+        },
+        core,
+        detail,
+      };
+    });
+}
+
+function indexEntry(entry: ManifestEntry): OccupationIndexEntry {
+  const { code, name, hasData, lastAsAt, lastCheckedAt } = entry;
+  return lastAsAt
+    ? { code, name, hasData, lastAsAt, lastCheckedAt }
+    : { code, name, hasData };
+}
+
 export function generate(input: GenerateInput): GeneratedData {
   const months = rawMonths(input.rawRoot);
   const snapshotId = snapshotIdFor(input.asAt);
@@ -139,7 +184,16 @@ export function generate(input: GenerateInput): GeneratedData {
     ...core,
     rounds189: rounds.cutoffs(core.code),
   }));
-  const entries = cores.map(manifestEntry);
+  const currentEntries = cores.map(manifestEntry);
+  const dropped = input.previous
+    ? carriedForward(input.previous, new Set(cores.map((core) => core.code)))
+    : [];
+  const byCode = (a: { code: string }, b: { code: string }) =>
+    a.code.localeCompare(b.code);
+  const entries = [
+    ...currentEntries,
+    ...dropped.map(({ entry }) => entry),
+  ].sort(byCode);
   return {
     manifest: {
       schemaVersion: 1,
@@ -155,9 +209,12 @@ export function generate(input: GenerateInput): GeneratedData {
       roundsUnmatched: rounds.unmatched,
       occupations: entries,
     },
-    index: entries.map(({ code, name, hasData }) => ({ code, name, hasData })),
-    cores,
-    details: occupations.map(({ detail }) => detail),
+    index: entries.map(indexEntry),
+    cores: [...cores, ...dropped.map(({ core }) => core)].sort(byCode),
+    details: [
+      ...occupations.map(({ detail }) => detail),
+      ...dropped.map(({ detail }) => detail),
+    ].sort(byCode),
     rounds: {
       schemaVersion: 2,
       rounds: rounds.file,

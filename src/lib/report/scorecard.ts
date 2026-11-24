@@ -28,7 +28,12 @@ export type ScorecardData =
   | { kind: "ready"; core: OccupationCore; detail: OccupationDetail | null }
   | {
       kind: "none";
-      reason: "notIndexed" | "noData" | "loadFailed" | "loading";
+      reason:
+        | "notIndexed"
+        | "noData"
+        | "loadFailed"
+        | "loading"
+        | { kind: "dropped"; note: string };
     };
 export type Tone = "red" | "amber" | "green" | "neutral";
 export type ScorecardCard = {
@@ -113,6 +118,9 @@ function headlineFor(name: string, data: ScorecardData, base: number): string {
   if (data.kind === "none") {
     if (data.reason === "notIndexed") {
       return "You chose a points check only, so there is no occupation data to compare. Your points breakdown is below.";
+    }
+    if (typeof data.reason === "object") {
+      return `${data.reason.note}, so there is no occupation data to compare. Your points breakdown is below.`;
     }
     // A failed fetch is a network fact, not a finding about the dataset.
     if (data.reason === "loadFailed") {

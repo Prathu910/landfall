@@ -99,7 +99,9 @@ export function sitemapEntries(
   checkedAt: string,
   guideCheckedAt: string,
 ): { url: string; lastModified: string }[] {
-  const withData = new Set(index.filter((e) => e.hasData).map((e) => e.code));
+  const withData = new Map(
+    index.filter((e) => e.hasData).map((e) => [e.code, e]),
+  );
   const [home, ...rest] = STATIC_PAGES;
   const dated = (path: string, lastModified: string) => ({
     url: SITE_URL + path,
@@ -108,11 +110,15 @@ export function sitemapEntries(
   return [
     dated(home, checkedAt),
     ...GUIDE_PATHS.map((path) => dated(path, guideCheckedAt)),
-    ...[
-      ...rest,
-      ...cores
-        .filter((c) => withData.has(c.code) && isIndexable(c))
-        .map((c) => occupationPath(c)),
-    ].map((path) => dated(path, checkedAt)),
+    ...rest.map((path) => dated(path, checkedAt)),
+    // A dropped occupation is dated by the last time its data was checked.
+    ...cores
+      .filter((c) => withData.has(c.code) && isIndexable(c))
+      .map((c) =>
+        dated(
+          occupationPath(c),
+          withData.get(c.code)?.lastCheckedAt ?? checkedAt,
+        ),
+      ),
   ];
 }
