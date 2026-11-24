@@ -135,8 +135,8 @@ function top190(
     .slice(0, TOP_STATES);
 }
 
-/** The occupation's lowest cut-off in a round, when it is listed. */
-function listedRow(round: StoredRound, code: string) {
+/** The occupation's lowest cut-off row in a round, or null when not listed. */
+export function listedRow(round: StoredRound, code: string) {
   return round.rows
     .filter((row) => row.code === code)
     .reduce<StoredRound["rows"][number] | null>(
