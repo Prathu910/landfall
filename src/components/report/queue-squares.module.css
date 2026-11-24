@@ -53,5 +53,5 @@
 
 .behind,
 .later {
-  fill: color-mix(in srgb, var(--muted-soft) 40%, var(--newsprint));
+  fill: var(--chart-quiet);
 }

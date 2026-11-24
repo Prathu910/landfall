@@ -8,7 +8,7 @@
   font-family: var(--font-report);
   font-size: 21px;
   font-stretch: 116%;
-  font-weight: 750;
+  font-weight: var(--headline-wght);
 }
 
 .summary::-webkit-details-marker {

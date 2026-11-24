@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { Burger, Drawer } from "@mantine/core";
 import { Brand } from "@/components/brand/brand";
+import { ThemeChoices } from "@/components/theme/theme-choices";
+import { ThemeMenu } from "@/components/theme/theme-menu";
 import { isNavigationActive, SITE_NAVIGATION } from "./site-navigation";
 import styles from "./site-header.module.css";
 
@@ -41,6 +43,7 @@ export function SiteHeader() {
           <nav className={styles.navigation} aria-label="Main navigation">
             {navLinks}
           </nav>
+          <ThemeMenu className={styles.themeMenu} />
           <Link
             href="/check/"
             className={`${styles.cta} ${styles.desktopCta}`}
@@ -87,6 +90,7 @@ export function SiteHeader() {
         <nav className={styles.mobileNavigation} aria-label="Mobile navigation">
           {navLinks}
         </nav>
+        <ThemeChoices variant="segmented" />
         <Link
           href="/check/"
           onClick={close}

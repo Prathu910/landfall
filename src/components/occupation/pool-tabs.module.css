@@ -100,8 +100,9 @@
 .masked {
   background: repeating-linear-gradient(
     45deg,
-    var(--brand-line) 0 var(--brand-unit),
-    var(--brand-paper) var(--brand-unit) calc(var(--brand-unit) * 2)
+    var(--chart-masked-a) 0 calc(var(--brand-unit) * 0.5),
+    var(--chart-masked-b) calc(var(--brand-unit) * 0.5)
+      calc(var(--brand-unit) * 1.25)
   );
   border: var(--brand-rule-width) solid var(--brand-muted);
 }

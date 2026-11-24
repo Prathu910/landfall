@@ -37,10 +37,13 @@
 .segmentIndicator {
   background: var(--check-ink);
   border-radius: var(--check-pill);
-  box-shadow: 0 2px 4px #12202c15;
+  box-shadow: 0 2px 4px color-mix(in srgb, var(--shadow-ink) 8.24%, transparent);
 }
 .segmentLabel[data-active] .segmentText {
   color: var(--check-paper);
+}
+.radio {
+  border-color: var(--input-border);
 }
 .radio:checked {
   border-color: var(--check-ink);

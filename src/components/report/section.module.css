@@ -13,7 +13,7 @@
   font-family: var(--font-report);
   font-size: 24px;
   font-stretch: 116%;
-  font-weight: 750;
+  font-weight: var(--headline-wght);
   letter-spacing: -0.01em;
   line-height: 1.2;
 }
@@ -23,7 +23,7 @@
   font-family: var(--font-report);
   font-size: 19px;
   font-stretch: 116%;
-  font-weight: 750;
+  font-weight: var(--headline-wght);
   line-height: 1.25;
 }
 

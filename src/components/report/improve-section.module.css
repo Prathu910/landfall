@@ -42,7 +42,7 @@
   font-family: var(--font-report);
   font-size: 18px;
   font-stretch: 105%;
-  font-weight: 750;
+  font-weight: var(--headline-wght);
 }
 
 .detail {

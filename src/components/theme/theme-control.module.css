@@ -1,0 +1,147 @@
+/* The appearance control (dark mode preview, 23 Nov 2026): a 44px round
+   button and menu in the header, a three-part switch in the phone menu. */
+.button {
+  width: var(--brand-target);
+  height: var(--brand-target);
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: var(--brand-rule-width) solid var(--brand-line);
+  border-radius: var(--brand-pill);
+  background: var(--brand-paper);
+  color: var(--brand-ink);
+}
+.button:hover,
+.button[aria-expanded="true"] {
+  background: var(--brand-sage);
+}
+.anchor {
+  position: relative;
+}
+.popover {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 248px;
+  padding: calc(var(--brand-unit) * 3.5);
+  border: var(--brand-rule-width) solid var(--brand-line);
+  border-radius: calc(var(--brand-unit) * 3);
+  background: var(--brand-paper);
+  color: var(--brand-ink);
+  font-family: var(--brand-font);
+  box-shadow:
+    0 1.5rem 4rem -2.5rem color-mix(in srgb, var(--shadow-ink) 75%, transparent),
+    inset 0 1px 0 var(--elevate-edge);
+  --focus-ring: var(--brand-focus);
+}
+.heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: calc(var(--brand-unit) * 3);
+  margin-bottom: calc(var(--brand-unit) * 2.5);
+}
+.title {
+  font-size: var(--brand-size-14);
+  font-weight: 600;
+}
+.segmentedBlock .title {
+  font-size: var(--brand-size-16);
+}
+.note {
+  color: var(--brand-muted);
+  font-size: var(--brand-size-12);
+}
+.segmentedBlock .note {
+  font-size: var(--brand-size-14);
+}
+.list {
+  display: grid;
+  gap: var(--brand-unit);
+}
+.choice {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: calc(var(--brand-unit) * 3);
+  min-height: var(--brand-target);
+  padding: 0 calc(var(--brand-unit) * 3);
+  border-radius: calc(var(--brand-unit) * 2);
+  font-size: var(--brand-size-14);
+  cursor: pointer;
+}
+.choice input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.list .choice:hover {
+  background: var(--brand-sage);
+}
+.list .choice .note {
+  margin-left: auto;
+}
+.dot {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border: 1.5px solid var(--brand-muted);
+  border-radius: 50%;
+}
+.choice input:checked + .dot {
+  border-color: var(--brand-green);
+}
+.choice input:checked + .dot::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--brand-green);
+}
+.choice:has(input:focus-visible) {
+  outline: 3px solid var(--brand-focus);
+  outline-offset: 1px;
+}
+.segmentedBlock {
+  margin-bottom: calc(var(--brand-unit) * 7);
+}
+.segmented {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding: var(--brand-unit);
+  border: var(--brand-rule-width) solid var(--brand-line);
+  border-radius: var(--brand-pill);
+  background: var(--brand-sage);
+}
+.segmented .choice {
+  justify-content: center;
+  gap: calc(var(--brand-unit) * 1.5);
+  padding: 0 var(--brand-unit);
+  border-radius: var(--brand-pill);
+  color: var(--brand-muted);
+  font-size: var(--brand-size-16);
+  font-weight: 500;
+}
+.segmented .choice:has(input:checked) {
+  background: var(--brand-paper);
+  color: var(--brand-ink);
+  box-shadow:
+    0 1px 2px color-mix(in srgb, var(--shadow-ink) 13%, transparent),
+    inset 0 1px 0 var(--elevate-edge);
+}
+@media print {
+  .button {
+    display: none;
+  }
+}
+/* Without light-dark() the site is light only, so there is no choice. */
+@supports not (color: light-dark(#000, #fff)) {
+  .button,
+  .segmentedBlock {
+    display: none;
+  }
+}

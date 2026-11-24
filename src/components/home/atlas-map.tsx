@@ -90,7 +90,7 @@ export function AtlasMap({
             <path id={`${id}country`} d={geometry.country} />
             <linearGradient id={`${id}face`} x1="0" y1="0" x2="1" y2="1">
               <stop stopColor="var(--homepage-paper)" />
-              <stop offset="1" stopColor="var(--homepage-color-eef3ee)" />
+              <stop offset="1" stopColor="var(--homepage-map-face-end)" />
             </linearGradient>
             <filter
               id={`${id}shadow`}
@@ -105,24 +105,24 @@ export function AtlasMap({
           <g transform="translate(42 28) rotate(-8 320 260)">
             <use
               href={`#${id}country`}
-              fill="var(--homepage-color-607a68)"
+              fill="var(--homepage-map-shadow)"
               opacity=".18"
               transform="translate(0 29)"
               filter={`url(#${id}shadow)`}
             />
             <use
               href={`#${id}country`}
-              fill="var(--homepage-color-a9b9ac)"
+              fill="var(--homepage-map-shade-1)"
               transform="translate(0 15)"
             />
             <use
               href={`#${id}country`}
-              fill="var(--homepage-color-c0cec3)"
+              fill="var(--homepage-map-shade-2)"
               transform="translate(0 9)"
             />
             <use
               href={`#${id}country`}
-              fill="var(--homepage-color-d3dfd5)"
+              fill="var(--homepage-map-shade-3)"
               transform="translate(0 4)"
             />
             {order.map((state) => {
@@ -175,7 +175,7 @@ export function AtlasMap({
                       <path
                         d={geometry.regions.ACT.connector}
                         fill="none"
-                        stroke="var(--homepage-color-92a396)"
+                        stroke="var(--homepage-map-edge-strong)"
                         strokeWidth="1.2"
                         pointerEvents="none"
                       />

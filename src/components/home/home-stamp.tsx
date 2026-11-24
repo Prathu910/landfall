@@ -111,7 +111,7 @@ export function HomeStamp({
               y={118 - (lines.length - 1) * size * 0.5}
               width="276"
               height={84 + (lines.length - 1) * size}
-              fill="white"
+              fill="var(--homepage-paper)"
               stroke="currentColor"
               strokeWidth="5"
             />

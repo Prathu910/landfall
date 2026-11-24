@@ -9,6 +9,8 @@ import "@mantine/core/styles.css";
 import "@mantine/dates/styles.css";
 import "./globals.css";
 import { SITE_VIEWPORT } from "@/lib/brand/viewport";
+import { THEME_STORAGE_KEY } from "@/lib/brand/theme";
+import { themeScript } from "@/lib/brand/theme-script";
 import { SITE_INDEXABLE, SITE_URL } from "@/lib/site";
 import { Providers } from "@/components/providers";
 import { SiteHeader } from "@/components/site-header";
@@ -56,7 +58,14 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en-AU" data-scroll-behavior="smooth">
+    // The head script sets data-mantine-color-scheme before first paint, so
+    // React must accept the attribute it did not render.
+    <html lang="en-AU" data-scroll-behavior="smooth" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{ __html: themeScript(THEME_STORAGE_KEY) }}
+        />
+      </head>
       <body>
         <Providers>
           <a className="skip-link" href="#main">

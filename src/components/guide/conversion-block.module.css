@@ -2,7 +2,8 @@
 .block {
   padding: calc(var(--brand-unit) * 6);
   border-radius: calc(var(--brand-unit) * 3);
-  background: var(--brand-ink);
+  color-scheme: light;
+  background: var(--brand-deep, var(--brand-ink));
   color: var(--brand-paper);
 }
 .lede,

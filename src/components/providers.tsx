@@ -1,28 +1,26 @@
 "use client";
-import { MantineProvider, createTheme } from "@mantine/core";
+import {
+  MantineProvider,
+  createTheme,
+  localStorageColorSchemeManager,
+  type CSSVariablesResolver,
+} from "@mantine/core";
 import { DatesProvider } from "@mantine/dates";
 import { MotionConfig } from "motion/react";
+import { INK_RAMP } from "@/lib/brand/palette";
+import { NIGHT_RAMP } from "@/lib/brand/palette-dark";
+import { LIGHT_DARK_PROBE, THEME_STORAGE_KEY } from "@/lib/brand/theme";
+import { ThemeSync } from "@/components/theme/theme-sync";
+
 const theme = createTheme({
   respectReducedMotion: true,
   primaryColor: "ink",
-  primaryShade: 9,
+  primaryShade: { light: 9, dark: 0 },
+  autoContrast: true,
   defaultRadius: "md",
   fontFamily: "Inter, Arial, sans-serif",
   headings: { fontFamily: "Newsreader, Georgia, serif", fontWeight: "600" },
-  colors: {
-    ink: [
-      "#FBF8F2",
-      "#F3EEE3",
-      "#ECE7DC",
-      "#DDD4C2",
-      "#B9AF9A",
-      "#948B77",
-      "#6B6558",
-      "#4A463E",
-      "#2E2C27",
-      "#1B1A17",
-    ],
-  },
+  colors: { ink: [...INK_RAMP], dark: [...NIGHT_RAMP] },
   components: {
     InputWrapper: { defaultProps: { size: "md" } },
     Select: {
@@ -40,9 +38,52 @@ const theme = createTheme({
     Tooltip: { defaultProps: { withArrow: true, multiline: true, maw: 280 } },
   },
 });
+
+/**
+ * At night Mantine's surfaces (dropdowns, the date picker, the drawer,
+ * accordions) take our tokens instead of its own greys. Light keeps
+ * Mantine's defaults, as before dark mode.
+ */
+const resolveCssVariables: CSSVariablesResolver = () => ({
+  variables: {},
+  light: {},
+  dark: {
+    "--mantine-color-body": "var(--brand-paper)",
+    "--mantine-color-text": "var(--ink)",
+    "--mantine-color-bright": "var(--ink)",
+    "--mantine-color-dimmed": "var(--brand-muted)",
+    "--mantine-color-placeholder": "var(--brand-muted)",
+    "--mantine-color-anchor": "var(--slate)",
+    "--mantine-color-error": "var(--check-error)",
+    "--mantine-color-default": "var(--card)",
+    "--mantine-color-default-hover": "var(--brand-sage)",
+    "--mantine-color-default-color": "var(--ink)",
+    "--mantine-color-default-border": "var(--input-border)",
+    "--mantine-color-disabled": "var(--brand-sage)",
+    "--mantine-color-disabled-color": "var(--brand-muted)",
+    "--mantine-color-disabled-border": "var(--brand-line)",
+  },
+});
+
+const colorSchemeManager = localStorageColorSchemeManager({
+  key: THEME_STORAGE_KEY,
+});
+
+/** Browsers without light-dark() stay light (the CSS hides the control). */
+const lightOnly =
+  typeof window !== "undefined" &&
+  !window.CSS?.supports("color", LIGHT_DARK_PROBE);
+
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <MantineProvider theme={theme} forceColorScheme="light">
+    <MantineProvider
+      theme={theme}
+      defaultColorScheme="auto"
+      colorSchemeManager={colorSchemeManager}
+      cssVariablesResolver={resolveCssVariables}
+      forceColorScheme={lightOnly ? "light" : undefined}
+    >
+      <ThemeSync />
       <DatesProvider settings={{ locale: "en", firstDayOfWeek: 1 }}>
         <MotionConfig reducedMotion="user">{children}</MotionConfig>
       </DatesProvider>

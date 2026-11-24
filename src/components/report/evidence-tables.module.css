@@ -55,7 +55,7 @@
 }
 
 .lower {
-  background: color-mix(in srgb, var(--muted-soft) 40%, var(--newsprint));
+  background: var(--chart-quiet);
 }
 
 .youRow td {

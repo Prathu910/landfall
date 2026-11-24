@@ -16,7 +16,7 @@
   outline-offset: 3px;
 }
 .state[aria-pressed="true"]:hover {
-  background: var(--homepage-color-1f3446);
+  background: var(--homepage-ink-hover);
   color: var(--homepage-paper);
 }
 .tool:disabled {

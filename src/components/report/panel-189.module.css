@@ -161,13 +161,13 @@
   background: var(--ink);
 }
 .lodged {
-  background: #6b6558;
+  background: var(--muted-soft);
 }
 .waiting {
-  background: #d9731a;
+  background: var(--saffron);
 }
 .closed {
-  background: #b9af9a;
+  background: var(--chart-quiet);
 }
 .legend {
   display: flex;
