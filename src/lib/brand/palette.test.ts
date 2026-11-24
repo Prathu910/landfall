@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { contrastRatio } from "./contrast";
 import {
+  ARTWORK,
   CHART,
   CHECK_PALETTE,
   DEEP_PANEL,
@@ -17,6 +18,7 @@ import {
   UPDATES_MAP,
 } from "./palette";
 import {
+  ARTWORK_DARK,
   CHART_DARK,
   CHECK_PALETTE_DARK,
   FOCUS_RING_DARK,
@@ -151,6 +153,23 @@ describe("globals.css", () => {
     UPDATES_MAP.forEach((fill, band) =>
       expectToken(`updates-map-${band + 1}`, fill, UPDATES_MAP_DARK[band]),
     );
+  });
+  it("mirrors the linework and map depth colours", () => {
+    const tokens: Record<keyof typeof ARTWORK, string> = {
+      rule: "homepage-rule",
+      mapEdge: "homepage-map-edge",
+      mapEdgeStrong: "homepage-map-edge-strong",
+      mapShade1: "homepage-map-shade-1",
+      mapShade2: "homepage-map-shade-2",
+      mapShade3: "homepage-map-shade-3",
+      mapShadow: "homepage-map-shadow",
+      guillocheA: "guilloche-a",
+      guillocheB: "guilloche-b",
+    };
+    for (const [key, name] of Object.entries(tokens)) {
+      const role = key as keyof typeof ARTWORK;
+      expectToken(name, ARTWORK[role], ARTWORK_DARK[role]);
+    }
   });
   it("mirrors the status colours", () => {
     for (const [key, { fg, bg }] of Object.entries(STATUS)) {

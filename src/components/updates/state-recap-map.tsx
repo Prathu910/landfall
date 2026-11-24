@@ -1,53 +1,13 @@
-import geometry from "@/components/home/atlas-map-geometry.json";
 import type { StateCode } from "@/lib/data/types";
 import type { StateSectionView } from "@/lib/updates/state-view";
+import {
+  ACT_CIRCLE,
+  ATLAS,
+  MAP_TILT,
+  STATE_DRAW_ORDER,
+  labelPoint,
+} from "./state-map-geometry";
 import styles from "./state-recap-map.module.css";
-
-/** Drawing order: ACT last, so its circle sits on top of NSW. */
-const ORDER: readonly StateCode[] = [
-  "WA",
-  "NT",
-  "SA",
-  "QLD",
-  "NSW",
-  "VIC",
-  "TAS",
-  "ACT",
-];
-/** The ACT's circle, drawn off the coast like the homepage atlas. */
-const ACT_CIRCLE = { x: 650, y: 420, r: 26 };
-/** Each label's offset from its region's centre, in map units (mockup). */
-const NUDGE: Record<StateCode, [number, number]> = {
-  NSW: [10, 8],
-  VIC: [-12, 14],
-  TAS: [-6, 22],
-  ACT: [0, 0],
-  QLD: [10, 10],
-  SA: [-6, 0],
-  NT: [0, 10],
-  WA: [16, 10],
-};
-const TILT = (-8 * Math.PI) / 180;
-
-/**
- * Where a map point lands once the shapes are tilted (the group transform
- * `translate(42 28) rotate(-8 320 260)`); labels are placed upright there.
- */
-function placed(x: number, y: number): { x: number; y: number } {
-  const dx = x - 320;
-  const dy = y - 260;
-  return {
-    x: dx * Math.cos(TILT) - dy * Math.sin(TILT) + 362,
-    y: dx * Math.sin(TILT) + dy * Math.cos(TILT) + 288,
-  };
-}
-
-function labelPoint(state: StateCode) {
-  if (state === "ACT") return placed(ACT_CIRCLE.x, ACT_CIRCLE.y);
-  const { x, y } = geometry.regions[state];
-  const [nudgeX, nudgeY] = NUDGE[state];
-  return placed(x + nudgeX, y + nudgeY);
-}
 
 function Label({
   state,
@@ -103,7 +63,7 @@ export function StateRecapMap({
         aria-label={description}
       >
         <defs>
-          <path id={`${id}-country`} d={geometry.country} />
+          <path id={`${id}-country`} d={ATLAS.country} />
           <filter
             id={`${id}-shadow`}
             x="-30%"
@@ -114,7 +74,7 @@ export function StateRecapMap({
             <feGaussianBlur stdDeviation="11" />
           </filter>
         </defs>
-        <g transform="translate(42 28) rotate(-8 320 260)">
+        <g transform={MAP_TILT}>
           <use
             href={`#${id}-country`}
             className={styles.shadow}
@@ -136,13 +96,13 @@ export function StateRecapMap({
             className={styles.depth3}
             transform="translate(0 4)"
           />
-          {ORDER.map((state) => {
+          {STATE_DRAW_ORDER.map((state) => {
             const shade = styles[`band${view.map[state].shade}`];
             if (state !== "ACT") {
               return (
                 <path
                   key={state}
-                  d={geometry.regions[state].path}
+                  d={ATLAS.regions[state].path}
                   className={`${styles.region} ${shade}`}
                 />
               );
@@ -150,11 +110,11 @@ export function StateRecapMap({
             return (
               <g key={state}>
                 <path
-                  d={geometry.regions.ACT.connector}
+                  d={ATLAS.regions.ACT.connector}
                   className={styles.connector}
                 />
                 <path
-                  d={geometry.regions.ACT.path}
+                  d={ATLAS.regions.ACT.path}
                   className={`${styles.region} ${shade}`}
                 />
                 <circle
@@ -167,7 +127,7 @@ export function StateRecapMap({
             );
           })}
         </g>
-        {ORDER.map((state) => (
+        {STATE_DRAW_ORDER.map((state) => (
           <Label key={state} state={state} label={view.map[state]} />
         ))}
       </svg>

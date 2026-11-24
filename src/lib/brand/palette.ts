@@ -77,6 +77,24 @@ export const UPDATES_MAP = [
   "#7ea590",
 ] as const;
 
+/**
+ * Linework and map depth (`--homepage-rule`, `--homepage-map-*` and
+ * `--guilloche-a`/`-b`): hairlines, the atlas's edges and shaded layers, and
+ * the night guilloche gradient. Never text. The Instagram cards read them
+ * (`scripts/social/tokens.ts`).
+ */
+export const ARTWORK = {
+  rule: "#d8dfdb",
+  mapEdge: "#adbbb2",
+  mapEdgeStrong: "#92a396",
+  mapShade1: "#a9b9ac",
+  mapShade2: "#c0cec3",
+  mapShade3: "#d3dfd5",
+  mapShadow: "#607a68",
+  guillocheA: "#bcd0c4",
+  guillocheB: "#d6e1da",
+} as const;
+
 /** Report status chips. Every status also shows its label, never colour alone. */
 export const STATUS = {
   strongest: { fg: "#1F5136", bg: "#DDEBDF" },

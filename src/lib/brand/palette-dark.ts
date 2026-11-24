@@ -3,6 +3,7 @@
  * same roles and keys, each the dark half of a `light-dark()` token.
  */
 import type {
+  ARTWORK,
   CHART,
   CHECK_PALETTE,
   FOCUS_RING,
@@ -82,6 +83,18 @@ export const UPDATES_MAP_DARK = [
   "#285040",
   "#376a52",
 ] as const satisfies ListTwin<typeof UPDATES_MAP>;
+
+export const ARTWORK_DARK = {
+  rule: "#26363f",
+  mapEdge: "#3e5560",
+  mapEdgeStrong: "#58707a",
+  mapShade1: "#081016",
+  mapShade2: "#0c161d",
+  mapShade3: "#122029",
+  mapShadow: "#000000",
+  guillocheA: "#7fb89a",
+  guillocheB: "#a99ad8",
+} as const satisfies Twin<typeof ARTWORK, string>;
 
 export const STATUS_DARK = {
   strongest: { fg: "#A3DAB9", bg: "#16342A" },
