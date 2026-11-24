@@ -23,6 +23,10 @@ const theme = createTheme({
   colors: { ink: [...INK_RAMP], dark: [...NIGHT_RAMP] },
   components: {
     InputWrapper: { defaultProps: { size: "md" } },
+    // Mantine keeps every closed dropdown mounted (hidden), and Floating UI
+    // then positions each one as the page loads, forcing a style and layout
+    // pass per select (Lighthouse's "forced reflow"). Mount on open instead.
+    Combobox: { defaultProps: { keepMounted: false } },
     Select: {
       defaultProps: {
         size: "md",
