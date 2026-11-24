@@ -1,34 +1,17 @@
+/* At night the UV linework keeps the daylight strength (0.5). */
 .artwork {
   position: absolute;
   inset: -40px;
-  width: calc(100% + 80px);
-  height: calc(100% + 80px);
-  max-width: none;
-  object-fit: cover;
-  opacity: 0.5;
+  opacity: calc(var(--guilloche-opacity) * 0.5);
   pointer-events: none;
   user-select: none;
   z-index: -1;
 }
 
 /* Cover the whole print hero so security lines never start mid-section.
-   The image prints even with browser background graphics off. */
+   The layers set print-color-adjust, so they print with background graphics
+   off. */
 .print {
   inset: -10pt;
-  width: calc(100% + 20pt);
-  height: calc(100% + 20pt);
   opacity: 0.45;
-}
-
-.artwork.day {
-  display: var(--theme-day-display);
-}
-.artwork.uv {
-  opacity: calc(var(--guilloche-opacity) * 0.5);
-  user-select: none;
-}
-@media print {
-  .artwork.day {
-    display: block;
-  }
 }

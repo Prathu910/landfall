@@ -112,6 +112,10 @@
   /* Security print: sage in daylight, UV sage and violet at night. */
   --guilloche-a: light-dark(#bcd0c4, #7fb89a);
   --guilloche-b: light-dark(#d6e1da, #a99ad8);
+  /* The report artwork's three line colours (night paints the gradient). */
+  --guilloche-report: light-dark(#d3ded7, #7fb89a);
+  --guilloche-report-deep: light-dark(#b5cabf, #7fb89a);
+  --guilloche-report-violet: light-dark(#c7c0e0, #a99ad8);
   /* A 1px top highlight on raised cards: elevation by light, not shadow. */
   --elevate-edge: light-dark(transparent, #ece6d814);
 }
@@ -125,8 +129,7 @@
    JavaScript whose device is dark. Screen only, so print stays light. */
 :root {
   --guilloche-opacity: 1;
-  --theme-day-display: block;
-  --theme-uv-display: none;
+  --theme-night: 0;
   --stamp-glow: none;
   --stamp-blend: normal;
   --headline-wght: 750;
@@ -138,26 +141,34 @@
     :root:not([data-mantine-color-scheme="light"]) {
       --brand-deep: #08121a;
       --guilloche-opacity: 0.3;
-      --theme-day-display: none;
-      --theme-uv-display: block;
+      --theme-night: 1;
       --stamp-glow: drop-shadow(
         0 0 6px color-mix(in oklab, currentColor 22%, transparent)
       );
       --stamp-blend: screen;
       --headline-wght: 720;
+      --guill-night: linear-gradient(
+        115deg,
+        var(--guilloche-a) 35%,
+        var(--guilloche-b)
+      );
     }
   }
   @media screen {
     :root[data-mantine-color-scheme="dark"] {
       --brand-deep: #08121a;
       --guilloche-opacity: 0.3;
-      --theme-day-display: none;
-      --theme-uv-display: block;
+      --theme-night: 1;
       --stamp-glow: drop-shadow(
         0 0 6px color-mix(in oklab, currentColor 22%, transparent)
       );
       --stamp-blend: screen;
       --headline-wght: 720;
+      --guill-night: linear-gradient(
+        115deg,
+        var(--guilloche-a) 35%,
+        var(--guilloche-b)
+      );
     }
   }
 }
@@ -182,7 +193,7 @@ html.theme-switching *::after {
     box-shadow 0.2s ease,
     outline-color 0.2s ease !important;
 }
-html.theme-switching .guill-uv {
+html.theme-switching[data-mantine-color-scheme="dark"] .guill-layer {
   animation: guilloche-wake 0.45s ease 0.08s both;
 }
 @keyframes guilloche-wake {
@@ -190,19 +201,19 @@ html.theme-switching .guill-uv {
     opacity: 0;
   }
 }
-/* The security print under the UV lamp: the same artwork as a mask,
-   coloured by the guilloche tokens. Hidden in light, where the original
-   image shows unchanged. */
-.guill-uv {
-  display: var(--theme-uv-display);
-  opacity: var(--guilloche-opacity);
-  background-image: linear-gradient(
-    115deg,
-    var(--guilloche-a) 35%,
-    var(--guilloche-b)
-  );
-  -webkit-mask: var(--guill-src) center / cover no-repeat;
-  mask: var(--guill-src) center / cover no-repeat;
+/* Security print (components/guilloche): each line colour of an artwork is
+   its own mask, painted with its guilloche token, so daylight and print
+   match the original drawing; at night every layer takes the UV gradient
+   (--guill-night). Masks are never the Largest Contentful Paint, and
+   print-color-adjust keeps the lines with background graphics off. */
+.guill-layer {
+  position: absolute;
+  inset: 0;
+  background: var(--guill-night, var(--guill-ink));
+  -webkit-mask: var(--guill-src) var(--guill-fit) no-repeat;
+  mask: var(--guill-src) var(--guill-fit) no-repeat;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
 }
 * {
   box-sizing: border-box;
@@ -863,6 +874,9 @@ svg {
     --rule-soft: #ece7dc;
     --guilloche-a: #bcd0c4;
     --guilloche-b: #d6e1da;
+    --guilloche-report: #d3ded7;
+    --guilloche-report-deep: #b5cabf;
+    --guilloche-report-violet: #c7c0e0;
     --elevate-edge: transparent;
     --homepage-paper: #fff;
     --homepage-ink-hover: #1f3446;

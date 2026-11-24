@@ -25,29 +25,14 @@
   isolation: isolate;
   padding: calc(var(--brand-unit) * 10) 0 calc(var(--brand-unit) * 8);
 }
-/* The passport lines: the image by day, the same file as a UV mask at night. */
-.directoryHead::before,
-.directoryHead::after {
-  content: "";
+/* The passport lines (components/guilloche): full strength by day, and at
+   night the UV glow at 0.6 of the guilloche strength. */
+.directoryArt {
   position: absolute;
   inset: 0;
   z-index: -1;
   pointer-events: none;
-}
-.directoryHead::before {
-  display: var(--theme-day-display);
-  background: url("/report-passport.svg") no-repeat right top / 45% auto;
-}
-.directoryHead::after {
-  display: var(--theme-uv-display);
-  opacity: calc(var(--guilloche-opacity) * 0.6);
-  background-image: linear-gradient(
-    115deg,
-    var(--guilloche-a) 35%,
-    var(--guilloche-b)
-  );
-  -webkit-mask: url("/report-passport.svg") no-repeat right top / 45% auto;
-  mask: url("/report-passport.svg") no-repeat right top / 45% auto;
+  opacity: calc(var(--guilloche-opacity) * (1 - 0.4 * var(--theme-night)));
 }
 .directoryHead h1 {
   max-width: 16ch;

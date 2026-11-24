@@ -1,5 +1,5 @@
 import { HomeStamp } from "./home-stamp";
-import { Guilloche } from "./guilloche";
+import { Guilloche } from "@/components/guilloche/guilloche";
 import type { HomeAtlasView } from "@/lib/home/atlas";
 
 export function HomePassport({
@@ -19,7 +19,7 @@ export function HomePassport({
       aria-label="An example report, opened like a passport"
     >
       <div className="pp left">
-        <Guilloche src="/home/passport-left.svg" />
+        <Guilloche art="passport-left" />
         <div className="pp-h">
           <b>Your three visas</b>
           <span>{date}</span>
@@ -52,7 +52,7 @@ export function HomePassport({
         </div>
       </div>
       <div className="pp">
-        <Guilloche src="/home/passport-right.svg" />
+        <Guilloche art="passport-right" />
         <div className="pp-h">
           <b>Your outlook</b>
           <span>Example</span>
