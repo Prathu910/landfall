@@ -1,0 +1,72 @@
+import { pageDescription } from "../occupation-page/meta";
+import { articleLd, breadcrumbLd, datasetLd, faqPageLd } from "../seo/json-ld";
+import { SITE_NAME, SITE_URL } from "../site";
+import { formatLongMonth, longDayText, monthEnd } from "./format";
+import type { RecapView } from "./recap-view";
+import type { RecapFacts } from "./types";
+
+const DESCRIPTION_LIMIT = 155;
+
+/**
+ * The full page title. Routes set it as `title.absolute` (R20): the layout's
+ * "· MigrateLens" template would repeat the brand.
+ */
+export function recapTitle(facts: RecapFacts): string {
+  const month = formatLongMonth(facts.month);
+  const topic =
+    Object.keys(facts.rounds).length > 0
+      ? "189 round, 190 and 491 by state"
+      : "190 and 491 invitations by state";
+  return `SkillSelect ${month} update: ${topic} | ${SITE_NAME}`;
+}
+
+/** The direct answer cut to 155 characters at a word boundary. */
+export function recapDescription(view: RecapView): string {
+  return pageDescription([view.hero.answer], DESCRIPTION_LIMIT);
+}
+
+const absolute = (path: string): string =>
+  path.startsWith("/") ? SITE_URL + path : path;
+
+/**
+ * Article (dated by the facts file's first and last generation), Dataset
+ * only once the month's data section exists, FAQPage and BreadcrumbList.
+ * `ogImage` is a site path or an absolute URL.
+ */
+export function recapJsonLd(
+  facts: RecapFacts,
+  view: RecapView,
+  ogImage: string,
+): object[] {
+  const url = absolute(view.path);
+  const description = recapDescription(view);
+  const month = formatLongMonth(facts.month);
+  const article = articleLd({
+    headline: view.hero.h1,
+    description,
+    url,
+    datePublished: facts.firstGeneratedAt,
+    dateModified: facts.updatedAt,
+    image: absolute(ogImage),
+    citations: view.method.sources.map((s) => s.href),
+  });
+  const dataset = facts.data
+    ? [
+        datasetLd({
+          name: `SkillSelect EOI data, ${month}`,
+          description: `189, 190 and 491 EOI pools and invitations by state and points, as at ${longDayText(monthEnd(facts.month))}.`,
+          url,
+          temporalCoverage: facts.month,
+          dateModified: facts.data.sources.checkedAt,
+        }),
+      ]
+    : [];
+  return [
+    article,
+    ...dataset,
+    faqPageLd(view.faq),
+    breadcrumbLd(
+      view.breadcrumb.map((c) => ({ name: c.name, item: absolute(c.href) })),
+    ),
+  ];
+}
