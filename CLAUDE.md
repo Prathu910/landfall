@@ -23,6 +23,7 @@ npm run lint         # eslint (next core-web-vitals + typescript)
 npm run format       # prettier --write .
 npm run check        # format:check + lint + typecheck + test — must pass before every commit
 npm run build        # static export to out/
+npm run lighthouse   # after a build: every SEO page type, mobile + desktop, must score 100 (docs/ENGINEERING.md, "Performance budget")
 npm run og:image     # regenerate public/og.png (headless Chrome; scripts/og-image/; set CHROME_PATH if needed)
 npm run data:import -- --as-at YYYY-MM   # SkillSelect import (network); see docs/DATA.md
 npm run data:generate -- --as-at YYYY-MM # rebuild src/data from data/raw, no network

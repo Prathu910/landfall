@@ -24,7 +24,7 @@ import {
  *   npm run lighthouse                         # the full matrix against out/
  *   npm run lighthouse -- --only guide --runs 1
  *   npm run lighthouse -- --base-url https://migratelens.com
- *   npm run lighthouse -- --only / --form mobile --cpu-slowdown 8   # PSI-like CPU
+ *   npm run lighthouse -- --only / --form mobile --cpu-slowdown 10  # PSI-like CPU
  *
  * Other flags: --runs N, --no-dark, --port 3020, --json <file> (medians),
  * --save-dir <dir> (every Lighthouse report as JSON).
