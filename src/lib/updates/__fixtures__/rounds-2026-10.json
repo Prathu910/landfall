@@ -1,0 +1,1866 @@
+{
+  "schemaVersion": 2,
+  "rounds": [
+    {
+      "date": "2026-10-15",
+      "totals": [
+        {
+          "subclass": "189",
+          "label": "Skilled Independent visa (subclass 189)",
+          "invited": 20000
+        }
+      ],
+      "tieBreak": null,
+      "rows": [
+        {
+          "name": "Actuary",
+          "code": "224111",
+          "cutoff": 85,
+          "tieBreak": "2026-09-03"
+        },
+        {
+          "name": "Agricultural Consultant",
+          "code": "234111",
+          "cutoff": 80,
+          "tieBreak": "2026-09-03"
+        },
+        {
+          "name": "Agricultural Scientist",
+          "code": "234112",
+          "cutoff": 80,
+          "tieBreak": "2026-09-04"
+        },
+        {
+          "name": "Airconditioning and Mechanical Services Plumber",
+          "code": "334112",
+          "cutoff": 65,
+          "tieBreak": "2026-09-19"
+        },
+        {
+          "name": "Airconditioning and Refrigeration Mechanic",
+          "code": "342111",
+          "cutoff": 65,
+          "tieBreak": "2026-10-08"
+        },
+        {
+          "name": "Architect",
+          "code": "232111",
+          "cutoff": 85,
+          "tieBreak": "2026-08-06"
+        },
+        {
+          "name": "Arts Administrator or Manager",
+          "code": "139911",
+          "cutoff": 65,
+          "tieBreak": "2026-10-01"
+        },
+        {
+          "name": "Audiologist",
+          "code": "252711",
+          "cutoff": 70,
+          "tieBreak": "2025-10-29"
+        },
+        {
+          "name": "Automotive Electrician",
+          "code": "321111",
+          "cutoff": 65,
+          "tieBreak": "2026-10-10"
+        },
+        {
+          "name": "Barrister",
+          "code": "271111",
+          "cutoff": 70,
+          "tieBreak": "2026-03-27"
+        },
+        {
+          "name": "Biotechnologist",
+          "code": "234514",
+          "cutoff": 90,
+          "tieBreak": "2026-02-09"
+        },
+        {
+          "name": "Boat Builder and Repairer",
+          "code": "399111",
+          "cutoff": 65,
+          "tieBreak": "2026-08-13"
+        },
+        {
+          "name": "Bricklayer",
+          "code": "331111",
+          "cutoff": 65,
+          "tieBreak": "2026-09-17"
+        },
+        {
+          "name": "Cabinetmaker",
+          "code": "394111",
+          "cutoff": 65,
+          "tieBreak": "2026-10-14"
+        },
+        {
+          "name": "Cardiologist",
+          "code": "253312",
+          "cutoff": 75,
+          "tieBreak": "2026-10-14"
+        },
+        {
+          "name": "Carpenter",
+          "code": "331212",
+          "cutoff": 65,
+          "tieBreak": "2026-09-21"
+        },
+        {
+          "name": "Carpenter and Joiner",
+          "code": "331211",
+          "cutoff": 65,
+          "tieBreak": "2026-09-15"
+        },
+        {
+          "name": "Cartographer",
+          "code": "232213",
+          "cutoff": 85,
+          "tieBreak": "2026-03-25"
+        },
+        {
+          "name": "Chemical Engineer",
+          "code": "233111",
+          "cutoff": 85,
+          "tieBreak": "2026-07-10"
+        },
+        {
+          "name": "Chemist",
+          "code": "234211",
+          "cutoff": 80,
+          "tieBreak": "2026-01-01"
+        },
+        {
+          "name": "Child Care Centre Manager",
+          "code": "134111",
+          "cutoff": 85,
+          "tieBreak": "2026-10-14"
+        },
+        {
+          "name": "Chiropractor",
+          "code": "252111",
+          "cutoff": 80,
+          "tieBreak": "2026-09-04"
+        },
+        {
+          "name": "Clinical Psychologist",
+          "code": "272311",
+          "cutoff": 90,
+          "tieBreak": "2026-09-28"
+        },
+        {
+          "name": "Conservator",
+          "code": "234911",
+          "cutoff": 90,
+          "tieBreak": "2026-09-16"
+        },
+        {
+          "name": "Construction Project Manager",
+          "code": "133111",
+          "cutoff": 80,
+          "tieBreak": "2026-09-04"
+        },
+        {
+          "name": "Dancer or Choreographer",
+          "code": "211112",
+          "cutoff": 65,
+          "tieBreak": "2026-07-07"
+        },
+        {
+          "name": "Dermatologist",
+          "code": "253911",
+          "cutoff": 85,
+          "tieBreak": "2026-04-03"
+        },
+        {
+          "name": "Diagnostic and Interventional Radiologist",
+          "code": "253917",
+          "cutoff": 75,
+          "tieBreak": "2026-09-27"
+        },
+        {
+          "name": "Drainer",
+          "code": "334113",
+          "cutoff": 65,
+          "tieBreak": "2026-07-15"
+        },
+        {
+          "name": "Early Childhood (Pre-primary School) Teacher",
+          "code": "241111",
+          "cutoff": 90,
+          "tieBreak": "2026-07-22"
+        },
+        {
+          "name": "Economist",
+          "code": "224311",
+          "cutoff": 65,
+          "tieBreak": "2026-10-15"
+        },
+        {
+          "name": "Educational Psychologist",
+          "code": "272312",
+          "cutoff": 65,
+          "tieBreak": "2026-10-15"
+        },
+        {
+          "name": "Electrical Engineering Draftsperson",
+          "code": "312311",
+          "cutoff": 65,
+          "tieBreak": "2026-10-15"
+        },
+        {
+          "name": "Electrical Engineering Technician",
+          "code": "312312",
+          "cutoff": 65,
+          "tieBreak": "2026-09-29"
+        },
+        {
+          "name": "Electrician (General)",
+          "code": "341111",
+          "cutoff": 65,
+          "tieBreak": "2026-09-18"
+        },
+        {
+          "name": "Electrician (Special Class)",
+          "code": "341112",
+          "cutoff": 65,
+          "tieBreak": "2026-02-19"
+        },
+        {
+          "name": "Electronic Equipment Trades Worker",
+          "code": "342313",
+          "cutoff": 65,
+          "tieBreak": "2026-10-13"
+        },
+        {
+          "name": "Electronic Instrument Trades Worker (General)",
+          "code": "342314",
+          "cutoff": 65,
+          "tieBreak": "2026-10-12"
+        },
+        {
+          "name": "Electronic Instrument Trades Worker (Special Class)",
+          "code": "342315",
+          "cutoff": 65,
+          "tieBreak": "2026-08-29"
+        },
+        {
+          "name": "Electronics Engineer",
+          "code": "233411",
+          "cutoff": 95,
+          "tieBreak": "2025-11-21"
+        },
+        {
+          "name": "Emergency Medicine Specialist",
+          "code": "253912",
+          "cutoff": 70,
+          "tieBreak": "2025-07-19"
+        },
+        {
+          "name": "Endocrinologist",
+          "code": "253315",
+          "cutoff": 80,
+          "tieBreak": "2026-03-06"
+        },
+        {
+          "name": "Engineering Manager",
+          "code": "133211",
+          "cutoff": 80,
+          "tieBreak": "2026-08-04"
+        },
+        {
+          "name": "Environmental Consultant",
+          "code": "234312",
+          "cutoff": 65,
+          "tieBreak": "2026-10-01"
+        },
+        {
+          "name": "Environmental Manager",
+          "code": "139912",
+          "cutoff": 65,
+          "tieBreak": null
+        },
+        {
+          "name": "Environmental Research Scientist",
+          "code": "234313",
+          "cutoff": 65,
+          "tieBreak": "2026-10-06"
+        },
+        {
+          "name": "Environmental Scientists nec",
+          "code": "234399",
+          "cutoff": 65,
+          "tieBreak": "2026-10-13"
+        },
+        {
+          "name": "Fibrous Plasterer",
+          "code": "333211",
+          "cutoff": 65,
+          "tieBreak": "2026-08-04"
+        },
+        {
+          "name": "Fitter (General)",
+          "code": "323211",
+          "cutoff": 80,
+          "tieBreak": "2026-08-12"
+        },
+        {
+          "name": "Fitter-Welder",
+          "code": "323213",
+          "cutoff": 80,
+          "tieBreak": "2026-08-13"
+        },
+        {
+          "name": "Food Technologist",
+          "code": "234212",
+          "cutoff": 80,
+          "tieBreak": "2025-12-20"
+        },
+        {
+          "name": "Footballer",
+          "code": "452411",
+          "cutoff": 70,
+          "tieBreak": "2026-05-28"
+        },
+        {
+          "name": "Forester",
+          "code": "234113",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Gasfitter",
+          "code": "334114",
+          "cutoff": 70,
+          "tieBreak": "2026-09-29"
+        },
+        {
+          "name": "Gastroenterologist",
+          "code": "253316",
+          "cutoff": 75,
+          "tieBreak": "2026-04-16"
+        },
+        {
+          "name": "General Practitioner",
+          "code": "253111",
+          "cutoff": 70,
+          "tieBreak": "2025-11-18"
+        },
+        {
+          "name": "Geophysicist",
+          "code": "234412",
+          "cutoff": 80,
+          "tieBreak": "2026-08-28"
+        },
+        {
+          "name": "Glazier",
+          "code": "333111",
+          "cutoff": 65,
+          "tieBreak": "2026-09-10"
+        },
+        {
+          "name": "Horse Trainer",
+          "code": "361112",
+          "cutoff": 65,
+          "tieBreak": "2026-09-28"
+        },
+        {
+          "name": "Hydrogeologist",
+          "code": "234413",
+          "cutoff": 80,
+          "tieBreak": "2026-08-16"
+        },
+        {
+          "name": "ICT Security Specialist",
+          "code": "262112",
+          "cutoff": 100,
+          "tieBreak": "2024-11-08"
+        },
+        {
+          "name": "Intensive Care Specialist",
+          "code": "253317",
+          "cutoff": 75,
+          "tieBreak": "2025-12-23"
+        },
+        {
+          "name": "Joiner",
+          "code": "331213",
+          "cutoff": 65,
+          "tieBreak": "2026-08-21"
+        },
+        {
+          "name": "Land Economist",
+          "code": "224511",
+          "cutoff": 65,
+          "tieBreak": "2026-09-12"
+        },
+        {
+          "name": "Landscape Architect",
+          "code": "232112",
+          "cutoff": 85,
+          "tieBreak": "2026-07-28"
+        },
+        {
+          "name": "Life Scientist (General)",
+          "code": "234511",
+          "cutoff": 90,
+          "tieBreak": "2026-01-22"
+        },
+        {
+          "name": "Life Scientists nec",
+          "code": "234599",
+          "cutoff": 90,
+          "tieBreak": "2026-02-03"
+        },
+        {
+          "name": "Lift mechanic",
+          "code": "341113",
+          "cutoff": 80,
+          "tieBreak": "2025-11-12"
+        },
+        {
+          "name": "Locksmith",
+          "code": "323313",
+          "cutoff": 65,
+          "tieBreak": "2026-10-09"
+        },
+        {
+          "name": "Management Consultant",
+          "code": "224711",
+          "cutoff": 80,
+          "tieBreak": "2026-09-07"
+        },
+        {
+          "name": "Marine Biologist",
+          "code": "234516",
+          "cutoff": 95,
+          "tieBreak": "2026-09-16"
+        },
+        {
+          "name": "Materials Engineer",
+          "code": "233112",
+          "cutoff": 85,
+          "tieBreak": "2026-05-16"
+        },
+        {
+          "name": "Medical Diagnostic Radiographer",
+          "code": "251211",
+          "cutoff": 70,
+          "tieBreak": "2025-11-20"
+        },
+        {
+          "name": "Medical Laboratory Scientist",
+          "code": "234611",
+          "cutoff": 80,
+          "tieBreak": "2026-08-31"
+        },
+        {
+          "name": "Medical Diagnostic Radiographer",
+          "code": "251211",
+          "cutoff": 70,
+          "tieBreak": "2025-11-20"
+        },
+        {
+          "name": "Medical Laboratory Scientist",
+          "code": "234611",
+          "cutoff": 80,
+          "tieBreak": "2026-08-31"
+        },
+        {
+          "name": "Medical Oncologist",
+          "code": "253314",
+          "cutoff": 70,
+          "tieBreak": "2025-08-26"
+        },
+        {
+          "name": "Medical Practitioners nec",
+          "code": "253999",
+          "cutoff": 70,
+          "tieBreak": "2025-11-20"
+        },
+        {
+          "name": "Medical Radiation Therapist",
+          "code": "251212",
+          "cutoff": 75,
+          "tieBreak": "2026-05-27"
+        },
+        {
+          "name": "Metal Fabricator",
+          "code": "322311",
+          "cutoff": 80,
+          "tieBreak": "2026-08-28"
+        },
+        {
+          "name": "Metal Machinist (First Class)",
+          "code": "323214",
+          "cutoff": 80,
+          "tieBreak": "2026-08-10"
+        },
+        {
+          "name": "Metallurgist",
+          "code": "234912",
+          "cutoff": 80,
+          "tieBreak": "2026-08-25"
+        },
+        {
+          "name": "Meteorologist",
+          "code": "234913",
+          "cutoff": 85,
+          "tieBreak": "2026-03-11"
+        },
+        {
+          "name": "Microbiologist",
+          "code": "234517",
+          "cutoff": 90,
+          "tieBreak": "2026-01-04"
+        },
+        {
+          "name": "Midwife",
+          "code": "254111",
+          "cutoff": 70,
+          "tieBreak": "2025-10-18"
+        },
+        {
+          "name": "Mining Engineer (excluding Petroleum)",
+          "code": "233611",
+          "cutoff": 80,
+          "tieBreak": "2026-08-25"
+        },
+        {
+          "name": "Multimedia Specialist",
+          "code": "261211",
+          "cutoff": 90,
+          "tieBreak": "2026-06-01"
+        },
+        {
+          "name": "Music Director",
+          "code": "211212",
+          "cutoff": 70,
+          "tieBreak": "2026-09-15"
+        },
+        {
+          "name": "Musician (Instrumental)",
+          "code": "211213",
+          "cutoff": 65,
+          "tieBreak": "2026-09-29"
+        },
+        {
+          "name": "Natural and Physical Science Professionals nec",
+          "code": "234999",
+          "cutoff": 85,
+          "tieBreak": "2026-09-06"
+        },
+        {
+          "name": "Neurologist",
+          "code": "253318",
+          "cutoff": 75,
+          "tieBreak": "2026-05-29"
+        },
+        {
+          "name": "Neurosurgeon",
+          "code": "253513",
+          "cutoff": 85,
+          "tieBreak": "2026-08-05"
+        },
+        {
+          "name": "Nuclear Medicine Technologist",
+          "code": "251213",
+          "cutoff": 70,
+          "tieBreak": "2026-02-15"
+        },
+        {
+          "name": "Nurse Practitioner",
+          "code": "254411",
+          "cutoff": 70,
+          "tieBreak": "2025-08-18"
+        },
+        {
+          "name": "Nursing Clinical Director",
+          "code": "134212",
+          "cutoff": 75,
+          "tieBreak": "2025-11-17"
+        },
+        {
+          "name": "Obstetrician and Gynaecologist",
+          "code": "253913",
+          "cutoff": 70,
+          "tieBreak": "2025-10-20"
+        },
+        {
+          "name": "Occupational Therapist",
+          "code": "252411",
+          "cutoff": 70,
+          "tieBreak": "2025-11-20"
+        },
+        {
+          "name": "Ophthalmologist",
+          "code": "253914",
+          "cutoff": 80,
+          "tieBreak": "2026-09-16"
+        },
+        {
+          "name": "Optometrist",
+          "code": "251411",
+          "cutoff": 80,
+          "tieBreak": "2026-08-24"
+        },
+        {
+          "name": "Orthopaedic Surgeon",
+          "code": "253514",
+          "cutoff": 80,
+          "tieBreak": "2026-08-10"
+        },
+        {
+          "name": "Orthotist or Prosthetist",
+          "code": "251912",
+          "cutoff": 80,
+          "tieBreak": "2026-04-07"
+        },
+        {
+          "name": "Osteopath",
+          "code": "252112",
+          "cutoff": 80,
+          "tieBreak": "2026-09-02"
+        },
+        {
+          "name": "Other Spatial Scientist",
+          "code": "232214",
+          "cutoff": 80,
+          "tieBreak": "2026-08-28"
+        },
+        {
+          "name": "Paediatrician",
+          "code": "253321",
+          "cutoff": 70,
+          "tieBreak": "2026-06-23"
+        },
+        {
+          "name": "Painting Trades Worker",
+          "code": "332211",
+          "cutoff": 70,
+          "tieBreak": "2026-07-01"
+        },
+        {
+          "name": "Panelbeater",
+          "code": "324111",
+          "cutoff": 65,
+          "tieBreak": "2026-10-13"
+        },
+        {
+          "name": "Pathologist",
+          "code": "253915",
+          "cutoff": 70,
+          "tieBreak": "2026-10-18"
+        },
+        {
+          "name": "Petroleum Engineer",
+          "code": "233612",
+          "cutoff": 80,
+          "tieBreak": "2026-08-17"
+        },
+        {
+          "name": "Physicist",
+          "code": "234914",
+          "cutoff": 80,
+          "tieBreak": "2026-08-28"
+        },
+        {
+          "name": "Physiotherapist",
+          "code": "252511",
+          "cutoff": 70,
+          "tieBreak": "2025-11-20"
+        },
+        {
+          "name": "Plumber (General)",
+          "code": "334111",
+          "cutoff": 65,
+          "tieBreak": "2026-06-11"
+        },
+        {
+          "name": "Podiatrist",
+          "code": "252611",
+          "cutoff": 70,
+          "tieBreak": "2025-03-15"
+        },
+        {
+          "name": "Primary Health Organisation Manager",
+          "code": "134213",
+          "cutoff": 65,
+          "tieBreak": "2026-10-14"
+        },
+        {
+          "name": "Psychiatrist",
+          "code": "253411",
+          "cutoff": 70,
+          "tieBreak": "2025-07-22"
+        },
+        {
+          "name": "Psychologists nec",
+          "code": "272399",
+          "cutoff": 80,
+          "tieBreak": "2026-08-15"
+        },
+        {
+          "name": "Radiocommunications Technician",
+          "code": "313211",
+          "cutoff": 85,
+          "tieBreak": "2025-01-31"
+        },
+        {
+          "name": "Registered Nurse (Aged Care)",
+          "code": "254412",
+          "cutoff": 70,
+          "tieBreak": "2025-11-20"
+        },
+        {
+          "name": "Registered Nurse (Child and Family Health)",
+          "code": "254413",
+          "cutoff": 70,
+          "tieBreak": "2025-08-21"
+        },
+        {
+          "name": "Registered Nurse (Community Health)",
+          "code": "254414",
+          "cutoff": 70,
+          "tieBreak": "2025-11-11"
+        },
+        {
+          "name": "Registered Nurse (Critical Care and Emergency)",
+          "code": "254415",
+          "cutoff": 70,
+          "tieBreak": "2025-11-18"
+        },
+        {
+          "name": "Registered Nurse (Developmental Disability)",
+          "code": "254416",
+          "cutoff": 70,
+          "tieBreak": "2025-04-10"
+        },
+        {
+          "name": "Registered Nurse (Disability and Rehabilitation)",
+          "code": "254417",
+          "cutoff": 70,
+          "tieBreak": "2025-08-26"
+        },
+        {
+          "name": "Registered Nurse (Medical Practice)",
+          "code": "254421",
+          "cutoff": 70,
+          "tieBreak": "2025-11-10"
+        },
+        {
+          "name": "Registered Nurse (Medical)",
+          "code": "254418",
+          "cutoff": 70,
+          "tieBreak": "2025-11-19"
+        },
+        {
+          "name": "Registered Nurse (Mental Health)",
+          "code": "254422",
+          "cutoff": 70,
+          "tieBreak": "2025-10-10"
+        },
+        {
+          "name": "Registered Nurse (Paediatrics)",
+          "code": "254425",
+          "cutoff": 70,
+          "tieBreak": "2025-11-19"
+        },
+        {
+          "name": "Registered Nurse (Perioperative)",
+          "code": "254423",
+          "cutoff": 70,
+          "tieBreak": "2025-11-19"
+        },
+        {
+          "name": "Registered Nurse (Surgical)",
+          "code": "254424",
+          "cutoff": 70,
+          "tieBreak": "2025-11-15"
+        },
+        {
+          "name": "Registered Nurses nec",
+          "code": "254499",
+          "cutoff": 70,
+          "tieBreak": "2025-11-19"
+        },
+        {
+          "name": "Roof Plumber",
+          "code": "334115",
+          "cutoff": 65,
+          "tieBreak": "2026-09-20"
+        },
+        {
+          "name": "Secondary School Teacher",
+          "code": "241411",
+          "cutoff": 80,
+          "tieBreak": "2026-09-04"
+        },
+        {
+          "name": "Sheetmetal Trades Worker",
+          "code": "322211",
+          "cutoff": 65,
+          "tieBreak": "2026-08-12"
+        },
+        {
+          "name": "Shipwright",
+          "code": "399112",
+          "cutoff": 65,
+          "tieBreak": "2025-09-16"
+        },
+        {
+          "name": "Social Worker",
+          "code": "272511",
+          "cutoff": 80,
+          "tieBreak": "2026-09-03"
+        },
+        {
+          "name": "Solicitor",
+          "code": "271311",
+          "cutoff": 65,
+          "tieBreak": "2026-10-15"
+        },
+        {
+          "name": "Solid Plasterer",
+          "code": "333212",
+          "cutoff": 65,
+          "tieBreak": "2026-09-18"
+        },
+        {
+          "name": "Sonographer",
+          "code": "251214",
+          "cutoff": 75,
+          "tieBreak": "2026-09-29"
+        },
+        {
+          "name": "Special Education Teachers nec",
+          "code": "241599",
+          "cutoff": 80,
+          "tieBreak": "2026-07-21"
+        },
+        {
+          "name": "Special Needs Teacher",
+          "code": "241511",
+          "cutoff": 80,
+          "tieBreak": "2026-08-22"
+        },
+        {
+          "name": "Specialist Physician (General Medicine)",
+          "code": "253311",
+          "cutoff": 75,
+          "tieBreak": "2026-09-21"
+        },
+        {
+          "name": "Specialist Physicians nec",
+          "code": "253399",
+          "cutoff": 85,
+          "tieBreak": "2026-09-19"
+        },
+        {
+          "name": "Speech Pathologist",
+          "code": "252712",
+          "cutoff": 70,
+          "tieBreak": "2025-10-29"
+        },
+        {
+          "name": "Statistician",
+          "code": "224113",
+          "cutoff": 85,
+          "tieBreak": "2026-09-02"
+        },
+        {
+          "name": "Stonemason",
+          "code": "331112",
+          "cutoff": 65,
+          "tieBreak": "2026-09-15"
+        },
+        {
+          "name": "Surgeon (General)",
+          "code": "253511",
+          "cutoff": 90,
+          "tieBreak": "2026-09-12"
+        },
+        {
+          "name": "Surveyor",
+          "code": "232212",
+          "cutoff": 80,
+          "tieBreak": "2025-09-15"
+        },
+        {
+          "name": "Technical Cable Jointer",
+          "code": "342212",
+          "cutoff": 70,
+          "tieBreak": "2026-08-19"
+        },
+        {
+          "name": "Telecommunications Engineer",
+          "code": "263311",
+          "cutoff": 85,
+          "tieBreak": "2026-10-14"
+        },
+        {
+          "name": "Telecommunications Field Engineer",
+          "code": "313212",
+          "cutoff": 85,
+          "tieBreak": "2026-10-11"
+        },
+        {
+          "name": "Telecommunications Network Engineer",
+          "code": "263312",
+          "cutoff": 85,
+          "tieBreak": "2026-10-06"
+        },
+        {
+          "name": "Telecommunications Network Planner",
+          "code": "313213",
+          "cutoff": 85,
+          "tieBreak": "2026-10-11"
+        },
+        {
+          "name": "Telecommunications Technical Officer or Technologist",
+          "code": "313214",
+          "cutoff": 85,
+          "tieBreak": "2026-10-14"
+        },
+        {
+          "name": "Tennis Coach",
+          "code": "452316",
+          "cutoff": 65,
+          "tieBreak": "2025-12-01"
+        },
+        {
+          "name": "University Lecturer",
+          "code": "242111",
+          "cutoff": 90,
+          "tieBreak": "2026-07-14"
+        },
+        {
+          "name": "Urologist",
+          "code": "253518",
+          "cutoff": 100,
+          "tieBreak": "2026-06-04"
+        },
+        {
+          "name": "Valuer",
+          "code": "224512",
+          "cutoff": 65,
+          "tieBreak": "2026-10-10"
+        },
+        {
+          "name": "Veterinarian",
+          "code": "234711",
+          "cutoff": 80,
+          "tieBreak": "2026-09-02"
+        },
+        {
+          "name": "Wall and Floor Tiler",
+          "code": "333411",
+          "cutoff": 65,
+          "tieBreak": "2026-09-19"
+        },
+        {
+          "name": "Welder (First Class)",
+          "code": "322313",
+          "cutoff": 80,
+          "tieBreak": "2026-09-01"
+        },
+        {
+          "name": "Welfare Centre Manager",
+          "code": "134214",
+          "cutoff": 65,
+          "tieBreak": "2026-09-28"
+        },
+        {
+          "name": "Zoologist",
+          "code": "234518",
+          "cutoff": 95,
+          "tieBreak": "2026-07-23"
+        }
+      ],
+      "nominations": {
+        "programYear": "2026-27",
+        "from": "2026-07-01",
+        "to": "2026-09-30",
+        "byVisa": {
+          "190": {
+            "ACT": "<5",
+            "NSW": "11",
+            "NT": "188",
+            "QLD": "7",
+            "SA": "0",
+            "TAS": "271",
+            "VIC": "0",
+            "WA": "17"
+          },
+          "491": {
+            "ACT": "<5",
+            "NSW": "0",
+            "NT": "208",
+            "QLD": "<5",
+            "SA": "0",
+            "TAS": "96",
+            "VIC": "0",
+            "WA": "120"
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-06-04",
+      "totals": [
+        {
+          "subclass": "189",
+          "label": "Skilled Independent visa (subclass 189)",
+          "invited": 10000
+        }
+      ],
+      "tieBreak": "2026-04-24",
+      "rows": [
+        {
+          "name": "Actuary",
+          "code": "224111",
+          "cutoff": 90,
+          "tieBreak": null
+        },
+        {
+          "name": "Agricultural Consultant",
+          "code": "234111",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Agricultural Scientist",
+          "code": "234112",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Airconditioning and Mechanical Services Plumber",
+          "code": "334112",
+          "cutoff": 65,
+          "tieBreak": null
+        },
+        {
+          "name": "Airconditioning and Refrigeration Mechanic",
+          "code": "342111",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Architect",
+          "code": "232111",
+          "cutoff": 85,
+          "tieBreak": null
+        },
+        {
+          "name": "Arts Administrator or Manager",
+          "code": "139911",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Audiologist",
+          "code": "252711",
+          "cutoff": 75,
+          "tieBreak": null
+        },
+        {
+          "name": "Automotive Electrician",
+          "code": "321111",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Barrister",
+          "code": "271111",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Biotechnologist",
+          "code": "234514",
+          "cutoff": 95,
+          "tieBreak": null
+        },
+        {
+          "name": "Boat Builder and Repairer",
+          "code": "399111",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Bricklayer",
+          "code": "331111",
+          "cutoff": 65,
+          "tieBreak": null
+        },
+        {
+          "name": "Cabinetmaker",
+          "code": "394111",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Cardiologist",
+          "code": "253312",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Carpenter",
+          "code": "331212",
+          "cutoff": 65,
+          "tieBreak": null
+        },
+        {
+          "name": "Carpenter and Joiner",
+          "code": "331211",
+          "cutoff": 65,
+          "tieBreak": null
+        },
+        {
+          "name": "Cartographer",
+          "code": "232213",
+          "cutoff": 85,
+          "tieBreak": null
+        },
+        {
+          "name": "Chemist",
+          "code": "234211",
+          "cutoff": 85,
+          "tieBreak": null
+        },
+        {
+          "name": "Child Care Centre Manager",
+          "code": "134111",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Chiropractor",
+          "code": "252111",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Clinical Psychologist",
+          "code": "272311",
+          "cutoff": 75,
+          "tieBreak": null
+        },
+        {
+          "name": "Construction Project Manager",
+          "code": "133111",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Dancer or Choreographer",
+          "code": "211112",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Dermatologist",
+          "code": "253911",
+          "cutoff": 85,
+          "tieBreak": null
+        },
+        {
+          "name": "Diagnostic and Interventional Radiologist",
+          "code": "253917",
+          "cutoff": 85,
+          "tieBreak": null
+        },
+        {
+          "name": "Drainer",
+          "code": "334113",
+          "cutoff": 65,
+          "tieBreak": null
+        },
+        {
+          "name": "Economist",
+          "code": "224311",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Electrical Engineering Draftsperson",
+          "code": "312311",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Electrical Engineering Technician",
+          "code": "312312",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Electrician (General)",
+          "code": "341111",
+          "cutoff": 65,
+          "tieBreak": null
+        },
+        {
+          "name": "Electrician (Special Class)",
+          "code": "341112",
+          "cutoff": 65,
+          "tieBreak": null
+        },
+        {
+          "name": "Electronic Equipment Trades Worker",
+          "code": "342313",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Electronic Instrument Trades Worker (General)",
+          "code": "342314",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Electronic Instrument Trades Worker (Special Class)",
+          "code": "342315",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Electronics Engineer",
+          "code": "233411",
+          "cutoff": 95,
+          "tieBreak": null
+        },
+        {
+          "name": "Emergency Medicine Specialist",
+          "code": "253912",
+          "cutoff": 75,
+          "tieBreak": null
+        },
+        {
+          "name": "Endocrinologist",
+          "code": "253315",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Engineering Manager",
+          "code": "133211",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Environmental Consultant",
+          "code": "234312",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Environmental Manager",
+          "code": "139912",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Environmental Research Scientist",
+          "code": "234313",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Environmental Scientists nec",
+          "code": "234399",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Fibrous Plasterer",
+          "code": "333211",
+          "cutoff": 65,
+          "tieBreak": null
+        },
+        {
+          "name": "Fitter (General)",
+          "code": "323211",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Fitter and Turner",
+          "code": "323212",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Food Technologist",
+          "code": "234212",
+          "cutoff": 85,
+          "tieBreak": null
+        },
+        {
+          "name": "Footballer",
+          "code": "452411",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Forester",
+          "code": "234113",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Gasfitter",
+          "code": "334114",
+          "cutoff": 70,
+          "tieBreak": null
+        },
+        {
+          "name": "Gastroenterologist",
+          "code": "253316",
+          "cutoff": 85,
+          "tieBreak": null
+        },
+        {
+          "name": "General Practitioner",
+          "code": "253111",
+          "cutoff": 75,
+          "tieBreak": null
+        },
+        {
+          "name": "Geophysicist",
+          "code": "234412",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Glazier",
+          "code": "333111",
+          "cutoff": 65,
+          "tieBreak": null
+        },
+        {
+          "name": "Hydrogeologist",
+          "code": "234413",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Intensive Care Specialist",
+          "code": "253317",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Joiner",
+          "code": "331213",
+          "cutoff": 65,
+          "tieBreak": null
+        },
+        {
+          "name": "Land Economist",
+          "code": "224511",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Landscape Architect",
+          "code": "232112",
+          "cutoff": 85,
+          "tieBreak": null
+        },
+        {
+          "name": "Life Scientist (General)",
+          "code": "234511",
+          "cutoff": 95,
+          "tieBreak": null
+        },
+        {
+          "name": "Life Scientists nec",
+          "code": "234599",
+          "cutoff": 95,
+          "tieBreak": null
+        },
+        {
+          "name": "Lift mechanic",
+          "code": "341113",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Management Consultant",
+          "code": "224711",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Marine Biologist",
+          "code": "234516",
+          "cutoff": 95,
+          "tieBreak": null
+        },
+        {
+          "name": "Medical Diagnostic Radiographer",
+          "code": "251211",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Medical Laboratory Scientist",
+          "code": "234611",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Medical Practitioners nec",
+          "code": "253999",
+          "cutoff": 75,
+          "tieBreak": null
+        },
+        {
+          "name": "Medical Radiation Therapist",
+          "code": "251212",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Metal Fabricator",
+          "code": "322311",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Metal Machinist (First Class)",
+          "code": "323214",
+          "cutoff": 85,
+          "tieBreak": null
+        },
+        {
+          "name": "Metallurgist",
+          "code": "234912",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Meteorologist",
+          "code": "234913",
+          "cutoff": 85,
+          "tieBreak": null
+        },
+        {
+          "name": "Microbiologist",
+          "code": "234517",
+          "cutoff": 95,
+          "tieBreak": null
+        },
+        {
+          "name": "Midwife",
+          "code": "254111",
+          "cutoff": 75,
+          "tieBreak": null
+        },
+        {
+          "name": "Mining Engineer (excluding Petroleum)",
+          "code": "233611",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Multimedia Specialist",
+          "code": "261211",
+          "cutoff": 95,
+          "tieBreak": null
+        },
+        {
+          "name": "Music Director",
+          "code": "211212",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Musician (Instrumental)",
+          "code": "211213",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Natural and Physical Science Professionals nec",
+          "code": "234999",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Nuclear Medicine Technologist",
+          "code": "251213",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Nurse Practitioner",
+          "code": "254411",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Obstetrician and Gynaecologist",
+          "code": "253913",
+          "cutoff": 85,
+          "tieBreak": null
+        },
+        {
+          "name": "Occupational Therapist",
+          "code": "252411",
+          "cutoff": 75,
+          "tieBreak": null
+        },
+        {
+          "name": "Ophthalmologist",
+          "code": "253914",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Optometrist",
+          "code": "251411",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Organisational Psychologist",
+          "code": "272313",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Orthopaedic Surgeon",
+          "code": "253514",
+          "cutoff": 85,
+          "tieBreak": null
+        },
+        {
+          "name": "Orthotist or Prosthetist",
+          "code": "251912",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Osteopath",
+          "code": "252112",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Other Spatial Scientist",
+          "code": "232214",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Paediatrician",
+          "code": "253321",
+          "cutoff": 75,
+          "tieBreak": null
+        },
+        {
+          "name": "Panelbeater",
+          "code": "324111",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Petroleum Engineer",
+          "code": "233612",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Physicist",
+          "code": "234914",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Physiotherapist",
+          "code": "252511",
+          "cutoff": 75,
+          "tieBreak": null
+        },
+        {
+          "name": "Plumber (General)",
+          "code": "334111",
+          "cutoff": 65,
+          "tieBreak": null
+        },
+        {
+          "name": "Podiatrist",
+          "code": "252611",
+          "cutoff": 75,
+          "tieBreak": null
+        },
+        {
+          "name": "Primary Health Organisation Manager",
+          "code": "134213",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Psychiatrist",
+          "code": "253411",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Psychologists nec",
+          "code": "272399",
+          "cutoff": 75,
+          "tieBreak": null
+        },
+        {
+          "name": "Registered Nurse (Aged Care)",
+          "code": "254412",
+          "cutoff": 75,
+          "tieBreak": null
+        },
+        {
+          "name": "Registered Nurse (Child and Family Health)",
+          "code": "254413",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Registered Nurse (Community Health)",
+          "code": "254414",
+          "cutoff": 75,
+          "tieBreak": null
+        },
+        {
+          "name": "Registered Nurse (Critical Care and Emergency)",
+          "code": "254415",
+          "cutoff": 75,
+          "tieBreak": null
+        },
+        {
+          "name": "Registered Nurse (Developmental Disability)",
+          "code": "254416",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Registered Nurse (Disability and Rehabilitation)",
+          "code": "254417",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Registered Nurse (Medical Practice)",
+          "code": "254421",
+          "cutoff": 75,
+          "tieBreak": null
+        },
+        {
+          "name": "Registered Nurse (Medical)",
+          "code": "254418",
+          "cutoff": 75,
+          "tieBreak": null
+        },
+        {
+          "name": "Registered Nurse (Mental Health)",
+          "code": "254422",
+          "cutoff": 75,
+          "tieBreak": null
+        },
+        {
+          "name": "Registered Nurse (Paediatrics)",
+          "code": "254425",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Registered Nurse (Perioperative)",
+          "code": "254423",
+          "cutoff": 75,
+          "tieBreak": null
+        },
+        {
+          "name": "Registered Nurse (Surgical)",
+          "code": "254424",
+          "cutoff": 75,
+          "tieBreak": null
+        },
+        {
+          "name": "Registered Nurses nec",
+          "code": "254499",
+          "cutoff": 75,
+          "tieBreak": null
+        },
+        {
+          "name": "Roof Plumber",
+          "code": "334115",
+          "cutoff": 65,
+          "tieBreak": null
+        },
+        {
+          "name": "Secondary School Teacher",
+          "code": "241411",
+          "cutoff": 75,
+          "tieBreak": null
+        },
+        {
+          "name": "Sheetmetal Trades Worker",
+          "code": "322211",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Shipwright",
+          "code": "399112",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Social Worker",
+          "code": "272511",
+          "cutoff": 75,
+          "tieBreak": null
+        },
+        {
+          "name": "Solicitor",
+          "code": "271311",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Solid Plasterer",
+          "code": "333212",
+          "cutoff": 65,
+          "tieBreak": null
+        },
+        {
+          "name": "Sonographer",
+          "code": "251214",
+          "cutoff": 85,
+          "tieBreak": null
+        },
+        {
+          "name": "Special Education Teachers nec",
+          "code": "241599",
+          "cutoff": 85,
+          "tieBreak": null
+        },
+        {
+          "name": "Special Needs Teacher",
+          "code": "241511",
+          "cutoff": 75,
+          "tieBreak": null
+        },
+        {
+          "name": "Specialist Physician (General Medicine)",
+          "code": "253311",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Specialist Physicians nec",
+          "code": "253399",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Speech Pathologist",
+          "code": "252712",
+          "cutoff": 75,
+          "tieBreak": null
+        },
+        {
+          "name": "Statistician",
+          "code": "224113",
+          "cutoff": 90,
+          "tieBreak": null
+        },
+        {
+          "name": "Stonemason",
+          "code": "331112",
+          "cutoff": 65,
+          "tieBreak": null
+        },
+        {
+          "name": "Surgeon (General)",
+          "code": "253511",
+          "cutoff": 85,
+          "tieBreak": null
+        },
+        {
+          "name": "Surveyor",
+          "code": "232212",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Telecommunications Engineer",
+          "code": "263311",
+          "cutoff": 95,
+          "tieBreak": null
+        },
+        {
+          "name": "Telecommunications Network Engineer",
+          "code": "263312",
+          "cutoff": 95,
+          "tieBreak": null
+        },
+        {
+          "name": "Tennis Coach",
+          "code": "452316",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Thoracic Medicine Specialist",
+          "code": "253324",
+          "cutoff": 95,
+          "tieBreak": null
+        },
+        {
+          "name": "Urologist",
+          "code": "253518",
+          "cutoff": 100,
+          "tieBreak": null
+        },
+        {
+          "name": "Valuer",
+          "code": "224512",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Veterinarian",
+          "code": "234711",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Wall and Floor Tiler",
+          "code": "333411",
+          "cutoff": 65,
+          "tieBreak": null
+        },
+        {
+          "name": "Welder (First Class)",
+          "code": "322313",
+          "cutoff": 80,
+          "tieBreak": null
+        },
+        {
+          "name": "Welfare Centre Manager",
+          "code": "134214",
+          "cutoff": 85,
+          "tieBreak": null
+        }
+      ],
+      "nominations": null
+    }
+  ],
+  "skipped": []
+}
