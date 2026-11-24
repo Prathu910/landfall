@@ -236,6 +236,14 @@ a {
   color: inherit;
   text-decoration: none;
 }
+/* A plain link inside running text is underlined, so colour is never the
+   only sign of it (WCAG 1.4.1, Lighthouse "link-in-text-block"). Zero
+   specificity beyond `a`, so a component's own link style still wins. */
+:where(p, li, dd, td, figcaption, blockquote) a:where(:not([class])) {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
 button,
 input,
 select {

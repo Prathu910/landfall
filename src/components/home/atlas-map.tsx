@@ -17,6 +17,11 @@ const order: StateCode[] = [
   "ACT",
 ];
 
+/** The name includes the visible code, so speech input can say "WA" (WCAG 2.5.3). */
+function stateLabel(state: StateCode): string {
+  return `${STATE_NAMES[state]} (${state})`;
+}
+
 export function AtlasMap({
   selected,
   national,
@@ -137,7 +142,7 @@ export function AtlasMap({
                   data-atlas-state={state}
                   role="button"
                   tabIndex={0}
-                  aria-label={STATE_NAMES[state]}
+                  aria-label={stateLabel(state)}
                   aria-pressed={!national && selected === state}
                   onClick={() => onSelect(state)}
                   onKeyDown={(event) => {
@@ -207,7 +212,7 @@ export function AtlasMap({
             className={styles.state}
             key={state}
             variant="default"
-            aria-label={STATE_NAMES[state]}
+            aria-label={stateLabel(state)}
             aria-pressed={!national && selected === state}
             onClick={() => onSelect(state)}
           >
