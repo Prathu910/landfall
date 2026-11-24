@@ -1,3 +1,4 @@
+import { listRecapMonths } from "../../src/lib/updates/load-server";
 import { CATEGORIES, type Category } from "./summary";
 
 export interface AuditPage {
@@ -17,7 +18,8 @@ const QUALITY_ONLY: readonly Category[] = ["accessibility", "best-practices"];
  * a large pool on every visa, a 189-invited occupation, one off the 189
  * list (Cook; Aquaculture Farmer is off the list too, but every count is
  * "<20", so it is noindex by design), and an indexable page whose counts
- * are almost all "<20".
+ * are almost all "<20". The updates rows are the index and the newest
+ * recap, whichever month that is when the audit runs.
  */
 export const AUDIT_PAGES: readonly AuditPage[] = [
   { path: "/", gated: ALL },
@@ -34,6 +36,10 @@ export const AUDIT_PAGES: readonly AuditPage[] = [
     gated: ALL,
   },
   { path: "/states/", gated: ALL },
+  { path: "/updates/", gated: ALL },
+  ...listRecapMonths()
+    .slice(0, 1)
+    .map((month) => ({ path: `/updates/${month}/`, gated: ALL })),
   { path: "/methodology/", gated: ALL },
   { path: "/sample/", gated: ALL },
   { path: "/check/", gated: ALL },
