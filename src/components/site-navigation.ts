@@ -1,4 +1,5 @@
 export const SITE_NAVIGATION = [
+  { href: "/guide/", label: "Guide" },
   { href: "/occupations/", label: "Occupations" },
   { href: "/sample/", label: "Sample report" },
   { href: "/states/", label: "States" },

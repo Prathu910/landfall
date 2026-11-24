@@ -60,7 +60,7 @@ function cohortsWith(streams: Stream[], status: Stream["status"]["value"]) {
  * Only verified streams speak. "Closed" needs every stream verified closed,
  * since an unverified stream could still be open.
  */
-function visaLines(
+export function visaLines(
   streams: Stream[],
   state: StateCode,
   programYear: string,

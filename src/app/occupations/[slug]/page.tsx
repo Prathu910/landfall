@@ -8,6 +8,7 @@ import { OccupationCheckPanel } from "@/components/occupation/occupation-check-p
 import shell from "@/components/occupation/occupation-shell.module.css";
 import { CohortBars } from "@/components/occupation/cohort-bars";
 import { OccupationFaq } from "@/components/occupation/occupation-faq";
+import { OccupationHowToApply } from "@/components/occupation/occupation-how-to-apply";
 import { OccupationSummary } from "@/components/occupation/occupation-summary";
 import { OccupationVerdict } from "@/components/occupation/occupation-verdict";
 import { PoolTabs } from "@/components/occupation/pool-tabs";
@@ -20,6 +21,7 @@ import {
   loadOccupationDetail,
 } from "@/lib/data/load-server";
 import type { OccupationCore, Visa } from "@/lib/data/types";
+import { applyLinks } from "@/lib/guide/apply-links";
 import { formatDate } from "@/lib/migration";
 import {
   cohortNote,
@@ -52,6 +54,7 @@ import {
 } from "@/lib/occupation-page/summary";
 import { occupationVerdict } from "@/lib/occupation-page/verdict";
 import { formatMonth } from "@/lib/report/copy";
+import { serializeJsonLd } from "@/lib/seo/json-ld";
 import { SITE_INDEXABLE } from "@/lib/site";
 import styles from "./page.module.css";
 
@@ -87,10 +90,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         ? { index: false, follow: false }
         : undefined,
   };
-}
-
-function jsonLd(value: object): string {
-  return JSON.stringify(value).replace(/</g, "\\u003c");
 }
 
 export default async function OccupationPage({ params }: Props) {
@@ -144,6 +143,7 @@ export default async function OccupationPage({ params }: Props) {
         <OccupationVerdict
           verdict={occupationVerdict(core, stateRuleData.federal)}
         />
+        <OccupationHowToApply links={applyLinks(code, stateRuleData.federal)} />
         <OccupationSectionNav
           hasRounds={has189Rounds(core)}
           hasCohorts={Boolean(cohorts)}
@@ -242,7 +242,7 @@ export default async function OccupationPage({ params }: Props) {
             <script
               key={i}
               type="application/ld+json"
-              dangerouslySetInnerHTML={{ __html: jsonLd(obj) }}
+              dangerouslySetInnerHTML={{ __html: serializeJsonLd(obj) }}
             />
           ),
         )}

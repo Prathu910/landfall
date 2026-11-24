@@ -1,15 +1,12 @@
 import { stateRules } from "../../data/state-rules/2026-27/index";
-import federalJson from "../../data/state-rules/federal-occupations.json";
 import nswJson from "../../data/state-rules/lists/nsw.json";
 import qldJson from "../../data/state-rules/lists/qld.json";
 import saJson from "../../data/state-rules/lists/sa.json";
 import waJson from "../../data/state-rules/lists/wa.json";
 import type { StateRuleData } from "../../lib/report/state-outlook-view";
-import {
-  isFederalList,
-  isImportedList,
-} from "../../lib/state-outlook/rules-guards";
+import { isImportedList } from "../../lib/state-outlook/rules-guards";
 import type { ImportedList } from "../../lib/state-outlook/rules-types";
+import { federalList } from "./federal-list";
 
 // The lists and the federal list total about 11 KB gzipped (see docs/DATA.md,
 // "State rules"), small enough for the client to import whole.
@@ -37,5 +34,5 @@ function validLists(): Record<string, ImportedList> {
 export const stateRuleData: StateRuleData = {
   rules: stateRules,
   lists: validLists(),
-  federal: isFederalList(federalJson) ? federalJson : null,
+  federal: federalList,
 };

@@ -98,17 +98,38 @@ describe("sitemapEntries", () => {
     [core, maskedCore],
     occupationIndex,
     "2026-11-17",
+    "2026-11-23",
   );
+  const guide = ["/guide/", "/guide/189/", "/guide/190/", "/guide/491/"];
   const urls = entries.map((e) => e.url);
   it("lists indexable pages only", () => {
     expect(urls).toContain(`${SITE_URL}/occupations/`);
     expect(urls).toContain(SITE_URL + occupationPath(core));
     expect(urls).not.toContain(SITE_URL + occupationPath(maskedCore));
   });
+  it("lists the PR guide and its three visa pages", () => {
+    for (const path of [
+      "/guide/",
+      "/guide/189/",
+      "/guide/190/",
+      "/guide/491/",
+    ]) {
+      expect(urls).toContain(SITE_URL + path);
+    }
+  });
   it("ends every URL in a slash and dates it", () => {
     for (const e of entries) {
       expect(e.url.endsWith("/")).toBe(true);
-      expect(e.lastModified).toBe("2026-11-17");
+      const isGuide = guide.some((path) => e.url === SITE_URL + path);
+      expect(e.lastModified).toBe(isGuide ? "2026-11-23" : "2026-11-17");
     }
+  });
+  it("dates the guide pages by the day their sources were checked", () => {
+    const dated = entries.filter((e) =>
+      guide.some((path) => e.url === SITE_URL + path),
+    );
+    expect(dated.map((e) => e.lastModified)).toEqual(
+      Array(4).fill("2026-11-23"),
+    );
   });
 });
