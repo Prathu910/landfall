@@ -10,15 +10,20 @@ Current dataset: snapshot `skillselect-2026-10-31`, as at October 2026, checked 
 data/raw/<asAt>/<view>.json          Raw displayed rows for one view and one as-at month. Committed, permanent history.
 data/raw/<asAt>/<view>.rev-<date>.json   A later re-fetch that differed from the stored file (a government revision).
 src/data/manifest.json               Snapshot id, as-at, checkedAt, import version, source URLs, unmatched round names, and the occupation index with totals.
-src/data/occupation-index.json       Code, name and hasData for every occupation. The only multi-occupation file a client component may import.
+src/data/occupation-index.json       Code, name and hasData for every occupation, plus lastAsAt and lastCheckedAt for one dropped from the data. The only multi-occupation file a client component may import.
 src/data/occupations/<code>.json     Core record: pools, status history, invited-by-score, state pools and state invitations, 189 rounds.
 src/data/occupations/<code>.detail.json   Detail record: cohorts, cohorts by score, invited profiles.
 data/raw/rounds/<date>.html          The current invitation rounds page as read when that round was current (written by the importer from 15 Oct 2026).
 src/data/rounds.json                 { schemaVersion: 2, rounds, skipped }: every parsed 189 round (all occupations, newest first, with totals, tie-break dates and, for the round read as current, the state nominations table) and every skipped round with its reason.
 src/data/state-rules/                State nomination rules and lists for the state outlook; see "State rules" below.
+src/data/updates/<YYYY-MM>.json      One data month's frozen recap facts (header, `rounds[date]` sections, `data` section or null), written only by `npm run updates:generate`.
+src/data/sample/2026-10/             The frozen /sample/ occupations' core and detail records and `meta.json`, written only by `npm run sample:freeze`.
 ```
 
-- Only the importer writes `data/raw/` and `src/data/`. Never hand-edit them.
+- Only scripts write `data/raw/` and `src/data/`: the importer, `updates:generate` (`src/data/updates/`) and `sample:freeze` (`src/data/sample/`). Never hand-edit them.
+- **Rounds v2.** `rounds.json` carries `schemaVersion: 2` (types in `src/lib/data/rounds-file.ts`, read through `readRoundsFile`). A round already stored is never re-derived from the previous-rounds page: regeneration keeps each stored round verbatim and only appends new dates (ruling R1), and the round page as read when it was current is kept in `data/raw/rounds/<date>.html`.
+- **Recap facts.** Each section of `src/data/updates/<YYYY-MM>.json` is frozen once merged, so figures already quoted never change. A round belongs to the Sydney month of its date; a month's file usually starts round-only and gains its `data` section when that month's dashboard data is imported. `src/lib/updates/load-server.ts` lists and loads them (`listRecapMonths`, `loadRecap`); the pages are `/updates/` and `/updates/<YYYY-MM>/`.
+- **The frozen sample.** `/sample/` reads only `src/data/sample/2026-10/` through `loadSampleCore`, `loadSampleDetail` and `loadSampleMeta`, never the live cores. A new month cannot change it.
 - `npm run dev` and `npm run build` copy `src/data/occupations/` to `public/data/occupations/` (`scripts/copy-public-data.ts`, git-ignored output). The browser fetches one occupation at a time from `/data/occupations/<code>.json`, through `useOccupationCore`. Only codes in the index are ever fetched.
 - Server Components read files with `src/lib/data/load-server.ts`. Never import it, or any multi-occupation JSON other than the index, into a `"use client"` module.
 - The occupation pages (`/occupations/<slug>/`) read each occupation's core and detail files at build through `load-server.ts`; a missing detail file only drops the cohort section and the "EOIs like these" sentence.
@@ -175,7 +180,7 @@ The spec asked why Software Engineer 189 SUBMITTED rose from 1,129 (as at 11/202
 ## Snapshots, revisions and versioning
 
 - Raw folders are keyed by **as-at month**, not import date. They are our permanent history: the dashboard keeps only 24 months, so older months are rebuilt only from `data/raw/`.
-- **The first dataset is pinned to `--as-at 2026-10`** so it matches the sample page and the legacy data. Moving to a newer snapshot is a separate, reviewed change.
+- **New months.** The first dataset was `--as-at 2026-10`; new months arrive through the monthly pull request (`docs/superpowers/specs/2026-11-24-monthly-updates-design.md`). `/sample/` and the legacy-data test stay on 2026-10 (see `src/data/sample/` above and ruling R16), so a new month never moves them.
 - **Revisions are never silently overwritten.** When a re-fetched month differs from the stored file, the importer writes `<view>.rev-<YYYY-MM-DD>.json` (or `-2`, `-3` the same day) beside it and prints the revision with row counts before and after. The generator always uses the newest revision. Identical re-fetches write nothing.
 - **Resumable fetches (ruling R10).** Each completed view-month raw file is written atomically as soon as it finishes, so a failed run leaves only complete files and a re-run skips them. `src/data` is written only after the whole dataset passes validation, all-or-nothing, with rollback.
 - `manifest.importVersion` is `"1"`. Core and detail records carry `schemaVersion: 2` (ruling R14: explicit fetched months, and `invitedProfile` keyed attribute → month → value); the manifest stays at `1`. A breaking shape change bumps it, along with the guards in `src/lib/data/guards.ts`.

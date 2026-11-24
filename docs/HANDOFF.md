@@ -1,5 +1,15 @@
 # Resume here
 
+## Monthly updates, Plan 1: recap pages (25 November 2026)
+
+Branch `roadmap/monthly-updates` (not merged, not pushed, not deployed). Spec `docs/superpowers/specs/2026-11-24-monthly-updates-design.md`; plan `docs/superpowers/plans/2026-11-24-monthly-updates-1-recap-pages.md`; ledger `.superpowers/sdd/2026-11-24-monthly-updates-1-recap-pages/progress.md` (rulings, outcomes, deferred minors). Plans 2 (Instagram images) and 3 (scheduled jobs) run next on the same branch.
+
+- **Unpinned from 2026-10, safely.** `/sample/` is frozen on 2026-10 (`src/data/sample/2026-10/`, `npm run sample:freeze`); live-data tests are sorted from frozen ones (`src/lib/data/__fixtures__/frozen-2026-10.ts`); a dropped occupation keeps its page with `lastAsAt` (`docs/DATA.md`); `rounds.json` is v2 (totals, tie-break dates, the state nominations table) and stored rounds are never re-derived; round pages are kept in `data/raw/rounds/`.
+- **Recap facts.** `npm run updates:generate` writes `src/data/updates/<YYYY-MM>.json` (a round section per 189 round, one data section per month, each frozen once merged; `scripts/README.md`). `2026-10.json` holds the 15 Oct 2026 round and the October data.
+- **Pages.** `/updates/2026-10/` (the recap) and `/updates/` (the index: dated answer, the latest month's stamp, headline and three figures, every month newest first, the points-check card). Both are in the sitemap, dated by `updatedAt`, round-only months included; the footer links "Monthly updates"; the header is unchanged. Lighthouse audits `/updates/` and the newest recap (`scripts/lighthouse/pages.ts`).
+- **Lighthouse** (`npm run lighthouse -- --only updates`, and `--only /` as a regression check): every gated score is 100 on mobile and desktop for `/updates/` (mobile LCP 0.9 s, TBT 4 ms), `/updates/2026-10/` (mobile LCP 1.1 s, TBT 7 ms) and `/`, dark accessibility 100, CPU benchmark ~4,200 (25 Nov 2026). A first run during Spotlight indexing (CPU ~860) read 95 and 84 on mobile; re-runs at normal CPU are 100. Best Practices on the recap is 100 now that its breadcrumb's `/updates/` exists.
+- **Founder review list** (from Task 11): the wording "Highest published minimum", "none published", "none recorded"; the not-listed FAQ uses Chef (the largest pool) rather than the mockup's Software Engineer.
+
 ## Lighthouse 100s (24 November 2026)
 
 Branch `roadmap/perf-100` (from `main` 9853460; not merged, not pushed, not deployed). Founder goal in `docs/STRATEGY.md`: 100 in Performance, Accessibility, Best Practices and SEO, mobile and desktop, for every SEO page type. Rules and budget: `docs/ENGINEERING.md`, "Performance budget".

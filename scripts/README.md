@@ -10,7 +10,7 @@ npm run data:import -- --as-at YYYY-MM --backfill   # fetch every unstored month
 npm run data:generate -- --as-at YYYY-MM            # rebuild src/data from stored raw files; no network
 ```
 
-Add `--checked-at YYYY-MM-DD` to set the source check date (default: today). The first dataset is pinned to `--as-at 2026-10`; moving to a newer month is a separate, reviewed change.
+Add `--checked-at YYYY-MM-DD` to set the source check date (default: today). The first dataset was `--as-at 2026-10`; new months arrive through the monthly pull request (`docs/superpowers/specs/2026-11-24-monthly-updates-design.md`).
 
 The importer:
 
@@ -24,7 +24,11 @@ After an import, run `npm run check` and `npm run build`, then commit `data/raw/
 
 ## Monthly recap facts
 
-`npm run updates:generate -- --month YYYY-MM --section round --round YYYY-MM-DD` and `-- --month YYYY-MM --section data [--spotlight <code>] [--previous-manifest <file>]` write `src/data/updates/<month>.json` (`scripts/updates/generate.ts`), the only writer of that folder. Each run replaces only its own section, keeps `firstGeneratedAt` and sets `updatedAt`; `--today YYYY-MM-DD` overrides the Sydney date. It exits 1 if the round is not in `rounds.json` or not in `--month`, if `--section data` is asked for a month other than `manifest.asAt`, or if the merged file fails `isRecapFacts`. `--previous-manifest` must be the previous month's manifest (for the occupations added and removed); a rerun of the same month (such as `--spotlight` swapping the pick) without it keeps the lists the first run recorded and never treats this month's own manifest as the previous one. `src/lib/updates/load-server.ts` reads the files (`listRecapMonths`, `loadRecap`).
+`npm run updates:generate -- --month YYYY-MM --section round --round YYYY-MM-DD` and `-- --month YYYY-MM --section data [--spotlight <code>] [--previous-manifest <file>]` write `src/data/updates/<month>.json` (`scripts/updates/generate.ts`), the only writer of that folder. Each file is one month's frozen facts for `/updates/<month>/` and the `/updates/` index; a round-only file (`data: null`) is a full page and is in the sitemap. Each run replaces only its own section, keeps `firstGeneratedAt` and sets `updatedAt`; `--today YYYY-MM-DD` overrides the Sydney date. It exits 1 if the round is not in `rounds.json` or not in `--month`, if `--section data` is asked for a month other than `manifest.asAt`, or if the merged file fails `isRecapFacts`. `--previous-manifest` must be the previous month's manifest (for the occupations added and removed); a rerun of the same month (such as `--spotlight` swapping the pick) without it keeps the lists the first run recorded and never treats this month's own manifest as the previous one. `src/lib/updates/load-server.ts` reads the files (`listRecapMonths`, `loadRecap`).
+
+## Frozen sample
+
+`npm run sample:freeze` (`scripts/sample/freeze.ts`) writes the 2026-10 core and detail records of the `/sample/` occupations (`SAMPLE_CODES` in `src/lib/outlook/examples.ts`) and a `meta.json` to `src/data/sample/2026-10/`, regenerated in memory from `data/raw/` and the stored rounds up to 31 October 2026. `/sample/` reads only these, so a monthly import never moves its stamps. Run it only when the founder asks for the sample to be refreshed.
 
 ## State nomination lists and rule staleness
 
