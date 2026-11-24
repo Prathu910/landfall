@@ -12,7 +12,6 @@ import type {
   Manifest,
   MonthKey,
   OccupationCore,
-  OccupationIndexEntry,
 } from "../../src/lib/data/types";
 import { isOccupationCore } from "../../src/lib/data/guards";
 import { isFederalList } from "../../src/lib/state-outlook/rules-guards";
@@ -25,7 +24,7 @@ import {
 import { isRecapFacts } from "../../src/lib/updates/guards";
 import { UPDATES_DIR, loadRecap } from "../../src/lib/updates/load-server";
 import { withDataSection, withRoundSection } from "../../src/lib/updates/merge";
-import type { RecapFacts } from "../../src/lib/updates/types";
+import type { DataSection, RecapFacts } from "../../src/lib/updates/types";
 import { writeFileAtomic } from "../import/atomic-write";
 
 export type GenerateArgs = {
@@ -154,6 +153,55 @@ function buildRound(
   );
 }
 
+/** The previous manifest must be last month's; this month's would report no change. */
+export function checkPreviousManifest(
+  manifest: Manifest,
+  month: MonthKey,
+): Manifest {
+  const previousMonth = shiftMonth(month, -1);
+  if (manifest.asAt !== previousMonth) {
+    throw new Error(
+      `--previous-manifest is for ${manifest.asAt}, not ${previousMonth}`,
+    );
+  }
+  return manifest;
+}
+
+/**
+ * A rerun (such as a spotlight swap) without --previous-manifest keeps the
+ * added/removed lists the first run recorded.
+ */
+export function keepAddedAndRemoved(
+  section: DataSection,
+  kept: DataSection | null,
+  previousManifest: Manifest | null,
+): DataSection {
+  if (previousManifest || !kept) return section;
+  return {
+    ...section,
+    occupationsAdded: kept.occupationsAdded,
+    occupationsRemoved: kept.occupationsRemoved,
+  };
+}
+
+/**
+ * Every index entry that has a core file counts, including hasData:false
+ * occupations that publish "<20" cells (an interval must contain the true
+ * value); buildDataSection itself drops the lastAsAt entries (R6).
+ */
+export function loadAllCores(dataDir = "src/data"): OccupationCore[] {
+  const index = readJson(path.join(dataDir, "occupation-index.json")) as {
+    code: string;
+  }[];
+  return index.flatMap(({ code }) => {
+    const file = path.join(dataDir, "occupations", `${code}.json`);
+    if (!existsSync(file)) return [];
+    const core = readJson(file);
+    if (!isOccupationCore(core)) throw new Error(`${file} is not a valid core`);
+    return [core];
+  });
+}
+
 function buildData(
   args: Extract<GenerateArgs, { section: "data" }>,
   existing: RecapFacts | null,
@@ -166,23 +214,10 @@ function buildData(
   }
   const previousMonth = shiftMonth(args.month, -1);
   const previousManifest = args.previousManifest
-    ? readManifest(args.previousManifest)
+    ? checkPreviousManifest(readManifest(args.previousManifest), args.month)
     : null;
-  if (previousManifest && previousManifest.asAt !== previousMonth) {
-    throw new Error(
-      `--previous-manifest is for ${previousManifest.asAt}, not ${previousMonth}`,
-    );
-  }
   const previousFacts = loadExisting(previousMonth);
-  const index = readJson(
-    "src/data/occupation-index.json",
-  ) as (OccupationIndexEntry & { hasData: boolean })[];
-  const cores = index
-    .filter((entry) => entry.hasData)
-    .map((entry) =>
-      readJson(path.join("src/data/occupations", `${entry.code}.json`)),
-    )
-    .filter((core): core is OccupationCore => isOccupationCore(core));
+  const cores = loadAllCores();
   const federal = readJson("src/data/state-rules/federal-occupations.json");
   if (!isFederalList(federal)) throw new Error("Federal list is invalid");
   const section = buildDataSection({
@@ -196,15 +231,12 @@ function buildData(
     today: args.today,
     spotlight: args.spotlight ?? null,
   });
-  // A rerun (such as a spotlight swap) without --previous-manifest keeps the
-  // added/removed lists the first run recorded. It never reads this month's
-  // own manifest as the previous one, which would report nothing changed.
-  const kept = existing?.data;
-  if (!previousManifest && kept) {
-    section.occupationsAdded = kept.occupationsAdded;
-    section.occupationsRemoved = kept.occupationsRemoved;
-  }
-  return withDataSection(existing, args.month, section, args.today);
+  return withDataSection(
+    existing,
+    args.month,
+    keepAddedAndRemoved(section, existing?.data ?? null, previousManifest),
+    args.today,
+  );
 }
 
 function main(): void {
