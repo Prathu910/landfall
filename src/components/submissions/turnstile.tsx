@@ -101,7 +101,7 @@ export function Turnstile({
   }, [siteKey, action, generation]);
   return (
     <div className={styles.verification}>
-      <div ref={element} aria-label="Spam verification" />
+      <div ref={element} role="group" aria-label="Spam verification" />
       {error && (
         <div role="alert">
           <p>{error}</p>
