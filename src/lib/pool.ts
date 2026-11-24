@@ -27,11 +27,18 @@ export function comparePool(
   return { higher, same, total };
 }
 
-const number = new Intl.NumberFormat("en-AU");
+let numberFormat: Intl.NumberFormat | undefined;
+
+/** Built on first use: a formatter costs a few ms to create, and many pages import this module without formatting a count while they load. */
+function formatCount(value: number): string {
+  numberFormat ??= new Intl.NumberFormat("en-AU");
+  return numberFormat.format(value);
+}
+
 export function formatInterval(value: Interval): string {
   return value.min === value.max
-    ? number.format(value.min)
-    : `${number.format(value.min)}–${number.format(value.max)}`;
+    ? formatCount(value.min)
+    : `${formatCount(value.min)}–${formatCount(value.max)}`;
 }
 
 /** Bounds chart work and aligns scores with the five-point comparison bands. */
