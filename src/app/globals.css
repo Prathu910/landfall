@@ -43,15 +43,17 @@
   --label-not-open-bg: light-dark(#fce5e3, #381916);
   --label-no-data-ink: light-dark(#586470, #b0bcc7);
   --label-no-data-bg: light-dark(#e8ecef, #1f2931);
-  --font-report: "Archivo Variable", "Inter", Arial, sans-serif;
+  --font-report:
+    "Archivo Variable", "Archivo Fallback", "Inter", Arial, sans-serif;
   --font-stamp:
-    "Big Shoulders Stencil Display", "Archivo Variable", Arial, sans-serif;
+    "Big Shoulders Stencil Display", "Archivo Variable", "Archivo Fallback",
+    Arial, sans-serif;
   --focus-ring: light-dark(#2e4a7d, #a3bdeb);
   --focus-ring-on-dark: light-dark(#f3eee3, #f3eee3);
   --muted-on-dark: light-dark(#d6cfbf, #cbc4b4);
   --saffron-on-dark: light-dark(#f0a35e, #f0a35e);
   --serif: "Newsreader", Georgia, serif;
-  --sans: "Inter", Arial, sans-serif;
+  --sans: "Inter", "Inter Fallback", Arial, sans-serif;
   /* Shared chrome follows the approved passport identity without recolouring page bodies. */
   --brand-ink: light-dark(#12202c, #ece6d8);
   --brand-paper: light-dark(#ffffff, #14212b);
@@ -62,7 +64,8 @@
   --brand-on-dark: light-dark(#c4d0d0, #b9c7c7);
   --brand-dark-line: light-dark(#41525b, #22323c);
   --brand-focus: light-dark(#315c87, #98bce6);
-  --brand-font: "Archivo Variable", "Inter", Arial, sans-serif;
+  --brand-font:
+    "Archivo Variable", "Archivo Fallback", "Inter", Arial, sans-serif;
   --brand-unit: 4px;
   --brand-rule-width: 1px;
   --brand-target: 44px;
@@ -112,6 +115,10 @@
   /* Security print: sage in daylight, UV sage and violet at night. */
   --guilloche-a: light-dark(#bcd0c4, #7fb89a);
   --guilloche-b: light-dark(#d6e1da, #a99ad8);
+  /* The report artwork's three line colours (night paints the gradient). */
+  --guilloche-report: light-dark(#d3ded7, #7fb89a);
+  --guilloche-report-deep: light-dark(#b5cabf, #7fb89a);
+  --guilloche-report-violet: light-dark(#c7c0e0, #a99ad8);
   /* A 1px top highlight on raised cards: elevation by light, not shadow. */
   --elevate-edge: light-dark(transparent, #ece6d814);
 }
@@ -125,8 +132,7 @@
    JavaScript whose device is dark. Screen only, so print stays light. */
 :root {
   --guilloche-opacity: 1;
-  --theme-day-display: block;
-  --theme-uv-display: none;
+  --theme-night: 0;
   --stamp-glow: none;
   --stamp-blend: normal;
   --headline-wght: 750;
@@ -138,26 +144,34 @@
     :root:not([data-mantine-color-scheme="light"]) {
       --brand-deep: #08121a;
       --guilloche-opacity: 0.3;
-      --theme-day-display: none;
-      --theme-uv-display: block;
+      --theme-night: 1;
       --stamp-glow: drop-shadow(
         0 0 6px color-mix(in oklab, currentColor 22%, transparent)
       );
       --stamp-blend: screen;
       --headline-wght: 720;
+      --guill-night: linear-gradient(
+        115deg,
+        var(--guilloche-a) 35%,
+        var(--guilloche-b)
+      );
     }
   }
   @media screen {
     :root[data-mantine-color-scheme="dark"] {
       --brand-deep: #08121a;
       --guilloche-opacity: 0.3;
-      --theme-day-display: none;
-      --theme-uv-display: block;
+      --theme-night: 1;
       --stamp-glow: drop-shadow(
         0 0 6px color-mix(in oklab, currentColor 22%, transparent)
       );
       --stamp-blend: screen;
       --headline-wght: 720;
+      --guill-night: linear-gradient(
+        115deg,
+        var(--guilloche-a) 35%,
+        var(--guilloche-b)
+      );
     }
   }
 }
@@ -182,7 +196,7 @@ html.theme-switching *::after {
     box-shadow 0.2s ease,
     outline-color 0.2s ease !important;
 }
-html.theme-switching .guill-uv {
+html.theme-switching[data-mantine-color-scheme="dark"] .guill-layer {
   animation: guilloche-wake 0.45s ease 0.08s both;
 }
 @keyframes guilloche-wake {
@@ -190,19 +204,95 @@ html.theme-switching .guill-uv {
     opacity: 0;
   }
 }
-/* The security print under the UV lamp: the same artwork as a mask,
-   coloured by the guilloche tokens. Hidden in light, where the original
-   image shows unchanged. */
-.guill-uv {
-  display: var(--theme-uv-display);
-  opacity: var(--guilloche-opacity);
-  background-image: linear-gradient(
-    115deg,
-    var(--guilloche-a) 35%,
-    var(--guilloche-b)
-  );
-  -webkit-mask: var(--guill-src) center / cover no-repeat;
-  mask: var(--guill-src) center / cover no-repeat;
+/* Security print (components/guilloche): each line colour of an artwork is
+   its own mask, painted with its guilloche token, so daylight and print
+   match the original drawing; at night every layer takes the UV gradient
+   (--guill-night). Masks are never the Largest Contentful Paint, and
+   print-color-adjust keeps the lines with background graphics off. */
+.guill-layer {
+  position: absolute;
+  inset: 0;
+  background: var(--guill-night, var(--guill-ink));
+  -webkit-mask: var(--guill-src) var(--guill-fit) no-repeat;
+  mask: var(--guill-src) var(--guill-fit) no-repeat;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+/* Metric-matched fallbacks: until a web font arrives, text sets in local
+   Arial (Arial Bold for heavier weights) scaled to that face's width at
+   each weight, with its line metrics, so the swap barely rewraps lines
+   (CLS). Ratios measured in Chrome over the site's own text, 24 Nov 2026. */
+@font-face {
+  font-family: "Archivo Fallback";
+  src: local("Arial"), local("ArialMT");
+  font-weight: 100 449;
+  size-adjust: 99.1%;
+  ascent-override: 88.8%;
+  descent-override: 21.2%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Archivo Fallback";
+  src: local("Arial"), local("ArialMT");
+  font-weight: 450 549;
+  size-adjust: 100.4%;
+  ascent-override: 87.6%;
+  descent-override: 20.9%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Archivo Fallback";
+  src: local("Arial Bold"), local("Arial-BoldMT");
+  font-weight: 550 624;
+  size-adjust: 97%;
+  ascent-override: 90.7%;
+  descent-override: 21.6%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Archivo Fallback";
+  src: local("Arial Bold"), local("Arial-BoldMT");
+  font-weight: 625 674;
+  size-adjust: 98.5%;
+  ascent-override: 89.3%;
+  descent-override: 21.3%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Archivo Fallback";
+  src: local("Arial Bold"), local("Arial-BoldMT");
+  font-weight: 675 724;
+  size-adjust: 100%;
+  ascent-override: 88%;
+  descent-override: 21%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Archivo Fallback";
+  src: local("Arial Bold"), local("Arial-BoldMT");
+  font-weight: 725 900;
+  size-adjust: 102.3%;
+  ascent-override: 86%;
+  descent-override: 20.5%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Inter Fallback";
+  src: local("Arial"), local("ArialMT");
+  font-weight: 100 549;
+  size-adjust: 104%;
+  ascent-override: 93.3%;
+  descent-override: 23.1%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Inter Fallback";
+  src: local("Arial Bold"), local("Arial-BoldMT");
+  font-weight: 550 900;
+  size-adjust: 100.9%;
+  ascent-override: 96.1%;
+  descent-override: 23.8%;
+  line-gap-override: 0%;
 }
 * {
   box-sizing: border-box;
@@ -224,6 +314,14 @@ body {
 a {
   color: inherit;
   text-decoration: none;
+}
+/* A plain link inside running text is underlined, so colour is never the
+   only sign of it (WCAG 1.4.1, Lighthouse "link-in-text-block"). Zero
+   specificity beyond `a`, so a component's own link style still wins. */
+:where(p, li, dd, td, figcaption, blockquote) a:where(:not([class])) {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
 }
 button,
 input,
@@ -770,7 +868,7 @@ svg {
   --check-radius: 0.625rem;
   --check-pill: 6rem;
   --check-unit: 0.25rem;
-  --check-font: "Archivo Variable", Arial, sans-serif;
+  --check-font: "Archivo Variable", "Archivo Fallback", Arial, sans-serif;
   --check-shadow:
     0 1.5rem 4rem -2.5rem light-dark(#12202c35, #000000c0),
     inset 0 1px 0 var(--elevate-edge);
@@ -863,6 +961,9 @@ svg {
     --rule-soft: #ece7dc;
     --guilloche-a: #bcd0c4;
     --guilloche-b: #d6e1da;
+    --guilloche-report: #d3ded7;
+    --guilloche-report-deep: #b5cabf;
+    --guilloche-report-violet: #c7c0e0;
     --elevate-edge: transparent;
     --homepage-paper: #fff;
     --homepage-ink-hover: #1f3446;

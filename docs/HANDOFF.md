@@ -1,5 +1,53 @@
 # Resume here
 
+## Lighthouse 100s (24 November 2026)
+
+Branch `roadmap/perf-100` (from `main` 9853460; not merged, not pushed, not deployed). Founder goal in `docs/STRATEGY.md`: 100 in Performance, Accessibility, Best Practices and SEO, mobile and desktop, for every SEO page type. Rules and budget: `docs/ENGINEERING.md`, "Performance budget".
+
+- **`npm run lighthouse`** (`scripts/lighthouse/`, Lighthouse 13.6.0 pinned): serves `out/` like Cloudflare Pages on 127.0.0.1:3020 (brotli/gzip, `_headers`, 404.html), three runs per page on mobile and desktop plus dark accessibility, medians in a table, exit 1 below 100. The CPU column is Lighthouse's benchmark index; Spotlight indexing once dropped it from ~4,200 to ~860 and tripled blocking time, so re-run rows whose CPU is far below the rest. `--cpu-slowdown 10` approximates PageSpeed Insights' CPU.
+- **Fixes.** Homepage LCP was the decorative guilloche `<img>` (4.0 s): every guilloche (homepage panels, report hero, `/check/` preview, `/occupations/` heading) is now CSS masks, one per line colour (`components/guilloche/`, SVGs split in `public/`), same pixels by day (mean brightness within 0.1), same UV gradient at night, and it prints in both themes. Mantine's CSS is cut to the components used (`components/mantine-styles.ts`, tested): 49–60 → 28–40 KB gzipped CSS per page. Select dropdowns mount on open (Floating UI positioned six hidden dropdowns per guide page on load, the "forced reflow"). Metric-matched Arial fallbacks for Archivo and Inter (the `/sample/` 0.038 layout shift is gone). Next's legacy polyfills replaced (only `URL.canParse` kept; browserslist pinned to Next's floor). Stamp fitting reads before it writes; the count formatter is built on first use. Accessibility: plain links in running text are underlined sitewide (guide, methodology, feedback and homepage links gain an underline); map states are named "Western Australia (WA)". `public/_headers` caches hashed assets for a year.
+- **Results** (`npm run lighthouse` on the built `out/`, median of 3 runs, Lighthouse 13.6.0, CPU benchmark ~4,250): every gated score is 100 (the 404's SEO is not gated: it is `noindex` by design; before = `main` 9853460, where Aquaculture Farmer stood in for an off-list page but is `noindex`, so Cook 351411 replaced it).
+
+| Page                                                    | Form    | Before (Perf/A11y/BP/SEO, LCP, TBT) | After                     | Dark A11y |
+| ------------------------------------------------------- | ------- | ----------------------------------- | ------------------------- | --------- |
+| /                                                       | mobile  | 87/97/100/100 4.0s 11ms             | 100/100/100/100 1.1s 4ms  | 97→100    |
+| /                                                       | desktop | 100/97/100/100 0.7s 0ms             | 100/100/100/100 0.3s 0ms  | 97→100    |
+| /guide/                                                 | mobile  | 100/100/100/100 1.4s 23ms           | 100/100/100/100 1.1s 25ms | 100→100   |
+| /guide/                                                 | desktop | 100/100/100/100 0.3s 0ms            | 100/100/100/100 0.3s 0ms  | 100→100   |
+| /guide/189/                                             | mobile  | 100/100/100/100 1.4s 33ms           | 100/100/100/100 1.1s 33ms | 100→100   |
+| /guide/189/                                             | desktop | 100/100/100/100 0.3s 0ms            | 100/100/100/100 0.3s 0ms  | 100→100   |
+| /guide/190/                                             | mobile  | 100/100/100/100 1.4s 56ms           | 100/100/100/100 1.1s 36ms | 100→100   |
+| /guide/190/                                             | desktop | 100/100/100/100 0.3s 0ms            | 100/100/100/100 0.3s 0ms  | 100→100   |
+| /guide/491/                                             | mobile  | 100/100/100/100 1.4s 37ms           | 100/100/100/100 1.1s 39ms | 100→100   |
+| /guide/491/                                             | desktop | 100/100/100/100 0.3s 0ms            | 100/100/100/100 0.3s 0ms  | 100→100   |
+| /occupations/                                           | mobile  | 100/100/100/100 1.2s 4ms            | 100/100/100/100 1.1s 3ms  | 100→100   |
+| /occupations/                                           | desktop | 100/100/100/100 0.8s 0ms            | 100/100/100/100 0.3s 0ms  | 100→100   |
+| /occupations/registered-nurses-nec-254499/              | mobile  | 100/100/100/100 1.4s 10ms           | 100/100/100/100 1.1s 10ms | 100→100   |
+| /occupations/registered-nurses-nec-254499/              | desktop | 100/100/100/100 0.3s 0ms            | 100/100/100/100 0.3s 0ms  | 100→100   |
+| /occupations/software-engineer-261313/                  | mobile  | 100/100/100/100 1.4s 4ms            | 100/100/100/100 1.1s 10ms | 100→100   |
+| /occupations/software-engineer-261313/                  | desktop | 100/100/100/100 0.3s 0ms            | 100/100/100/100 0.3s 0ms  | 100→100   |
+| /occupations/cook-351411/                               | mobile  | 100/100/100/100 1.2s 6ms            | 100/100/100/100 0.9s 4ms  | 100→100   |
+| /occupations/cook-351411/                               | desktop | 100/100/100/100 0.3s 0ms            | 100/100/100/100 0.2s 0ms  | 100→100   |
+| /occupations/intensive-care-ambulance-paramedic-411112/ | mobile  | 100/100/100/100 1.2s 11ms           | 100/100/100/100 0.9s 9ms  | 100→100   |
+| /occupations/intensive-care-ambulance-paramedic-411112/ | desktop | 100/100/100/100 0.3s 0ms            | 100/100/100/100 0.2s 0ms  | 100→100   |
+| /states/                                                | mobile  | 100/100/100/100 1.4s 4ms            | 100/100/100/100 1.1s 3ms  | 100→100   |
+| /states/                                                | desktop | 100/100/100/100 0.3s 0ms            | 100/100/100/100 0.3s 0ms  | 100→100   |
+| /methodology/                                           | mobile  | 100/100/100/100 1.1s 10ms           | 100/100/100/100 0.9s 10ms | 100→100   |
+| /methodology/                                           | desktop | 100/100/100/100 0.3s 0ms            | 100/100/100/100 0.2s 0ms  | 100→100   |
+| /sample/                                                | mobile  | 84/100/100/100 4.4s 18ms            | 100/100/100/100 1.4s 12ms | 100→100   |
+| /sample/                                                | desktop | 99/100/100/100 1.0s 0ms             | 100/100/100/100 0.3s 0ms  | 100→100   |
+| /check/                                                 | mobile  | 100/100/100/100 1.4s 8ms            | 100/100/100/100 1.1s 12ms | 100→100   |
+| /check/                                                 | desktop | 99/100/100/100 0.8s 0ms             | 100/100/100/100 0.2s 0ms  | 100→100   |
+| /feedback/                                              | mobile  | 100/100/100/100 1.2s 8ms            | 100/100/100/100 0.9s 8ms  | 100→100   |
+| /feedback/                                              | desktop | 100/100/100/100 0.3s 0ms            | 100/100/100/100 0.2s 0ms  | 100→100   |
+| 404                                                     | mobile  | 100/100/100/63 1.2s 8ms             | 100/100/100/63 0.9s 3ms   | 100→100   |
+| 404                                                     | desktop | 100/100/100/63 0.3s 0ms             | 100/100/100/63 0.2s 0ms   | 100→100   |
+
+- **Checked:** screenshots of 12 pages at 390 and 1280 in light and dark against `main` (only the guilloche antialiasing and the new underlines differ); `/sample/` tabs print 4, 5, 5, 5 A4 pages with Light and Dark saved, identical to `main`, guilloche included; homepage, `/occupations/` and `/check/` print identically; no-flash matrix (saved none/light/dark/system × device light/dark, scripts blocked) correct; every select opens and picks by keyboard with no console errors.
+- **Cloudflare Web Analytics** (founder action): the injected beacon's site token is rejected by the collector (404, so CORS errors in the console and Best Practices 96 on PageSpeed). Steps in `docs/OPERATIONS.md`.
+
+Follow-ups (not done): at a PageSpeed-like CPU (`--cpu-slowdown 10`, one run, `main` → this branch) Performance is `/` 87 → 100, `/sample/` 80 → 97, `/check/` 97 → 99 and `/guide/` 98 → 98; the rest is blocking time (105–190 ms), mostly Next/React hydration of large RSC payloads (`/sample/` 310 KB, `/guide/` 106 KB) and Mantine `SegmentedControl` measuring its indicator on mount; trimming client components or the four server-rendered `/sample/` reports is the next lever. Archivo's variable latin file is 90 KB.
+
 ## Dark mode, "passport at night" (23 November 2026)
 
 Branch `roadmap/dark-mode` (from `roadmap/pr-guide` 5e7223f; not merged, not pushed, not deployed). Founder decision in `docs/STRATEGY.md`; the approved preview, tokens and rationale are in `.superpowers/brainstorm/dark-mode-2026-11-23/`.

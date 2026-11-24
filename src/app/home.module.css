@@ -10,6 +10,7 @@
   color: var(--homepage-ink);
   font:
     400 var(--homepage-size-17)/1.55 "Archivo Variable",
+    "Archivo Fallback",
     system-ui,
     sans-serif;
 }
@@ -163,18 +164,12 @@
     var(--homepage-size-20);
   min-height: var(--homepage-size-380);
 }
+/* At night the UV linework keeps each panel's daylight strength. */
 .home :global(.pp .guill) {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0.75;
-  pointer-events: none;
-}
-/* At night the UV linework keeps each panel's daylight strength. */
-.home :global(.pp .guill.guill-uv) {
   opacity: calc(var(--guilloche-opacity) * 0.75);
+  pointer-events: none;
 }
 .home :global(.pp > *:not(.guill)) {
   position: relative;
@@ -873,6 +868,7 @@
   fill: var(--homepage-map-label);
   font:
     500 var(--homepage-size-20) "Archivo Variable",
+    "Archivo Fallback",
     Arial,
     sans-serif;
   pointer-events: none;
@@ -955,16 +951,10 @@
   flex-direction: column;
   align-items: stretch;
 }
-.home :global(.atlas-passport > .guill.guill-uv) {
-  opacity: calc(var(--guilloche-opacity) * 0.38);
-}
 .home :global(.atlas-passport > .guill) {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0.38;
+  opacity: calc(var(--guilloche-opacity) * 0.38);
   pointer-events: none;
   z-index: -1;
 }
@@ -1526,7 +1516,7 @@
 .home {
   background: var(--homepage-desk);
   color: var(--homepage-ink);
-  font-family: "Archivo Variable", Arial, sans-serif;
+  font-family: "Archivo Variable", "Archivo Fallback", Arial, sans-serif;
   font-size: var(--homepage-size-17);
   line-height: 1.55;
   overflow-x: clip;

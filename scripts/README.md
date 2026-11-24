@@ -41,3 +41,7 @@ After an import, run `npm run check` and `npm run build`, then commit `data/raw/
 ## History
 
 The Python script `import-report-evidence.py` imported 11 occupations into `src/data/pool.json` and `src/data/report-evidence.json`. The TypeScript importer reproduces both exactly for as-at 2026-10, so the script was removed. The two files are kept as test fixtures in `src/lib/data/__fixtures__/legacy-2026-10/`.
+
+## Lighthouse
+
+`npm run lighthouse` (after `npm run build`) audits every SEO page type in `out/` on mobile and desktop, three runs each, plus accessibility in dark, and exits 1 if any gated median is under 100 (`scripts/lighthouse/`). It serves `out/` itself on 127.0.0.1:3020 with brotli or gzip and the `public/_headers` caching, like Cloudflare Pages. Flags: `--only <path or text>`, `--form mobile|desktop`, `--runs N`, `--no-dark`, `--cpu-slowdown N` (10 approximates PageSpeed Insights), `--base-url <url>` (audit a running site instead), `--json <file>` and `--save-dir <dir>` (every report as JSON). The page list and the rules are in `docs/ENGINEERING.md` ("Performance budget").

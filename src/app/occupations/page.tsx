@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { occupationIndex } from "@/components/data/occupation-index";
 import { OccupationSearch } from "@/components/occupation/occupation-search";
+import { Guilloche } from "@/components/guilloche/guilloche";
 import { occupationPath } from "@/lib/occupation-page/slug";
 import { loadManifest } from "@/lib/data/load-server";
 import { formatDate } from "@/lib/migration";
@@ -25,6 +26,10 @@ export default function OccupationsPage() {
     <main id="main" className={styles.page}>
       <div className={styles.inner}>
         <header className={styles.directoryHead}>
+          <Guilloche
+            art="report-passport-corner"
+            className={styles.directoryArt}
+          />
           <h1>Start with your occupation.</h1>
           <p className={styles.intro}>
             Look beyond the minimum points. Explore published EOI pools, 189

@@ -9,7 +9,8 @@ A change is done only when all of these hold:
 1. `npm run check` passes. It runs Prettier (check), ESLint, TypeScript and Vitest.
 2. `npm run build` passes (static export to `out/`).
 3. Any UI change is verified in a browser against the built `out/` folder, at desktop width and at 390px, and with reduced motion on.
-4. Docs are updated when behaviour changes:
+4. A change to pages, CSS or client JavaScript keeps `npm run lighthouse` at 100 (see "Performance budget").
+5. Docs are updated when behaviour changes:
    - `docs/STRATEGY.md` decision log, for any product decision;
    - `docs/REPORT-COVERAGE.md`, for report sections;
    - `docs/HANDOFF.md`, for the resume point.
@@ -98,6 +99,22 @@ The site must feel modern, premium, trustworthy and engaging.
 - Structured data (JSON-LD) is built by one typed helper module, never hand-written per page.
 - Every data page opens with a 2–3 sentence direct answer that states the date and the source, and shows a visible "last updated" date.
 - Use semantic HTML: one `h1` per page, ordered headings, real `<table>` elements for tabular data.
+
+## Performance budget
+
+Founder requirement (24 Nov 2026, `docs/STRATEGY.md`): Lighthouse **100 in Performance, Accessibility, Best Practices and SEO, on mobile and desktop**, for every page type that should get search traffic, and 100 in Accessibility and Best Practices for `/feedback/` and the 404.
+
+- **Check it.** After `npm run build`, run `npm run lighthouse`. It serves `out/` on 127.0.0.1:3020 the way Cloudflare Pages does (brotli or gzip, `public/_headers` caching, 404.html), runs Lighthouse three times per page on mobile and desktop (medians), then accessibility once per page in dark, prints a table and exits 1 if any gated score is under 100. The pages are listed in `scripts/lighthouse/pages.ts`; add a new page type there. `--only <path>`, `--form mobile|desktop`, `--runs N` and `--no-dark` narrow a run; `--cpu-slowdown 10` approximates PageSpeed Insights' slower CPU; `--base-url https://migratelens.com` audits the live site.
+- **Never use python's `http.server` for performance numbers:** it doesn't compress, which skews every score.
+- **Decorative art is never the Largest Contentful Paint.** Background linework, guilloche and textures are CSS masks or backgrounds, never an above-the-fold `<img>` (the homepage's eager guilloche image was its LCP at 4 s on a phone). The hero text should be the LCP.
+- **Budget** (gzipped, everything a page's HTML references, 24 Nov 2026): CSS 28–40 KB per page (was 49–60 KB before Mantine was cut down), JavaScript 182–392 KB without the legacy `polyfills` chunk (`/states/` 182, a guide 184, `/check/` 392). A change that adds more than a few KB to every page needs a reason in its commit.
+- **Render-blocking CSS stays small.** Mantine's CSS comes only through `src/components/mantine-styles.ts`, which lists the per-component stylesheets the site uses (its test walks Mantine's imports and fails if one is missing or unused). Never import `@mantine/core/styles.css`. Feature styles go in CSS Modules so they load only on their routes; the root `not-found.tsx` loads everywhere, so it imports nothing from other routes.
+- **JavaScript.** Server Components by default (see Architecture); interactive leaves load what they render. Next's client polyfills are replaced by `src/components/polyfills/polyfill-module.ts` (only `URL.canParse`, which the browserslist floor lacks), and `package.json` pins Next's own browserslist floor (Chrome and Edge 111, Firefox 111, Safari 16.4); don't lower it without restoring the polyfills.
+- **No layout reads during load that interleave with writes.** Read every size first, then write (`use-fit-stamp-text.ts`), and don't measure in a mount effect what CSS can lay out. Mantine dropdowns mount only when open (the `Combobox` default in `providers.tsx`); don't set `keepMounted` on a select. Mantine's `SegmentedControl` still measures its indicator on mount, so keep them few per page.
+- **Fonts.** Web fonts swap in over metric-matched local fallbacks (`"Archivo Fallback"`, `"Inter Fallback"` in `globals.css`); a new web font needs its own fallback face, or the swap shifts text (CLS).
+- **Links in running text are underlined** (globals.css), so colour is never the only sign of a link. A visible label inside a control is part of its accessible name (`aria-label="Western Australia (WA)"`).
+- **No third-party scripts in the code.** Cloudflare injects its Web Analytics beacon at the edge; its console errors are a dashboard setting (`docs/OPERATIONS.md`, "Cloudflare Web Analytics").
+- **Caching.** `public/_headers` gives hashed `/_next/static/` files a year (immutable) and the stable-named artwork a day; pages and `/data/` keep the Pages default so a deploy shows at once.
 
 ## Testing
 
