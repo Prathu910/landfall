@@ -16,6 +16,7 @@ import {
   parseCurrentRound,
   parseRoundPagesDetailed,
   type RoundPages,
+  type TieBreakMisprint,
 } from "./rounds";
 import { validateGenerated } from "./validate-generated";
 
@@ -125,11 +126,27 @@ function readKeptRounds(): RoundPages | null {
   return readRoundsFile(value);
 }
 
+/** Misprinted tie-breaks in rounds being added (stored rounds are kept). */
+function printMisprints(
+  misprints: TieBreakMisprint[],
+  stored: RoundPages | null,
+): void {
+  const storedDates = new Set(stored?.rounds.map((round) => round.date));
+  const added = misprints.filter((m) => !storedDates.has(m.date));
+  console.log(`Tie-break misprints stored as no date: ${added.length}`);
+  for (const m of added) console.log(`  ${m.date} ${m.where}: "${m.text}"`);
+}
+
 /** Parses both pages, keeps the stored rounds and saves the current page. */
 function readRoundPages(currentHtml: string, previousHtml: string): RoundPages {
   const parsed = parseRoundPagesDetailed(currentHtml, previousHtml);
   console.log(`189 rounds parsed: ${parsed.rounds.length}`);
-  const pages = keepStoredRounds(readKeptRounds(), parsed);
+  const stored = readKeptRounds();
+  const pages = keepStoredRounds(stored, {
+    rounds: parsed.rounds,
+    skipped: parsed.skipped,
+  });
+  printMisprints(parsed.misprints, stored);
   const date = parseCurrentRound(currentHtml).date;
   console.log(`Stored ${writeRoundPage(RAW_ROOT, date, currentHtml)}`);
   return pages;

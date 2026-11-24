@@ -88,11 +88,14 @@ export function parseLongDate(text: string): string {
   return `${match[3]}-${pad(month + 1)}-${pad(Number(match[1]))}`;
 }
 
-/** "03/09/2026" (day first) → "2026-09-03", or null if it isn't a real date. */
+/**
+ * "03/09/2026" or "3/9/2026" (day first) → "2026-09-03"; null unless it is a
+ * day, month and four-digit year naming a date that exists.
+ */
 export function parseDayFirstDate(text: string): string | null {
-  const match = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(text);
+  const match = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(text);
   if (!match) return null;
-  const iso = `${match[3]}-${match[2]}-${match[1]}`;
+  const iso = `${match[3]}-${pad(Number(match[2]))}-${pad(Number(match[1]))}`;
   const date = new Date(`${iso}T00:00:00Z`);
   return !Number.isNaN(date.getTime()) && date.toISOString().startsWith(iso)
     ? iso

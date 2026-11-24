@@ -19,22 +19,36 @@ import {
 const NO_DATE = /^(n\/?a\*?|)$/i;
 /** "11/2025": a month and year (one round printed "15/2024"), naming no day. */
 const MONTH_AND_YEAR = /^\d{1,2}\/\d{4}$/;
-/** Date-shaped but not a date: the 15 Oct 2026 page prints "13/10/206". */
-const MISPRINTED_DATE = /^\d{1,2}\/\d{1,2}\/\d{1,4}$/;
+/** A short year: the 15 Oct 2026 page prints "13/10/206". */
+const SHORT_YEAR = /^\d{1,2}\/\d{1,2}\/\d{1,3}$/;
+/** Day/month/year shaped; after parseDayFirstDate fails, a date that doesn't exist. */
+const DAY_MONTH_YEAR = /^\d{1,2}\/\d{1,2}\/\d{4}$/;
 export const TIE_BREAK_COLUMN = /^tie break/i;
 
+/** A tie-break cell stored as no date because its text misprints a date. */
+export type TieBreakMisprint = { date: string; where: string; text: string };
+
 /**
- * A tie-break date as ISO. Only a real day-first "dd/mm/yyyy" date is stored.
- * "N/A", a blank, a month and year alone, or a misprinted date give null: a
- * misprint is never repaired by guessing. Any other text stops the import.
+ * A tie-break date as ISO. Only a real day-first date (dd/mm/yyyy, or
+ * d/m/yyyy) is stored. "N/A", a blank or a month and year alone give null. A
+ * misprinted date (a short year, or a date that doesn't exist such as
+ * 31/02/2026) also gives null, is never repaired by guessing, and is added to
+ * `misprints` so the CLI can print it. Any other text stops the import.
  */
-export function parseTieBreak(text: string, where: string): string | null {
-  const date = parseDayFirstDate(text);
-  if (date !== null) return date;
-  if ([NO_DATE, MONTH_AND_YEAR, MISPRINTED_DATE].some((re) => re.test(text))) {
+export function parseTieBreak(
+  text: string,
+  date: string,
+  where: string,
+  misprints: TieBreakMisprint[],
+): string | null {
+  const parsed = parseDayFirstDate(text);
+  if (parsed !== null) return parsed;
+  if (NO_DATE.test(text) || MONTH_AND_YEAR.test(text)) return null;
+  if (SHORT_YEAR.test(text) || DAY_MONTH_YEAR.test(text)) {
+    misprints.push({ date, where, text });
     return null;
   }
-  throw new Error(`Unexpected tie-break date for ${where}: ${text}`);
+  throw new Error(`Unexpected tie-break date for ${where} on ${date}: ${text}`);
 }
 
 /** The round's own totals table: the block's first "Visa subclass" table. */
@@ -52,6 +66,7 @@ export function firstVisaTable(tables: Table[]): Table | undefined {
 export function parseTotals(
   date: string,
   tables: Table[],
+  misprints: TieBreakMisprint[],
 ): { totals: RoundTotal[] | null; tieBreak: string | null } {
   const table = firstVisaTable(tables);
   const header = texts(table?.[0] ?? []);
@@ -74,7 +89,12 @@ export function parseTotals(
     }
     totals.push({ subclass, label, invited });
     if (subclass === "189" && tieColumn >= 0) {
-      tieBreak = parseTieBreak(cells[tieColumn] ?? "", `${date} totals`);
+      tieBreak = parseTieBreak(
+        cells[tieColumn] ?? "",
+        date,
+        "the totals table",
+        misprints,
+      );
     }
   }
   return { totals, tieBreak };

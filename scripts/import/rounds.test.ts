@@ -139,6 +139,7 @@ describe("parseRoundBlock", () => {
         rows: [{ occupationName: "Actuary", cutoff: 85, tieBreak: null }],
         nominations: null,
       },
+      misprints: [],
     });
     expect(() => parseRoundBlock("2026-01-01", occupations)).toThrow(
       /189 column/,
@@ -159,6 +160,7 @@ describe("parseRoundBlock", () => {
         rows: [{ occupationName: "Actuary", cutoff: 90, tieBreak: null }],
         nominations: null,
       },
+      misprints: [],
     });
   });
 
@@ -202,6 +204,11 @@ describe("round totals, tie-break dates and nominations", () => {
       "Environmental Manager",
       "Forester",
     ]);
+    expect(pages.misprints.filter((m) => m.date === "2026-10-15")).toEqual([
+      { date: "2026-10-15", where: "Environmental Manager", text: "13/10/206" },
+      { date: "2026-10-15", where: "Forester", text: "01/07/206" },
+    ]);
+    expect(pages.misprints).toHaveLength(2);
     expect(oct.nominations).toEqual({
       programYear: "2026-27",
       from: "2026-07-01",

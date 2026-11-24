@@ -18,10 +18,12 @@ import {
   parseTieBreak,
   parseTotals,
   TIE_BREAK_COLUMN,
+  type TieBreakMisprint,
 } from "./round-tables";
 
 export { decodeEntities } from "./html-tables";
 export type { SkippedRound } from "../../src/lib/data/rounds-file";
+export type { TieBreakMisprint } from "./round-tables";
 
 export type ParsedRow = {
   occupationName: string;
@@ -87,7 +89,8 @@ const MINIMUM_POINTS = /^minimum points score$/i;
 /** 2020-21 rounds list 4-digit unit groups: "Subclass | Occupation ID | Description". */
 const UNIT_GROUP_COLUMN = /^occupation id$/i;
 
-type BlockResult = { round: ParsedRound } | { reason: string };
+type BlockResult =
+  { round: ParsedRound; misprints: TieBreakMisprint[] } | { reason: string };
 
 /**
  * True when the round's own totals table (the first "Visa subclass" table;
@@ -168,6 +171,7 @@ export function parseRoundBlock(date: string, block: string): BlockResult {
   const tieColumn = header.findIndex((text) => TIE_BREAK_COLUMN.test(text));
   const columns = cutoffColumns(table, headerRow, listsOnly189(tables));
   const rows: ParsedRow[] = [];
+  const misprints: TieBreakMisprint[] = [];
   for (const cells of table.slice(headerRow + 1).map(texts)) {
     if (cells.length === 0) continue;
     const occupationName = cells[nameColumn];
@@ -190,17 +194,20 @@ export function parseRoundBlock(date: string, block: string): BlockResult {
           ? null
           : parseTieBreak(
               cells[tieColumn] ?? "",
-              `${occupationName} on ${date}`,
+              date,
+              occupationName,
+              misprints,
             );
       rows.push({ occupationName, cutoff: Math.min(...values), tieBreak });
     }
   }
-  return {
-    round: { date, ...parseTotals(date, tables), rows, nominations: null },
-  };
+  const totals = parseTotals(date, tables, misprints);
+  return { round: { date, ...totals, rows, nominations: null }, misprints };
 }
 
 export type RoundPages = { rounds: ParsedRound[]; skipped: SkippedRound[] };
+/** Freshly parsed pages, plus each misprinted tie-break (stored as no date). */
+export type ParsedPages = RoundPages & { misprints: TieBreakMisprint[] };
 
 function contentBlock(schema: Record<string, unknown>, text: string) {
   const item = arrayField(schema, "content").find(
@@ -214,6 +221,13 @@ function contentBlock(schema: Record<string, unknown>, text: string) {
  * Territory nominations" table (null when the page has no such block).
  */
 export function parseCurrentRound(currentHtml: string): ParsedRound {
+  return readCurrentRound(currentHtml).round;
+}
+
+function readCurrentRound(currentHtml: string): {
+  round: ParsedRound;
+  misprints: TieBreakMisprint[];
+} {
   const schema = readSchema(currentHtml);
   const block = contentBlock(schema, "Current round");
   if (block === undefined) throw new Error("Current round block missing");
@@ -226,26 +240,33 @@ export function parseCurrentRound(currentHtml: string): ParsedRound {
   }
   const nominations = contentBlock(schema, "State and Territory nominations");
   return {
-    ...newest.round,
-    nominations:
-      nominations === undefined ? null : parseNominations(nominations),
+    round: {
+      ...newest.round,
+      nominations:
+        nominations === undefined ? null : parseNominations(nominations),
+    },
+    misprints: newest.misprints,
   };
 }
 
 export function parseRoundPagesDetailed(
   currentHtml: string,
   previousHtml: string,
-): RoundPages {
-  const rounds = [parseCurrentRound(currentHtml)];
+): ParsedPages {
+  const current = readCurrentRound(currentHtml);
+  const rounds = [current.round];
+  const misprints = [...current.misprints];
   const skipped: SkippedRound[] = [];
   for (const item of arrayField(readSchema(previousHtml), "criteria")) {
     const date = parseLongDate(stringField(item, "title"));
     const result = parseRoundBlock(date, stringField(item, "description"));
-    if ("round" in result) rounds.push(result.round);
-    else skipped.push({ date, reason: result.reason });
+    if ("round" in result) {
+      rounds.push(result.round);
+      misprints.push(...result.misprints);
+    } else skipped.push({ date, reason: result.reason });
   }
   rounds.sort((a, b) => b.date.localeCompare(a.date));
-  return { rounds, skipped };
+  return { rounds, skipped, misprints };
 }
 
 export function parseRoundPages(
