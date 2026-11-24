@@ -1,0 +1,19 @@
+# Cloudflare Pages response headers (https://developers.cloudflare.com/pages/configuration/headers/).
+# Pages, RSC payloads and /data/ keep the Pages default (max-age=0, must-revalidate)
+# so a deploy is seen at once.
+
+# Hashed build output (scripts, styles, fonts): a new build gets new file names.
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Artwork and icons with stable names: a day, then revalidate in the background.
+/home/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+/brand/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+/report-passport.svg
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+/icon.svg
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+/og.png
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
