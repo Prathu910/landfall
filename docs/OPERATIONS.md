@@ -67,15 +67,20 @@ The project has no email delivery service, login, verified email ownership, paid
 
 Use the restricted Supabase dashboard for records and operator queries. Treat exports as private, keep them outside git and `out`, and delete them after their task. Daily cleanup removes records older than 180 days at its next run; backup expiry follows the provider's configured policy. Monitor the scheduled job history. Deletion requests arrive at the configured privacy mailbox; browser “Clear my answers” does not delete server submissions. Verify the requester's authority before deleting or disclosing records, and do not send profile records to an unverified address.
 
-## Cloudflare Web Analytics (beacon errors)
+## Cloudflare Web Analytics
 
-The privacy section discloses Cloudflare Web Analytics, but nothing in the code loads it: Cloudflare injects `<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "3cf7eccade584b71974c42dd7d4699de"}'>` into every page at the edge (seen with `curl -s https://migratelens.com/ | grep cloudflareinsights`, 24 Nov 2026).
+The privacy section discloses Cloudflare Web Analytics, but nothing in the code loads it. Cloudflare injects the beacon (`<script defer src="https://static.cloudflareinsights.com/beacon.min.js/…" data-cf-beacon='{…"token":"…"}'>`) at the edge, and only for browser-like requests: a plain `curl` gets the page without it, so send a browser user agent when checking.
 
-**What goes wrong.** The beacon's report to `https://cloudflareinsights.com/cdn-cgi/rum` fails on every page view. The CORS preflight succeeds (200, `access-control-allow-origin: https://migratelens.com`), but the POST itself, replayed with the browser's exact payload, returns **404 with no CORS headers**, so Chrome logs "Access to XMLHttpRequest … blocked by CORS policy" and "Failed to load resource: net::ERR_FAILED". The collector does not accept site token `3cf7ecca…`: the Web Analytics site behind it no longer exists or is not active for `migratelens.com` (for example it was created for another hostname or a since-deleted Pages setup). No visits are being counted, and PageSpeed Insights takes Best Practices to 96 for the console errors. The handoff of 20 Nov already noted the beacon upload failing.
+**How it is set up (since 24 Nov 2026).** One source only: the `migratelens.com` site under **Analytics & Logs → Web Analytics** with automatic setup (the zone's DNS is on Cloudflare). Its token starts `1ac3db71…`. The Pages project's own switch (**Workers & Pages → the MigrateLens project → Metrics → Web Analytics**) is **off** and must stay off: with both on, every page carries two beacons and visits count twice.
 
-**Fix it in the Cloudflare dashboard** (pick one):
+**What went wrong before (resolved 24 Nov 2026).** The Pages switch was injecting token `3cf7ecca…`, whose Web Analytics site was no longer active. The collector (`https://cloudflareinsights.com/cdn-cgi/rum`) answered the browser's real POST with 404 and no CORS headers, so Chrome logged "blocked by CORS policy" and "net::ERR_FAILED" on every page view, no visits were counted, and PageSpeed gave Best Practices 96. The founder turned off the Pages switch and purged the cache; the account-level site, which already existed, then became the only beacon. Live Lighthouse afterwards: Best Practices 100, no console errors, the beacon script loads (200) and the dashboard shows visits. A hand-made `curl` POST to `/cdn-cgi/rum` returns 404 for valid tokens too, so it is not a test; use a real browser load.
 
-1. **Keep analytics (recommended).** Dashboard → **Analytics & Logs → Web Analytics**. If a site for `migratelens.com` is listed, open **Manage site** and check its hostname is exactly `migratelens.com`; otherwise choose **Add a site**, enter `migratelens.com` and pick **Enable automatic setup** (the zone is proxied by Cloudflare, so no snippet is needed). Then **Workers & Pages → the MigrateLens project → Metrics → Web Analytics**: if it shows enabled with an old site, **Disable** it, so only one beacon is injected. Purge the cache (**Caching → Configuration → Purge Everything**).
-2. **Turn it off.** Disable Web Analytics in both places above and purge the cache. The privacy sentence about Cloudflare Web Analytics in `src/components/methodology/method-privacy.tsx` then needs removing in a release.
+**Check it.**
 
-**Check it worked.** `curl -s https://migratelens.com/ | grep -o 'data-cf-beacon=[^>]*'` shows a new token (or nothing, if turned off); in Chrome DevTools the Console has no CORS error and the Network tab's `rum` request succeeds; then `npm run lighthouse -- --base-url https://migratelens.com --only / --runs 1` shows Best Practices 100. Don't paste a manual beacon snippet into the code while automatic setup is on: two beacons would double-count.
+```sh
+curl -s -A "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0 Safari/537.36" \
+  -H "Accept: text/html" https://migratelens.com/ | grep -o "data-cf-beacon='[^']*'"
+npm run lighthouse -- --base-url https://migratelens.com --only / --runs 1
+```
+
+Expect exactly one beacon with the `1ac3db71…` token and Best Practices 100; in Chrome DevTools the Console shows no CORS error. Don't paste a manual beacon snippet into the code while automatic setup is on. To turn analytics off, disable the Web Analytics site, purge the cache, and remove the privacy sentence in `src/components/methodology/method-privacy.tsx` in a release.

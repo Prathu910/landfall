@@ -44,7 +44,7 @@ Branch `roadmap/perf-100` (from `main` 9853460; not merged, not pushed, not depl
 | 404                                                     | desktop | 100/100/100/63 0.3s 0ms             | 100/100/100/63 0.2s 0ms   | 100→100   |
 
 - **Checked:** screenshots of 12 pages at 390 and 1280 in light and dark against `main` (only the guilloche antialiasing and the new underlines differ); `/sample/` tabs print 4, 5, 5, 5 A4 pages with Light and Dark saved, identical to `main`, guilloche included; homepage, `/occupations/` and `/check/` print identically; no-flash matrix (saved none/light/dark/system × device light/dark, scripts blocked) correct; every select opens and picks by keyboard with no console errors.
-- **Cloudflare Web Analytics** (founder action): the injected beacon's site token is rejected by the collector (404, so CORS errors in the console and Best Practices 96 on PageSpeed). Steps in `docs/OPERATIONS.md`.
+- **Cloudflare Web Analytics** (resolved 24 Nov 2026): the Pages project's switch was injecting a dead token (collector 404, CORS errors, Best Practices 96). The founder turned it off; the account-level `migratelens.com` site with automatic setup is now the only beacon and records visits. Details in `docs/OPERATIONS.md`.
 
 Follow-ups (not done): at a PageSpeed-like CPU (`--cpu-slowdown 10`, one run, `main` → this branch) Performance is `/` 87 → 100, `/sample/` 80 → 97, `/check/` 97 → 99 and `/guide/` 98 → 98; the rest is blocking time (105–190 ms), mostly Next/React hydration of large RSC payloads (`/sample/` 310 KB, `/guide/` 106 KB) and Mantine `SegmentedControl` measuring its indicator on mount; trimming client components or the four server-rendered `/sample/` reports is the next lever. Archivo's variable latin file is 90 KB.
 
