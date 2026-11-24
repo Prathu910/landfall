@@ -19,20 +19,22 @@ function clearFit(text: SVGTextContentElement): void {
 /**
  * The stencil face has no width axis, so a line still too wide at its
  * fitted size is squeezed with textLength. Unmeasurable text (hidden, or
- * not laid out) keeps the size the server rendered.
+ * not laid out) keeps the size the server rendered. Every write is cleared
+ * first and every width read before any new write, so the browser lays the
+ * stamp out once instead of once per line (a forced reflow per text).
  */
-function fitText(text: SVGTextContentElement): void {
-  clearFit(text);
-  const maxWidth = Number(text.dataset.fit);
-  const width = measure(text);
-  if (width !== null && width > maxWidth) {
-    text.setAttribute("textLength", String(maxWidth));
-    text.setAttribute("lengthAdjust", "spacingAndGlyphs");
-  }
-}
-
 function fitTexts(svg: SVGSVGElement): void {
-  svg.querySelectorAll<SVGTextContentElement>(FITTED).forEach(fitText);
+  const texts = [...svg.querySelectorAll<SVGTextContentElement>(FITTED)];
+  texts.forEach(clearFit);
+  const widths = texts.map(measure);
+  texts.forEach((text, index) => {
+    const maxWidth = Number(text.dataset.fit);
+    const width = widths[index];
+    if (width !== null && width > maxWidth) {
+      text.setAttribute("textLength", String(maxWidth));
+      text.setAttribute("lengthAdjust", "spacingAndGlyphs");
+    }
+  });
 }
 
 /**
