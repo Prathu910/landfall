@@ -19,7 +19,7 @@ export type SampleExample = {
 type Props = {
   examples: SampleExample[];
   asOf: string;
-  initialComparison: OccupationEvidence;
+  fixedComparisons: OccupationEvidence[];
   source: ReportSource;
 };
 
@@ -30,7 +30,7 @@ type Props = {
 export function SampleTabs({
   examples,
   asOf,
-  initialComparison,
+  fixedComparisons,
   source,
 }: Props) {
   const [selected, setSelected] = useState(0);
@@ -91,7 +91,7 @@ export function SampleTabs({
           sample
           occupation={current.occupation}
           comparisonIndex={occupationIndex}
-          initialComparison={initialComparison}
+          fixedComparisons={fixedComparisons}
           source={source}
         />
       </div>

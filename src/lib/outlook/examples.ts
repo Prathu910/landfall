@@ -1,5 +1,5 @@
 import { emptyProfile, type Profile } from "../migration";
-import { sampleReportProfile } from "../sample";
+import { SAMPLE_COMPARISON, sampleReportProfile } from "../sample";
 
 export type ExampleId = "strong" | "middle" | "notinv" | "none";
 
@@ -56,4 +56,12 @@ export const EXAMPLES: { id: ExampleId; tab: string; profile: Profile }[] = [
   { id: "middle", tab: "In the middle", profile: EXAMPLE_PROFILES.middle },
   { id: "notinv", tab: "189 closed", profile: EXAMPLE_PROFILES.notinv },
   { id: "none", tab: "Nothing suits", profile: EXAMPLE_PROFILES.none },
+];
+
+/** The occupations /sample/ reads: each example's, then the comparison's. */
+export const SAMPLE_CODES: readonly string[] = [
+  ...new Set([
+    ...EXAMPLES.map(({ profile }) => profile.occupation),
+    SAMPLE_COMPARISON,
+  ]),
 ];

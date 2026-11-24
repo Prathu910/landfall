@@ -46,6 +46,8 @@ type Props = {
   comparisonIndex: OccupationIndexEntry[];
   /** Server-rendered evidence for the default comparison occupation. */
   initialComparison?: OccupationEvidence;
+  /** Offer only these comparisons, preloaded, and never fetch (the frozen /sample/). */
+  fixedComparisons?: OccupationEvidence[];
   source: ReportSource;
   /** From the calculation receipt; memory only. Absent on the sample. */
   readToken?: string | null;
@@ -159,6 +161,7 @@ function ReportBody(props: Props & { view: OutlookView; read: OurReadResult }) {
         onAnswer={props.onAnswer}
         comparisonIndex={props.comparisonIndex}
         initialComparison={props.initialComparison}
+        fixedComparisons={props.fixedComparisons}
         source={source}
       />
       <PointsPage page={view.pointsPage} warnings={view.points.warnings} />

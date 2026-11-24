@@ -29,6 +29,7 @@ type Props = {
   onAnswer?: (patch: Partial<Profile>) => void;
   comparisonIndex: OccupationIndexEntry[];
   initialComparison?: OccupationEvidence;
+  fixedComparisons?: OccupationEvidence[];
   source: ReportSource;
 };
 
@@ -125,6 +126,7 @@ export function EvidenceSection(props: Props) {
             occupationCode={profile.occupation}
             index={props.comparisonIndex}
             initialComparison={props.initialComparison}
+            fixedComparisons={props.fixedComparisons}
             score={points.base}
             snapshotDate={props.source.snapshotDate}
             label="OCCUPATION CONTEXT"

@@ -40,3 +40,51 @@ export function loadOccupationDetail(code: string): OccupationDetail | null {
   const value = loadOccupationFile(code, ".detail");
   return isOccupationDetail(value) ? value : null;
 }
+
+/** What /sample/ needs to date its frozen snapshot. */
+export type SampleMeta = {
+  snapshotId: string;
+  asAt: string;
+  checkedAt: string;
+  sources: Manifest["sources"];
+};
+
+const SAMPLE_DIR = path.join(DATA_DIR, "sample", "2026-10");
+
+function readSampleFile(name: string): unknown {
+  return readJson(path.join(SAMPLE_DIR, name));
+}
+
+/** The frozen 2026-10 core of a sample occupation; throws if it is missing. */
+export function loadSampleCore(code: string): OccupationCore {
+  const value = readSampleFile(`${code}.json`);
+  if (!isOccupationCore(value))
+    throw new Error(`Sample core ${code} is invalid`);
+  return value;
+}
+
+export function loadSampleDetail(code: string): OccupationDetail {
+  const value = readSampleFile(`${code}.detail.json`);
+  if (!isOccupationDetail(value)) {
+    throw new Error(`Sample detail ${code} is invalid`);
+  }
+  return value;
+}
+
+export function loadSampleMeta(): SampleMeta {
+  const value = readSampleFile("meta.json") as Partial<SampleMeta> | null;
+  const sources = value?.sources;
+  if (
+    !value ||
+    typeof value.snapshotId !== "string" ||
+    typeof value.asAt !== "string" ||
+    typeof value.checkedAt !== "string" ||
+    !sources ||
+    typeof sources.dashboard !== "string" ||
+    typeof sources.currentRounds !== "string" ||
+    typeof sources.previousRounds !== "string"
+  ) {
+    throw new Error("Sample meta.json is invalid");
+  }
+  return value as SampleMeta;
+}

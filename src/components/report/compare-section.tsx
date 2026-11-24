@@ -22,15 +22,21 @@ type CardData =
   | { status: "ready"; evidence: OccupationEvidence }
   | { status: "unavailable" };
 
-/** A server-rendered comparison needs no fetch; any other is loaded on demand. */
+/**
+ * A preloaded comparison needs no fetch; any other is loaded on demand. With
+ * `fixed` the comparison is always one of them and nothing is ever fetched.
+ */
 function useComparison(
   code: string,
   index: OccupationIndexEntry[],
   initial: OccupationEvidence | undefined,
+  fixed: OccupationEvidence[] | undefined,
 ): CardData {
-  const preloaded = initial?.code === code ? initial : null;
+  const preloaded =
+    fixed?.find((e) => e.code === code) ??
+    (initial?.code === code ? initial : null);
   const load = useOccupationCore(
-    preloaded ? null : publishedOccupationCode(code, index),
+    preloaded || fixed ? null : publishedOccupationCode(code, index),
     index,
   );
   if (preloaded) return { status: "ready", evidence: preloaded };
@@ -88,6 +94,7 @@ export function CompareSection({
   occupationCode,
   index,
   initialComparison,
+  fixedComparisons,
   score,
   snapshotDate,
   label,
@@ -96,13 +103,26 @@ export function CompareSection({
   occupationCode: string;
   index: OccupationIndexEntry[];
   initialComparison?: OccupationEvidence;
+  /** The only occupations the picker offers; none is fetched (the frozen /sample/). */
+  fixedComparisons?: OccupationEvidence[];
   score: number;
   snapshotDate: string;
   label: string;
 }) {
-  const [comparison, setComparison] = useState(DEFAULT_COMPARISON);
-  const compared = useComparison(comparison, index, initialComparison);
-  const nameOf = (code: string) => index.find((o) => o.code === code)?.name;
+  const [comparison, setComparison] = useState(
+    fixedComparisons &&
+      !fixedComparisons.some((e) => e.code === DEFAULT_COMPARISON)
+      ? fixedComparisons[0].code
+      : DEFAULT_COMPARISON,
+  );
+  const compared = useComparison(
+    comparison,
+    index,
+    initialComparison,
+    fixedComparisons,
+  );
+  const options = fixedComparisons ?? index;
+  const nameOf = (code: string) => options.find((o) => o.code === code)?.name;
   return (
     <section className="report-section" id="compare">
       <span className="section-label">{label}</span>
@@ -117,7 +137,7 @@ export function CompareSection({
         searchable
         value={comparison}
         onChange={(v) => v && setComparison(v)}
-        data={index.map((o) => ({
+        data={options.map((o) => ({
           value: o.code,
           label: `${o.name} · ${o.code}`,
         }))}

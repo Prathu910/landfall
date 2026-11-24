@@ -4,34 +4,19 @@ import { SampleTabs } from "@/components/report/sample-tabs";
 import type { SampleExample } from "@/components/report/sample-tabs";
 import { toOccupationEvidence } from "@/lib/data/legacy";
 import {
-  loadManifest,
-  loadOccupationCore,
-  loadOccupationDetail,
+  loadSampleCore,
+  loadSampleDetail,
+  loadSampleMeta,
 } from "@/lib/data/load-server";
 import { reportSource } from "@/lib/data/report-source";
-import type { OccupationCore, OccupationDetail } from "@/lib/data/types";
-import { EXAMPLES } from "@/lib/outlook/examples";
-import { SAMPLE_AS_OF, SAMPLE_COMPARISON } from "@/lib/sample";
+import { EXAMPLES, SAMPLE_CODES } from "@/lib/outlook/examples";
+import { SAMPLE_AS_OF } from "@/lib/sample";
 import styles from "./sample-page.module.css";
 export const metadata = { title: "Explore the sample report" };
 
-function requireCore(code: string): OccupationCore {
-  const core = loadOccupationCore(code);
-  if (!core) throw new Error(`Sample report needs occupation ${code}`);
-  return core;
-}
-
-/** The sample's panels need the detail file: a missing one fails the build, not the page. */
-function requireDetail(code: string): OccupationDetail {
-  const detail = loadOccupationDetail(code);
-  if (!detail)
-    throw new Error(`Sample report needs the detail file for ${code}`);
-  return detail;
-}
-
 export default function SamplePage() {
   const examples: SampleExample[] = EXAMPLES.map(({ id, tab, profile }) => {
-    const core = requireCore(profile.occupation);
+    const core = loadSampleCore(profile.occupation);
     return {
       id,
       tab,
@@ -42,7 +27,7 @@ export default function SamplePage() {
         core,
         detail: {
           status: "ready",
-          detail: requireDetail(profile.occupation),
+          detail: loadSampleDetail(profile.occupation),
         },
       },
     };
@@ -68,7 +53,8 @@ export default function SamplePage() {
           <p className={styles.description}>
             Four fictional people, one for each kind of result. The points
             calculations and official occupation snapshot are real. Your own
-            report uses your answers.
+            report uses your answers. Example reports use SkillSelect data as at
+            31 Oct 2026.
             <span className={styles.guideLink}>
               {" "}
               New to skilled PR?{" "}
@@ -79,10 +65,10 @@ export default function SamplePage() {
         <SampleTabs
           examples={examples}
           asOf={SAMPLE_AS_OF}
-          initialComparison={toOccupationEvidence(
-            requireCore(SAMPLE_COMPARISON),
+          fixedComparisons={SAMPLE_CODES.map((code) =>
+            toOccupationEvidence(loadSampleCore(code)),
           )}
-          source={reportSource(first.core.asAt, loadManifest())}
+          source={reportSource(first.core.asAt, loadSampleMeta())}
         />
       </div>
     </main>
