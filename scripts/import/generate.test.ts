@@ -12,6 +12,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildRawFixture,
   fixtureInput,
+  fixtureRounds,
   fixtureSkippedRounds,
   HEADERS,
   NURSE,
@@ -155,19 +156,36 @@ describe("generate", () => {
       { code: "261313", name: "Software Engineer", hasData: true },
     ]);
     expect(data.rounds).toEqual({
+      schemaVersion: 2,
       rounds: [
         {
           date: "2026-10-15",
+          totals: fixtureRounds[0].totals,
+          tieBreak: null,
           rows: [
-            { name: "Software Engineer", code: "261313", cutoff: 95 },
-            { name: "Chef", code: null, cutoff: 90 },
+            {
+              name: "Software Engineer",
+              code: "261313",
+              cutoff: 95,
+              tieBreak: "2026-09-03",
+            },
+            { name: "Chef", code: null, cutoff: 90, tieBreak: "2026-09-10" },
           ],
+          nominations: null,
         },
         {
           date: "2026-06-04",
+          totals: null,
+          tieBreak: "2026-04-24",
           rows: [
-            { name: "Registered Nurses (nec)", code: "254499", cutoff: 65 },
+            {
+              name: "Registered Nurses (nec)",
+              code: "254499",
+              cutoff: 65,
+              tieBreak: null,
+            },
           ],
+          nominations: null,
         },
       ],
       skipped: fixtureSkippedRounds,

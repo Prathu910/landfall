@@ -24,6 +24,7 @@ describe("parseArgs", () => {
       mode: "backfill",
       generateOnly: false,
       checkedAt: "2026-11-17",
+      roundsHtml: null,
     });
   });
 
@@ -46,5 +47,26 @@ describe("parseArgs", () => {
     expect(() =>
       parseArgs(["--as-at", "2026-10", "--generate-only", "--backfill"]),
     ).toThrow(/--generate-only/);
+  });
+
+  it("reads saved round pages with --generate-only", () => {
+    const args = parseArgs([
+      "--as-at",
+      "2026-10",
+      "--generate-only",
+      "--rounds-html",
+      "scripts/import/__fixtures__",
+    ]);
+    expect(args.generateOnly).toBe(true);
+    expect(args.roundsHtml).toBe("scripts/import/__fixtures__");
+  });
+
+  it("rejects --rounds-html without --generate-only", () => {
+    expect(() =>
+      parseArgs(["--as-at", "2026-10", "--rounds-html", "pages"]),
+    ).toThrow(/--rounds-html/);
+    expect(() =>
+      parseArgs(["--as-at", "2026-10", "--generate-only", "--rounds-html"]),
+    ).toThrow(/--rounds-html/);
   });
 });

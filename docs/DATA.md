@@ -13,7 +13,8 @@ src/data/manifest.json               Snapshot id, as-at, checkedAt, import versi
 src/data/occupation-index.json       Code, name and hasData for every occupation. The only multi-occupation file a client component may import.
 src/data/occupations/<code>.json     Core record: pools, status history, invited-by-score, state pools and state invitations, 189 rounds.
 src/data/occupations/<code>.detail.json   Detail record: cohorts, cohorts by score, invited profiles.
-src/data/rounds.json                 { rounds, skipped }: every parsed 189 round (all occupations, newest first) and every skipped round with its reason.
+data/raw/rounds/<date>.html          The current invitation rounds page as read when that round was current (written by the importer from 15 Oct 2026).
+src/data/rounds.json                 { schemaVersion: 2, rounds, skipped }: every parsed 189 round (all occupations, newest first, with totals, tie-break dates and, for the round read as current, the state nominations table) and every skipped round with its reason.
 src/data/state-rules/                State nomination rules and lists for the state outlook; see "State rules" below.
 ```
 
@@ -118,6 +119,11 @@ Rules that follow:
 ### 189 invitation rounds
 
 - 13 rounds are parsed, from 21 Jan 2022 to 15 Oct 2026. Every occupation row is kept.
+- **`rounds.json` v2** (types and `isRoundsFile` in `src/lib/data/rounds-file.ts`, so app code never imports `scripts/`). Each round is `{ date, totals, tieBreak, rows, nominations }`; each row is `{ name, code, cutoff, tieBreak }` (`code` null when unmatched).
+  - **`totals`**: the round's own totals table (its first "Visa subclass" table) when it has a "Total EOIs Invited" column: `{ subclass, label, invited }` per row, label as published. Seven rounds have one (13 Jun 2024 to 15 Oct 2026); older tables say "Number", so their `totals` is `null`. A count that isn't digits (commas allowed) stops the import.
+  - **`tieBreak`** (round) is the totals table's 189 tie-break date; a row's `tieBreak` comes from an occupation table's "Tie break date" column (the current-round page only). Only a real `dd/mm/yyyy` date is stored, as `YYYY-MM-DD`. `N/A`, a blank, a month and year alone (`11/2025`; 13 Jun 2024 prints `15/2024`) and a misprinted date give `null`; a misprint is never repaired by guessing. Of the 15 Oct 2026 rows, Environmental Manager (`13/10/206`) and Forester (`01/07/206`) are `null` for this reason. Other text stops the import. Before 4 Jun 2026 every round-level `tieBreak` is `null` (the pages give months only).
+  - **`nominations`**: the Home Affairs "State and Territory nominations" table, copied as published (values are text, including `<5`) with its program year and period, `{ programYear, from, to, byVisa: { "190" | "491": { ACT … WA } } }`. Only the current-round page has it, so only the round read as current carries one; `null` elsewhere, and `null` if the page has no such block. The state headers must be exactly `ACT NSW NT Qld SA Tas Vic WA` in that order, with one 190 row and one 491 row, or the import stops ("Official page schema changed"). It is a different measure from the dashboard's state figures and is never reconciled with them.
+  - **Stored rounds are kept (ruling R1).** When the round pages are read again, a round already in `rounds.json` is kept as stored and only new dates are added, because the previous-rounds page drops a round's row tie-breaks and nominations. A stored row keeps its `code`; a stored unmatched row is matched again. A stored round the pages no longer show is kept.
 - **Eight rounds are skipped**, each with its reason in `rounds.json` `skipped` and printed by the CLI. A skipped round is absent from `rounds189`; it is never shown as "not listed".
   - **6 October 2022.** Its page has no table with an Occupation column. It is recoverable later.
   - **The seven rounds from 11 Aug 2020 to 29 Oct 2021 (ruling R15).** They use a `Subclass | Occupation ID | Description | Minimum points score` layout that lists 4-digit unit groups (for example `2211 Accountants`) and mixes 189 and 491 rows. A unit-group cut-off cannot honestly be attributed to one 6-digit occupation, so these rounds are skipped. Before this fix the parser read the 4-digit ID as the name and stored 491 rows as 189 cut-offs.
@@ -197,7 +203,7 @@ npm run data:generate -- --as-at 2026-10              # rebuild src/data from st
 - A **backfill** fetches every unstored month in each view's window up to the as-at month. It is resumable.
 - **Page-read budgets (ruling R11):** backfill 600, monthly 250. The as-at views alone cost about 203 reads, so the spec's original 150 a month was raised. The first backfill used about 440 reads in total; the stored dataset cost 428.
 - The dashboard streams at about 12–19 KB/s, so a full backfill takes about an hour.
-- `--generate-only` needs an existing `src/data/rounds.json` in the `{ rounds, skipped }` shape (checked by `readRoundsFile`), because the raw round HTML is not stored. The 2026-10 file was rebuilt from the round pages recorded on 17 November 2026 (`scripts/import/__fixtures__/`) when the parser changed.
+- `--generate-only` rebuilds from the stored `src/data/rounds.json`, which must be schemaVersion 2 (checked by `readRoundsFile`); it writes the same file back byte for byte (a test checks this). `--rounds-html <dir>` (with `--generate-only` only) reads saved `invitation-rounds.html` and `previous-rounds.html` from `<dir>` instead, adds any new rounds to the stored ones and saves the current page to `data/raw/rounds/<date>.html`; a monthly import does the same with the fetched pages. The v2 file was built from the round pages recorded on 17 November 2026: `npm run data:generate -- --as-at 2026-10 --checked-at 2026-11-17 --rounds-html scripts/import/__fixtures__` (a `rounds.json` without `schemaVersion` is re-parsed in full, once).
 - The CLI prints parsed and skipped rounds, page reads used, revisions, the occupation count, unmatched round names and validation issues. It exits 1 on any issue.
 
 After an import:

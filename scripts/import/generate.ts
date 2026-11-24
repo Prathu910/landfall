@@ -158,7 +158,11 @@ export function generate(input: GenerateInput): GeneratedData {
     index: entries.map(({ code, name, hasData }) => ({ code, name, hasData })),
     cores,
     details: occupations.map(({ detail }) => detail),
-    rounds: { rounds: rounds.file, skipped: input.rounds.skipped },
+    rounds: {
+      schemaVersion: 2,
+      rounds: rounds.file,
+      skipped: input.rounds.skipped,
+    },
     newestRawMonth: months.at(-1) ?? null,
   };
 }

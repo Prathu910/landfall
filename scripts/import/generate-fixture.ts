@@ -192,14 +192,32 @@ export function buildRawFixture(): string {
 export const fixtureRounds: ParsedRound[] = [
   {
     date: "2026-10-15",
-    rows: [
-      { occupationName: "Software Engineer", cutoff: 95 },
-      { occupationName: "Chef", cutoff: 90 },
+    totals: [
+      {
+        subclass: "189",
+        label: "Skilled Independent visa (subclass 189)",
+        invited: 20000,
+      },
     ],
+    tieBreak: null,
+    rows: [
+      {
+        occupationName: "Software Engineer",
+        cutoff: 95,
+        tieBreak: "2026-09-03",
+      },
+      { occupationName: "Chef", cutoff: 90, tieBreak: "2026-09-10" },
+    ],
+    nominations: null,
   },
   {
     date: "2026-06-04",
-    rows: [{ occupationName: "Registered Nurses (nec)", cutoff: 65 }],
+    totals: null,
+    tieBreak: "2026-04-24",
+    rows: [
+      { occupationName: "Registered Nurses (nec)", cutoff: 65, tieBreak: null },
+    ],
+    nominations: null,
   },
 ];
 

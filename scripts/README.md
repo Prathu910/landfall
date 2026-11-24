@@ -33,7 +33,8 @@ After an import, run `npm run check` and `npm run build`, then commit `data/raw/
 - `views.ts`: the declared views and the guardrail check.
 - `import-plan.ts`, `import-fetch.ts`, `run-view.ts`: which view-months to fetch, and fetching them.
 - `raw-store.ts`, `atomic-write.ts`: the compact raw format, revisions and atomic writes.
-- `rounds.ts`: the official 189 round pages.
+- `rounds.ts`, `round-tables.ts`, `html-tables.ts`: the official 189 round pages (occupation tables; totals, tie-break dates and the state nominations table; table and date reading).
+- `round-store.ts`: saving the current round page to `data/raw/rounds/<date>.html` and keeping stored rounds when the pages are re-read.
 - `generate*.ts`, `validate-generated.ts`: building and validating `src/data/`.
 
 `copy-public-data.ts` runs before `dev` and `build`. It copies `src/data/occupations/` to `public/data/occupations/`, so the static site can serve one occupation file at a time.

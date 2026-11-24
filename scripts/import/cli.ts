@@ -1,5 +1,5 @@
 // Usage: npm run data:import -- --as-at YYYY-MM [--backfill] [--checked-at YYYY-MM-DD]
-//        npm run data:generate -- --as-at YYYY-MM [--checked-at YYYY-MM-DD]
+//        npm run data:generate -- --as-at YYYY-MM [--checked-at YYYY-MM-DD] [--rounds-html <dir>]
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { isManifest } from "../../src/lib/data/guards";
@@ -10,8 +10,10 @@ import { fetchViews } from "./import-fetch";
 import { PAGE_READ_BUDGET, planFetches, type ImportMode } from "./import-plan";
 import { openQlikSession } from "./qlik-client";
 import { readRawView, writeRawView, type RawViewFile } from "./raw-store";
+import { keepStoredRounds, writeRoundPage } from "./round-store";
 import {
   fetchRoundPages,
+  parseCurrentRound,
   parseRoundPagesDetailed,
   type RoundPages,
 } from "./rounds";
@@ -22,6 +24,8 @@ export type CliArgs = {
   mode: ImportMode;
   generateOnly: boolean;
   checkedAt: string; // YYYY-MM-DD
+  /** A folder holding saved invitation-rounds.html and previous-rounds.html. */
+  roundsHtml: string | null;
 };
 
 const RAW_ROOT = "data/raw";
@@ -49,10 +53,12 @@ export function parseArgs(argv: string[]): CliArgs {
   let checkedAt = localToday();
   let backfill = false;
   let generateOnly = false;
+  let roundsHtml: string | null = null;
   for (let i = 0; i < argv.length; i++) {
     const flag = argv[i];
     if (flag === "--backfill") backfill = true;
     else if (flag === "--generate-only") generateOnly = true;
+    else if (flag === "--rounds-html") roundsHtml = argv[++i] ?? "";
     else if (flag === "--as-at") asAt = argv[++i];
     else if (flag === "--checked-at") checkedAt = argv[++i];
     else throw new Error(`Unknown argument "${flag}"`);
@@ -67,11 +73,21 @@ export function parseArgs(argv: string[]): CliArgs {
   if (generateOnly && backfill) {
     throw new Error("--generate-only fetches nothing; drop --backfill");
   }
+  if (
+    roundsHtml !== null &&
+    (roundsHtml === "" || roundsHtml.startsWith("--"))
+  ) {
+    throw new Error("--rounds-html needs a folder");
+  }
+  if (roundsHtml !== null && !generateOnly) {
+    throw new Error("--rounds-html needs --generate-only");
+  }
   return {
     asAt,
     mode: backfill ? "backfill" : "monthly",
     generateOnly,
     checkedAt,
+    roundsHtml,
   };
 }
 
@@ -90,6 +106,43 @@ function readStoredRounds(): RoundPages {
   return readRoundsFile(readJson(join(OUT_ROOT, "rounds.json")));
 }
 
+/**
+ * The stored rounds that newly read pages may only add to. A file without a
+ * schemaVersion predates v2 and can't be kept, so every round is re-parsed
+ * from the pages (once, when moving to v2).
+ */
+function readKeptRounds(): RoundPages | null {
+  const value = readJson(join(OUT_ROOT, "rounds.json"));
+  const legacy =
+    value === undefined ||
+    (typeof value === "object" &&
+      value !== null &&
+      !("schemaVersion" in value));
+  if (legacy) {
+    console.log("No v2 rounds.json: every round is parsed from the pages");
+    return null;
+  }
+  return readRoundsFile(value);
+}
+
+/** Parses both pages, keeps the stored rounds and saves the current page. */
+function readRoundPages(currentHtml: string, previousHtml: string): RoundPages {
+  const parsed = parseRoundPagesDetailed(currentHtml, previousHtml);
+  console.log(`189 rounds parsed: ${parsed.rounds.length}`);
+  const pages = keepStoredRounds(readKeptRounds(), parsed);
+  const date = parseCurrentRound(currentHtml).date;
+  console.log(`Stored ${writeRoundPage(RAW_ROOT, date, currentHtml)}`);
+  return pages;
+}
+
+function readSavedRoundPages(dir: string): RoundPages {
+  const read = (name: string) => readFileSync(join(dir, name), "utf8");
+  return readRoundPages(
+    read("invitation-rounds.html"),
+    read("previous-rounds.html"),
+  );
+}
+
 function printSkipped(pages: RoundPages): void {
   console.log(`Skipped rounds: ${pages.skipped.length}`);
   for (const round of pages.skipped) {
@@ -99,9 +152,7 @@ function printSkipped(pages: RoundPages): void {
 
 async function fetchRounds(): Promise<RoundPages> {
   const { currentHtml, previousHtml } = await fetchRoundPages();
-  const pages = parseRoundPagesDetailed(currentHtml, previousHtml);
-  console.log(`189 rounds parsed: ${pages.rounds.length}`);
-  return pages;
+  return readRoundPages(currentHtml, previousHtml);
 }
 
 function rowCount(file: RawViewFile | undefined): number {
@@ -168,7 +219,9 @@ async function main(): Promise<void> {
   try {
     const args = parseArgs(process.argv.slice(2));
     let rounds: RoundPages;
-    if (args.generateOnly) {
+    if (args.roundsHtml !== null) {
+      rounds = readSavedRoundPages(args.roundsHtml);
+    } else if (args.generateOnly) {
       rounds = readStoredRounds();
     } else {
       rounds = await fetchRounds();
