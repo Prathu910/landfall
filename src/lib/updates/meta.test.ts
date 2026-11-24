@@ -1,12 +1,16 @@
 import { describe, expect, it } from "vitest";
 import { SITE_URL } from "../site";
+import { pagesFor } from "./__fixtures__/occupation-pages";
 import { dataOnly, roundOnly } from "./__fixtures__/recap-facts";
 import { loadRecap } from "./load-server";
 import { recapDescription, recapJsonLd, recapTitle } from "./meta";
 import { buildRecapView } from "./recap-view";
 
 const oct = loadRecap("2026-10");
-const ctx = { recapMonths: ["2026-10"] };
+const ctx = {
+  recapMonths: ["2026-10"],
+  occupationPages: pagesFor(oct, dataOnly, roundOnly),
+};
 const OG = "/social/2026-10/og.png";
 
 type Ld = Record<string, unknown>;

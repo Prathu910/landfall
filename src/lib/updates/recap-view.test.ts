@@ -1,10 +1,12 @@
 import { describe, expect, it } from "vitest";
+import { pagesFor } from "./__fixtures__/occupation-pages";
 import { dataOnly, roundOnly, twoRounds } from "./__fixtures__/recap-facts";
 import { loadRecap } from "./load-server";
 import { buildRecapView } from "./recap-view";
 
 const oct = loadRecap("2026-10");
-const ctx = { recapMonths: ["2026-10"] };
+const occupationPages = pagesFor(oct, dataOnly, roundOnly, twoRounds);
+const ctx = { recapMonths: ["2026-10"], occupationPages };
 
 describe("buildRecapView, October 2026", () => {
   const view = buildRecapView(oct, ctx);
@@ -101,6 +103,19 @@ describe("buildRecapView, October 2026", () => {
     });
   });
 
+  it("links only occupations that have a page", () => {
+    const withoutChef = new Set(occupationPages);
+    withoutChef.delete("351311");
+    const linked = buildRecapView(oct, {
+      ...ctx,
+      occupationPages: withoutChef,
+    });
+    expect(linked.notListed!.items[0].occupation).toEqual({
+      name: "Chef",
+      href: null,
+    });
+  });
+
   it("compares the month with the one before, stating both numbers", () => {
     expect(view.compare!.columns).toEqual({
       label: "All occupations",
@@ -168,7 +183,10 @@ describe("buildRecapView, round only", () => {
 
 describe("buildRecapView, data only", () => {
   it("says there was no round and links the last one only if its recap exists", () => {
-    const view = buildRecapView(dataOnly, { recapMonths: ["2026-12"] });
+    const view = buildRecapView(dataOnly, {
+      recapMonths: ["2026-12"],
+      occupationPages,
+    });
     expect(view.kind).toBe("data-only");
     expect(view.noRound).toEqual({
       text: "No 189 round in December 2026; the last was on 15 Oct 2026",
@@ -176,6 +194,7 @@ describe("buildRecapView, data only", () => {
     });
     const linked = buildRecapView(dataOnly, {
       recapMonths: ["2026-12", "2026-10"],
+      occupationPages,
     });
     expect(linked.noRound?.href).toBe("/updates/2026-10/");
   });

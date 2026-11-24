@@ -56,8 +56,11 @@ export type RecapView = {
 export type RecapContext = {
   /** Months with a facts file, for links to other recaps. */
   recapMonths: MonthKey[];
-  /** Occupations with a page; omitted, every matched code is linked. */
-  occupationPages?: ReadonlySet<string>;
+  /**
+   * Codes that have an occupation page (index entries with data). Required:
+   * a code without a page would link to a 404.
+   */
+  occupationPages: ReadonlySet<string>;
 };
 
 export const recapPath = (month: MonthKey): string => `/updates/${month}/`;

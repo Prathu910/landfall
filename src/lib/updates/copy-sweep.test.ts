@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { BANNED_COPY } from "../report/copy";
+import { pagesFor } from "./__fixtures__/occupation-pages";
 import { dataOnly, roundOnly, twoRounds } from "./__fixtures__/recap-facts";
 import { isRecapFacts } from "./guards";
 import { listRecapMonths, loadRecap } from "./load-server";
@@ -24,7 +25,10 @@ function strings(value: unknown): string[] {
 }
 
 function recapStrings(facts: RecapFacts): string[] {
-  const view = buildRecapView(facts, { recapMonths: listRecapMonths() });
+  const view = buildRecapView(facts, {
+    recapMonths: listRecapMonths(),
+    occupationPages: pagesFor(facts),
+  });
   return [
     ...strings(view),
     recapTitle(facts),
@@ -65,7 +69,10 @@ describe("every recap's copy", () => {
   it.each(FILES)(
     "%s links internal pages with a trailing slash",
     (_n, facts) => {
-      const view = buildRecapView(facts, { recapMonths: listRecapMonths() });
+      const view = buildRecapView(facts, {
+        recapMonths: listRecapMonths(),
+        occupationPages: pagesFor(facts),
+      });
       const hrefs = strings(view).filter((s) => s.startsWith("/"));
       for (const href of hrefs) expect(href, href).toMatch(/\/(#[\w-]+)?$/);
     },
