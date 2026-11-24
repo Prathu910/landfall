@@ -1,0 +1,10 @@
+.card {
+  margin-top: calc(var(--brand-unit) * 6);
+}
+.note {
+  display: block;
+  margin-top: var(--brand-unit);
+  color: var(--brand-muted);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+}

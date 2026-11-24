@@ -14,6 +14,7 @@ import {
   QUESTION_LINE,
   SHELL_PALETTE,
   STATUS,
+  UPDATES_MAP,
 } from "./palette";
 import {
   CHART_DARK,
@@ -25,6 +26,7 @@ import {
   QUESTION_LINE_DARK,
   SHELL_PALETTE_DARK,
   STATUS_DARK,
+  UPDATES_MAP_DARK,
 } from "./palette-dark";
 import { TEXT_PAIRS, TEXT_PAIRS_DARK } from "./text-pairs";
 import { lightFallback } from "./light-fallback";
@@ -108,6 +110,8 @@ describe("text pairs", () => {
         expect(names).toContain(`status ${key}`);
       expect(names).toContain("question line");
       expect(names).toContain("homepage muted on desk");
+      for (const band of [1, 2, 3, 4])
+        expect(names).toContain(`updates map label on band ${band}`);
     }
   });
   it("gives input borders 3:1 on every input surface in both themes", () => {
@@ -144,6 +148,9 @@ describe("globals.css", () => {
       expectToken(`homepage-${kebab(key)}`, value, dark);
     }
     expectToken("input-border", INPUT_BORDER.light, INPUT_BORDER.dark);
+    UPDATES_MAP.forEach((fill, band) =>
+      expectToken(`updates-map-${band + 1}`, fill, UPDATES_MAP_DARK[band]),
+    );
   });
   it("mirrors the status colours", () => {
     for (const [key, { fg, bg }] of Object.entries(STATUS)) {

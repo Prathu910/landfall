@@ -853,6 +853,14 @@ svg {
   --homepage-map-shade-3: light-dark(#d3dfd5, #122029);
   --homepage-map-edge-strong: light-dark(#92a396, #58707a);
 }
+/* The monthly recap's state map: four shade bands by a state's published
+   floor (700+, 200+, 20+, under 20 each). Labels on them are --brand-ink. */
+:root {
+  --updates-map-1: light-dark(#e3ece6, #17302a);
+  --updates-map-2: light-dark(#c8dacf, #1d3a2f);
+  --updates-map-3: light-dark(#a6c4b1, #285040);
+  --updates-map-4: light-dark(#7ea590, #376a52);
+}
 /* Approved passport-style points check; only check components consume these tokens. */
 :root {
   --check-ink: light-dark(#12202c, #ece6d8);
@@ -1015,6 +1023,10 @@ svg {
     --homepage-map-shade-2: #c0cec3;
     --homepage-map-shade-3: #d3dfd5;
     --homepage-map-edge-strong: #92a396;
+    --updates-map-1: #e3ece6;
+    --updates-map-2: #c8dacf;
+    --updates-map-3: #a6c4b1;
+    --updates-map-4: #7ea590;
     --check-ink: #12202c;
     --check-muted: #52616a;
     --check-sage: #eef2f0;

@@ -11,10 +11,15 @@ import type {
   PALETTE,
   SHELL_PALETTE,
   STATUS,
+  UPDATES_MAP,
 } from "./palette";
 
 /** A dark twin has exactly its light palette's keys. */
 type Twin<Light, Value> = Record<keyof Light, Value>;
+/** A dark twin of a list has its light list's length. */
+type ListTwin<Light extends readonly string[]> = {
+  [Index in keyof Light]: string;
+};
 
 /** The same roles at night: ivory ink on a blue-ink page. */
 export const PALETTE_DARK = {
@@ -70,6 +75,13 @@ export const HOMEPAGE_TEXT_DARK = {
   longWait: "#E2B57A",
   notInvited: "#F3958C",
 } as const satisfies Twin<typeof HOMEPAGE_TEXT, string>;
+
+export const UPDATES_MAP_DARK = [
+  "#17302a",
+  "#1d3a2f",
+  "#285040",
+  "#376a52",
+] as const satisfies ListTwin<typeof UPDATES_MAP>;
 
 export const STATUS_DARK = {
   strongest: { fg: "#A3DAB9", bg: "#16342A" },

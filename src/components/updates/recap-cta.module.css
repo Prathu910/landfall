@@ -1,0 +1,71 @@
+/* An always-dark panel: color-scheme light inside, so its text tokens keep
+   the light design's on-ink values in both themes (globals.css). */
+.cta {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 14.375rem;
+  gap: calc(var(--brand-unit) * 7.5);
+  align-items: center;
+  padding: calc(var(--brand-unit) * 10);
+  border-radius: calc(var(--brand-unit) * 5);
+  color-scheme: light;
+  background: var(--brand-deep, var(--brand-ink));
+  color: var(--brand-paper);
+}
+.heading {
+  font-family: var(--brand-font);
+  font-size: clamp(1.625rem, 3vw, 2.125rem);
+  font-weight: var(--headline-wght);
+  font-stretch: 108%;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.text {
+  max-width: 35rem;
+  margin-top: calc(var(--brand-unit) * 3);
+  color: var(--brand-on-dark);
+  font-size: 1.0625rem;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--brand-unit) * 3);
+  margin-top: calc(var(--brand-unit) * 6);
+}
+.primary,
+.secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--brand-unit) * 2);
+  min-height: var(--brand-target);
+  padding: 0 calc(var(--brand-unit) * 4.5);
+  border-radius: var(--brand-pill);
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.primary {
+  background: var(--brand-paper);
+  color: var(--brand-ink);
+}
+.secondary {
+  box-shadow: inset 0 0 0 1.5px var(--brand-on-dark);
+  color: var(--brand-paper);
+}
+.primary:focus-visible,
+.secondary:focus-visible {
+  outline: 3px solid var(--focus-ring-on-dark);
+  outline-offset: 3px;
+}
+/* 230px keeps the ring text at 12px or more (BIG_STAMP.minWidth). */
+.stamp {
+  display: block;
+  width: 14.375rem;
+  height: auto;
+  color: var(--brand-on-dark);
+}
+@media screen and (max-width: 900px) {
+  .cta {
+    grid-template-columns: minmax(0, 1fr);
+    padding: calc(var(--brand-unit) * 7) calc(var(--brand-unit) * 5.5);
+  }
+}

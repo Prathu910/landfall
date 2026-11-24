@@ -10,6 +10,7 @@ import {
   QUESTION_LINE,
   SHELL_PALETTE,
   STATUS,
+  UPDATES_MAP,
 } from "./palette";
 import {
   CHECK_PALETTE_DARK,
@@ -18,6 +19,7 @@ import {
   QUESTION_LINE_DARK,
   SHELL_PALETTE_DARK,
   STATUS_DARK,
+  UPDATES_MAP_DARK,
 } from "./palette-dark";
 
 export type TextPair = {
@@ -35,6 +37,7 @@ type Theme = {
   status: Record<keyof typeof STATUS, { fg: string; bg: string }>;
   question: { fg: string; bg: string };
   deep: { brand: string; ink: string };
+  updatesMap: readonly string[];
 };
 
 const HOMEPAGE_INKS = [
@@ -103,6 +106,12 @@ function textPairs(theme: Theme): TextPair[] {
         bg: homepage[surface],
       })),
     ),
+    // The recap map's state labels sit on its shade bands.
+    ...theme.updatesMap.map((fill, band) => ({
+      name: `updates map label on band ${band + 1}`,
+      fg: shell.ink,
+      bg: fill,
+    })),
   ];
 }
 
@@ -114,6 +123,7 @@ export const TEXT_PAIRS = textPairs({
   status: STATUS,
   question: QUESTION_LINE,
   deep: { brand: DEEP_PANEL.brand.light, ink: DEEP_PANEL.ink.light },
+  updatesMap: UPDATES_MAP,
 });
 
 export const TEXT_PAIRS_DARK = textPairs({
@@ -124,4 +134,5 @@ export const TEXT_PAIRS_DARK = textPairs({
   status: STATUS_DARK,
   question: QUESTION_LINE_DARK,
   deep: { brand: DEEP_PANEL.brand.dark, ink: DEEP_PANEL.ink.dark },
+  updatesMap: UPDATES_MAP_DARK,
 });

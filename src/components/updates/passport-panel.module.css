@@ -1,0 +1,86 @@
+/* The hero's passport page: white paper, the report's security lines and
+   the month's stamp, as in the approved mockup. */
+.passport {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: calc(var(--brand-unit) * 6.5) calc(var(--brand-unit) * 6.5)
+    calc(var(--brand-unit) * 5);
+  border-radius: calc(var(--brand-unit) * 4.5);
+  background: var(--brand-paper);
+  box-shadow:
+    0 1.25rem 3rem -1.75rem
+      color-mix(in srgb, var(--shadow-ink) 40%, transparent),
+    inset 0 0 0 1px var(--brand-line),
+    inset 0 1px 0 var(--elevate-edge);
+}
+.top {
+  display: flex;
+  justify-content: space-between;
+  gap: calc(var(--brand-unit) * 3);
+  color: var(--brand-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+/* 230px keeps the stamp's ring text at 12px or more (BIG_STAMP.minWidth). */
+.stampBox {
+  width: 14.375rem;
+  margin: calc(var(--brand-unit) * 1) auto calc(var(--brand-unit) * -1);
+}
+.stamp {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: var(--stamp-glow);
+  mix-blend-mode: var(--stamp-blend);
+}
+.round {
+  color: var(--homepage-strong);
+}
+.data {
+  color: var(--brand-ink);
+}
+.figures {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: calc(var(--brand-unit) * 3.5) 0 0;
+}
+.figure {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  padding: calc(var(--brand-unit) * 3.5) var(--brand-unit);
+  border-top: var(--brand-rule-width) solid var(--homepage-rule);
+}
+.figure:nth-child(odd) {
+  padding-right: calc(var(--brand-unit) * 3.5);
+}
+.figure dd {
+  margin: 0;
+  font-family: var(--font-stamp);
+  font-size: clamp(1.625rem, 2.6vw, 2.125rem);
+  font-weight: 900;
+  line-height: 1;
+}
+.figure dt {
+  margin-top: calc(var(--brand-unit) * 1.5);
+  color: var(--brand-muted);
+  font-size: 0.8125rem;
+  line-height: 1.35;
+}
+.mrz {
+  margin-top: calc(var(--brand-unit) * 2.5);
+  overflow: hidden;
+  color: var(--brand-muted);
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  white-space: nowrap;
+}
+@media screen and (max-width: 640px) {
+  .passport {
+    padding: calc(var(--brand-unit) * 5);
+  }
+}

@@ -1,0 +1,13 @@
+.cautions {
+  max-width: 51.25rem;
+  margin: calc(var(--brand-unit) * 4.5) 0 0;
+  padding: 0 0 0 calc(var(--brand-unit) * 4.5);
+  color: var(--homepage-lede);
+  font-size: 0.9375rem;
+}
+.cautions li {
+  margin: calc(var(--brand-unit) * 1.5) 0;
+}
+.cautions b {
+  color: var(--brand-ink);
+}

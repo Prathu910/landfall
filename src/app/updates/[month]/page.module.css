@@ -1,0 +1,13 @@
+/* The recap page: the passport identity's sage, paper and ink, in both
+   themes. It is not a print target. */
+.page {
+  --focus-ring: var(--brand-focus);
+  background: var(--brand-sage);
+  color: var(--brand-ink);
+  font: 400 1rem/1.6 var(--brand-font);
+}
+.page h1,
+.page h2,
+.page h3 {
+  font-family: var(--brand-font);
+}

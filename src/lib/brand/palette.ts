@@ -66,6 +66,17 @@ export const HOMEPAGE_TEXT = {
   notInvited: "#a23b39",
 } as const;
 
+/**
+ * The monthly recap's state map fills (`--updates-map-1..4`), lightest to
+ * deepest by a state's published floor. Labels on them use the shell ink.
+ */
+export const UPDATES_MAP = [
+  "#e3ece6",
+  "#c8dacf",
+  "#a6c4b1",
+  "#7ea590",
+] as const;
+
 /** Report status chips. Every status also shows its label, never colour alone. */
 export const STATUS = {
   strongest: { fg: "#1F5136", bg: "#DDEBDF" },
