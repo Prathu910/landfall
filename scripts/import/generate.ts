@@ -42,6 +42,8 @@ export type GenerateInput = {
   checkedAt: string;
   rounds: RoundPages;
   importVersion: string;
+  /** Ignore raw revisions fetched after this date (YYYY-MM-DD). */
+  revisionsUpTo?: string;
 };
 
 const VISAS: Visa[] = ["189", "190", "491"];
@@ -70,13 +72,14 @@ function readRows(
   rawRoot: string,
   asAt: MonthKey,
   months: MonthKey[],
+  revisionsUpTo?: string,
 ): { rows: RowsByView; coverage: CoverageByView } {
   const rows = {} as RowsByView;
   const coverage = {} as CoverageByView;
   for (const view of VIEWS) {
     const viewMonths = view.months === "latest" ? [asAt] : months;
     const files = viewMonths.flatMap((month) => {
-      const file = readRawView(rawRoot, month, view.id);
+      const file = readRawView(rawRoot, month, view.id, { revisionsUpTo });
       if (!file) {
         if (month === asAt) {
           throw new Error(`${view.id} ${asAt}: raw view is missing`);
@@ -122,6 +125,7 @@ export function generate(input: GenerateInput): GeneratedData {
     input.rawRoot,
     input.asAt,
     months.filter((month) => month <= input.asAt),
+    input.revisionsUpTo,
   );
   const occupations = assembleOccupations(rows, coverage, {
     snapshotId,

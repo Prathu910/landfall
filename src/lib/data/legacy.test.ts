@@ -1,8 +1,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { generate } from "../../../scripts/import/generate";
-import { readRoundsFile } from "../../../scripts/import/generate-rounds";
+import { frozenCore } from "./__fixtures__/frozen-2026-10";
 import { coreFixture } from "./__fixtures__/occupation";
 import { toOccupationEvidence, toPoolOccupation } from "./legacy";
 import type { OccupationEvidence } from "../report-evidence";
@@ -28,37 +27,14 @@ const legacyEvidence = readJson(
   occupations: OccupationEvidence[];
 };
 
-/**
- * Rebuilds the 2026-10 snapshot in memory from the permanent raw history and
- * the stored rounds up to 31 Oct 2026, so later imports (which replace
- * src/data) cannot break this comparison (R16).
- */
-function generate202610(): Map<string, OccupationCore> {
-  const stored = readRoundsFile(readJson("src/data/rounds.json"));
-  const upTo = (date: string) => date <= "2026-10-31";
-  const data = generate({
-    rawRoot: path.resolve(root, "data/raw"),
-    asAt: "2026-10",
-    checkedAt: "2026-11-17",
-    rounds: {
-      rounds: stored.rounds.filter((round) => upTo(round.date)),
-      skipped: stored.skipped.filter((round) => upTo(round.date)),
-    },
-    importVersion: "legacy-test",
-  });
-  return new Map(data.cores.map((core) => [core.code, core]));
-}
-
 describe("legacy adapters reproduce the 2026-10 site data", () => {
-  const cores = generate202610();
-
   it("covers the 11 original occupations", () => {
     expect(legacyPool.occupations).toHaveLength(11);
   });
 
   for (const legacy of legacyPool.occupations) {
     describe(legacy.code, () => {
-      const core = cores.get(legacy.code);
+      const core = frozenCore(legacy.code);
 
       it("pool points match", () => {
         const pool = core && toPoolOccupation(core);

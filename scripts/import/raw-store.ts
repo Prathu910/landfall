@@ -59,14 +59,14 @@ function directory(root: string, asAt: MonthKey): string {
   return join(root, asAt);
 }
 
-function revisionNames(dir: string, viewId: ViewId): string[] {
+function revisionNames(dir: string, viewId: ViewId, upTo?: string): string[] {
   if (!existsSync(dir)) return [];
   const pattern = new RegExp(
     `^${viewId}\\.rev-(\\d{4}-\\d{2}-\\d{2})(?:-(\\d+))?\\.json$`,
   );
   return readdirSync(dir)
     .map((name) => ({ name, match: pattern.exec(name) }))
-    .filter((entry) => entry.match)
+    .filter((entry) => entry.match && (!upTo || entry.match[1] <= upTo))
     .sort((a, b) => {
       const dateOrder = a.match![1].localeCompare(b.match![1]);
       return dateOrder || Number(a.match![2] ?? 1) - Number(b.match![2] ?? 1);
@@ -89,9 +89,10 @@ export function readRawView(
   root: string,
   asAt: MonthKey,
   viewId: ViewId,
+  options: { revisionsUpTo?: string } = {},
 ): RawViewFile | undefined {
   const dir = directory(root, asAt);
-  const newest = revisionNames(dir, viewId).at(-1);
+  const newest = revisionNames(dir, viewId, options.revisionsUpTo).at(-1);
   const name = newest ?? `${viewId}.json`;
   const path = join(dir, name);
   return existsSync(path) ? load(path) : undefined;
