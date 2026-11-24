@@ -2,7 +2,7 @@ import { AT_SCORE_LABEL, EOI_CAVEAT } from "../report/scorecard";
 import { describe, expect, it } from "vitest";
 import { coreFixture } from "../data/__fixtures__/occupation";
 import { poolPosition } from "../data/pool-position";
-import { loadOccupationCore } from "../data/load-server";
+import { frozenCore } from "../data/__fixtures__/frozen-2026-10";
 import { toPoolOccupation } from "../data/legacy";
 import type { OccupationCore } from "../data/types";
 import { comparePool, formatInterval } from "../pool";
@@ -121,7 +121,7 @@ describe("buildTryIt", () => {
   });
 
   it("on real data matches the report's pool comparison", () => {
-    const core = loadOccupationCore("261313");
+    const core = frozenCore("261313");
     const pool = core && toPoolOccupation(core);
     if (!core || !pool) throw new Error("fixture occupation missing");
     const view = buildTryIt(core, 85);
@@ -139,7 +139,7 @@ describe("buildTryIt", () => {
 
   it("opens on an occupation with recent 189 invitations at or below the default points", () => {
     // A data refresh that turns this negative should prompt a new default.
-    const core = loadOccupationCore(TRY_IT_OCCUPATION);
+    const core = frozenCore(TRY_IT_OCCUPATION);
     if (!core) throw new Error("default occupation missing");
     const view = buildTryIt(core, TRY_IT_DEFAULT);
     if (view.kind !== "data") throw new Error("expected data");
@@ -150,7 +150,7 @@ describe("buildTryIt", () => {
   });
 
   it("reads the published pool total exactly as the report does", () => {
-    const core = loadOccupationCore("261313");
+    const core = frozenCore("261313");
     if (!core) throw new Error("fixture occupation missing");
     const view = buildTryIt(core, 85);
     const position = poolPosition(core, null, "189", 85, null);

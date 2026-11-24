@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { loadOccupationCore, loadOccupationDetail } from "../data/load-server";
+import { frozenCore, frozenDetail } from "../data/__fixtures__/frozen-2026-10";
 import federalJson from "../../data/state-rules/federal-occupations.json";
 import { buildEoisLikeYours } from "../report/eois-like-yours";
 import { BANNED_COPY } from "../report/copy";
@@ -27,11 +27,11 @@ import {
 } from "./summary";
 
 const federal = federalJson as unknown as FederalList;
-const core261313 = loadOccupationCore("261313")!;
-const detail261313 = loadOccupationDetail("261313");
-const core254499 = loadOccupationCore("254499")!;
+const core261313 = frozenCore("261313")!;
+const detail261313 = frozenDetail("261313");
+const core254499 = frozenCore("254499")!;
 // Ophthalmologist: no 189 pool, but 189 listed it at 80 in its last four rounds.
-const core253914 = loadOccupationCore("253914")!;
+const core253914 = frozenCore("253914")!;
 const quietNo189Core = {
   ...no189PoolCore,
   rounds189: no189PoolCore.rounds189.map((r) => ({ ...r, cutoff: null })),
@@ -126,7 +126,7 @@ describe("occupationSummary", () => {
     expect(lines.some((l) => l.includes("EOIs submitted"))).toBe(false);
   });
   it("says an occupation is off the Home Affairs 189 list instead of an empty pool", () => {
-    const farmer = loadOccupationCore("121111")!;
+    const farmer = frozenCore("121111")!;
     const lines = occupationSummary(farmer, null, federal);
     expect(lines[0]).toMatch(
       /^Aquaculture Farmer isn't on the Home Affairs list for 189; the 491 pool holds /,

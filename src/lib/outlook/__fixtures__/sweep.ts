@@ -52,6 +52,9 @@ type Loaded = { code: string; state: OccupationState };
 // Loaded once: the rules and asOf are the same for every view.
 const { asOf, rules } = profileInput(PLANNER);
 
+/** How many occupations the live index lists. */
+export const OCCUPATION_COUNT = index.length;
+
 export const OCCUPATIONS: Loaded[] = index.map((entry) => {
   const core: OccupationCore | null = entry.hasData
     ? loadOccupationCore(entry.code)

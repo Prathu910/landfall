@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { stateRules } from "../../data/state-rules/2026-27/index";
-import { loadOccupationCore } from "../data/load-server";
+import { frozenCore } from "../data/__fixtures__/frozen-2026-10";
 import type { StateCode, StateVisa } from "../data/types";
 import {
   calculatePoints,
@@ -51,7 +51,7 @@ function build(
   ruleData = data,
   points = POINTS,
 ): StateOutlookView {
-  const core = loadOccupationCore(profile.occupation);
+  const core = frozenCore(profile.occupation);
   if (!core) throw new Error(`no core for ${profile.occupation}`);
   return buildStateOutlookView({
     core,

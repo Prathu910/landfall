@@ -1,7 +1,7 @@
 import {
-  loadOccupationCore,
-  loadOccupationDetail,
-} from "../../data/load-server";
+  frozenCore,
+  frozenDetail,
+} from "../../data/__fixtures__/frozen-2026-10";
 import type { Profile } from "../../migration";
 import type { OutlookInput } from "../evaluate-profile";
 import { AS_OF, scenarioInput } from "./scenario-input";
@@ -28,7 +28,7 @@ export function profileInput(profile: Profile): OutlookInput {
     ...scenarioInput("middle"),
     profile,
     asOf: AS_OF,
-    core: loadOccupationCore(profile.occupation),
-    detail: loadOccupationDetail(profile.occupation),
+    core: frozenCore(profile.occupation),
+    detail: frozenDetail(profile.occupation),
   };
 }

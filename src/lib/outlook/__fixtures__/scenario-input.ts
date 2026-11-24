@@ -1,8 +1,8 @@
 import { stateRules } from "../../../data/state-rules/2026-27/index";
 import {
-  loadOccupationCore,
-  loadOccupationDetail,
-} from "../../data/load-server";
+  frozenCore,
+  frozenDetail,
+} from "../../data/__fixtures__/frozen-2026-10";
 import {
   realFederal,
   realLists,
@@ -29,8 +29,8 @@ export function scenarioInput(id: ScenarioId): OutlookInput {
   return {
     profile,
     asOf: AS_OF,
-    core: fetched ? loadOccupationCore(profile.occupation) : null,
-    detail: fetched ? loadOccupationDetail(profile.occupation) : null,
+    core: fetched ? frozenCore(profile.occupation) : null,
+    detail: fetched ? frozenDetail(profile.occupation) : null,
     rules: RULES,
   };
 }

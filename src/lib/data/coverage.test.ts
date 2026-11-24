@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import index from "../../data/occupation-index.json";
+import { frozenIndex } from "./__fixtures__/frozen-2026-10";
 import { coverageSentence, snapshotCoverage } from "./coverage";
 
 describe("snapshotCoverage", () => {
@@ -12,8 +12,11 @@ describe("snapshotCoverage", () => {
     expect(snapshotCoverage(entries)).toEqual({ total: 3, withData: 2 });
   });
 
-  it("matches the checked-in snapshot (493 occupations, 479 with data)", () => {
-    expect(snapshotCoverage(index)).toEqual({ total: 493, withData: 479 });
+  it("matches the frozen 2026-10 snapshot (493 occupations, 479 with data)", () => {
+    expect(snapshotCoverage(frozenIndex())).toEqual({
+      total: 493,
+      withData: 479,
+    });
   });
 });
 

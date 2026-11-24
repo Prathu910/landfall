@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { stateRules } from "../../data/state-rules/2026-27/index";
-import { loadOccupationCore } from "../data/load-server";
+import { frozenCore } from "../data/__fixtures__/frozen-2026-10";
 import type { StateVisa } from "../data/types";
 import { BANNED_COPY } from "../report/copy";
 import {
@@ -30,7 +30,7 @@ const lists = realLists();
 const federal = realFederal();
 
 function run(c: Case, visa: StateVisa, points: number): Outlook {
-  const core = loadOccupationCore(c.profile.occupation);
+  const core = frozenCore(c.profile.occupation);
   if (!core) throw new Error(`no core for ${c.profile.occupation}`);
   return stateOutlook({
     core,

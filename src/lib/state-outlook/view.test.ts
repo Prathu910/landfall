@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { stateRules } from "../../data/state-rules/2026-27/index";
-import { loadOccupationCore } from "../data/load-server";
+import { frozenCore } from "../data/__fixtures__/frozen-2026-10";
 import type { StateSide } from "../data/state-evidence";
 import type { StateCode, StateVisa } from "../data/types";
 import { sampleProfile } from "../migration";
@@ -36,7 +36,7 @@ function rulesFor(state: StateCode, visa: StateVisa): StateVisaRules {
 
 function run(caseIndex: number, visa: StateVisa, points: number, asOf = AS_OF) {
   const c = cases[caseIndex];
-  const core = loadOccupationCore(c.profile.occupation);
+  const core = frozenCore(c.profile.occupation);
   if (!core) throw new Error("no core");
   return stateOutlook({
     core,
@@ -52,7 +52,7 @@ function run(caseIndex: number, visa: StateVisa, points: number, asOf = AS_OF) {
 }
 
 function runProfile(profile: Profile, visa: StateVisa, points: number) {
-  const core = loadOccupationCore(profile.occupation);
+  const core = frozenCore(profile.occupation);
   if (!core) throw new Error("no core");
   return stateOutlook({
     core,

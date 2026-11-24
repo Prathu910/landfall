@@ -1,14 +1,24 @@
 import { describe, expect, it } from "vitest";
 import { toOccupationEvidence } from "./data/legacy";
+import { frozenCore } from "./data/__fixtures__/frozen-2026-10";
 import { loadManifest, loadOccupationCore } from "./data/load-server";
+import type { OccupationCore } from "./data/types";
 import type { OccupationEvidence } from "./report-evidence";
 import { netPoolChange, validateOccupationEvidence } from "./report-evidence";
 
-function generatedEvidence(code: string): OccupationEvidence {
-  const core = loadOccupationCore(code);
+function evidenceOf(
+  load: (code: string) => OccupationCore | null,
+  code: string,
+): OccupationEvidence {
+  const core = load(code);
   if (!core) throw new Error(`No generated core for ${code}`);
   return toOccupationEvidence(core);
 }
+
+/** The live import: only for invariants that every month must keep. */
+const liveEvidence = (code: string) => evidenceOf(loadOccupationCore, code);
+/** The frozen 2026-10 snapshot: for the figures asserted below. */
+const generatedEvidence = (code: string) => evidenceOf(frozenCore, code);
 
 const LEGACY_CODES = [
   "261111",
@@ -29,9 +39,7 @@ describe("published report evidence", () => {
     const codes = loadManifest().occupations.map((o) => o.code);
     expect(codes.length).toBeGreaterThan(400);
     for (const code of codes) {
-      expect(validateOccupationEvidence(generatedEvidence(code)), code).toEqual(
-        [],
-      );
+      expect(validateOccupationEvidence(liveEvidence(code)), code).toEqual([]);
     }
   });
 
@@ -74,7 +82,7 @@ describe("published report evidence", () => {
     expect(generatedEvidence("254499").rounds[0].cutoff).toBe(70);
     expect(generatedEvidence("241111").rounds[0].cutoff).toBe(90);
     expect(generatedEvidence("241411").rounds[0].cutoff).toBe(80);
-    expect(loadOccupationCore("not-imported")).toBeNull();
+    expect(frozenCore("not-imported")).toBeNull();
   });
 
   it("bounds a net change across masked snapshots without treating it as gross inflow", () => {

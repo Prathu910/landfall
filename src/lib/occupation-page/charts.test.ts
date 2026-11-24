@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { loadOccupationCore, loadOccupationDetail } from "../data/load-server";
+import { frozenCore, frozenDetail } from "../data/__fixtures__/frozen-2026-10";
 import { BANNED_COPY } from "../report/copy";
 import {
   type CohortKey,
@@ -11,10 +11,10 @@ import {
   roundsNote,
 } from "./charts";
 
-const core261313 = loadOccupationCore("261313")!;
-const core254499 = loadOccupationCore("254499")!;
-const detail254499 = loadOccupationDetail("254499");
-const detail261313 = loadOccupationDetail("261313");
+const core261313 = frozenCore("261313")!;
+const core254499 = frozenCore("254499")!;
+const detail254499 = frozenDetail("254499");
+const detail261313 = frozenDetail("261313");
 
 describe("roundCards and roundsNote", () => {
   it("lists rounds oldest first with null for not listed", () => {

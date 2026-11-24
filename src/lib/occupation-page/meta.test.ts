@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { occupationIndex } from "../../components/data/occupation-index";
 import { stateRuleData } from "../../components/data/state-rule-data";
-import { loadOccupationCore } from "../data/load-server";
+import { frozenCore, frozenIndex } from "../data/__fixtures__/frozen-2026-10";
 import { allMaskedCore } from "../report/__fixtures__/scorecard";
 import { SITE_URL } from "../site";
 import { occupationFaq } from "./faq";
@@ -17,7 +16,7 @@ import { occupationPath } from "./slug";
 import { stateRows } from "./states";
 import { occupationSummary } from "./summary";
 
-const core = loadOccupationCore("261313")!;
+const core = frozenCore("261313")!;
 const faq = occupationFaq(core, stateRows("261313", core, stateRuleData));
 const summary = occupationSummary(core, null);
 // allMaskedCore masks only its monthly history; its pools are unmasked.
@@ -34,7 +33,7 @@ const maskedCore = {
 
 describe("relatedOccupations", () => {
   it("shares the first four digits and excludes itself", () => {
-    const related = relatedOccupations("261313", occupationIndex);
+    const related = relatedOccupations("261313", frozenIndex());
     expect(related.length).toBeLessThanOrEqual(6);
     expect(related.every((r) => r.code.startsWith("2613"))).toBe(true);
     expect(related.map((r) => r.code)).not.toContain("261313");
@@ -96,7 +95,7 @@ describe("occupationJsonLd", () => {
 describe("sitemapEntries", () => {
   const entries = sitemapEntries(
     [core, maskedCore],
-    occupationIndex,
+    frozenIndex(),
     "2026-11-17",
     "2026-11-23",
   );
