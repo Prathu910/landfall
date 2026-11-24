@@ -219,23 +219,79 @@ html.theme-switching[data-mantine-color-scheme="dark"] .guill-layer {
   print-color-adjust: exact;
 }
 /* Metric-matched fallbacks: until a web font arrives, text sets in local
-   Arial scaled to that face's width and line metrics, so the swap doesn't
-   rewrap lines (Lighthouse found a 0.038 layout shift on /sample/).
-   Measured in Chrome against the latin files, 24 Nov 2026. */
+   Arial (Arial Bold for heavier weights) scaled to that face's width at
+   each weight, with its line metrics, so the swap barely rewraps lines
+   (CLS). Ratios measured in Chrome over the site's own text, 24 Nov 2026. */
 @font-face {
   font-family: "Archivo Fallback";
-  src: local("Arial");
-  size-adjust: 98.4%;
-  ascent-override: 89.4%;
+  src: local("Arial"), local("ArialMT");
+  font-weight: 100 449;
+  size-adjust: 99.1%;
+  ascent-override: 88.8%;
+  descent-override: 21.2%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Archivo Fallback";
+  src: local("Arial"), local("ArialMT");
+  font-weight: 450 549;
+  size-adjust: 100.4%;
+  ascent-override: 87.6%;
+  descent-override: 20.9%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Archivo Fallback";
+  src: local("Arial Bold"), local("Arial-BoldMT");
+  font-weight: 550 624;
+  size-adjust: 97%;
+  ascent-override: 90.7%;
+  descent-override: 21.6%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Archivo Fallback";
+  src: local("Arial Bold"), local("Arial-BoldMT");
+  font-weight: 625 674;
+  size-adjust: 98.5%;
+  ascent-override: 89.3%;
   descent-override: 21.3%;
   line-gap-override: 0%;
 }
 @font-face {
+  font-family: "Archivo Fallback";
+  src: local("Arial Bold"), local("Arial-BoldMT");
+  font-weight: 675 724;
+  size-adjust: 100%;
+  ascent-override: 88%;
+  descent-override: 21%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Archivo Fallback";
+  src: local("Arial Bold"), local("Arial-BoldMT");
+  font-weight: 725 900;
+  size-adjust: 102.3%;
+  ascent-override: 86%;
+  descent-override: 20.5%;
+  line-gap-override: 0%;
+}
+@font-face {
   font-family: "Inter Fallback";
-  src: local("Arial");
-  size-adjust: 106.2%;
-  ascent-override: 91.3%;
-  descent-override: 22.6%;
+  src: local("Arial"), local("ArialMT");
+  font-weight: 100 549;
+  size-adjust: 104%;
+  ascent-override: 93.3%;
+  descent-override: 23.1%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Inter Fallback";
+  src: local("Arial Bold"), local("Arial-BoldMT");
+  font-weight: 550 900;
+  size-adjust: 100.9%;
+  ascent-override: 96.1%;
+  descent-override: 23.8%;
   line-gap-override: 0%;
 }
 * {
