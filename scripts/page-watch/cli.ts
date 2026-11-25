@@ -1,16 +1,12 @@
 // Usage:
 //   npm run page-watch -- --state <file> [--dry-run]
-// Reads every cited page in turn, compares each with the saved state, opens
-// or comments on `source-watch` issues (assigned to the founder) and then
-// writes the new state to <file>. A dry run (--dry-run or DRY_RUN=1) never
-// calls GitHub: it prints the actions and writes the state to a temp file.
-// The summary goes to stdout and, in Actions, to $GITHUB_STEP_SUMMARY.
-//
-// Fetching is polite and never works around a block: one request at a time,
-// at least GAP_MS apart (HOST_GAP_MS for the same host, with the hosts taken
-// in turn: Queensland answered HTTP 429 to requests 1 s apart), the
-// state-list importer's User-Agent (R19) and one retry only for a timeout, a
-// network error or a server error (5xx).
+// Reads every cited page (fetch-pages.ts has the politeness rules), compares
+// each with the saved state, opens or comments on `source-watch` issues
+// (assigned to the founder), keeps the one "Sources the watcher cannot read"
+// issue current, and then writes the new state to <file>. A dry run
+// (--dry-run or DRY_RUN=1) never calls GitHub: it prints the actions and
+// writes the state to a temp file. The summary goes to stdout and, in
+// Actions, to $GITHUB_STEP_SUMMARY.
 import { appendFileSync, existsSync, mkdirSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
@@ -18,98 +14,22 @@ import { FOUNDER } from "../automation/failure-issue";
 import { realGh, type Gh } from "../automation/gh";
 import { writeFileAtomic } from "../import/atomic-write";
 import { USER_AGENT } from "../state-lists/shared";
-import { isLoginPage, normaliseResponse } from "./normalise";
+import { readAll } from "./fetch-pages";
+import { LABEL, STANDING_TITLE } from "./issue-text";
 import { collectSources } from "./sources";
 import {
-  hostOf,
-  LABEL,
   planWatch,
   type OpenWatchIssue,
+  type StandingIssue,
   type WatchAction,
-  type WatchResult,
   type WatchState,
 } from "./watch";
 
-const GAP_MS = 1_000;
-const HOST_GAP_MS = 10_000;
-const RETRY_AFTER_MS = 5_000;
-const TIMEOUT_MS = 30_000;
-const ACCEPT =
-  "text/html,application/xhtml+xml,text/csv,application/pdf;q=0.9,*/*;q=0.8";
+// Under the step's 20 minutes, so the plan, issues and state always follow.
+const RUN_BUDGET_MS = 15 * 60_000;
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-type Attempt = { result: WatchResult; retry: boolean };
-
-function failure(reason: string, retry: boolean): Attempt {
-  return { result: { ok: false, reason }, retry };
-}
-
-async function attempt(url: string): Promise<Attempt> {
-  try {
-    const response = await fetch(url, {
-      headers: { "User-Agent": USER_AGENT, Accept: ACCEPT },
-      signal: AbortSignal.timeout(TIMEOUT_MS),
-    });
-    if (response.status >= 400)
-      return failure(`HTTP ${response.status}`, response.status >= 500);
-    const body = Buffer.from(await response.arrayBuffer());
-    const type = response.headers.get("content-type") ?? "";
-    if (/html/i.test(type) && isLoginPage(body.toString("utf8")))
-      return failure("a sign-in page", false);
-    return {
-      result: { ok: true, page: normaliseResponse(body, type, url) },
-      retry: false,
-    };
-  } catch (error) {
-    if (error instanceof Error && error.name === "TimeoutError")
-      return failure(`no answer within ${TIMEOUT_MS / 1000} s`, true);
-    const cause = (error as { cause?: { code?: string } }).cause?.code;
-    return failure(`network error${cause ? ` (${cause})` : ""}`, true);
-  }
-}
-
-async function readPage(url: string): Promise<WatchResult> {
-  const first = await attempt(url);
-  if (!first.retry) return first.result;
-  await sleep(RETRY_AFTER_MS);
-  return (await attempt(url)).result;
-}
-
-/** The URLs with their hosts taken in turn, so one site is never read twice in a row when another is waiting. */
-export function politeOrder(urls: string[]): string[] {
-  const byHost = new Map<string, string[]>();
-  for (const url of urls)
-    byHost.set(hostOf(url), [...(byHost.get(hostOf(url)) ?? []), url]);
-  const queues = [...byHost.values()];
-  const ordered: string[] = [];
-  for (let round = 0; ordered.length < urls.length; round++)
-    for (const queue of queues)
-      if (round < queue.length) ordered.push(queue[round]);
-  return ordered;
-}
-
-async function readAll(urls: string[]): Promise<Record<string, WatchResult>> {
-  const results: Record<string, WatchResult> = {};
-  const lastRead = new Map<string, number>();
-  let previous = 0;
-  for (const url of politeOrder(urls)) {
-    const host = hostOf(url);
-    const due = Math.max(
-      previous + GAP_MS,
-      (lastRead.get(host) ?? 0) + HOST_GAP_MS,
-    );
-    await sleep(Math.max(0, due - Date.now()));
-    const result = await readPage(url);
-    previous = Date.now();
-    lastRead.set(host, previous);
-    results[url] = result;
-    console.error(
-      `${result.ok ? "read" : `failed (${result.reason})`}: ${url}`,
-    );
-  }
-  return results;
-}
+const sleep = (ms: number) =>
+  new Promise<void>((resolve) => setTimeout(resolve, ms));
 
 function isEntry(value: unknown): boolean {
   const entry = value as Record<string, unknown> | null;
@@ -117,6 +37,7 @@ function isEntry(value: unknown): boolean {
     typeof entry?.hash === "string" &&
     typeof entry.text === "string" &&
     typeof entry.firstSeen === "string" &&
+    typeof entry.checkedOn === "string" &&
     Number.isInteger(entry.failures)
   );
 }
@@ -134,6 +55,8 @@ export function parseState(text: string | null): WatchState | null {
   }
 }
 
+const BOT = ["--author", "app/github-actions"];
+
 function openIssues(gh: Gh): OpenWatchIssue[] {
   return JSON.parse(
     gh([
@@ -143,14 +66,37 @@ function openIssues(gh: Gh): OpenWatchIssue[] {
       "open",
       "--label",
       LABEL,
-      "--author",
-      "app/github-actions",
+      ...BOT,
       "--limit",
       "200",
       "--json",
       "number,title,body",
     ]),
   ) as OpenWatchIssue[];
+}
+
+/** The standing issue, open or closed (an open one first), found by its exact title. */
+export function findStandingIssue(gh: Gh): StandingIssue | null {
+  const found = JSON.parse(
+    gh([
+      "issue",
+      "list",
+      "--state",
+      "all",
+      ...BOT,
+      "--search",
+      `in:title "${STANDING_TITLE}"`,
+      "--limit",
+      "20",
+      "--json",
+      "number,title,body,state",
+    ]),
+  ) as (StandingIssue & { title: string })[];
+  const matches = found.filter((issue) => issue.title === STANDING_TITLE);
+  const issue = matches.find((match) => match.state === "OPEN") ?? matches[0];
+  return issue
+    ? { number: issue.number, body: issue.body, state: issue.state }
+    : null;
 }
 
 /** Page text only ever reaches `gh` as an argument array and on stdin, never a shell. */
@@ -174,7 +120,7 @@ export function applyActions(gh: Gh, actions: WatchAction[]): void {
       );
     else
       gh(
-        ["issue", "comment", String(action.number), "--body-file", "-"],
+        ["issue", action.kind, String(action.number), "--body-file", "-"],
         action.body,
       );
   }
@@ -200,7 +146,7 @@ function printActions(actions: WatchAction[]): void {
     const head =
       action.kind === "create"
         ? `create "${action.title}"`
-        : `comment on #${action.number}`;
+        : `${action.kind} #${action.number}`;
     console.log(`\n--- would ${head} ---\n${action.body}`);
   }
 }
@@ -212,17 +158,36 @@ async function main(): Promise<void> {
   if (!statePath && !dryRun)
     throw new Error("Usage: page-watch --state <file> [--dry-run]");
   const gh = realGh(dryRun);
+  const today = process.env.TODAY ?? sydneyToday();
   const sources = collectSources();
   const state = parseState(
     statePath && existsSync(statePath) ? readFileSync(statePath, "utf8") : null,
   );
-  const results = await readAll(sources.map((source) => source.url));
+  const readToday = new Set(
+    Object.entries(state ?? {})
+      .filter(([, entry]) => entry.checkedOn === today)
+      .map(([url]) => url),
+  );
+  const { results, notes } = await readAll(
+    sources.map((source) => source.url),
+    readToday,
+    {
+      fetch,
+      sleep,
+      now: Date.now,
+      log: console.error,
+      userAgent: USER_AGENT,
+      deadline: Date.now() + RUN_BUDGET_MS,
+    },
+  );
   const plan = planWatch({
     sources,
     results,
     state,
     openIssues: openIssues(gh),
-    today: process.env.TODAY ?? sydneyToday(),
+    standingIssue: findStandingIssue(gh),
+    today,
+    notes,
   });
   if (dryRun) printActions(plan.actions);
   applyActions(gh, plan.actions);

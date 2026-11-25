@@ -46,6 +46,16 @@ describe("normalisePage", () => {
     expect(text).toContain("Nominations are open.");
   });
 
+  it("keeps the page when its body or a wrapper carries a cookie class", () => {
+    const html = `<body class="cookie-consent-pending"><div id="cookie-wrapper"><main><h1>Fees</h1><p>A</p>
+      <div class="cookie-bar"><p>We use cookies</p></div></main></div></body>`;
+    const { title, text } = normalisePage(html, url);
+    expect(title).toBe("Fees");
+    expect(text).toBe("Fees\nA");
+    const noMain = `<body class="has-cookies"><div class="cookie-page"><h1>Fees</h1><p>B</p></div></body>`;
+    expect(normalisePage(noMain, url).text).toBe("Fees\nB");
+  });
+
   it("uses a role=main region", () => {
     const html = `<body><div>Promo banner</div><div role="main"><div><p>Rules</p></div></div></body>`;
     expect(normalisePage(html, url).text).toBe("Rules");

@@ -33,6 +33,8 @@ const VOID = new Set([
   "wbr",
 ]);
 const CHROME = new Set(["nav", "header", "footer"]);
+const NEVER_COOKIE = new Set(["html", "body", "main"]);
+const WRAPS_CONTENT = /<main\b|\brole\s*=\s*["']?main\b|<h1\b/i;
 const BLOCK =
   /<\/?(?:p|div|li|ul|ol|h[1-6]|tr|table|thead|tbody|tfoot|section|article|aside|main|br|hr|dl|dt|dd|blockquote|pre|figure|figcaption|form|fieldset|details|summary|option|caption|label|button)\b[^>]*>/gi;
 // Home Affairs (SharePoint) pages ship their content as JSON in hidden fields
@@ -95,7 +97,16 @@ function findElement(html: string, matches: Matcher, from = 0): Span | null {
   );
 }
 
-function removeElements(html: string, matches: Matcher): string {
+/**
+ * Removes every element `matches` finds. With `spareWrappers`, an element
+ * holding the page's main content or its h1 stays (a `cookie-…` class on a
+ * page wrapper), and its children are searched instead.
+ */
+function removeElements(
+  html: string,
+  matches: Matcher,
+  spareWrappers = false,
+): string {
   let kept = "";
   let position = 0;
   for (
@@ -103,8 +114,11 @@ function removeElements(html: string, matches: Matcher): string {
     span;
     span = findElement(html, matches, position)
   ) {
-    kept += html.slice(position, span.start);
-    position = span.end;
+    const wraps =
+      spareWrappers &&
+      WRAPS_CONTENT.test(html.slice(span.innerStart, span.innerEnd));
+    kept += html.slice(position, wraps ? span.innerStart : span.start);
+    position = wraps ? span.innerStart : span.end;
   }
   return kept + html.slice(position);
 }
@@ -123,8 +137,13 @@ function attrValues(attrs: string, names: string[]): string[] {
     .map((attr) => attr[2] ?? attr[3] ?? attr[4]);
 }
 
-const isChrome: Matcher = (name, attrs) =>
-  CHROME.has(name) ||
+const isChrome: Matcher = (name) => CHROME.has(name);
+// Never the page itself, even when it carries a cookie-consent class.
+const isCookieNotice: Matcher = (name, attrs) =>
+  !NEVER_COOKIE.has(name) &&
+  !attrValues(attrs, ["role"]).some(
+    (value) => value.toLowerCase() === "main",
+  ) &&
   attrValues(attrs, ["id", "class"]).some((value) => /cookie/i.test(value));
 const isMain: Matcher = (name, attrs) =>
   name === "main" ||
@@ -132,7 +151,8 @@ const isMain: Matcher = (name, attrs) =>
 
 /** The page's main region (else its body) with scripts, menus and cookie notices removed. */
 function contentHtml(html: string): string {
-  const cleaned = removeElements(html.replace(RAW_TEXT, " "), isChrome);
+  const withoutChrome = removeElements(html.replace(RAW_TEXT, " "), isChrome);
+  const cleaned = removeElements(withoutChrome, isCookieNotice, true);
   return (
     innerHtml(cleaned, isMain) ??
     innerHtml(cleaned, (name) => name === "body") ??
