@@ -49,9 +49,11 @@ export type OrderResponse =
 export type VerifyRequest = { claimId: string; code: string };
 export type VerifyResponse =
   | { kind: "issued"; token: string }
+  | { kind: "error"; code: "wrong-code"; triesLeft: number }
   | {
       kind: "error";
-      code: "wrong-code" | "expired" | "locked" | "founding-full";
+      /** `invalid` is a malformed request (400); `busy` a server fault (503). */
+      code: "expired" | "locked" | "founding-full" | "invalid" | "busy";
     };
 
 export type ConfirmRequest = {

@@ -23,6 +23,7 @@ PAID_FUNCTIONS = (
     "report_delivery_mark('{}'::jsonb)", "purge_expired_reports()", "report_rate('k', 1)",
     "report_iso(now())", "report_with_meta('{}'::jsonb, 'ML-2611-0001', 1, now(), now())",
     "report_insert('paid', 'a@example.com', '{}'::jsonb, '{}'::jsonb)",
+    "founding_claim_source('c5fa65d5-f388-4a7b-940c-1b5b78c75100')", "founding_unsent('c5fa65d5-f388-4a7b-940c-1b5b78c75100')",
 )
 FEEDBACK = {"id": "23937e80-90fd-44f6-9ebe-c189dd536043", "category": "bug", "message": "A small test feedback message.", "email": None, "summary": None, "privacy_version": "2026-11-20"}
 
@@ -148,6 +149,23 @@ def paid_report_checks(sql, connection):
     again = start("late@example.com", "777777")
     assert again["status"] == "sent" and again["claim_id"] != late["claim_id"], again
     print("PASS: an expired code is refused, and a new claim replaces it")
+
+    def source(claim_id):
+        return json.loads(scalar(f"select public.founding_claim_source('{claim_id}')"))
+
+    assert source(again["claim_id"]) == {"status": "open", "profile": PROFILE, "as_of": "2026-11-25"}
+    assert source(first["claim_id"]) == {"status": "locked"}
+    assert source(late["claim_id"]) == {"status": "expired"}
+    assert source("c5fa65d5-f388-4a7b-940c-1b5b78c75100") == {"status": "expired"}
+    assert source(last_a["claim_id"]) == {"status": "used"}
+    assert start("late@example.com", "787878")["status"] == "wait"
+    scalar(f"select public.founding_unsent('{again['claim_id']}')")
+    assert start("late@example.com", "797979") == {"status": "sent", "claim_id": again["claim_id"]}
+    tries_before = scalar("select tries || ' ' || expires_at from public.founding_claims where email = 'guess@example.com' and status = 'locked'")
+    scalar(f"select public.founding_unsent('{first['claim_id']}')")
+    assert scalar("select tries || ' ' || expires_at from public.founding_claims where email = 'guess@example.com' and status = 'locked'") == tries_before
+    assert start("guess@example.com", "565656")["status"] == "wait"
+    print("PASS: claim source mirrors confirm's states; unsent allows an immediate resend but never unlocks a claim")
 
     sql("update public.report_settings set founding_enabled = false")
     assert start("off@example.com", "888888") == {"status": "off"}

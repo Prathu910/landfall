@@ -80,11 +80,12 @@ async function receipt(
   }
   return value as Receipt;
 }
-async function verify(
+/** Cloudflare Turnstile: throws RequestError(403) unless the token passes for this action and host. */
+export async function verifyTurnstile(
   token: string,
-  kind: Kind,
+  action: string,
   origin: string,
-  config: Settings,
+  secret: string,
   fetcher: typeof fetch,
 ): Promise<void> {
   const result = await fetcher(
@@ -92,7 +93,7 @@ async function verify(
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ secret: config.turnstileSecret, response: token }),
+      body: JSON.stringify({ secret, response: token }),
       signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
     },
   );
@@ -101,7 +102,7 @@ async function verify(
   if (
     !record(value) ||
     value.success !== true ||
-    value.action !== kind ||
+    value.action !== action ||
     value.hostname !== new URL(origin).hostname
   ) {
     throw new RequestError(403, "Complete the spam check again.");
@@ -205,11 +206,11 @@ export function createHandler(kind: Kind, dependencies: Dependencies) {
         false,
       );
       if (existing) return existing;
-      await verify(
+      await verifyTurnstile(
         envelope.turnstile_token,
         kind,
         origin,
-        config,
+        config.turnstileSecret,
         dependencies.fetch,
       );
       const saved = await persisted(

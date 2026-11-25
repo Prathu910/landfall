@@ -38,17 +38,18 @@ export function response(
   status: number,
   body: unknown,
   origin?: string,
+  method: "GET" | "POST" = "POST",
 ): Response {
   const headers = new Headers({
     Vary: "Origin",
     "Cache-Control": "no-store",
     "X-Robots-Tag": "noindex",
     "Content-Type": "application/json",
-    Allow: "POST, OPTIONS",
+    Allow: `${method}, OPTIONS`,
   });
   if (origin) headers.set("Access-Control-Allow-Origin", origin);
   if (status === 204) {
-    headers.set("Access-Control-Allow-Methods", "POST, OPTIONS");
+    headers.set("Access-Control-Allow-Methods", `${method}, OPTIONS`);
     headers.set("Access-Control-Allow-Headers", "content-type");
   }
   return new Response(status === 204 ? null : JSON.stringify(body), {
@@ -63,7 +64,19 @@ export async function readJson(request: Request): Promise<unknown> {
   ) {
     throw new RequestError(415, "Send application/json.");
   }
-  if (Number(request.headers.get("Content-Length")) > BODY_LIMIT) {
+  const text = await readText(request);
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new RequestError(400, "Send valid JSON.");
+  }
+}
+/** The raw body as UTF-8 text, streamed under the cap (the webhook signs it). */
+export async function readText(
+  request: Request,
+  limit = BODY_LIMIT,
+): Promise<string> {
+  if (Number(request.headers.get("Content-Length")) > limit) {
     await request.body?.cancel();
     throw new RequestError(413, "The submission is too large.");
   }
@@ -76,7 +89,7 @@ export async function readJson(request: Request): Promise<unknown> {
       const chunk = await reader.read();
       if (chunk.done) break;
       size += chunk.value.byteLength;
-      if (size > BODY_LIMIT) {
+      if (size > limit) {
         await reader.cancel();
         throw new RequestError(413, "The submission is too large.");
       }
@@ -92,21 +105,25 @@ export async function readJson(request: Request): Promise<unknown> {
     offset += chunk.byteLength;
   }
   try {
-    return JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes));
+    return new TextDecoder("utf-8", { fatal: true }).decode(bytes);
   } catch {
     throw new RequestError(400, "Send valid JSON.");
   }
 }
-export function preflight(request: Request, origin: string): Response {
+export function preflight(
+  request: Request,
+  origin: string,
+  allowed: "GET" | "POST" = "POST",
+): Response {
   const method = request.headers.get("Access-Control-Request-Method");
   const headers = (request.headers.get("Access-Control-Request-Headers") ?? "")
     .split(",")
     .map((value) => value.trim().toLowerCase())
     .filter(Boolean);
   if (
-    (method && method !== "POST") ||
+    (method && method !== allowed) ||
     headers.some((header) => header !== "content-type")
   )
-    return response(400, { error: "Unsupported preflight." }, origin);
-  return response(204, null, origin);
+    return response(400, { error: "Unsupported preflight." }, origin, allowed);
+  return response(204, null, origin, allowed);
 }
