@@ -1,6 +1,6 @@
 import { writeFileAtomic } from "../import/atomic-write";
 
-const USER_AGENT =
+export const USER_AGENT =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36";
 const FETCH_TIMEOUT_MS = 60_000;
 

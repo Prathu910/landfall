@@ -65,7 +65,7 @@ export function failureIssueAction(
 export const MAX_BODY = 60_000;
 
 /** A fence longer than any backtick run in `text`, so the log can't close it. */
-function fenceFor(text: string): string {
+export function fenceFor(text: string): string {
   const longest = Math.max(
     0,
     ...(text.match(/`+/g) ?? []).map((run) => run.length),

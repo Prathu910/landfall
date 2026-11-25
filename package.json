@@ -21,6 +21,7 @@
     "updates:frozen-check": "tsx scripts/automation/frozen-check.ts",
     "social:render": "tsx scripts/social/render.ts",
     "data:state-lists": "tsx scripts/state-lists/cli.ts",
+    "page-watch": "tsx scripts/page-watch/cli.ts",
     "predev": "tsx scripts/copy-public-data.ts",
     "prebuild": "tsx scripts/copy-public-data.ts && tsx scripts/check-rule-staleness.ts",
     "backend:check": "deno task --config supabase/functions/deno.json check",

@@ -1,0 +1,80 @@
+# Daily page watcher (spec 6.11). Reads every official state nomination and
+# fee page the site cites and, when a page's text changes, opens (or comments
+# on) a `source-watch` issue for the founder with a before/after excerpt. It
+# never edits the site: the founder updates the rule or fee in a reviewed
+# change. The baseline is the previous run's page texts, kept in the Actions
+# cache; when it is missing (the first run, or evicted) the run stores a new
+# one and opens no issues. The job body is scripts/page-watch/cli.ts.
+name: Page watch
+
+on:
+  schedule:
+    # 22:00 UTC is 08:00-09:00 in Sydney, after the data jobs.
+    - cron: "0 22 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: page-watch
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: bash
+    env:
+      GH_REPO: ${{ github.repository }}
+    steps:
+      # The job never pushes, so it keeps no git credentials on disk.
+      - name: Check out
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: npm
+
+      # Install scripts never see the token.
+      - name: Install dependencies
+        timeout-minutes: 10
+        run: env -u GH_TOKEN npm ci
+
+      # Restores the newest page-watch-* cache, the previous run's baseline.
+      - name: Restore the baseline
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ${{ runner.temp }}/page-watch
+          key: page-watch-${{ github.run_id }}
+          restore-keys: page-watch-
+
+      # R18: the issues carry this label, so it must exist first.
+      - name: Create the source-watch label
+        timeout-minutes: 2
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          gh label create source-watch --force --color FBCA04
+          --description "An official page the site cites has changed or is unreachable"
+
+      # Also writes the run summary to $GITHUB_STEP_SUMMARY.
+      - name: Check the cited pages
+        timeout-minutes: 20
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: npm run page-watch -- --state "$RUNNER_TEMP/page-watch/state.json"
+
+      # Only after a successful check, so a failed run never replaces the baseline.
+      - name: Save the baseline
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ${{ runner.temp }}/page-watch
+          key: page-watch-${{ github.run_id }}
