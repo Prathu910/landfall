@@ -1,6 +1,6 @@
 // Usage:
-//   tsx scripts/automation/failure-issue.ts report --title <t> --log <file>
-//   tsx scripts/automation/failure-issue.ts resolve --title <t>
+//   tsx scripts/automation/failure-issue.ts report (--month YYYY-MM | --round YYYY-MM-DD) --log <file>
+//   tsx scripts/automation/failure-issue.ts resolve (--month YYYY-MM | --round YYYY-MM-DD)
 // `report` opens a failure issue (assigned to the founder) or comments on the
 // open one with the same title; `resolve` closes it with a comment linking
 // the successful run. The repo is public: bodies hold no secrets, only the
@@ -32,12 +32,16 @@ const MONTHS = [
 
 /** `Monthly SkillSelect update failed (Nov 2026)` for a `YYYY-MM` month. */
 export function monthlyFailureTitle(month: string): string {
+  if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(month))
+    throw new Error(`Not a YYYY-MM month: ${month}`);
   const [year, m] = month.split("-");
   return `Monthly SkillSelect update failed (${MONTHS[Number(m) - 1]} ${year})`;
 }
 
 /** `189 round import failed (10 Nov 2026)` for a `YYYY-MM-DD` round date. */
 export function roundFailureTitle(date: string): string {
+  if (!/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/.test(date))
+    throw new Error(`Not a YYYY-MM-DD date: ${date}`);
   const [year, m, d] = date.split("-");
   return `189 round import failed (${Number(d)} ${MONTHS[Number(m) - 1]} ${year})`;
 }
@@ -52,18 +56,33 @@ export function failureIssueAction(
     : { kind: "create" };
 }
 
+export const MAX_BODY = 60_000;
+
+/** A fence longer than any backtick run in `text`, so the log can't close it. */
+function fenceFor(text: string): string {
+  const longest = Math.max(
+    0,
+    ...(text.match(/`+/g) ?? []).map((run) => run.length),
+  );
+  return "`".repeat(Math.max(3, longest + 1));
+}
+
 export function failureBody(step: string, log: string, runUrl: string): string {
-  const tail = log.split("\n").slice(-LOG_LINES).join("\n").trimEnd();
-  return [
+  const tail = log.trim().split("\n").slice(-LOG_LINES).join("\n");
+  const fence = fenceFor(tail);
+  const body = [
     `Failing step: ${step || "unknown"}`,
     `Run: ${runUrl}`,
     "",
     `Last ${LOG_LINES} log lines:`,
     "",
-    "```",
+    fence,
     tail,
-    "```",
+    fence,
   ].join("\n");
+  return body.length <= MAX_BODY
+    ? body
+    : `${body.slice(0, MAX_BODY - 100)}\n${fence}\n(truncated)`;
 }
 
 function openIssues(gh: Gh): OpenIssue[] {
@@ -73,6 +92,8 @@ function openIssues(gh: Gh): OpenIssue[] {
       "list",
       "--state",
       "open",
+      "--author",
+      "app/github-actions",
       "--limit",
       "200",
       "--json",
@@ -88,17 +109,21 @@ export function reportFailure(
 ): FailureAction {
   const action = failureIssueAction(openIssues(gh), title);
   if (action.kind === "create")
-    gh([
-      "issue",
-      "create",
-      "--title",
-      title,
-      "--body",
+    gh(
+      [
+        "issue",
+        "create",
+        "--title",
+        title,
+        "--body-file",
+        "-",
+        "--assignee",
+        FOUNDER,
+      ],
       body,
-      "--assignee",
-      FOUNDER,
-    ]);
-  else gh(["issue", "comment", String(action.number), "--body", body]);
+    );
+  else
+    gh(["issue", "comment", String(action.number), "--body-file", "-"], body);
   return action;
 }
 
@@ -106,13 +131,11 @@ export function reportFailure(
 export function resolveFailure(gh: Gh, title: string, runUrl: string): boolean {
   const action = failureIssueAction(openIssues(gh), title);
   if (action.kind === "create") return false;
-  gh([
-    "issue",
-    "close",
-    String(action.number),
-    "--comment",
+  gh(
+    ["issue", "comment", String(action.number), "--body-file", "-"],
     `Resolved: a later run succeeded. ${runUrl}`,
-  ]);
+  );
+  gh(["issue", "close", String(action.number)]);
   return true;
 }
 
@@ -121,6 +144,13 @@ function flag(name: string): string {
   const value = index === -1 ? undefined : process.argv[index + 1];
   if (!value) throw new Error(`Missing ${name}`);
   return value;
+}
+
+/** The one place a CLI turns `--month` or `--round` into a title. */
+function titleFromFlags(): string {
+  if (process.argv.includes("--month"))
+    return monthlyFailureTitle(flag("--month"));
+  return roundFailureTitle(flag("--round"));
 }
 
 function runUrl(): string {
@@ -132,7 +162,7 @@ function runUrl(): string {
 
 function main(): void {
   const mode = process.argv[2];
-  const title = flag("--title");
+  const title = titleFromFlags();
   const gh = realGh();
   if (mode === "report") {
     const log = readFileSync(flag("--log"), "utf8");
@@ -141,7 +171,9 @@ function main(): void {
   } else if (mode === "resolve") {
     console.log(resolveFailure(gh, title, runUrl()) ? "closed" : "none open");
   } else {
-    throw new Error("Usage: failure-issue.ts report|resolve --title <t>");
+    throw new Error(
+      "Usage: failure-issue.ts report|resolve (--month YYYY-MM | --round YYYY-MM-DD)",
+    );
   }
 }
 

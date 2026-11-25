@@ -18,6 +18,19 @@ describe("chooseBase", () => {
     ).toEqual({ kind: "join", branch: "data/round-2026-12-10", number: 12 });
   });
 
+  it("rejects fork pull requests and odd branch names", () => {
+    expect(() =>
+      chooseBase(
+        [{ number: 5, headRefName: "data/x", isCrossRepository: true }],
+        "f",
+      ),
+    ).toThrow("comes from a fork");
+    for (const name of ["main", "data/a b", "data/x;rm", "feature/x"])
+      expect(() => chooseBase([{ number: 5, headRefName: name }], "f")).toThrow(
+        "unexpected branch name",
+      );
+  });
+
   it("stops on more than one", () => {
     expect(() =>
       chooseBase(

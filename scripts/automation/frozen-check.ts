@@ -12,24 +12,65 @@ import type { RecapFacts } from "../../src/lib/updates/types";
 
 const DIR = "src/data/updates";
 
+function git(args: string[]): string {
+  return execFileSync("git", args, {
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+}
+
 function parseFacts(text: string, where: string): RecapFacts {
   const value: unknown = JSON.parse(text);
   if (!isRecapFacts(value)) throw new Error(`${where} is not recap facts`);
   return value;
 }
 
-/** The file's copy on `base`, or null when the base doesn't have it. */
-function readBase(base: string, path: string): RecapFacts | null {
-  let text: string;
+/** Throws unless `base` names a commit, so an unfetched ref never passes silently. */
+export function verifyBase(base: string): void {
   try {
-    text = execFileSync("git", ["show", `${base}:${path}`], {
-      encoding: "utf8",
-      stdio: ["ignore", "pipe", "ignore"],
-    });
+    git(["rev-parse", "--verify", "--quiet", `${base}^{commit}`]);
+  } catch {
+    throw new Error(`Base ref ${base} is not a commit (run git fetch first)`);
+  }
+}
+
+/** The facts file names (e.g. 2026-10.json) that `base` has. */
+export function listBaseFiles(base: string): string[] {
+  return git(["ls-tree", "--name-only", base, `${DIR}/`])
+    .split("\n")
+    .filter((line) => line.endsWith(".json"))
+    .map((line) => line.slice(DIR.length + 1));
+}
+
+/** The file's copy on `base`; null only when the base doesn't have it. */
+export function readBaseFile(base: string, path: string): RecapFacts | null {
+  try {
+    git(["cat-file", "-e", `${base}:${path}`]);
   } catch {
     return null;
   }
-  return parseFacts(text, `${base}:${path}`);
+  return parseFacts(git(["show", `${base}:${path}`]), `${base}:${path}`);
+}
+
+/**
+ * Frozen sections the head files change, as `<month>:<section>` (a facts
+ * file that base has but head lacks is `<month>:file`). `allowed` entries
+ * are exempt.
+ */
+export function checkFrozen(
+  head: Map<string, RecapFacts>,
+  baseNames: string[],
+  readBase: (name: string) => RecapFacts | null,
+  allowed: Set<string> = new Set(),
+): string[] {
+  const problems: string[] = [];
+  const month = (name: string) => name.replace(/\.json$/, "");
+  for (const [name, facts] of head)
+    for (const section of changedFrozenSections(readBase(name), facts))
+      problems.push(`${month(name)}:${section}`);
+  for (const name of baseNames)
+    if (!head.has(name)) problems.push(`${month(name)}:file`);
+  return problems.filter((problem) => !allowed.has(problem));
 }
 
 function option(name: string): string | undefined {
@@ -44,15 +85,21 @@ function main(): void {
       arg === "--allow" && process.argv[i + 1] ? [process.argv[i + 1]] : [],
     ),
   );
-  const problems: string[] = [];
-  for (const name of readdirSync(DIR).filter((n) => n.endsWith(".json"))) {
-    const path = join(DIR, name);
-    const month = name.replace(/\.json$/, "");
-    const head = parseFacts(readFileSync(path, "utf8"), path);
-    for (const section of changedFrozenSections(readBase(base, path), head))
-      if (!allowed.has(`${month}:${section}`))
-        problems.push(`${month}:${section}`);
-  }
+  verifyBase(base);
+  const head = new Map(
+    readdirSync(DIR)
+      .filter((n) => n.endsWith(".json"))
+      .map((n) => [
+        n,
+        parseFacts(readFileSync(join(DIR, n), "utf8"), join(DIR, n)),
+      ]),
+  );
+  const problems = checkFrozen(
+    head,
+    listBaseFiles(base),
+    (name) => readBaseFile(base, `${DIR}/${name}`),
+    allowed,
+  );
   if (problems.length > 0) {
     console.error(
       `Frozen sections changed against ${base}: ${problems.join(", ")}`,
@@ -64,4 +111,11 @@ function main(): void {
 }
 
 // tsx runs this file as CommonJS, so there is no top-level await.
-if (process.argv[1]?.endsWith("frozen-check.ts")) main();
+if (process.argv[1]?.endsWith("frozen-check.ts")) {
+  try {
+    main();
+  } catch (error) {
+    console.error(error instanceof Error ? error.message : error);
+    process.exitCode = 1;
+  }
+}

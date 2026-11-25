@@ -4,7 +4,13 @@
 // branch and appends to it; none means the job starts `fresh`.
 import { realGh, type Gh } from "./gh";
 
-export type OpenPr = { number: number; headRefName: string };
+export type OpenPr = {
+  number: number;
+  headRefName: string;
+  isCrossRepository?: boolean;
+};
+
+const DATA_BRANCH = /^data\/[a-z0-9-]+$/;
 
 export type BaseChoice =
   | { kind: "join"; branch: string; number: number }
@@ -16,6 +22,12 @@ export function chooseBase(open: OpenPr[], fresh: string): BaseChoice {
     throw new Error(`More than one open data-update pull request: ${numbers}`);
   }
   const [pr] = open;
+  if (pr && pr.isCrossRepository)
+    throw new Error(`Pull request #${pr.number} comes from a fork`);
+  if (pr && !DATA_BRANCH.test(pr.headRefName))
+    throw new Error(
+      `Pull request #${pr.number} has an unexpected branch name: ${pr.headRefName}`,
+    );
   return pr
     ? { kind: "join", branch: pr.headRefName, number: pr.number }
     : { kind: "new", branch: fresh };
@@ -31,7 +43,7 @@ export function listOpenDataUpdates(gh: Gh): OpenPr[] {
     "--state",
     "open",
     "--json",
-    "number,headRefName",
+    "number,headRefName,isCrossRepository",
   ]);
   return JSON.parse(out) as OpenPr[];
 }
