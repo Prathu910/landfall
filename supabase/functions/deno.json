@@ -1,9 +1,12 @@
 {
-  "compilerOptions": { "strict": true, "lib": ["deno.window"] },
+  "compilerOptions": {
+    "strict": true,
+    "lib": ["deno.window"]
+  },
   "nodeModulesDir": "none",
   "tasks": {
-    "check": "deno check submit-calculation/index.ts submit-feedback/index.ts write-read/index.ts ../tests/submissions_test.ts ../tests/write_read_test.ts ../tests/report_engine_test.ts",
-    "test": "deno test ../tests/submissions_test.ts ../tests/write_read_test.ts ../tests/report_engine_test.ts"
+    "check": "deno check submit-calculation/index.ts submit-feedback/index.ts write-read/index.ts ../tests/submissions_test.ts ../tests/write_read_test.ts ../tests/report_engine_test.ts _shared/report/razorpay.ts ../tests/razorpay_test.ts",
+    "test": "deno test ../tests/submissions_test.ts ../tests/write_read_test.ts ../tests/report_engine_test.ts ../tests/razorpay_test.ts"
   },
   "lock": false
 }

@@ -31,7 +31,7 @@ async function signature(payload: string, secret: string): Promise<string> {
 }
 
 /** Compares every character so the time taken doesn't reveal how much matched. */
-function constantTimeEqual(left: string, right: string): boolean {
+export function constantTimeEqual(left: string, right: string): boolean {
   if (left.length !== right.length) return false;
   let difference = 0;
   for (let index = 0; index < left.length; index++) {

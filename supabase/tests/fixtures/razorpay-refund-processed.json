@@ -1,0 +1,42 @@
+{
+  "entity": "event",
+  "account_id": "acc_TESTACCOUNT1",
+  "event": "refund.processed",
+  "contains": ["refund", "payment"],
+  "payload": {
+    "refund": {
+      "entity": {
+        "id": "rfnd_TEST1",
+        "entity": "refund",
+        "amount": 69900,
+        "currency": "INR",
+        "payment_id": "pay_TEST1",
+        "notes": [],
+        "receipt": null,
+        "acquirer_data": { "arn": null },
+        "created_at": 1795700000,
+        "batch_id": null,
+        "status": "processed",
+        "speed_processed": "normal",
+        "speed_requested": "normal"
+      }
+    },
+    "payment": {
+      "entity": {
+        "id": "pay_TEST1",
+        "entity": "payment",
+        "amount": 69900,
+        "currency": "INR",
+        "status": "refunded",
+        "order_id": "order_TEST1",
+        "amount_refunded": 69900,
+        "refund_status": "full",
+        "captured": true,
+        "email": "buyer@example.com",
+        "contact": "+910000000000",
+        "created_at": 1795612000
+      }
+    }
+  },
+  "created_at": 1795700005
+}

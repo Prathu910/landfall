@@ -1,0 +1,49 @@
+{
+  "entity": "event",
+  "account_id": "acc_TESTACCOUNT1",
+  "event": "order.paid",
+  "contains": ["payment", "order"],
+  "payload": {
+    "payment": {
+      "entity": {
+        "id": "pay_TEST1",
+        "entity": "payment",
+        "amount": 69900,
+        "currency": "INR",
+        "status": "captured",
+        "order_id": "order_TEST1",
+        "invoice_id": null,
+        "international": false,
+        "method": "upi",
+        "amount_refunded": 0,
+        "refund_status": null,
+        "captured": true,
+        "description": "MigrateLens PR report",
+        "email": "buyer@example.com",
+        "contact": "+910000000000",
+        "notes": { "occupation": "261313" },
+        "fee": 1650,
+        "tax": 252,
+        "error_code": null,
+        "created_at": 1795612000
+      }
+    },
+    "order": {
+      "entity": {
+        "id": "order_TEST1",
+        "entity": "order",
+        "amount": 69900,
+        "amount_paid": 69900,
+        "amount_due": 0,
+        "currency": "INR",
+        "receipt": "c5fa65d5-f388-4a7b-940c-1b5b78c751bd",
+        "offer_id": null,
+        "status": "paid",
+        "attempts": 1,
+        "notes": { "occupation": "261313" },
+        "created_at": 1795611900
+      }
+    }
+  },
+  "created_at": 1795612006
+}
