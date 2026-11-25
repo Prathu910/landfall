@@ -3,9 +3,8 @@ import { formatSummed } from "../report/copy";
 import { STATE_NAMES } from "../state-outlook/context";
 import type { OutlookInput, ProfileOutlook } from "./evaluate-profile";
 import { lastListedMonth } from "./facts";
-import { MIN_POINTS, isOffList, stampName189 } from "./label-189";
+import { MIN_POINTS, isOffList } from "./label-189";
 import type { StateLabel } from "./label-state";
-import { stampName } from "./labels";
 import type { OutlookLabel } from "./labels";
 import {
   capital,
@@ -20,18 +19,12 @@ import {
   withoutConfirm,
 } from "./phrases";
 import { daysBetween } from "./route";
+import { listedBy, stampFace } from "./stamp-face";
+import type { FreeStamp } from "./stamp-face";
 import { roughlyEois } from "./wait";
 import type { EstimatedWait } from "./wait";
 
-export type VisaCard = {
-  visa: Visa;
-  shape: "rect" | "hex" | "oval";
-  top: string;
-  stampWord: string;
-  points: number;
-  label: OutlookLabel;
-  /** The label whose colours the stamp takes: neutral for an unavailable 189. */
-  ink: OutlookLabel;
+export type VisaCard = FreeStamp & {
   title: string;
   caption: string;
   flagText: string | null;
@@ -39,14 +32,6 @@ export type VisaCard = {
   flagHref: "#sharpen" | null;
 };
 
-type StateCardText = Pick<VisaCard, "top" | "stampWord" | "caption">;
-
-const ANY_STATE = "ANY STATE";
-const SHAPES: Record<Visa, VisaCard["shape"]> = {
-  "189": "rect",
-  "190": "hex",
-  "491": "oval",
-};
 const TITLES: Record<Visa, string> = {
   "189": "189 Independent",
   "190": "190 Nominated",
@@ -124,16 +109,8 @@ function card189(
   o: ProfileOutlook,
   wait: EstimatedWait,
 ): VisaCard {
-  const { v189 } = o;
   return {
-    visa: "189",
-    shape: SHAPES["189"],
-    top: `189 ${ANY_STATE}`,
-    stampWord: stampName189(v189),
-    points: o.points.base,
-    label: v189.label,
-    // Neutral, like the "Not available" stamp on the occupation page.
-    ink: isOffList(v189) ? "no-data" : v189.label,
+    ...stampFace(input, o, "189"),
     title: TITLES["189"],
     caption: caption189(input, o, wait),
     flagText: null,
@@ -147,29 +124,13 @@ function invitedCaption(state: StateLabel): string {
   return `${capital(theState(state.state))} invited ${formatSummed(count)} EOIs at or below your points in ${longMonth(month)}.`;
 }
 
-/** States whose lists hold the occupation, when there is no evidence to label it. */
-function listedBy(
-  o: ProfileOutlook,
-  visa: StateVisa,
-  label: OutlookLabel,
-): StateCode[] {
-  const federal = visa === "190" ? "federal190" : "federal491";
-  if (label !== "no-data" || !o.listMembership[federal]) return [];
-  return o.listMembership.states;
-}
-
-/** Ruling R16: a state named from its list says so ("On WA list"). */
-function listText(visa: StateVisa, states: StateCode[]): StateCardText {
-  const one = states.length === 1;
+/** The caption of a stamp named from the state lists that hold the occupation. */
+function listCaption(visa: StateVisa, states: StateCode[]): string {
   const names = joinAnd(states.map((s) => theStateName(STATE_NAMES[s])));
-  const regional = one
-    ? `Check ${names}'s regional program.`
-    : `Check the regional programs of ${names}.`;
-  return {
-    top: one ? `${visa} ${states[0]}` : `${visa} ${ANY_STATE}`,
-    stampWord: one ? `On ${states[0]} list` : `On ${states.length} state lists`,
-    caption: visa === "190" ? `Listed by ${names}.` : capital(regional),
-  };
+  if (visa === "190") return `Listed by ${names}.`;
+  return states.length === 1
+    ? capital(`Check ${names}'s regional program.`)
+    : capital(`Check the regional programs of ${names}.`);
 }
 
 function unnamedCaption(input: OutlookInput, label: OutlookLabel): string {
@@ -187,35 +148,17 @@ function stateCard(
   o: ProfileOutlook,
   visa: StateVisa,
 ): VisaCard {
-  const visaLabel = stateVisaOf(o, visa);
-  const label = visaLabel?.label ?? "no-data";
-  // Ruling R7: only a state with invitation evidence is named.
-  const named = namedState(visaLabel);
-  const listed = listedBy(o, visa, label);
-  let text: StateCardText;
-  if (named) {
-    text = {
-      top: `${visa} ${named.state}`,
-      stampWord: stampName(label),
-      caption: invitedCaption(named),
-    };
-  } else if (listed.length > 0) {
-    text = listText(visa, listed);
-  } else {
-    text = {
-      top: `${visa} ${ANY_STATE}`,
-      stampWord: stampName(label),
-      caption: unnamedCaption(input, label),
-    };
-  }
+  const face = stampFace(input, o, visa);
+  const named = namedState(stateVisaOf(o, visa));
+  const listed = listedBy(o, visa, face.label);
+  let caption: string;
+  if (named) caption = invitedCaption(named);
+  else if (listed.length > 0) caption = listCaption(visa, listed);
+  else caption = unnamedCaption(input, face.label);
   return {
-    visa,
-    shape: SHAPES[visa],
-    ...text,
-    points: visa === "190" ? o.points.subclass190 : o.points.subclass491,
-    label,
-    ink: label,
+    ...face,
     title: TITLES[visa],
+    caption,
     flagText: named ? flagNote(named) : null,
     flagHref: named?.flag === "needs-answers" ? SHARPEN_HREF : null,
   };
