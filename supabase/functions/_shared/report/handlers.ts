@@ -31,6 +31,7 @@ import { createRazorpayOrder, validPaymentSignature } from "./razorpay.ts";
 import { sendEmail } from "./resend.ts";
 
 export type { Deps } from "./endpoint.ts";
+export { deliverHandler } from "./deliver.ts";
 export { getHandler, reviseHandler } from "./stored.ts";
 export { webhookHandler } from "./webhook.ts";
 

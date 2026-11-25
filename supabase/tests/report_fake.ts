@@ -449,6 +449,77 @@ export class FakeDb {
     return { status: "revoked", report_id: o.report_id };
   }
 
+  rpc_report_delivery_queue({ p_limit }: Json) {
+    const due = (status: string, at: number) =>
+      ["pending", "retry"].includes(status) && at <= this.now;
+    const picked = this.reports
+      .filter(
+        (r) =>
+          r.status === "issued" &&
+          (due(r.pdf_status, r.next_attempt_at) ||
+            due(r.email_status, r.email_next_at)) &&
+          (r.lease_until === null || r.lease_until <= this.now),
+      )
+      .sort((a, b) => a.first_issued_at - b.first_issued_at)
+      .slice(0, p_limit as number);
+    return picked.map((r) => {
+      r.lease_until = this.now + 10 * MINUTE;
+      const o = this.orders.find((x) => x.report_id === r.id);
+      return {
+        report_id: r.id,
+        report_no: r.report_no,
+        kind: r.kind,
+        version: r.version,
+        email: r.email,
+        name: (r.profile.name as string) ?? "",
+        token_enc: r.token_enc,
+        pdf_status: r.pdf_status,
+        email_status: r.email_status,
+        pdf_attempts: r.pdf_attempts,
+        email_attempts: r.email_attempts,
+        link_email_sent: r.link_email_sent,
+        pdf_email_sent: r.pdf_email_sent,
+        alert_sent: r.alert_sent,
+        first_issued_at: iso(r.first_issued_at),
+        issued_at: iso(r.issued_at),
+        next_attempt_at: iso(r.next_attempt_at),
+        email_next_at: iso(r.email_next_at),
+        amount: o?.amount ?? null,
+        currency: o?.currency ?? null,
+        payment_id: o?.razorpay_payment_id ?? null,
+      };
+    });
+  }
+
+  marks: Json[] = [];
+  rpc_report_delivery_mark({ p }: Json) {
+    const a = p as Json;
+    this.marks.push(a);
+    const r = this.reports.find((x) => x.id === a.report_id);
+    if (!r || ("version" in a && a.version !== r.version)) return null;
+    if ("pdf_status" in a) {
+      r.pdf_status = a.pdf_status as string;
+      r.pdf_attempts += 1;
+    }
+    if ("email_status" in a) {
+      r.email_status = a.email_status as string;
+      r.email_attempts += 1;
+    }
+    if ("next_attempt_at" in a)
+      r.next_attempt_at = Date.parse(a.next_attempt_at as string);
+    if ("email_next_at" in a)
+      r.email_next_at = Date.parse(a.email_next_at as string);
+    for (const flag of [
+      "link_email_sent",
+      "pdf_email_sent",
+      "alert_sent",
+    ] as const)
+      if (flag in a) r[flag] = a[flag] as boolean;
+    if (a.clear_token === true) r.token_enc = null;
+    r.lease_until = null;
+    return null;
+  }
+
   rpc_report_rate({ p_key, p_limit }: Json) {
     const key = `${p_key}@${Math.floor(this.now / MINUTE)}`;
     const hits = (this.rateHits.get(key) ?? 0) + 1;

@@ -24,6 +24,10 @@ In Cloudflare Turnstile, create managed widgets with explicit frontend hostnames
 
 For local UI development, run `npm run dev`. For an integrated local backend use the Supabase CLI stack separately (see the backend runbook), set public local URL and test widget values in an ignored `.env.local`, and rebuild/restart the frontend. Never send real user data in local smoke tests.
 
+## Paid reports
+
+The paid report (Razorpay orders, Founding 100 codes, the report link and its emailed PDF) runs on eight more Supabase Functions and a pg_cron delivery job. Its founder setup, secrets list, test-mode rehearsal and switch to live keys are in [the backend runbook, "Paid reports"](OPERATIONS-BACKEND.md#paid-reports). It needs Razorpay, Resend and Cloudflare Browser Rendering accounts; none is live until that rehearsal passes.
+
 ## Verification commands
 
 ```sh

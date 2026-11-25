@@ -52,3 +52,7 @@ entrypoint = "./functions/report-get/index.ts"
 [functions.report-revise]
 verify_jwt = false
 entrypoint = "./functions/report-revise/index.ts"
+
+[functions.report-deliver]
+verify_jwt = false
+entrypoint = "./functions/report-deliver/index.ts"
