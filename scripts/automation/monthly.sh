@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # The monthly SkillSelect job (spec 6.9), run by .github/workflows/monthly-data.yml.
 #
+#   bash scripts/automation/monthly.sh prepare          clear old state and record the likely month
 #   bash scripts/automation/monthly.sh run              import a new month, or swap the spotlight
 #   bash scripts/automation/monthly.sh collect-failure  save a failed run's git status and raw files
 #   bash scripts/automation/monthly.sh report-failure   open or comment on the failure issue
@@ -12,7 +13,11 @@
 #   BASE_REF     the published branch (default origin/main). Local dry runs
 #                use HEAD (R15).
 #   DRY_RUN=1    no dashboard import (data:generate instead), and every git
-#                push and gh call is printed, not run; gh reads return nothing.
+#                push and gh call is printed, not run; gh reads return nothing,
+#                except DRY_RUN_OPEN_PRS (JSON for `gh pr list`, read by gh.ts)
+#                and DRY_RUN_PR_BODY (a file for `gh pr view`), for local tests.
+#   TODAY        optional YYYY-MM-DD for the run's Sydney date (reproducible
+#                local runs); Actions leaves it unset.
 #   RUNNER_TEMP  where the logs, import report and PR body go (Actions sets it).
 #   GH_TOKEN     for gh (Actions sets it from github.token).
 #
@@ -32,12 +37,13 @@ DRY_RUN="${DRY_RUN:-0}"
 export BASE_REF DRY_RUN
 WORK="${RUNNER_TEMP:-${TMPDIR:-/tmp}/monthly-data}"
 STATE="$WORK/monthly-state"
-TODAY="$(TZ=Australia/Sydney date +%F)"
+TODAY="${TODAY:-$(TZ=Australia/Sydney date +%F)}"
 
 INFO=""      # month-info.ts output for the target month
 TARGET=""    # the as-at month this run imports
 BRANCH=""    # the branch the run commits to (base-branch.ts chooses it)
 PR=""        # the open data PR's number when joining one
+HELD=""      # yes when the fresh branch is on origin with no open PR (closed: held)
 REGENERATED=0
 COMMITS=()   # subjects of the commits this run made
 
@@ -70,9 +76,24 @@ gh_write() {
   if [[ $DRY_RUN == 1 ]]; then print_dry gh "$@"; else gh "$@"; fi
 }
 
-# A dry read prints to stderr and returns nothing.
+# A dry read prints to stderr and returns nothing (or DRY_RUN_PR_BODY for a PR body).
 gh_read() {
-  if [[ $DRY_RUN == 1 ]]; then print_dry gh "$@" >&2; else gh "$@"; fi
+  if [[ $DRY_RUN != 1 ]]; then
+    gh "$@"
+    return
+  fi
+  print_dry gh "$@" >&2
+  if [[ $1 == pr && $2 == view && -n ${DRY_RUN_PR_BODY:-} ]]; then cat "$DRY_RUN_PR_BODY"; fi
+}
+
+# Needs only node, so a failure before or during `npm ci` still has a month.
+early_month() {
+  if [[ -n ${MONTH:-} ]]; then
+    echo "$MONTH"
+    return
+  fi
+  node -p 'const [y, m] = JSON.parse(require("fs").readFileSync("src/data/manifest.json", "utf8")).asAt.split("-").map(Number);
+    m === 12 ? y + 1 + "-01" : y + "-" + String(m + 1).padStart(2, "0")'
 }
 
 load_info() { INFO="$(run_tsx scripts/automation/month-info.ts "$@")"; }
@@ -82,15 +103,19 @@ check_inputs() {
   [[ -z ${SPOTLIGHT:-} || ${SPOTLIGHT} =~ $CODE_RE ]] || fail "SPOTLIGHT must be a six-digit code, got \"${SPOTLIGHT}\""
 }
 
-reset_work() {
+# Idempotent: the workflow runs it before the Chrome step, and `run` again.
+prepare() {
   mkdir -p "$STATE"
   rm -f "$STATE/step" "$STATE/month" "$WORK/import.json" "$WORK/build.log" \
     "$WORK/pr-body.md" "$WORK/existing-body.md" "$WORK/previous-manifest.json"
+  remember_month "$(early_month)"
 }
 
+# Install scripts never see the token. The real trust boundary is the pinned
+# package-lock.json (checkout's persisted git credentials are still on disk).
 install() {
   step "Install dependencies"
-  npm ci
+  env -u GH_TOKEN npm ci
 }
 
 # R17: the frozen check and the "already on main" tests read BASE_REF.
@@ -106,6 +131,7 @@ choose_base() {
   out="$(run_tsx scripts/automation/base-branch.ts --fresh "$1")"
   BRANCH="$(sed -n 's/^branch=//p' <<<"$out")"
   PR="$(sed -n 's/^pr=//p' <<<"$out")"
+  HELD="$(sed -n 's/^held=//p' <<<"$out")"
   [[ -n $BRANCH ]] || fail "base-branch.ts printed no branch"
   if [[ -z $PR ]]; then
     echo "No open $LABEL pull request; the run starts $BRANCH from main."
@@ -154,7 +180,7 @@ generate_recap() {
     return
   fi
   step "Write the $TARGET recap facts"
-  local args=(--month "$TARGET" --section data)
+  local args=(--month "$TARGET" --section data --today "$TODAY")
   # updates:generate takes only last month's manifest.
   if [[ $(field manifest_month) == "$(field previous_month)" ]]; then
     args+=(--previous-manifest "$WORK/previous-manifest.json")
@@ -189,7 +215,8 @@ check_and_build() {
 write_summary() {
   step "Write the pull request summary"
   local args=(--month "$TARGET" --kind data --previous-manifest "$WORK/previous-manifest.json"
-    --import-report "$WORK/import.json" --build-log "$WORK/build.log" --branch "$BRANCH")
+    --import-report "$WORK/import.json" --build-log "$WORK/build.log" --branch "$BRANCH"
+    --today "$TODAY")
   if [[ -n $PR ]]; then
     gh_read pr view "$PR" --json body --jq .body >"$WORK/existing-body.md"
     args+=(--append-to "$WORK/existing-body.md")
@@ -254,8 +281,8 @@ open_or_update_pr() {
 }
 
 resolve_failure() {
-  step "Close any failure issue for $TARGET"
-  run_tsx scripts/automation/failure-issue.ts resolve --month "$TARGET"
+  step "Close any failure issue for $1"
+  run_tsx scripts/automation/failure-issue.ts resolve --month "$1"
 }
 
 run_import() {
@@ -265,11 +292,17 @@ run_import() {
   load_info ${MONTH:+--month "$MONTH"}
   remember_month "$(field month)"
   choose_base "data/skillselect-$(field month)"
+  # Controller ruling: closing a data PR holds the month (no import, no issue).
+  if [[ $HELD == yes ]]; then
+    echo "Held: the pull request for $(field long) was closed. Delete branch $BRANCH to import it again."
+    return
+  fi
   load_info ${MONTH:+--month "$MONTH"}
   remember_month "$(field month)"
   probe
   if [[ -z $TARGET ]]; then
     echo "The dashboard has nothing newer than $(field manifest_month). Nothing to do."
+    resolve_failure "$(field month)"
     return
   fi
   [[ $TARGET == "$(field month)" ]] || fail "next-month.ts chose $TARGET, not $(field month)"
@@ -282,6 +315,7 @@ run_import() {
   prune_images
   check_and_build
   write_summary
+  step "Commit"
   commit_paths "data: SkillSelect snapshot as at $(field short)" \
     data/raw src/data ':(exclude)src/data/updates'
   commit_paths "feat(updates): $(field long) recap and Instagram cards" \
@@ -293,7 +327,7 @@ run_import() {
     push_branch
     open_or_update_pr
   fi
-  resolve_failure
+  resolve_failure "$TARGET"
 }
 
 # Spec 6.8: rerun the data section with the founder's pick on the open PR.
@@ -318,17 +352,29 @@ run_swap() {
   if [[ $(as_at_of "$WORK/previous-manifest.json") == "$(field previous_month)" ]]; then
     args+=(--previous-manifest "$WORK/previous-manifest.json")
   fi
-  npm run updates:generate -- "${args[@]}"
+  npm run updates:generate -- "${args[@]}" --today "$TODAY"
   REGENERATED=1
   render_month_set
   check_and_build
+  swap_summary
+  step "Commit"
   commit_paths "feat(updates): spotlight $(field spotlight_name)" src/data/updates public/social
   require_clean_tree
   [[ ${#COMMITS[@]} -gt 0 ]] || fail "The swap changed nothing; is $SPOTLIGHT already the spotlight?"
   push_branch
-  step "Comment on pull request #$PR"
-  comment_on_pr "Swapped the $(field short) spotlight to $(field spotlight_name) ($SPOTLIGHT) and re-rendered the month cards. New commits:"
-  resolve_failure
+  step "Update pull request #$PR"
+  gh_write pr edit "$PR" --body-file - <"$WORK/pr-body.md"
+  comment_on_pr "Swapped the $(field short) spotlight to $(field spotlight_name) ($SPOTLIGHT), re-rendered the month cards and updated the summary's spotlight, images and captions. New commits:"
+  resolve_failure "$TARGET"
+}
+
+# The PR body with this month's spotlight, images and captions regenerated.
+swap_summary() {
+  step "Update the pull request summary"
+  gh_read pr view "$PR" --json body --jq .body >"$WORK/existing-body.md"
+  run_tsx scripts/updates/summary.ts --month "$TARGET" --kind data --branch "$BRANCH" \
+    --today "$TODAY" --swap-into "$WORK/existing-body.md" >"$WORK/pr-body.md"
+  echo "Wrote $WORK/pr-body.md ($(wc -c <"$WORK/pr-body.md" | tr -d ' ') bytes)"
 }
 
 # R20: the artifact holds the git status and any raw files the run fetched.
@@ -349,19 +395,44 @@ report_failure() {
   touch "$WORK/monthly.log"
   FAILED_STEP="$(cat "$STATE/step" 2>/dev/null || echo unknown)"
   export FAILED_STEP
-  run_tsx scripts/automation/failure-issue.ts report --month "$month" --log "$WORK/monthly.log"
+  if [[ -x node_modules/.bin/tsx ]]; then
+    run_tsx scripts/automation/failure-issue.ts report --month "$month" --log "$WORK/monthly.log"
+  else
+    report_failure_with_gh "$month"
+  fi
+}
+
+# Without node_modules (npm ci failed): failure-issue.ts's title, author
+# filter and stdin body, with gh directly.
+report_failure_with_gh() {
+  local title number body fence run_url
+  title="Monthly SkillSelect update failed ($(node -p '
+    const [y, m] = process.argv[1].split("-");
+    ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][m - 1] + " " + y' "$1"))"
+  number="$(gh_read issue list --state open --author app/github-actions --limit 200 \
+    --json number,title --jq ".[] | select(.title == \"$title\") | .number" | head -n 1)"
+  run_url="${GITHUB_SERVER_URL:-}/${GITHUB_REPOSITORY:-}/actions/runs/${GITHUB_RUN_ID:-}"
+  fence="$(tail -n 50 "$WORK/monthly.log" | grep -o '`*' | awk '{ if (length > n) n = length } END { s = "```"; while (length(s) <= n) s = s "`"; print s }')"
+  body="$(printf 'Failing step: %s\nRun: %s\n\nLast 50 log lines:\n\n%s\n%s\n%s\n' \
+    "$FAILED_STEP" "$run_url" "$fence" "$(tail -n 50 "$WORK/monthly.log")" "$fence" | head -c 60000)"
+  if [[ -n $number ]]; then
+    gh_write issue comment "$number" --body-file - <<<"$body"
+  else
+    gh_write issue create --title "$title" --body-file - --assignee "$FOUNDER" <<<"$body"
+  fi
 }
 
 main() {
   check_inputs
   case "${1:-}" in
+    prepare) prepare ;;
     run)
-      reset_work
+      prepare
       if [[ -n ${SPOTLIGHT:-} ]]; then run_swap; else run_import; fi
       ;;
     collect-failure) collect_failure ;;
     report-failure) report_failure ;;
-    *) fail "Usage: monthly.sh run|collect-failure|report-failure" ;;
+    *) fail "Usage: monthly.sh prepare|run|collect-failure|report-failure" ;;
   esac
 }
 

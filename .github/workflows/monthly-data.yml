@@ -55,6 +55,14 @@ jobs:
           node-version: 22
           cache: npm
 
+      # Records the likely month first, so a failure from here on (npm ci,
+      # Chrome) can still open the month's failure issue.
+      - name: Prepare
+        env:
+          MONTH: ${{ inputs.month }}
+          SPOTLIGHT: ${{ inputs.spotlight }}
+        run: bash scripts/automation/monthly.sh prepare
+
       # Ubuntu 24.04 limits unprivileged user namespaces through AppArmor,
       # which Chrome's sandbox needs. Lifting the limit on this throwaway VM
       # keeps the sandbox on (rather than launching Chrome with --no-sandbox).
@@ -63,9 +71,12 @@ jobs:
           if [ -e /proc/sys/kernel/apparmor_restrict_unprivileged_userns ]; then
             sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
           fi
-          "$CHROME_PATH" --version
+          # A headless start that opens a sandboxed renderer.
+          "$CHROME_PATH" --headless=new --disable-gpu --dump-dom about:blank >/dev/null
 
+      # Under the job's 120 minutes, so the failure steps still get time.
       - name: Import, check and open the pull request
+        timeout-minutes: 105
         env:
           GH_TOKEN: ${{ github.token }}
           MONTH: ${{ inputs.month }}
@@ -74,11 +85,11 @@ jobs:
         run: bash scripts/automation/monthly.sh run 2>&1 | tee "$RUNNER_TEMP/monthly.log"
 
       - name: Collect the failed run's files
-        if: failure()
+        if: failure() || cancelled()
         run: bash scripts/automation/monthly.sh collect-failure
 
       - name: Upload the failed run's files
-        if: failure()
+        if: failure() || cancelled()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: monthly-data-failure-${{ github.run_id }}
@@ -90,7 +101,7 @@ jobs:
           retention-days: 7
 
       - name: Open or update the failure issue
-        if: failure()
+        if: failure() || cancelled()
         env:
           GH_TOKEN: ${{ github.token }}
         run: bash scripts/automation/monthly.sh report-failure
