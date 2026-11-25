@@ -1,13 +1,18 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { BUILDER_SENTINELS } from "../src/lib/report-issue/sentinels";
 
 /**
  * Built pages that only render a report payload, so their JS must not contain
  * the report builder (paid report spec: the full report is built on the server).
- * Plan 3 adds check/index.html and report/index.html.
+ * Every chunk in the build is scanned too (plan 3 ruling R5), so a chunk a
+ * page loads later, outside its HTML, can't carry the builder either.
  */
-export const LOCKED_PAGES: string[] = ["sample/index.html"];
+export const LOCKED_PAGES: string[] = [
+  "sample/index.html",
+  "check/index.html",
+  "report/index.html",
+];
 
 const CHUNK_RE = /(?:src|href)="(\/_next\/static\/[^"?]+\.js)(?:\?[^"]*)?"/g;
 
@@ -66,16 +71,51 @@ function pageProblems(outDir: string, page: string): string[] {
   });
 }
 
+/** Every chunk, by its `/_next/static/...` path, that ships a sentinel. */
+export function staticChunkProblems(files: Record<string, string>): string[] {
+  return Object.entries(files).flatMap(([chunk, js]) =>
+    findSentinels(js).map((sentinel) => `${chunk} contains "${sentinel}"`),
+  );
+}
+
+/** Every .js file under out/_next/static, keyed by its served path. */
+function staticChunks(outDir: string): Record<string, string> {
+  const root = path.join(outDir, "_next", "static");
+  const walk = (dir: string): string[] =>
+    readdirSync(dir).flatMap((name) => {
+      const file = path.join(dir, name);
+      return statSync(file).isDirectory() ? walk(file) : [file];
+    });
+  if (!existsSync(root)) return {};
+  return Object.fromEntries(
+    walk(root)
+      .filter((file) => file.endsWith(".js"))
+      .map((file) => [
+        `/${path.relative(outDir, file).split(path.sep).join("/")}`,
+        readFileSync(file, "utf8"),
+      ]),
+  );
+}
+
 function main(): void {
   const outDir = path.resolve("out");
-  const problems = LOCKED_PAGES.flatMap((page) => pageProblems(outDir, page));
+  const chunks = staticChunks(outDir);
+  const problems = [
+    ...LOCKED_PAGES.flatMap((page) => pageProblems(outDir, page)),
+    ...staticChunkProblems(chunks).map(
+      (problem) => `the build ships the report builder: ${problem}`,
+    ),
+  ];
   if (problems.length > 0) {
     for (const problem of problems) console.error(`bundle lock: ${problem}`);
     process.exitCode = 1;
     return;
   }
   const count = LOCKED_PAGES.length;
-  console.log(`bundle lock: ${count} page${count === 1 ? "" : "s"} clean`);
+  const scanned = Object.keys(chunks).length;
+  console.log(
+    `bundle lock: ${count} page${count === 1 ? "" : "s"} clean, ${scanned} chunks scanned`,
+  );
 }
 
 // tsx runs this file as CommonJS, so there is no top-level await.

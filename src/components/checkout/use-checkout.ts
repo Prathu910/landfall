@@ -12,7 +12,7 @@ import {
   type CheckoutState,
 } from "@/lib/checkout/reducer";
 import type { Profile } from "@/lib/migration";
-import type { Quote } from "@/lib/orders/contract";
+import { emailHint, type Quote } from "@/lib/orders/contract";
 import { loadRazorpay, openRazorpay } from "./razorpay";
 import { getQuote, postConfirm, postOrder, postVerify } from "./transport";
 
@@ -25,9 +25,10 @@ type Options = {
 
 type Send = (event: CheckoutEvent) => void;
 
-async function goToReport(token: string) {
+/** The issued mark carries only the masked email, for "PDF sent to a•••@…". */
+async function goToReport(token: string, hint: string) {
   try {
-    sessionStorage.setItem(await issuedFlagKey(token), "1");
+    sessionStorage.setItem(await issuedFlagKey(token), hint);
   } catch {
     /* Without the mark the report simply opens without the issued moment. */
   }
@@ -89,7 +90,8 @@ function start(next: CheckoutState, send: Send, context: Options) {
         .catch(failure(send));
       return;
     case "issued":
-      if (next.token) void goToReport(next.token);
+      if (next.token)
+        void goToReport(next.token, next.emailHint ?? emailHint(next.email));
       return;
     case "error":
       if (next.error?.code === "no-data") onNoData();

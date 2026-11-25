@@ -1,0 +1,137 @@
+/* /report/: the issued report on the check's sage desk, its states, the
+   correction bar and the Edit answers dialog. */
+.report {
+  margin-top: 1rem;
+}
+.report:focus {
+  outline: none;
+}
+.state {
+  display: grid;
+  gap: 0.75rem;
+  max-width: 40rem;
+  padding: 1.5rem;
+  border: 1px solid var(--check-line);
+  border-radius: 1rem;
+  background: var(--check-paper);
+  color: var(--check-ink);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+.stateTitle {
+  margin: 0;
+  font-family: var(--check-font);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.state p {
+  margin: 0;
+}
+.state a {
+  color: var(--check-ink);
+}
+.notice {
+  margin: 1rem 0 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--check-line);
+  border-radius: 0.75rem;
+  background: var(--check-paper);
+  color: var(--check-ink);
+  font-size: 0.9375rem;
+}
+.button {
+  justify-self: start;
+  min-height: 2.75rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--check-line);
+  border-radius: 0.5rem;
+  background: var(--check-paper);
+  color: var(--check-ink);
+  font: inherit;
+  cursor: pointer;
+}
+.primary {
+  border-color: transparent;
+  background: var(--brand-ink-fill);
+  color: var(--brand-on-fill);
+  font-weight: 600;
+}
+.button:focus-visible {
+  outline: 3px solid var(--check-focus);
+  outline-offset: 2px;
+}
+.button:disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+.saveBar {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  margin-top: 1rem;
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--check-line);
+  border-radius: 0.875rem 0.875rem 0 0;
+  background: var(--check-paper);
+  color: var(--check-ink);
+  box-shadow: 0 -10px 24px -18px
+    color-mix(in srgb, var(--shadow-ink) 80%, transparent);
+}
+.saveBar p {
+  margin: 0;
+  font-size: 0.9375rem;
+}
+.saveBar div {
+  display: flex;
+  gap: 0.5rem;
+}
+.fine {
+  margin: 1.5rem 0 0;
+  color: var(--check-muted);
+  font-size: 0.8125rem;
+}
+.drawer {
+  background: var(--check-paper);
+  color: var(--check-ink);
+}
+.drawerTitle {
+  font-family: var(--check-font);
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+.editForm {
+  display: grid;
+  gap: 1.25rem;
+  font-family: var(--check-font);
+}
+.editStep {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+  margin: 0;
+  padding: 1rem 0 0;
+  border: 0;
+  border-top: 1px solid var(--check-line);
+}
+.editStep legend {
+  padding: 0 0.5rem 0 0;
+  font-weight: 700;
+}
+.note {
+  margin: 0;
+  color: var(--check-muted);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+.editActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}

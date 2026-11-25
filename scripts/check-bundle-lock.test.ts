@@ -6,6 +6,8 @@ import {
   chunkListProblems,
   chunksForPage,
   findSentinels,
+  LOCKED_PAGES,
+  staticChunkProblems,
 } from "./check-bundle-lock";
 
 const PAGE = `<!DOCTYPE html><html><head>
@@ -57,6 +59,28 @@ describe("check-bundle-lock", () => {
     expect(chunkListProblems("sample/index.html", chunks)).toEqual([
       "sample/index.html loads no app/sample/page-*.js chunk, so the lock may be missing its code",
     ]);
+  });
+
+  it("locks the sample, the check and the report pages", () => {
+    expect(LOCKED_PAGES).toEqual([
+      "sample/index.html",
+      "check/index.html",
+      "report/index.html",
+    ]);
+  });
+
+  it("scans every static chunk, not only the ones a page lists", () => {
+    const sentinel = BUILDER_SENTINELS[0];
+    const files = {
+      "/_next/static/chunks/a.js": "clean",
+      "/_next/static/chunks/app/other/page-1.js": `x${sentinel}y`,
+    };
+    expect(staticChunkProblems(files)).toEqual([
+      `/_next/static/chunks/app/other/page-1.js contains "${sentinel}"`,
+    ]);
+    expect(staticChunkProblems({ "/_next/static/chunks/a.js": "ok" })).toEqual(
+      [],
+    );
   });
 
   it("finds a sentinel in minified code", () => {

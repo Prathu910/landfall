@@ -8,6 +8,7 @@ describe("robots", () => {
     expect(robotsRules(true, SITE_URL).rules).toEqual({
       userAgent: "*",
       allow: "/",
+      disallow: ["/report/"],
     });
     expect(robotsRules(false, SITE_URL).rules).toEqual({
       userAgent: "*",
@@ -19,6 +20,17 @@ describe("robots", () => {
     const result = robots();
     expect(result).toEqual(robotsRules(SITE_INDEXABLE, SITE_URL));
     expect(result.sitemap).toBe(`${SITE_URL}/sitemap.xml`);
+  });
+
+  it("the report page is disallowed in robots", () => {
+    for (const indexable of [true, false]) {
+      const rules = robotsRules(indexable, SITE_URL).rules;
+      const disallow = Array.isArray(rules) ? [] : [rules.disallow].flat();
+      expect(disallow.some((path) => path === "/report/" || path === "/")).toBe(
+        true,
+      );
+    }
+    expect(robots().rules).toMatchObject({ disallow: ["/report/"] });
   });
 
   it("is open to search engines since the launch", () => {

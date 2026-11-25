@@ -8,6 +8,7 @@ import {
 } from "@/lib/profile-storage";
 import { useEffect, useState, useRef } from "react";
 import { START_OVER, TRY_SAMPLE_ANSWERS } from "@/lib/check-actions";
+import { stepError } from "@/lib/check-validation";
 import { Alert, Button, Progress } from "@mantine/core";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import {
@@ -144,31 +145,8 @@ export function CheckFlow({ source }: { source: ReportSource }) {
     clearSavedProfile(localStorage);
   };
   const next = () => {
-    if (
-      step === 0 &&
-      (!profile.dob || result.missing.includes("Date of birth"))
-    )
-      return setError("Enter a valid date of birth, on or before today.");
-    if (step === 0 && !profile.occupation)
-      return setError("Choose your occupation, or select points check only.");
-    if (
-      step === 1 &&
-      (profile.english === "unknown" || profile.qualification === "unknown")
-    )
-      return setError("Choose your English level and highest qualification.");
-    if (step === 1 && profile.englishDate > asOf)
-      return setError("Your English test date cannot be in the future.");
-    if (step === 2 && profile.partner === "unknown")
-      return setError("Choose the partner category that describes you.");
-    if (
-      step === 2 &&
-      (profile.assessmentDate > asOf ||
-        profile.eoiDate > asOf ||
-        (profile.professionalYear && profile.professionalYearDate > asOf))
-    )
-      return setError(
-        "Assessment, EOI and completion dates cannot be in the future.",
-      );
+    const problem = stepError(step, profile, asOf);
+    if (problem) return setError(problem);
     if (step === 3) {
       setShowResult(true);
       window.scrollTo({

@@ -1,0 +1,29 @@
+/* /report/ sits on the points check's sage desk, as wide as the report sheet. */
+.page {
+  min-height: 60vh;
+  background: var(--check-sage);
+  color: var(--check-ink);
+  font-family: var(--check-font);
+  padding: calc(var(--check-unit) * 9) 0 calc(var(--check-unit) * 16);
+}
+.inner {
+  width: min(100% - 3rem, 56.25rem);
+  margin-inline: auto;
+}
+/* As on /sample/: the report sheet's own phone layout cancels the page
+   gutter, so the column takes the gutter as its margin. */
+@media screen and (max-width: 720px) {
+  .inner {
+    width: auto;
+    margin-inline: var(--page-gutter);
+  }
+}
+@media print {
+  .page {
+    padding: 0;
+    background: none;
+  }
+  .inner {
+    width: auto;
+  }
+}
