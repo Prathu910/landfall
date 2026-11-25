@@ -11,6 +11,7 @@ import {
 import { reportSource } from "@/lib/data/report-source";
 import { EXAMPLES, SAMPLE_CODES } from "@/lib/outlook/examples";
 import { SAMPLE_AS_OF } from "@/lib/sample";
+import { dayText, monthEnd } from "@/lib/updates/format";
 import styles from "./sample-page.module.css";
 export const metadata = { title: "Explore the sample report" };
 
@@ -34,6 +35,8 @@ export default function SamplePage() {
   });
   const first = examples[0].occupation;
   if (first.status !== "ready") throw new Error("Sample needs a core");
+  const meta = loadSampleMeta();
+  const dataAsAt = dayText(monthEnd(meta.asAt));
   return (
     <main id="main" className={styles.page}>
       <div className={styles.inner}>
@@ -53,8 +56,8 @@ export default function SamplePage() {
           <p className={styles.description}>
             Four fictional people, one for each kind of result. The points
             calculations and official occupation snapshot are real. Your own
-            report uses your answers. Example reports use SkillSelect data as at
-            31 Oct 2026.
+            report uses your answers. Example reports use SkillSelect data as at{" "}
+            {dataAsAt}.
             <span className={styles.guideLink}>
               {" "}
               New to skilled PR?{" "}
@@ -68,7 +71,7 @@ export default function SamplePage() {
           fixedComparisons={SAMPLE_CODES.map((code) =>
             toOccupationEvidence(loadSampleCore(code)),
           )}
-          source={reportSource(first.core.asAt, loadSampleMeta())}
+          source={reportSource(first.core.asAt, meta)}
         />
       </div>
     </main>

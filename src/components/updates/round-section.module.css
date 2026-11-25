@@ -5,6 +5,10 @@
   align-items: start;
   margin-top: calc(var(--brand-unit) * 8);
 }
+/* A block with nothing beside its card takes the full width. */
+.single {
+  grid-template-columns: minmax(0, 1fr);
+}
 /* Cut-off moves stack beside the columns on a page without movers. */
 .moves {
   display: grid;

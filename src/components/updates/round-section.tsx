@@ -43,7 +43,7 @@ function RoundBlock({
         lead={round.lead}
         stamp={first ? STAMP : undefined}
       />
-      <div className={styles.grid}>
+      <div className={aside ? styles.grid : `${styles.grid} ${styles.single}`}>
         <DistributionCard round={round} />
         {aside}
       </div>
@@ -117,7 +117,7 @@ export function RoundSection({
             }
           />
           {pool && (
-            <div className={styles.grid}>
+            <div className={`${styles.grid} ${styles.single}`}>
               <PoolChart pool={pool} />
             </div>
           )}

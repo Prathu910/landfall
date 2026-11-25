@@ -77,7 +77,7 @@
   font-weight: 600;
 }
 /* Narrower frames drop the figure words (the tiles hold them) and grow the
-   codes and figures: 23 units at 0.53x (400px) and 31 at 0.39x (296px)
+   codes and figures: 23 units at 0.53x (400px) and 31 at 0.39x (300px)
    still render at 12px. */
 @container (width < 540px) {
   .small {
@@ -91,6 +91,8 @@
     font-size: 30px;
   }
 }
+/* At these sizes the south-east labels would touch, so they move apart
+   (map units: NSW up, VIC west, TAS down). */
 @container (width < 400px) {
   .code {
     font-size: 31px;
@@ -98,5 +100,25 @@
   .big,
   .bigLong {
     font-size: 38px;
+  }
+  .label[data-state="NSW"] {
+    transform: translate(8px, -10px);
+  }
+  .label[data-state="VIC"] {
+    transform: translateX(-22px);
+  }
+  .label[data-state="TAS"] {
+    transform: translate(6px, 14px);
+  }
+}
+/* A 320px viewport draws the map about 274px wide (0.365x): 34 units render
+   at 12.4px, 33 at 12.1px. */
+@container (width < 300px) {
+  .code,
+  .big {
+    font-size: 34px;
+  }
+  .bigLong {
+    font-size: 33px;
   }
 }

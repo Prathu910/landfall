@@ -21,7 +21,7 @@ function Label({
   // The ACT's name sits above its circle and its figures below.
   const valueY = act ? y + ACT_CIRCLE.r + 4 : y;
   return (
-    <>
+    <g className={styles.label} data-state={state}>
       <text x={x} y={act ? y - ACT_CIRCLE.r - 10 : y} className={styles.code}>
         <tspan dy={act ? 0 : "-0.9em"}>{state}</tspan>
       </text>
@@ -37,7 +37,7 @@ function Label({
           {label.small}
         </tspan>
       </text>
-    </>
+    </g>
   );
 }
 

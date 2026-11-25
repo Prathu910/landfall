@@ -111,4 +111,11 @@
   .tiles {
     grid-template-columns: minmax(0, 1fr);
   }
+  /* A thinner frame on phones gives the map's labels room to stay 12px. */
+  .layout > .mapCard {
+    padding: calc(var(--brand-unit) * 1.5);
+  }
+  .legend {
+    padding: 0 calc(var(--brand-unit) * 2.5) calc(var(--brand-unit) * 1.5);
+  }
 }

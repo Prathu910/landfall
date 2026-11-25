@@ -19,8 +19,7 @@ export function NotListedCard({ notListed }: { notListed: NotListedView }) {
               <span className={styles.note}>{item.note}</span>
             </span>
             <span className={parts.figure}>
-              {item.pool}
-              <small>{item.poolLabel}</small>
+              {item.pool} <small>{item.poolLabel}</small>
             </span>
           </li>
         ))}

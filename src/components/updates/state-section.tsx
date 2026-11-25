@@ -102,7 +102,13 @@ export function StateSection({
       </div>
       {nominations && (
         <div className={`${parts.card} ${styles.nominations}`}>
-          <div className={styles.nominationsScroll}>
+          {/* A scrolling region takes focus so it scrolls by keyboard. */}
+          <div
+            className={styles.nominationsScroll}
+            tabIndex={0}
+            role="region"
+            aria-label={nominations.heading}
+          >
             <table className={parts.table}>
               <caption>{nominations.heading}</caption>
               <thead>

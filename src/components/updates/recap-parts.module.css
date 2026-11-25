@@ -85,8 +85,8 @@ a.name:hover {
   line-height: 1.1;
   white-space: nowrap;
 }
+/* The markup puts a space before the label, so no margin is needed. */
 .figure small {
-  margin-left: calc(var(--brand-unit) * 1);
   color: var(--brand-muted);
   font-family: var(--brand-font);
   font-size: 0.75rem;
