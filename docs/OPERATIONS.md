@@ -104,7 +104,7 @@ All three run only from `main` on `schedule` or `workflow_dispatch`. The data jo
 
 Use Actions, pick the workflow, "Run workflow" (or `gh workflow run <file>`), and read each run's summary.
 
-1. `monthly-data` with `month` = `2026-10` (and no spotlight). It re-imports a month that is already published, as a no-op check. Expected: a pull request in which `src/data/manifest.json` changes only in `checkedAt`; `src/data/updates/2026-10.json` is unchanged; `data/raw/` changes only if Home Affairs revised 2026-10, which the summary lists under "Needs your decision"; the summary renders with its images table. Close the pull request (or merge it) before step 3: an open data pull request is one the round job joins. Closing it holds 2026-10, which does no harm.
+1. `monthly-data` with `month` = `2026-10` (and no spotlight). It re-imports a month that is already published, as a no-op check. Expected: a pull request in which `src/data/manifest.json` changes only in `checkedAt`; `src/data/updates/2026-10.json` is unchanged; `data/raw/` changes only if Home Affairs revised 2026-10, which the summary lists under "Needs your decision"; the summary renders with its images table. Close the pull request (or merge it) before step 2: the next data run joins an open data pull request. Closing it holds 2026-10, which does no harm.
 2. `monthly-data` with no inputs. This exercises the dashboard probe: expected "Nothing to do" (no newer month) and exit 0, or, if November is out, the November pull request.
 3. `round-189`. Expected: no new round, exit 0, no pull request. If a November round is already published, it opens that round's pull request instead.
 4. `page-watch`, twice. First run: "baseline stored", no issues. Second run: no issues.

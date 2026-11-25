@@ -8,7 +8,7 @@ The three workflows (`monthly-data`, `round-189`, `page-watch`) are on branch `r
 - [ ] Optional: set the repository variable `CF_PAGES_PROJECT` (Cloudflare Pages project name) so pull requests link a preview.
 - [ ] Merge to `main`.
 - [ ] Rehearse with "Run workflow" (`docs/OPERATIONS.md`, "Rehearsal"), reading each run's summary and noting durations in the Plan 3 ledger:
-  - `monthly-data` with month `2026-10` (a no-op check). Close its pull request before running `round-189`, or the round run joins it.
+  - `monthly-data` with month `2026-10` (a no-op check). Close its pull request before the next run, or that run (`round-189` included) joins it.
   - `monthly-data` with no inputs, to exercise the dashboard probe.
   - `round-189`. If a November round is already published, it opens that round's pull request.
   - `page-watch` twice.
