@@ -1,6 +1,7 @@
 // Usage: npm run data:import -- --as-at YYYY-MM [--backfill] [--checked-at YYYY-MM-DD]
+//        npm run data:import -- --probe [--report-file <path>]
 //        npm run data:generate -- --as-at YYYY-MM [--checked-at YYYY-MM-DD] [--rounds-html <dir>]
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import type { MonthKey } from "../../src/lib/data/types";
 import { generate, writeGenerated, type GeneratedData } from "./generate";
@@ -21,12 +22,30 @@ import {
 import { validateGenerated } from "./validate-generated";
 
 export type CliArgs = {
-  asAt: MonthKey;
+  /** Null only for --probe, which names no month. */
+  asAt: MonthKey | null;
   mode: ImportMode;
+  /** Print the newest As At Month and write nothing. */
+  probe: boolean;
+  /** Where to write the ImportReport JSON, if anywhere. */
+  reportFile: string | null;
   generateOnly: boolean;
   checkedAt: string; // YYYY-MM-DD
   /** A folder holding saved invitation-rounds.html and previous-rounds.html. */
   roundsHtml: string | null;
+};
+
+/** What a run did, written to --report-file on success and on failure. */
+export type ImportReport = {
+  mode: "probe" | "monthly" | "backfill" | "generate-only" | "rounds-only";
+  asAt: MonthKey | null;
+  newestAsAt: MonthKey | null;
+  pageReads: number;
+  budget: number | null;
+  revisions: { path: string; rowsBefore: number; rowsAfter: number }[];
+  unmatched: string[];
+  newRounds: string[];
+  durationSeconds: number;
 };
 
 const RAW_ROOT = "data/raw";
@@ -55,14 +74,40 @@ export function parseArgs(argv: string[]): CliArgs {
   let backfill = false;
   let generateOnly = false;
   let roundsHtml: string | null = null;
+  let probe = false;
+  let reportFile: string | null = null;
+  const given: string[] = [];
   for (let i = 0; i < argv.length; i++) {
     const flag = argv[i];
-    if (flag === "--backfill") backfill = true;
+    if (flag !== "--probe" && flag !== "--report-file") given.push(flag);
+    if (flag === "--probe") probe = true;
+    else if (flag === "--report-file") reportFile = argv[++i] ?? "";
+    else if (flag === "--backfill") backfill = true;
     else if (flag === "--generate-only") generateOnly = true;
     else if (flag === "--rounds-html") roundsHtml = argv[++i] ?? "";
     else if (flag === "--as-at") asAt = argv[++i];
     else if (flag === "--checked-at") checkedAt = argv[++i];
     else throw new Error(`Unknown argument "${flag}"`);
+  }
+  if (
+    reportFile !== null &&
+    (reportFile === "" || reportFile.startsWith("--"))
+  ) {
+    throw new Error("--report-file needs a path");
+  }
+  if (probe) {
+    if (given.length > 0) {
+      throw new Error(`--probe takes only --report-file, not ${given[0]}`);
+    }
+    return {
+      asAt: null,
+      mode: "monthly",
+      probe,
+      reportFile,
+      generateOnly: false,
+      checkedAt,
+      roundsHtml: null,
+    };
   }
   if (asAt === undefined) throw new Error("--as-at YYYY-MM is required");
   if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(asAt)) {
@@ -86,6 +131,8 @@ export function parseArgs(argv: string[]): CliArgs {
   return {
     asAt,
     mode: backfill ? "backfill" : "monthly",
+    probe,
+    reportFile,
     generateOnly,
     checkedAt,
     roundsHtml,
@@ -132,7 +179,11 @@ function printMisprints(
 }
 
 /** Parses both pages, keeps the stored rounds and saves the current page. */
-function readRoundPages(currentHtml: string, previousHtml: string): RoundPages {
+function readRoundPages(
+  currentHtml: string,
+  previousHtml: string,
+  report: ImportReport,
+): RoundPages {
   const parsed = parseRoundPagesDetailed(currentHtml, previousHtml);
   console.log(`189 rounds parsed: ${parsed.rounds.length}`);
   const stored = readKeptRounds();
@@ -140,17 +191,22 @@ function readRoundPages(currentHtml: string, previousHtml: string): RoundPages {
     rounds: parsed.rounds,
     skipped: parsed.skipped,
   });
+  const storedDates = new Set(stored?.rounds.map((round) => round.date));
+  report.newRounds = pages.rounds
+    .map((round) => round.date)
+    .filter((date) => !storedDates.has(date));
   printMisprints(parsed.misprints, stored);
   const date = parseCurrentRound(currentHtml).date;
   console.log(`Stored ${writeRoundPage(RAW_ROOT, date, currentHtml)}`);
   return pages;
 }
 
-function readSavedRoundPages(dir: string): RoundPages {
+function readSavedRoundPages(dir: string, report: ImportReport): RoundPages {
   const read = (name: string) => readFileSync(join(dir, name), "utf8");
   return readRoundPages(
     read("invitation-rounds.html"),
     read("previous-rounds.html"),
+    report,
   );
 }
 
@@ -161,9 +217,9 @@ function printSkipped(pages: RoundPages): void {
   }
 }
 
-async function fetchRounds(): Promise<RoundPages> {
+async function fetchRounds(report: ImportReport): Promise<RoundPages> {
   const { currentHtml, previousHtml } = await fetchRoundPages();
-  return readRoundPages(currentHtml, previousHtml);
+  return readRoundPages(currentHtml, previousHtml, report);
 }
 
 function rowCount(file: RawViewFile | undefined): number {
@@ -171,13 +227,15 @@ function rowCount(file: RawViewFile | undefined): number {
 }
 
 /** Writes one fetched file; a changed month becomes a new revision. */
-function storeRaw(file: RawViewFile, revisions: string[]): void {
+function storeRaw(file: RawViewFile, revisions: ImportReport["revisions"]) {
   const before = readRawView(RAW_ROOT, file.asAt, file.viewId);
   const { path, revised } = writeRawView(RAW_ROOT, file);
   if (revised) {
-    revisions.push(
-      `  ${path}: ${rowCount(before)} rows before, ${rowCount(file)} after`,
-    );
+    revisions.push({
+      path,
+      rowsBefore: rowCount(before),
+      rowsAfter: rowCount(file),
+    });
   }
 }
 
@@ -186,17 +244,21 @@ function storeRaw(file: RawViewFile, revisions: string[]): void {
  * files only and a re-run backfill resumes after them. src/data is not
  * touched until everything validates.
  */
-async function fetchRaw(args: CliArgs): Promise<void> {
+async function fetchRaw(
+  args: CliArgs,
+  asAt: MonthKey,
+  report: ImportReport,
+): Promise<void> {
   const budget = PAGE_READ_BUDGET[args.mode];
+  report.budget = budget;
   const jobs = planFetches(
-    args.asAt,
+    asAt,
     args.mode,
     (viewId, month) => readRawView(RAW_ROOT, month, viewId) !== undefined,
   );
   console.log(`${args.mode}: ${jobs.length} view-months, budget ${budget}`);
   // A finished backfill has nothing left to fetch; don't connect at all.
   if (jobs.length === 0) return;
-  const revisions: string[] = [];
   const session = await openQlikSession({
     throttleMs: THROTTLE_MS,
     maxPageReads: budget,
@@ -205,18 +267,23 @@ async function fetchRaw(args: CliArgs): Promise<void> {
   try {
     await fetchViews(session, jobs, {
       log: (line) => console.log(line),
-      onFile: (file) => storeRaw(file, revisions),
+      onFile: (file) => storeRaw(file, report.revisions),
       readStoredPool: (month) => readRawView(RAW_ROOT, month, "pool-by-score"),
     });
   } finally {
-    console.log(`Page reads used: ${session.pageReads()} of ${budget}`);
-    console.log(`Revisions found: ${revisions.length}`);
-    for (const line of revisions) console.log(line);
+    report.pageReads = session.pageReads();
+    console.log(`Page reads used: ${report.pageReads} of ${budget}`);
+    console.log(`Revisions found: ${report.revisions.length}`);
+    for (const r of report.revisions) {
+      console.log(
+        `  ${r.path}: ${r.rowsBefore} rows before, ${r.rowsAfter} after`,
+      );
+    }
     session.close();
   }
 }
 
-function report(data: GeneratedData, issues: string[]): void {
+function printSummary(data: GeneratedData, issues: string[]): void {
   const unmatched = data.manifest.roundsUnmatched;
   console.log(`Occupations: ${data.manifest.occupations.length}`);
   console.log(`Unmatched round names: ${unmatched.length}`);
@@ -225,44 +292,94 @@ function report(data: GeneratedData, issues: string[]): void {
   for (const issue of issues) console.log(`  ${issue}`);
 }
 
+/** The newest As At Month the dashboard lists. Reads no table. */
+async function probeNewest(): Promise<MonthKey> {
+  const session = await openQlikSession({
+    throttleMs: THROTTLE_MS,
+    maxPageReads: 0,
+    callTimeoutMs: CALL_TIMEOUT_MS,
+  });
+  try {
+    const months = await session.listAsAtMonths();
+    return months[months.length - 1];
+  } finally {
+    session.close();
+  }
+}
+
+function modeOf(args: CliArgs): ImportReport["mode"] {
+  if (args.probe) return "probe";
+  return args.generateOnly ? "generate-only" : args.mode;
+}
+
+async function run(args: CliArgs, report: ImportReport): Promise<void> {
+  if (args.probe) {
+    report.newestAsAt = await probeNewest();
+    console.log(`Newest As At Month: ${report.newestAsAt}`);
+    return;
+  }
+  const asAt = args.asAt as MonthKey;
+  let rounds: RoundPages;
+  if (args.roundsHtml !== null) {
+    rounds = readSavedRoundPages(args.roundsHtml, report);
+  } else if (args.generateOnly) {
+    rounds = readStoredRounds();
+  } else {
+    rounds = await fetchRounds(report);
+    await fetchRaw(args, asAt, report);
+  }
+  printSkipped(rounds);
+  // Every mode that writes src/data carries dropped occupations forward.
+  const previous = readPreviousData(OUT_ROOT);
+  const data = generate({
+    previous,
+    rawRoot: RAW_ROOT,
+    asAt,
+    checkedAt: args.checkedAt,
+    rounds,
+    importVersion: IMPORT_VERSION,
+  });
+  report.unmatched = data.manifest.roundsUnmatched;
+  const issues = validateGenerated(data, previous?.manifest ?? null);
+  printSummary(data, issues);
+  if (issues.length > 0) {
+    console.log(`Not written: ${OUT_ROOT} is unchanged`);
+    process.exitCode = 1;
+    return;
+  }
+  writeGenerated(OUT_ROOT, data);
+  console.log(`Wrote ${OUT_ROOT} (${data.manifest.snapshotId})`);
+}
+
 async function main(): Promise<void> {
   const started = Date.now();
+  let args: CliArgs | null = null;
+  const report: ImportReport = {
+    mode: "monthly",
+    asAt: null,
+    newestAsAt: null,
+    pageReads: 0,
+    budget: null,
+    revisions: [],
+    unmatched: [],
+    newRounds: [],
+    durationSeconds: 0,
+  };
   try {
-    const args = parseArgs(process.argv.slice(2));
-    let rounds: RoundPages;
-    if (args.roundsHtml !== null) {
-      rounds = readSavedRoundPages(args.roundsHtml);
-    } else if (args.generateOnly) {
-      rounds = readStoredRounds();
-    } else {
-      rounds = await fetchRounds();
-      await fetchRaw(args);
-    }
-    printSkipped(rounds);
-    // Every mode that writes src/data carries dropped occupations forward.
-    const previous = readPreviousData(OUT_ROOT);
-    const data = generate({
-      previous,
-      rawRoot: RAW_ROOT,
-      asAt: args.asAt,
-      checkedAt: args.checkedAt,
-      rounds,
-      importVersion: IMPORT_VERSION,
-    });
-    const issues = validateGenerated(data, previous?.manifest ?? null);
-    report(data, issues);
-    if (issues.length > 0) {
-      console.log(`Not written: ${OUT_ROOT} is unchanged`);
-      process.exitCode = 1;
-      return;
-    }
-    writeGenerated(OUT_ROOT, data);
-    console.log(`Wrote ${OUT_ROOT} (${data.manifest.snapshotId})`);
+    args = parseArgs(process.argv.slice(2));
+    report.mode = modeOf(args);
+    report.asAt = args.asAt;
+    await run(args, report);
   } catch (error) {
     console.error(error instanceof Error ? error.message : error);
     process.exitCode = 1;
   } finally {
-    console.log(`Duration: ${((Date.now() - started) / 1000).toFixed(0)} s`);
+    report.durationSeconds = Math.round((Date.now() - started) / 1000);
+    console.log(`Duration: ${report.durationSeconds} s`);
+    // Written on failure too, with what is known by then.
+    if (args?.reportFile) {
+      writeFileSync(args.reportFile, `${JSON.stringify(report, null, 2)}\n`);
+    }
   }
 }
 

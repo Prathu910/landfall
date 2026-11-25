@@ -16,6 +16,7 @@ function fakeSession(tables: (call: number) => Table): QlikSession {
     select: async () => {},
     clear: async () => {},
     readTable: async () => tables(calls++),
+    listAsAtMonths: async () => [],
     pageReads: () => calls,
     close: () => {},
   };

@@ -22,6 +22,8 @@ describe("parseArgs", () => {
     ).toEqual({
       asAt: "2026-10",
       mode: "backfill",
+      probe: false,
+      reportFile: null,
       generateOnly: false,
       checkedAt: "2026-11-17",
       roundsHtml: null,
@@ -68,5 +70,27 @@ describe("parseArgs", () => {
     expect(() =>
       parseArgs(["--as-at", "2026-10", "--generate-only", "--rounds-html"]),
     ).toThrow(/--rounds-html/);
+  });
+
+  it("probes with no month and takes only --report-file", () => {
+    const args = parseArgs(["--probe", "--report-file", "out.json"]);
+    expect(args).toMatchObject({
+      probe: true,
+      asAt: null,
+      reportFile: "out.json",
+    });
+    expect(() => parseArgs(["--probe", "--as-at", "2026-10"])).toThrow(
+      /--probe/,
+    );
+    expect(() => parseArgs(["--probe", "--backfill"])).toThrow(/--probe/);
+    expect(() => parseArgs(["--probe", "--report-file"])).toThrow(
+      /--report-file/,
+    );
+  });
+
+  it("reads --report-file with an import", () => {
+    expect(
+      parseArgs(["--as-at", "2026-10", "--report-file", "r.json"]).reportFile,
+    ).toBe("r.json");
   });
 });
