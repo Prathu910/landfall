@@ -26,6 +26,17 @@ function Distribution({ view }: { view: RoundView["distribution"] }) {
   );
 }
 
+/** "was 85 on 13 Nov 2025": the date never breaks inside, only before "on". */
+function WasText({ text }: { text: string }) {
+  const [head, date] = text.split(" on ");
+  if (date === undefined) return text;
+  return (
+    <>
+      {head} on <span className="nowrap">{date}</span>
+    </>
+  );
+}
+
 function Picks({ view }: { view: NonNullable<RoundView["picks"]> }) {
   return (
     <div className="block">
@@ -36,7 +47,9 @@ function Picks({ view }: { view: NonNullable<RoundView["picks"]> }) {
             <span className="name fit">{item.name}</span>
             <span className="score">
               <span className="val">{item.current}</span>
-              <span className="was">{item.previous}</span>
+              <span className="was">
+                <WasText text={item.previous} />
+              </span>
             </span>
           </div>
         ))}

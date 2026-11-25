@@ -142,6 +142,31 @@ describe("the cover's sub-line", () => {
   });
 });
 
+describe("previous cutoffs on the round card", () => {
+  const round = (facts: RecapFacts) =>
+    monthSetCards(facts).find((c) => c.id === "round") as Extract<
+      CardView,
+      { id: "round" }
+    >;
+
+  it("drops the year inside the round's year and keeps it across years", () => {
+    expect(round(oct).picks?.items[0].previous).toMatch(/^was \d+ on 4 Jun$/);
+    const [date, section] = Object.entries(oct.rounds)[0];
+    const earlier = {
+      ...oct,
+      rounds: {
+        [date]: {
+          ...section,
+          previousRound: { ...section.previousRound!, date: "2025-11-13" },
+        },
+      },
+    } as RecapFacts;
+    expect(round(earlier).picks?.items[0].previous).toMatch(
+      /^was \d+ on 13 Nov 2025$/,
+    );
+  });
+});
+
 describe("a month without a round", () => {
   it("drops card 2 and the cover's round stamp", () => {
     const cards = monthSetCards(dataOnly);

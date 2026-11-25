@@ -206,7 +206,15 @@ function notListedLine(section: RoundSection): string | null {
   return `Listed on ${dayText(previousRound.date)}, not this round (${formatNumber(notListedAgain.length)}): ${names.join(", ")}.`;
 }
 
-function picksView(section: RoundSection): RoundCard["picks"] {
+/** "4 Jun" in the round's own year, "13 Nov 2025" in an earlier one. */
+function previousDayText(previous: string, current: string): string {
+  const text = dayText(previous);
+  return previous.slice(0, 4) === current.slice(0, 4)
+    ? withoutYear(text)
+    : text;
+}
+
+function picksView(section: RoundSection, date: string): RoundCard["picks"] {
   const { previousRound, cardPicks } = section;
   if (!previousRound || cardPicks.length === 0) return null;
   return {
@@ -214,7 +222,7 @@ function picksView(section: RoundSection): RoundCard["picks"] {
     items: cardPicks.map((move) => ({
       name: move.name,
       current: String(move.current),
-      previous: `was ${move.previous} on ${withoutYear(dayText(previousRound.date))}`,
+      previous: `was ${move.previous} on ${previousDayText(previousRound.date, date)}`,
     })),
   };
 }
@@ -250,7 +258,7 @@ function roundCard(
       })),
       axis: "Lowest score invited (points) · number of occupations above each bar",
     },
-    picks: picksView(section),
+    picks: picksView(section, date),
     notListed: notListedLine(section),
   };
 }

@@ -86,6 +86,28 @@ describe.skipIf(!existsSync(chrome))("rendering cards in Chrome", () => {
   );
 
   it(
+    "fits the longest name with a cross-year previous cutoff",
+    async () => {
+      const card = byId("round");
+      const picks = card.picks;
+      if (!picks) throw new Error("no picks");
+      const crossYear = {
+        ...card,
+        picks: {
+          ...picks,
+          items: picks.items.map((item) => ({
+            ...item,
+            previous: item.previous.replace(/ on .*$/, " on 13 Nov 2025"),
+          })),
+        },
+      };
+      const png = await renderer.render(job(crossYear, "feed", "light"));
+      expect(pngSize(png).width).toBe(1080);
+    },
+    SLOW,
+  );
+
+  it(
     "refuses a dark render that came out light",
     async () => {
       const dark = job(byId("closing"), "feed", "dark");

@@ -329,7 +329,7 @@ p {
   grid-template-columns: 1fr auto;
   gap: 20px;
   align-items: baseline;
-  padding: 7px 0;
+  padding: 5px 0;
   border-bottom: 1.5px solid var(--rule);
   font-size: 28px;
 }
@@ -351,8 +351,12 @@ p {
   color: var(--green);
 }
 .row .was {
+  display: inline-block;
+  max-width: 170px;
   margin-left: 12px;
   font-size: 24px;
+  line-height: 1.1;
+  vertical-align: baseline;
   color: var(--muted);
 }
 
