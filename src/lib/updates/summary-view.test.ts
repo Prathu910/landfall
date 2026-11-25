@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import type { ImportReport } from "./import-report";
 import type { SetManifest } from "./set-manifest";
+import { frozenManifest } from "../data/__fixtures__/frozen-2026-10";
 import type { Manifest } from "../data/types";
 import { BANNED_COPY } from "../report/copy";
 import { loadRecap } from "./load-server";
@@ -17,18 +18,17 @@ import {
 const readJson = <T>(file: string): T =>
   JSON.parse(readFileSync(file, "utf8")) as T;
 
-// The opening line states the snapshot and check date, so those are pinned
-// to 2026-10: a new month (or a re-import) must not fail this test.
-const manifest: Manifest = {
-  ...readJson<Manifest>("src/data/manifest.json"),
-  snapshotId: "skillselect-2026-10-31",
-  asAt: "2026-10",
-  checkedAt: "2026-11-17",
-};
+// The opening line states the snapshot and check date, so the manifest is the
+// frozen 2026-10 one with its published check date: a new month (or a
+// re-import) must not fail this test.
+const manifest: Manifest = { ...frozenManifest(), checkedAt: "2026-11-17" };
 const facts = loadRecap("2026-10");
-const monthSet = readJson<SetManifest>("public/social/2026-10/month/set.json");
+// Copies of the 2026-10 set.json files: retention will prune public/social/.
+const monthSet = readJson<SetManifest>(
+  "src/lib/updates/__fixtures__/social-2026-10/month-set.json",
+);
 const roundSet = readJson<SetManifest>(
-  "public/social/2026-10/round-2026-10-15/set.json",
+  "src/lib/updates/__fixtures__/social-2026-10/round-2026-10-15-set.json",
 );
 
 const report: ImportReport = {
@@ -52,7 +52,7 @@ const base: SummaryInput = {
   previousManifest: null,
   report,
   buildWarnings: [],
-  publishedDataMonths: [],
+  published: {},
   coverage: {
     current: { min: 22280, max: 22299 },
     previous: { min: 21400, max: 21420 },
@@ -160,7 +160,7 @@ describe("buildSummary, a data update", () => {
     const published = buildSummary({
       ...base,
       report: withRevision(path, 1200, 1203),
-      publishedDataMonths: ["2026-10"],
+      published: { "2026-10": facts.data!.national },
     });
     expect(published).toContain("1,200 rows before, 1,203 after");
     expect(published).toMatch(/published recap affected/);
@@ -169,6 +169,48 @@ describe("buildSummary, a data update", () => {
       report: withRevision(path, 1200, 1203),
     });
     expect(open).toMatch(/no published recap affected/);
+  });
+
+  it("shows last month's national figures before and after a revision", () => {
+    // Summarising 2026-10, a revision of 2026-09: the figures after are this
+    // section's "previous" values; the published recap's are made up here.
+    const september = structuredClone(facts.data!.national);
+    september["189"].submitted.current = { min: 181000, max: 182000 };
+    const md2 = buildSummary({
+      ...base,
+      report: withRevision("data/raw/2026-09/status-history.json", 10, 11),
+      published: { "2026-09": september },
+    });
+    expect(md2).toContain(
+      "  - 189: EOIs submitted 181,000–182,000 before, 181,076–182,311 after;",
+    );
+    expect(md2).toMatch(
+      / {2}- 190: EOIs submitted .+ before, .+ after; invited/,
+    );
+    expect(md2).toMatch(/ {2}- 491: /);
+  });
+
+  it("leaves the figures out when the revised month isn't last month", () => {
+    const md2 = buildSummary({
+      ...base,
+      report: withRevision("data/raw/2026-10/status-history.json", 10, 11),
+      published: { "2026-10": facts.data!.national },
+    });
+    expect(md2).toMatch(/published recap affected/);
+    expect(md2).not.toMatch(/EOIs submitted .+ before/);
+  });
+
+  it("puts the coverage check under Notes, so nothing can need a decision", () => {
+    const quiet = buildSummary({ ...base, previousManifest: manifest });
+    const decision = quiet.slice(
+      quiet.indexOf("### Needs your decision"),
+      quiet.indexOf("### Notes"),
+    );
+    expect(decision).toContain("Nothing needs a decision.");
+    expect(quiet).toMatch(/### Notes\n\n- Coverage-window check: /);
+    expect(buildSummary({ ...base, coverage: null })).not.toContain(
+      "### Notes",
+    );
   });
 
   it("does not repeat unmatched names the previous month already had", () => {

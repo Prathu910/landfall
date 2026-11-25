@@ -114,6 +114,23 @@ function currentEntries(manifest: Manifest): Map<string, string> {
   );
 }
 
+/**
+ * The cores of occupations that dropped out this month: marked with last
+ * month as their `lastAsAt`. Their figures belong in last month's sums.
+ */
+function droppedThisMonth(
+  cores: readonly OccupationCore[],
+  manifest: Manifest,
+  previousMonth: MonthKey,
+): OccupationCore[] {
+  const codes = new Set(
+    manifest.occupations
+      .filter((entry) => entry.lastAsAt === previousMonth)
+      .map((entry) => entry.code),
+  );
+  return coresAsAt(cores, previousMonth).filter((core) => codes.has(core.code));
+}
+
 function difference(a: Map<string, string>, b: Map<string, string>): OccRef[] {
   return [...a]
     .filter(([code]) => !b.has(code))
@@ -139,8 +156,9 @@ function previousSource(
 /**
  * The month's data section, from its dashboard snapshot and the stored
  * rounds. Occupations marked `lastAsAt` in the manifest are left out of every
- * sum, ranking and pick (R6); rounds after the month are ignored (R5), except
- * that the nominations table is the newest one stored.
+ * sum, ranking and pick (R6), except that those dropped this month still count
+ * in last month's national and state figures; rounds after the month are
+ * ignored (R5), except that the nominations table is the newest one stored.
  */
 export function buildDataSection(input: {
   month: MonthKey;
@@ -180,6 +198,7 @@ export function buildDataSection(input: {
     [...rounds.rounds]
       .sort((a, b) => (a.date < b.date ? 1 : -1))
       .find((round) => round.nominations !== null)?.nominations ?? null;
+  const dropped = droppedThisMonth(input.cores, manifest, previousMonth);
   const previousEntries = previousManifest
     ? currentEntries(previousManifest)
     : null;
@@ -192,12 +211,12 @@ export function buildDataSection(input: {
       previous: previousSource(previousMonth, previousManifest, previousFacts),
       federalListCheckedAt: federal.checkedAt,
     },
-    national: nationalFigures(cores, month),
+    national: nationalFigures(cores, month, dropped),
     pool189ByScore: scoreTotals(cores, month, "189", "pool"),
     invitedByScore: byVisa((visa) =>
       scoreTotals(cores, month, visa, "invited"),
     ),
-    states: stateFigures(cores, month),
+    states: stateFigures(cores, month, dropped),
     nominations,
     movers: poolMovers(cores, month),
     notable189: notable189(cores, rounds, month),

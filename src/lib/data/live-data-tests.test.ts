@@ -6,16 +6,19 @@ import { describe, expect, it } from "vitest";
  * A monthly import changes the live SkillSelect data. Tests that assert
  * specific figures or labels read the frozen 2026-10 snapshot instead; only
  * the invariants below (which should stop a bad month) read live data.
- * Paths are relative to src/lib/.
+ * Paths are relative to the repository root.
  */
 const LIVE_INVARIANT_TESTS = new Set([
-  "occupation-page/copy-sweep.test.ts",
-  "occupation-page/slug.test.ts",
-  "outlook/sweep-60.test.ts",
-  "outlook/sweep-70.test.ts",
-  "outlook/sweep-80.test.ts",
-  "outlook/sweep-90.test.ts",
-  "report-evidence.test.ts",
+  "scripts/import/generate-rounds.test.ts",
+  "scripts/social/title-fit.test.ts",
+  "scripts/updates/generate.test.ts",
+  "src/lib/occupation-page/copy-sweep.test.ts",
+  "src/lib/occupation-page/slug.test.ts",
+  "src/lib/outlook/sweep-60.test.ts",
+  "src/lib/outlook/sweep-70.test.ts",
+  "src/lib/outlook/sweep-80.test.ts",
+  "src/lib/outlook/sweep-90.test.ts",
+  "src/lib/report-evidence.test.ts",
 ]);
 
 const LIVE_LOADER_NAMES =
@@ -23,9 +26,13 @@ const LIVE_LOADER_NAMES =
 const LIVE_IMPORTS = [
   /from\s+["'][^"']*occupation-index(\.json)?["']/,
   /from\s+["'][^"']*__fixtures__\/sweep["']/,
+  /from\s+["'][^"']*data\/manifest\.json["']/,
+  /["']src\/data\/manifest\.json["']/,
+  /\bloadAllCores\b/,
 ];
 
-const LIB = path.join(process.cwd(), "src", "lib");
+const ROOT = process.cwd();
+const SCANNED = ["src/lib", "scripts"];
 
 function testFiles(dir: string): string[] {
   return readdirSync(dir).flatMap((name) => {
@@ -35,7 +42,7 @@ function testFiles(dir: string): string[] {
   });
 }
 
-/** Does the file read the live SkillSelect loaders or index? */
+/** Does the file read the live SkillSelect loaders, manifest, cores or index? */
 function readsLiveData(source: string): boolean {
   const loadServerImports = source.matchAll(
     /import\s*\{([^}]*)\}\s*from\s*["'][^"']*load-server["']/g,
@@ -47,14 +54,16 @@ function readsLiveData(source: string): boolean {
 }
 
 describe("tests that read live SkillSelect data", () => {
-  const files = testFiles(LIB).map((file) => ({
-    rel: path.relative(LIB, file).split(path.sep).join("/"),
-    source: readFileSync(file, "utf8"),
-  }));
+  const files = SCANNED.flatMap((dir) => testFiles(path.join(ROOT, dir))).map(
+    (file) => ({
+      rel: path.relative(ROOT, file).split(path.sep).join("/"),
+      source: readFileSync(file, "utf8"),
+    }),
+  );
 
   it("are only the listed invariant tests", () => {
     const offenders = files
-      .filter(({ rel }) => rel !== "data/live-data-tests.test.ts")
+      .filter(({ rel }) => rel !== "src/lib/data/live-data-tests.test.ts")
       .filter(({ source }) => readsLiveData(source))
       .map(({ rel }) => rel)
       .filter((rel) => !LIVE_INVARIANT_TESTS.has(rel));
@@ -64,7 +73,7 @@ describe("tests that read live SkillSelect data", () => {
   it("never reaches live data through the shared outlook fixtures", () => {
     for (const name of ["scenario-input", "review-profiles"]) {
       const fixture = readFileSync(
-        path.join(LIB, "outlook", "__fixtures__", `${name}.ts`),
+        path.join(ROOT, "src/lib/outlook/__fixtures__", `${name}.ts`),
         "utf8",
       );
       expect(readsLiveData(fixture), name).toBe(false);
@@ -77,5 +86,15 @@ describe("tests that read live SkillSelect data", () => {
       return !file || !readsLiveData(file.source);
     });
     expect(stale).toEqual([]);
+  });
+
+  it("sees the manifest and every core however a test reaches them", () => {
+    expect(readsLiveData(`import m from "../../data/manifest.json";`)).toBe(
+      true,
+    );
+    expect(readsLiveData(`readJson("src/data/manifest.json")`)).toBe(true);
+    expect(readsLiveData(`popularOccupations(loadAllCores(), m)`)).toBe(true);
+    // Mocking the manifest with frozen data is how a test avoids it.
+    expect(readsLiveData(`vi.mock("../../data/manifest.json", f)`)).toBe(false);
   });
 });

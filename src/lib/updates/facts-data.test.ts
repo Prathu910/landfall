@@ -207,6 +207,66 @@ describe("buildDataSection", () => {
     ).toThrow();
   });
 
+  it("keeps an occupation dropped this month in last month's figures", () => {
+    // A synthetic November: every 2026-10 core moves on a month with the same
+    // figures, except Registered Nurses nec, which drops out of the data.
+    const october = buildDataSection(base);
+    const next = <T>(months: Record<string, T>) => ({
+      ...months,
+      "2026-11": months["2026-10"],
+    });
+    const novemberCores = cores.map((c) =>
+      c.code === "254499"
+        ? c
+        : {
+            ...c,
+            asAt: "2026-11",
+            statusHistory: Object.fromEntries(
+              Object.entries(c.statusHistory).map(([v, m]) => [v, next(m)]),
+            ),
+            stateInvited: Object.fromEntries(
+              Object.entries(c.stateInvited).map(([v, states]) => [
+                v,
+                Object.fromEntries(
+                  Object.entries(states).map(([st, m]) => [st, next(m)]),
+                ),
+              ]),
+            ),
+          },
+    ) as typeof cores;
+    const m = manifest();
+    const november = buildDataSection({
+      ...base,
+      month: "2026-11",
+      cores: novemberCores,
+      manifest: {
+        ...m,
+        asAt: "2026-11",
+        occupations: m.occupations.map((o) =>
+          o.code === "254499"
+            ? { ...o, lastAsAt: "2026-10", lastCheckedAt: m.checkedAt }
+            : o,
+        ),
+      },
+      previousManifest: m,
+    });
+    for (const visa of ["189", "190", "491"] as const) {
+      const now = november.national[visa];
+      const then = october.national[visa];
+      expect(now.submitted.previous, visa).toEqual(then.submitted.current);
+      expect(now.invited.previous, visa).toEqual(then.invited.current);
+    }
+    expect(november.national["189"].submitted.current.min).toBe(
+      october.national["189"].submitted.current.min - 4280,
+    );
+    expect(november.states["190"].VIC.previousFloor).toBe(
+      october.states["190"].VIC.floor,
+    );
+    expect(november.occupationsRemoved).toEqual([
+      { code: "254499", name: "Registered Nurses nec" },
+    ]);
+  });
+
   it("refuses a month other than the manifest's", () => {
     expect(() => buildDataSection({ ...base, month: "2026-09" })).toThrow(
       /2026-10/,

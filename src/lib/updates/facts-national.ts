@@ -46,28 +46,51 @@ function monthTotal(
 
 function monthPair(
   cores: readonly OccupationCore[],
+  previousCores: readonly OccupationCore[],
   visa: Visa,
   month: MonthKey,
   status: EoiStatus,
 ): MonthPair {
+  const current = monthTotal(cores, visa, month, status);
+  if (current === null) {
+    throw new Error(`No occupation has ${visa} figures for ${month}`);
+  }
   return {
-    current: monthTotal(cores, visa, month, status) ?? { min: 0, max: 0 },
-    previous: monthTotal(cores, visa, shiftMonth(month, -1), status),
+    current,
+    previous: monthTotal(previousCores, visa, shiftMonth(month, -1), status),
   };
+}
+
+/**
+ * The cores whose figures make up last month's sums: this month's, plus the
+ * occupations that dropped out this month. Last month they were current, so
+ * last month's figure includes them (spec 6.13: an interval must contain the
+ * true value).
+ */
+export function previousMonthCores(
+  current: readonly OccupationCore[],
+  dropped: readonly OccupationCore[],
+  month: MonthKey,
+): OccupationCore[] {
+  return [...current, ...coresAsAt(dropped, shiftMonth(month, -1))];
 }
 
 /**
  * SUBMITTED and INVITED per visa, this month and last. Each figure sums one
  * visa in one month: INVITED is a stock, never added across months or visas.
+ * `dropped` holds the cores of occupations that dropped out this month; they
+ * count towards last month's figures only.
  */
 export function nationalFigures(
   cores: readonly OccupationCore[],
   month: MonthKey,
+  dropped: readonly OccupationCore[] = [],
 ): DataSection["national"] {
   const current = coresAsAt(cores, month);
+  const previous = previousMonthCores(current, dropped, month);
   const entry = (visa: Visa) => ({
-    submitted: monthPair(current, visa, month, "SUBMITTED"),
-    invited: monthPair(current, visa, month, "INVITED"),
+    submitted: monthPair(current, previous, visa, month, "SUBMITTED"),
+    invited: monthPair(current, previous, visa, month, "INVITED"),
   });
   return { "189": entry("189"), "190": entry("190"), "491": entry("491") };
 }

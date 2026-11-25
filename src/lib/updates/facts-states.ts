@@ -7,7 +7,7 @@ import type {
   StateKey,
   StateVisa,
 } from "../data/types";
-import { coresAsAt } from "./facts-national";
+import { coresAsAt, previousMonthCores } from "./facts-national";
 import type { StateFigure } from "./types";
 
 const TOP_OCCUPATIONS = 3;
@@ -45,6 +45,7 @@ function occupationCell(
 
 function stateFigure(
   cores: readonly OccupationCore[],
+  previousCores: readonly OccupationCore[],
   visa: StateVisa,
   state: StateKey,
   month: MonthKey,
@@ -53,8 +54,11 @@ function stateFigure(
     const cell = occupationCell(core, visa, state, month);
     return cell ? [{ core, cell }] : [];
   });
+  if (rows.length === 0) {
+    throw new Error(`No occupation has ${visa} ${state} figures for ${month}`);
+  }
   const total = sumIntervals(rows.map((row) => row.cell.total));
-  const previous = cores
+  const previous = previousCores
     .map((core) => occupationCell(core, visa, state, shiftMonth(month, -1)))
     .filter((cell): cell is Cell => cell !== undefined);
   const top = rows
@@ -86,18 +90,22 @@ function stateFigure(
  * 190 and 491 invitations per state in the month: the sum of each state's
  * occupation-by-score cells within one visa, with its floor, its hidden
  * ("<20") cells, last month's floor and the occupations with the highest
- * floors. States are never added to each other or to `ANY`.
+ * floors. States are never added to each other or to `ANY`. `dropped` holds
+ * the cores of occupations that dropped out this month; they count towards
+ * last month's floor only.
  */
 export function stateFigures(
   cores: readonly OccupationCore[],
   month: MonthKey,
+  dropped: readonly OccupationCore[] = [],
 ): Record<StateVisa, Record<StateKey, StateFigure>> {
   const current = coresAsAt(cores, month);
+  const previous = previousMonthCores(current, dropped, month);
   const forVisa = (visa: StateVisa) =>
     Object.fromEntries(
       STATE_KEYS.map((state) => [
         state,
-        stateFigure(current, visa, state, month),
+        stateFigure(current, previous, visa, state, month),
       ]),
     ) as Record<StateKey, StateFigure>;
   return Object.fromEntries(

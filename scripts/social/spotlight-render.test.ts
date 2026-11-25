@@ -7,7 +7,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { monthSetCards, type SpotlightCard } from "../../src/lib/updates/cards";
 import { loadRecap } from "../../src/lib/updates/load-server";
 import { popularOccupations } from "../../src/lib/updates/spotlight";
-import { loadAllCores } from "../updates/generate";
+import { frozenCores } from "../../src/lib/data/__fixtures__/frozen-2026-10";
 import { cardHtml } from "./html";
 import { DEFAULT_CHROME } from "./render";
 
@@ -17,7 +17,7 @@ const oct = loadRecap("2026-10");
 const spotlight = monthSetCards(oct).find(
   (card): card is SpotlightCard => card.id === "spotlight",
 ) as SpotlightCard;
-const popular = popularOccupations(loadAllCores(), "2026-10").map(
+const popular = popularOccupations(frozenCores(), "2026-10").map(
   (core) => core.name,
 );
 /** One word wider than the title column at every size. */

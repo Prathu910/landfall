@@ -41,5 +41,6 @@ export const frozenCore = (code: string): OccupationCore | null =>
   frozen().cores.get(code) ?? null;
 export const frozenDetail = (code: string): OccupationDetail | null =>
   frozen().details.get(code) ?? null;
+export const frozenCores = (): OccupationCore[] => [...frozen().cores.values()];
 export const frozenIndex = (): OccupationIndexEntry[] => frozen().index;
 export const frozenManifest = (): Manifest => frozen().manifest;

@@ -27,6 +27,7 @@ import {
   type Coverage,
   type SummaryInput,
 } from "../../src/lib/updates/summary-view";
+import type { RecapFacts } from "../../src/lib/updates/types";
 import type { ImportReport } from "../import/cli";
 import type { SetManifest } from "../social/compress";
 
@@ -169,12 +170,21 @@ function readSets(
     .map((file) => readJson(file) as SetManifest);
 }
 
+type PublishedNational = SummaryInput["published"];
+
 /**
- * Months whose data section is on the base branch (BASE_REF, default
- * origin/main). Without that ref, every other month with a data section.
+ * The national figures of each month whose data section is on the base
+ * branch (BASE_REF, default origin/main). Without that ref, every other month
+ * with a data section.
  */
-export function publishedDataMonths(current: MonthKey): MonthKey[] {
+export function publishedNational(current: MonthKey): PublishedNational {
   const ref = process.env.BASE_REF ?? "origin/main";
+  const entries = (months: [MonthKey, RecapFacts][]): PublishedNational =>
+    Object.fromEntries(
+      months.flatMap(([m, facts]) =>
+        facts.data ? [[m, facts.data.national]] : [],
+      ),
+    );
   try {
     const dir = "src/data/updates";
     const files = execFileSync(
@@ -185,19 +195,24 @@ export function publishedDataMonths(current: MonthKey): MonthKey[] {
         stdio: ["ignore", "pipe", "ignore"],
       },
     ).split("\n");
-    return files
-      .map((f) => /^(\d{4}-\d{2})\.json$/.exec(f)?.[1])
-      .filter((m): m is MonthKey => m !== undefined)
-      .filter((m) => {
-        const text = execFileSync("git", ["show", `${ref}:${dir}/${m}.json`], {
-          encoding: "utf8",
-          maxBuffer: 64 * 1024 * 1024,
-        });
-        return (JSON.parse(text) as { data: unknown }).data !== null;
-      });
+    return entries(
+      files
+        .map((f) => /^(\d{4}-\d{2})\.json$/.exec(f)?.[1])
+        .filter((m): m is MonthKey => m !== undefined)
+        .map((m) => {
+          const text = execFileSync(
+            "git",
+            ["show", `${ref}:${dir}/${m}.json`],
+            { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 },
+          );
+          return [m, JSON.parse(text) as RecapFacts];
+        }),
+    );
   } catch {
-    return listRecapMonths().filter(
-      (m) => m !== current && loadRecap(m).data !== null,
+    return entries(
+      listRecapMonths()
+        .filter((m) => m !== current)
+        .map((m) => [m, loadRecap(m)]),
     );
   }
 }
@@ -234,7 +249,7 @@ function main(): void {
       buildWarnings: args.buildLog
         ? warningLines(readFileSync(args.buildLog, "utf8"))
         : [],
-      publishedDataMonths: publishedDataMonths(args.month),
+      published: publishedNational(args.month),
       coverage: coverageFor(args.month),
       sets: readSets(args.month, args.kind, args.round),
       branch: args.branch,

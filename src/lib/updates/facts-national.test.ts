@@ -3,21 +3,33 @@ import type { OccupationCore } from "../data/types";
 import { MONTH, cores } from "./__fixtures__/data-2026-10";
 import { coresAsAt, nationalFigures, scoreTotals } from "./facts-national";
 
-/** A minimal core for synthetic cases. */
+/**
+ * A minimal core for synthetic cases. Like every real import, it has every
+ * visa's as-at month fetched (empty unless given).
+ */
 function core(
   code: string,
   statusHistory: OccupationCore["statusHistory"],
   extra: Partial<OccupationCore> = {},
 ): OccupationCore {
+  const asAt = extra.asAt ?? "2026-10";
+  const fetched = (visa: "189" | "190" | "491") => ({
+    [asAt]: {},
+    ...statusHistory[visa],
+  });
   return {
     schemaVersion: 2,
     snapshotId: "skillselect-2026-10-31",
-    asAt: "2026-10",
+    asAt,
     code,
     name: `Occupation ${code}`,
     group: null,
     pool: {},
-    statusHistory,
+    statusHistory: {
+      "189": fetched("189"),
+      "190": fetched("190"),
+      "491": fetched("491"),
+    },
     invitedByScore: {},
     statePool: {},
     stateInvited: {},
@@ -99,6 +111,44 @@ describe("nationalFigures", () => {
       current: { min: 20, max: 20 },
       previous: { min: 10, max: 10 },
     });
+  });
+});
+
+describe("nationalFigures with occupations dropped this month", () => {
+  const current = core("1", {
+    "189": { "2026-09": { SUBMITTED: "10" }, "2026-10": { SUBMITTED: "20" } },
+  });
+  const dropped = core(
+    "2",
+    { "189": { "2026-09": { SUBMITTED: "900" } } },
+    { asAt: "2026-09" },
+  );
+
+  it("counts them in last month's figures only", () => {
+    expect(
+      nationalFigures([current, dropped], "2026-10", [dropped])["189"]
+        .submitted,
+    ).toEqual({
+      current: { min: 20, max: 20 },
+      previous: { min: 910, max: 910 },
+    });
+  });
+
+  it("ignores a core that dropped out before last month", () => {
+    const older = core(
+      "3",
+      { "189": { "2026-09": { SUBMITTED: "500" } } },
+      { asAt: "2026-08" },
+    );
+    expect(
+      nationalFigures([current], "2026-10", [older])["189"].submitted.previous,
+    ).toEqual({ min: 10, max: 10 });
+  });
+
+  it("refuses a month no occupation has", () => {
+    expect(() => nationalFigures([current], "2026-11")).toThrow(
+      /No occupation has 189 figures for 2026-11/,
+    );
   });
 });
 

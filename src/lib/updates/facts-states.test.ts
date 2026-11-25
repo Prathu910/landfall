@@ -1,13 +1,37 @@
 import { describe, expect, it } from "vitest";
-import type { OccupationCore } from "../data/types";
+import type { OccupationCore, StateKey } from "../data/types";
 import { MONTH, cores } from "./__fixtures__/data-2026-10";
 import { stateFigures } from "./facts-states";
 
+const STATES: StateKey[] = [
+  "ACT",
+  "NSW",
+  "NT",
+  "QLD",
+  "SA",
+  "TAS",
+  "VIC",
+  "WA",
+  "ANY",
+];
+
+/**
+ * A minimal core. Like every real import, it has each state's as-at month
+ * fetched for both visas (empty unless given).
+ */
 function core(
   code: string,
-  stateInvited: OccupationCore["stateInvited"],
+  given: OccupationCore["stateInvited"],
   asAt = "2026-10",
 ): OccupationCore {
+  const visa = (v: "190" | "491") =>
+    Object.fromEntries(
+      STATES.map((state) => [state, { [asAt]: {}, ...given[v]?.[state] }]),
+    );
+  const stateInvited = {
+    "190": visa("190"),
+    "491": visa("491"),
+  } as OccupationCore["stateInvited"];
   return {
     schemaVersion: 2,
     snapshotId: `skillselect-${asAt}`,
@@ -93,5 +117,25 @@ describe("stateFigures", () => {
     expect(
       stateFigures([a, dropped], "2026-10")["190"].VIC.previousFloor,
     ).toBeNull();
+  });
+
+  it("counts occupations dropped this month in last month's floor only", () => {
+    const dropped = core(
+      "2",
+      { "190": { VIC: { "2026-09": { "80": "900" } } } },
+      "2026-09",
+    );
+    const a = core("1", { "190": { VIC: { "2026-10": { "80": "25" } } } });
+    const vic = stateFigures([a, dropped], "2026-10", [dropped])["190"].VIC;
+    expect(vic.total).toEqual({ min: 25, max: 25 });
+    expect(vic.previousFloor).toBe(900);
+    expect(vic.top.map((t) => t.code)).toEqual(["1"]);
+  });
+
+  it("refuses a month no occupation has", () => {
+    const a = core("1", {});
+    expect(() => stateFigures([a], "2026-11")).toThrow(
+      /No occupation has 190 ACT figures for 2026-11/,
+    );
   });
 });

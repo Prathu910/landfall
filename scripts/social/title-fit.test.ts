@@ -1,14 +1,15 @@
 import { describe, expect, it } from "vitest";
 import index from "../../src/data/occupation-index.json";
 import { popularOccupations } from "../../src/lib/updates/spotlight";
-import { loadAllCores } from "../updates/generate";
+import { frozenCores } from "../../src/lib/data/__fixtures__/frozen-2026-10";
 import { SPOTLIGHT_TITLE, estimatedLines, fitTitle, textEm } from "./title-fit";
 
 /** A fixture no size fits: one word wider than the title column. */
 const UNBREAKABLE = "Supercalifragilisticexpialidocious Specialist";
 
-// Spec 6.8 picks the spotlight among these 20.
-const popular = popularOccupations(loadAllCores(), "2026-10");
+// Spec 6.8 picks the spotlight among these 20, from the frozen 2026-10
+// cores so that a new data month can't change the list.
+const popular = popularOccupations(frozenCores(), "2026-10");
 
 describe("fitTitle", () => {
   it("fits every one of the 20 most popular names in the spotlight", () => {

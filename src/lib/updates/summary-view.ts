@@ -3,6 +3,7 @@
  * (spec 6.12), as Markdown. Pure: the CLI gathers the inputs. The repository
  * is public, so it holds published data and our drafts only.
  */
+import { shiftMonth } from "../data/months";
 import type { Manifest, MonthKey } from "../data/types";
 import { formatLongMonth } from "../report/copy";
 import { occupationPath } from "../occupation-page/slug";
@@ -25,7 +26,7 @@ import {
   stateLines,
 } from "./summary-sections";
 import type { Interval } from "../data/types";
-import type { RecapFacts } from "./types";
+import type { DataSection, RecapFacts } from "./types";
 
 export const PAGE_READ_BUDGET = 250;
 const WARN_SHARE = 0.9;
@@ -44,8 +45,8 @@ export type SummaryInput = {
   previousManifest: Manifest | null;
   report: ImportReport;
   buildWarnings: string[];
-  /** Months whose recap is already on `main`. */
-  publishedDataMonths: MonthKey[];
+  /** The national figures of each month whose data section is already on `main`. */
+  published: Partial<Record<MonthKey, DataSection["national"]>>;
   /** `coverage` for the coverage-window check; null when 261313 has no core. */
   coverage: Coverage | null;
   sets: SetManifest[];
@@ -87,14 +88,37 @@ function coverageLine(c: Coverage): string {
   return `${now}, ${rangeText(c.previous)} last month, a difference of ${signed(low)} to ${signed(high)}. The sum rose about 885 a month before the 11/2026 import; docs/DATA.md expects the rise to stop after it.`;
 }
 
+const VISAS = ["189", "190", "491"] as const;
+
+/**
+ * A revised month's national figures as its published recap shows them and
+ * as this import has them: last month's, the month the importer re-reads.
+ * Empty when either side is missing.
+ */
+function revisedFigureLines(input: SummaryInput, month: MonthKey): string[] {
+  const before = input.published[month];
+  const after =
+    month === shiftMonth(input.month, -1) ? input.facts.data?.national : null;
+  if (!before || !after) return [];
+  const pair = (was: Interval, now: Interval | null) =>
+    `${rangeText(was)} before, ${now ? rangeText(now) : "not published"} after`;
+  return VISAS.map(
+    (visa) =>
+      `  - ${visa}: EOIs submitted ${pair(before[visa].submitted.current, after[visa].submitted.previous)}; invited ${pair(before[visa].invited.current, after[visa].invited.previous)}.`,
+  );
+}
+
 function revisionLines(input: SummaryInput): string[] {
-  return input.report.revisions.map((r) => {
+  return input.report.revisions.flatMap((r) => {
     const month = /data\/raw\/(\d{4}-\d{2})\//.exec(r.path)?.[1];
-    const published = month && input.publishedDataMonths.includes(month);
+    const published = month !== undefined && month in input.published;
     const effect = published
       ? `published recap affected: ${month}'s recap sections are frozen and do not change, so decide whether to leave it or correct it by hand`
       : "no published recap affected";
-    return `- Revision of \`${r.path}\`: ${formatNumber(r.rowsBefore)} rows before, ${formatNumber(r.rowsAfter)} after; ${effect}.`;
+    return [
+      `- Revision of \`${r.path}\`: ${formatNumber(r.rowsBefore)} rows before, ${formatNumber(r.rowsAfter)} after; ${effect}.`,
+      ...(published ? revisedFigureLines(input, month) : []),
+    ];
   });
 }
 
@@ -114,11 +138,15 @@ function decisionLines(input: SummaryInput): string[] {
         ]
       : []),
     ...input.buildWarnings.map((w) => `- Build warning: ${w.trim()}`),
-    ...(input.kind === "data" && input.coverage
-      ? [`- Coverage-window check: ${coverageLine(input.coverage)}`]
-      : []),
   ];
   return lines.length ? lines : ["Nothing needs a decision."];
+}
+
+/** Checks to read, which need no decision on their own. */
+function noteLines(input: SummaryInput): string[] {
+  return input.kind === "data" && input.coverage
+    ? [`- Coverage-window check: ${coverageLine(input.coverage)}`]
+    : [];
 }
 
 /** A Markdown table cell: pipes and brackets would break the table or image. */
@@ -220,6 +248,7 @@ export function buildSummary(input: SummaryInput): string {
     "",
     ...factSections,
     ...section("Needs your decision", decisionLines(input)),
+    ...(noteLines(input).length ? section("Notes", noteLines(input)) : []),
     ...section(
       "Images",
       input.sets.flatMap((s) => setLines(s, input)),

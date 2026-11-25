@@ -14,10 +14,13 @@ const DESCRIPTION_LIMIT = 155;
  */
 export function recapTitle(facts: RecapFacts): string {
   const month = formatLongMonth(facts.month);
+  const hasRound = Object.keys(facts.rounds).length > 0;
   const topic =
-    Object.keys(facts.rounds).length > 0
-      ? "189 round, 190 and 491 by state"
-      : "190 and 491 invitations by state";
+    facts.data === null
+      ? "189 round results"
+      : hasRound
+        ? "189 round, 190 and 491 by state"
+        : "190 and 491 invitations by state";
   return `SkillSelect ${month} update: ${topic} | ${SITE_NAME}`;
 }
 

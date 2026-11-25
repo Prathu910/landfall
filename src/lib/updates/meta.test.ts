@@ -24,6 +24,13 @@ describe("recapTitle", () => {
       "SkillSelect December 2026 update: 190 and 491 invitations by state | MigrateLens",
     );
   });
+
+  it("names only the round until the month's data arrives", () => {
+    expect(roundOnly.data).toBeNull();
+    expect(recapTitle(roundOnly)).toBe(
+      "SkillSelect November 2026 update: 189 round results | MigrateLens",
+    );
+  });
 });
 
 describe("recapDescription", () => {
