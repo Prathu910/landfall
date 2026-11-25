@@ -118,6 +118,20 @@ def paid_report_checks(sql, connection):
     sql("update public.report_settings set founding_limit = 100")
     print("PASS: a claim confirmed after the last place goes gets full; a confirmed claim can't issue twice")
 
+    upper = start("Aarav@x.com", "141414")
+    assert upper["status"] == "sent", upper
+    same = start("aarav@x.com", "151515")
+    assert same["status"] == "wait", same
+    sql("update public.founding_claims set sent_at = now() - interval '61 seconds' where lower(email) = 'aarav@x.com'")
+    assert start("aarav@x.com", "151515") == {"status": "sent", "claim_id": upper["claim_id"]}
+    assert confirm(upper["claim_id"], "151515", "aarav")["status"] == "issued"
+    assert scalar("select email from public.report_orders where kind = 'founding' and lower(email) = 'aarav@x.com'") == "aarav@x.com"
+    assert start("AARAV@x.com", "161616") == {"status": "used"}
+    assert start("aarav+1@x.com", "171717")["status"] == "sent"
+    duplicate = subprocess.run(connection + ["-c", "insert into public.report_orders (kind, email, currency, amount, status) values ('founding', 'AaRaV@x.com', 'INR', 0, 'issued')"], capture_output=True, text=True)
+    assert duplicate.returncode != 0 and "report_orders_founding_email" in duplicate.stderr, duplicate.stderr
+    print("PASS: one founding place per email whatever its case (R11); +tags stay distinct; the email is kept as typed")
+
     report_no = scalar("select report_no from public.reports order by report_no limit 1")
     assert report_no.startswith("ML-") and len(report_no) == 12 and report_no[3:7].isdigit() and report_no[8:].isdigit(), report_no
     stored = json.loads(scalar(f"select payload from public.reports where report_no = '{report_no}'"))
@@ -180,7 +194,7 @@ def paid_report_checks(sql, connection):
     assert call("paid_order_create", {**order, "razorpay_order_id": "order_PRICE1", "amount": 50000})["status"] == "price-changed"
     assert scalar("select count(*) from public.report_orders where razorpay_order_id in ('order_USD1', 'order_PRICE1')") == "0"
     got = json.loads(scalar("select public.paid_order_get('order_RACE1')"))
-    assert got == {"email": "Buyer@example.com", "currency": "INR", "amount": 69900, "profile": PROFILE, "as_of": "2026-11-25", "status": "created"}, got
+    assert got == {"email": "Buyer@example.com", "currency": "INR", "amount": 69900, "profile": PROFILE, "engine_data": None, "as_of": "2026-11-25", "status": "created"}, got
     assert scalar("select public.paid_order_get('order_NONE')") == ""
 
     def issue(name):
@@ -203,11 +217,25 @@ def paid_report_checks(sql, connection):
     call("paid_order_create", {**order, "razorpay_order_id": "order_MISMATCH1"})
     tampered = {"razorpay_order_id": "order_MISMATCH1", "razorpay_payment_id": "pay_MISMATCH1", "amount": 100, "currency": "INR", "report": report_input("mismatch")}
     assert call("paid_issue", tampered) == {"status": "mismatch"}
-    assert call("paid_issue", {**tampered, "amount": 69900, "currency": "USD"}) == {"status": "mismatch"}
-    assert scalar("select status || ' ' || failure_reason from public.report_orders where razorpay_order_id = 'order_MISMATCH1'") == "failed amount-mismatch"
+    call("paid_order_create", {**order, "razorpay_order_id": "order_MISMATCH2"})
+    assert call("paid_issue", {**tampered, "razorpay_order_id": "order_MISMATCH2", "amount": 69900, "currency": "USD"}) == {"status": "mismatch"}
+    assert scalar("select string_agg(status || ' ' || failure_reason, ',') from public.report_orders where razorpay_order_id in ('order_MISMATCH1', 'order_MISMATCH2')") == "failed amount-mismatch,failed amount-mismatch"
     assert scalar("select count(*) from public.reports where token_hash = '" + sha("token-mismatch") + "'") == "0"
     assert call("paid_issue", {**tampered, "razorpay_order_id": "order_NONE"}) == {"status": "unknown-order"}
+    retried = {**tampered, "amount": 69900, "report": report_input("mismatch-retry")}
+    assert call("paid_issue", retried) == {"status": "failed"}
+    assert scalar("select status || ' ' || failure_reason || ' ' || (report_id is null)::text from public.report_orders where razorpay_order_id = 'order_MISMATCH1'") == "failed amount-mismatch true"
+    assert scalar("select count(*) from public.reports where token_hash = '" + sha("token-mismatch-retry") + "'") == "0"
     print("PASS: amount or currency mismatch is refused and the order marked failed; unknown orders are refused")
+    print("PASS: paid_issue on a failed order answers failed and inserts nothing")
+
+    snapshot = {"core": {"code": "261313", "asAt": "2026-10"}, "detail": None, "checkedAt": "2026-10-31"}
+    call("paid_order_create", {**order, "razorpay_order_id": "order_SNAP1", "engine_data": snapshot})
+    assert json.loads(scalar("select public.paid_order_get('order_SNAP1')"))["engine_data"] == snapshot
+    snap_issue = {"razorpay_order_id": "order_SNAP1", "razorpay_payment_id": "pay_SNAP1", "amount": 69900, "currency": "INR", "report": report_input("snap")}
+    assert call("paid_issue", snap_issue)["status"] == "issued"
+    assert json.loads(scalar("select public.paid_order_get('order_SNAP1')"))["engine_data"] is None
+    print("PASS: a paid order stores its data snapshot until its report is issued (R10)")
 
     found = json.loads(scalar(f"select public.report_by_token('{paid_hash}')"))
     assert found["status"] == "issued" and found["version"] == 1 and found["payload"]["meta"]["version"] == 1, found
@@ -301,6 +329,8 @@ def paid_report_checks(sql, connection):
     call("paid_order_create", {**order, "razorpay_order_id": "order_NODATA1"})
     scalar("select public.paid_order_fail('order_NODATA1', 'no-data')")
     assert scalar("select status || ' ' || failure_reason from public.report_orders where razorpay_order_id = 'order_NODATA1'") == "failed no-data"
+    assert call("paid_issue", {**early, "razorpay_order_id": "order_NODATA1", "razorpay_payment_id": "pay_NODATA1", "report": report_input("nodata")}) == {"status": "failed"}
+    assert scalar("select count(*) from public.reports where token_hash = '" + sha("token-nodata") + "'") == "0"
     scalar("select public.paid_order_fail('order_RACE1', 'no-data')")
     assert scalar("select status from public.report_orders where razorpay_order_id = 'order_RACE1'") == "refunded"
     print("PASS: a refund before issue blocks any later issue, also when the two race; a pending order can be failed")

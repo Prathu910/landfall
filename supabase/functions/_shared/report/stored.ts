@@ -93,15 +93,15 @@ export function reviseHandler(deps: Deps) {
     // A different occupation is a different report, not a correction.
     if (profile.occupation !== source.profile.occupation)
       return fail("occupation-changed");
-    const data = await rebuildEngineData(
+    const rebuilt = await rebuildEngineData(
       setting(deps, "REPORT_SITE_URL"),
       source.engine_data,
       deps.fetch,
     );
-    if (!data) throw new Error("Stored engine data unreadable");
+    if (!rebuilt) throw new Error("Stored engine data unreadable");
     const now = deps.now();
     const payload = issuePayload(
-      data,
+      rebuilt.data,
       profile,
       new Date(now).toISOString().slice(0, 10),
       pendingMeta(now, source.version + 1),

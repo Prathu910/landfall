@@ -106,16 +106,18 @@ export function dataMonthOf(raw: RawEngineData): string {
 }
 
 /**
- * Version 1's data for a revision: the stored core and detail, with the
- * live index and state rules, and the live manifest pinned to the stored
- * month and check date, so the data month and source dates never change.
- * Null when the stored data no longer parses; site down throws.
+ * Engine data rebuilt from a stored snapshot ({core, detail, checkedAt}: a
+ * paid order's, or version 1's for a revision): the stored core and detail,
+ * with the live index and state rules, and the live manifest pinned to the
+ * stored month and check date, so the data month and source dates are the
+ * snapshot's whatever month the site serves now. Null when it no longer
+ * parses; site down throws.
  */
 export async function rebuildEngineData(
   siteUrl: string,
   stored: unknown,
   fetcher: typeof fetch,
-): Promise<EngineData | null> {
+): Promise<LoadedData | null> {
   if (!record(stored) || !record(stored.core)) return null;
   const month = await loadMonth(siteUrl, fetcher);
   if (!record(month.manifest)) return null;
@@ -124,10 +126,12 @@ export async function rebuildEngineData(
     asAt: stored.core.asAt,
     checkedAt: stored.checkedAt ?? month.manifest.checkedAt,
   };
-  return parseEngineData({
+  const raw: RawEngineData = {
     ...month,
     manifest,
     core: stored.core,
     detail: stored.detail ?? null,
-  });
+  };
+  const data = parseEngineData(raw);
+  return data ? { data, raw } : null;
 }

@@ -15,7 +15,7 @@ import { verifyTurnstile } from "../handler.ts";
 import { readJson } from "../http.ts";
 import { freeResult, parseProfile, type Profile } from "../report-engine.js";
 import { sha256Hex, sixDigitCode } from "./crypto.ts";
-import { loadEngineData } from "./data.ts";
+import { type LoadedData, loadEngineData, storedEngineData } from "./data.ts";
 import { database, type Rpc } from "./db.ts";
 import {
   browserEndpoint,
@@ -108,6 +108,7 @@ async function startPaid(
   rpc: Rpc,
   order: OrderRequest,
   profile: Profile,
+  loaded: LoadedData,
 ): Promise<Reply> {
   const amount = await rpc<number | null>("paid_order_amount", {
     p_currency: order.currency,
@@ -132,6 +133,8 @@ async function startPaid(
       as_of: order.asOf,
       razorpay_order_id: created.id,
       amount,
+      // What the reader was quoted: the report is issued from it (R10).
+      engine_data: storedEngineData(loaded.raw),
     },
   });
   if (stored.status === "usd-off") return fail("usd-off");
@@ -174,7 +177,7 @@ export function orderHandler(deps: Deps) {
     const quote = await rpc<Quote>("report_quote");
     return quote.founding.enabled && quote.founding.remaining > 0
       ? await startFounding(deps, rpc, order, profile)
-      : await startPaid(deps, rpc, order, profile);
+      : await startPaid(deps, rpc, order, profile, loaded);
   });
 }
 
@@ -208,8 +211,10 @@ export function verifyHandler(deps: Deps) {
     const profile = parseProfile(source.profile);
     if (!profile) throw new Error("Stored claim profile unreadable");
     const loaded = await loadEngineData(site, profile.occupation, deps.fetch);
-    // The occupation lost its data since the code was sent: start again.
-    if (!loaded) return fail("expired");
+    // The live month isn't usable now (a deploy in progress, or the
+    // occupation lost its data since the code was sent): busy, without
+    // spending a try. The claim stays open until it expires.
+    if (!loaded) throw new Error("Founding claim data unavailable");
     const { token, report } = await prepareReport(
       deps,
       loaded,

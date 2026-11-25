@@ -152,6 +152,40 @@ Deno.test("founding used: one founding report per email", async () => {
   equal(body, { kind: "error", code: "founding-used" });
 });
 
+Deno.test(
+  "founding used: the email's letter case doesn't make a new place (R11)",
+  async () => {
+    const w = world();
+    const sent = await order(w, { ...ORDER, email: "Aarav@x.com" });
+    await verify(w, sent.body.claimId, lastCode(w));
+    equal(w.db.reports[0].email, "Aarav@x.com");
+    w.clock.now += 120_000;
+    const { body } = await order(w, { ...ORDER, email: "aarav@x.com" });
+    equal(body, { kind: "error", code: "founding-used" });
+    equal(w.db.orders.length, 1);
+  },
+);
+
+Deno.test(
+  "verify on a mixed-month site is busy, spends no try, and a retry issues",
+  async () => {
+    const w = world();
+    const sent = await order(w);
+    const code = lastCode(w);
+    w.site.set("/data/manifest.json", {
+      ...input.data.manifest,
+      asAt: "2026-11",
+    });
+    const mixed = await verify(w, sent.body.claimId, code);
+    equal(mixed.status, 503);
+    equal(mixed.body, { kind: "error", code: "busy" });
+    equal(w.db.claims[0].tries, 0);
+    equal(w.db.reports.length, 0);
+    w.site.set("/data/manifest.json", input.data.manifest);
+    equal((await verify(w, sent.body.claimId, code)).body.kind, "issued");
+  },
+);
+
 Deno.test("an amount in the request is ignored", async () => {
   const w = world();
   w.db.settings.founding_enabled = false;

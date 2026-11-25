@@ -8,6 +8,7 @@ import { hmacHex } from "../functions/_shared/report/razorpay.ts";
 import captured from "./fixtures/razorpay-payment-captured.json" with { type: "json" };
 import orderPaid from "./fixtures/razorpay-order-paid.json" with { type: "json" };
 import refunded from "./fixtures/razorpay-refund-processed.json" with { type: "json" };
+import input from "../../src/lib/report-issue/__fixtures__/engine-input-261313.json" with { type: "json" };
 import {
   AS_OF,
   browser,
@@ -279,23 +280,101 @@ Deno.test("webhook: site data down is 500 so Razorpay retries", async () => {
   equal(w.db.reports.length, 1);
 });
 
+const SNAPSHOT = {
+  core: input.data.core,
+  detail: input.data.detail,
+  checkedAt: input.data.manifest.checkedAt,
+};
+
+/** The site mid-deploy: next month's manifest, and this occupation's core gone. */
+function mixedMonth(w: World) {
+  w.site.set("/data/manifest.json", {
+    ...input.data.manifest,
+    asAt: "2026-11",
+    checkedAt: "2026-11-30",
+  });
+  w.site.delete("/data/occupations/261313.json");
+  w.site.delete("/data/occupations/261313.detail.json");
+}
+
 Deno.test(
-  "paid but the occupation lost its data: order failed, founder alerted",
+  "report-order stores the quoted data on the order (R10)",
+  async () => {
+    const w = world();
+    await paidOrder(w);
+    equal(w.db.orders[0].engine_data, SNAPSHOT);
+  },
+);
+
+for (const via of ["webhook", "confirm"] as const) {
+  Deno.test(
+    `${via} on a mixed-month site still issues, from the order's snapshot`,
+    async () => {
+      const w = world();
+      const orderId = await paidOrder(w);
+      mixedMonth(w);
+      if (via === "webhook")
+        equal((await webhook(w, event(captured, orderId))).status, 200);
+      else equal((await confirm(w, orderId)).body.kind, "issued");
+      equal(w.db.reports.length, 1);
+      const report = w.db.reports[0];
+      equal(report.data_as_at, "2026-10");
+      equal(report.engine_data, SNAPSHOT);
+      equal(
+        (report.payload as { view: { dataMonth: string } }).view.dataMonth,
+        "October 2026",
+      );
+      equal(w.db.orders[0].status, "paid");
+      equal(w.db.orders[0].engine_data, null);
+      equal(w.emails.length, 0);
+    },
+  );
+}
+
+Deno.test(
+  "an order without a snapshot on a mixed-month site: 500 or busy, then a retry issues",
   async () => {
     const w = world();
     const orderId = await paidOrder(w);
-    w.site.delete("/data/occupations/261313.json");
+    w.db.orders[0].engine_data = null;
+    mixedMonth(w);
+    equal((await webhook(w, event(captured, orderId))).status, 500);
+    const busy = await confirm(w, orderId);
+    equal(busy.status, 503);
+    equal(busy.body, { kind: "error", code: "busy" });
+    equal(w.db.orders[0].status, "created");
+    equal(w.db.reports.length, 0);
+    equal(w.emails.length, 0);
+    w.site.set("/data/manifest.json", input.data.manifest);
+    w.site.set("/data/occupations/261313.json", input.data.core);
     equal((await webhook(w, event(captured, orderId))).status, 200);
-    equal(w.db.orders[0].status, "failed");
-    equal(w.db.orders[0].failure_reason, "no-data");
-    equal(w.emails.length, 1);
-    equal(w.emails[0].to, "hello@migratelens.com");
-    equal(w.emails[0].text.includes(orderId), true);
-    equal(w.emails[0].text.includes("buyer@example.com"), false);
-    equal(w.emails[0].text.includes("Rahul"), false);
+    equal(w.db.reports.length, 1);
+    equal(w.db.orders[0].status, "paid");
+  },
+);
+
+Deno.test(
+  "confirm racing a wrong-amount webhook: the failed order never issues",
+  async () => {
+    const w = world();
+    const orderId = await paidOrder(w);
+    // The webhook fails the order between confirm's order read and its issue.
+    const issue = w.db.rpc_paid_issue.bind(w.db);
+    let raced = false;
+    w.db.rpc_paid_issue = (args) => {
+      if (!raced) {
+        raced = true;
+        const p = args.p as Record<string, unknown>;
+        issue({ p: { ...p, amount: 100 } });
+      }
+      return issue(args);
+    };
     equal((await confirm(w, orderId)).body, {
       kind: "error",
       code: "signature",
     });
+    equal(w.db.reports.length, 0);
+    equal(w.db.orders[0].status, "failed");
+    equal(w.db.orders[0].failure_reason, "amount-mismatch");
   },
 );

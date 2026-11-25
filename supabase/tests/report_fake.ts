@@ -72,6 +72,7 @@ export type Order = {
   currency: string;
   amount: number;
   profile: unknown;
+  engine_data: unknown;
   as_of: string;
   razorpay_order_id: string | null;
   razorpay_payment_id: string | null;
@@ -196,16 +197,26 @@ export class FakeDb {
     };
   }
 
+  /** One founding place per email whatever its case (ruling R11). */
+  private sameEmail(a: string, b: string) {
+    return a.toLowerCase() === b.toLowerCase();
+  }
+
   rpc_founding_start({ p }: Json) {
     const a = p as Json;
     const email = a.email as string;
     if (!this.settings.founding_enabled) return { status: "off" };
-    if (this.orders.some((o) => o.kind === "founding" && o.email === email))
+    if (
+      this.orders.some(
+        (o) => o.kind === "founding" && this.sameEmail(o.email, email),
+      )
+    )
       return { status: "used" };
     if (this.foundingCount() >= this.settings.founding_limit)
       return { status: "full" };
     let claim = this.claims.find(
-      (c) => c.email === email && ["open", "locked"].includes(c.status),
+      (c) =>
+        this.sameEmail(c.email, email) && ["open", "locked"].includes(c.status),
     );
     if (claim && claim.expires_at <= this.now) {
       claim.status = "expired";
@@ -223,6 +234,7 @@ export class FakeDb {
           seconds: Math.ceil((claim.sent_at + MINUTE - this.now) / 1000),
         };
       Object.assign(claim, {
+        email,
         code_hash: a.code_hash,
         sent_at: this.now,
         expires_at: this.now + 10 * MINUTE,
@@ -294,7 +306,11 @@ export class FakeDb {
       this.foundingCount() >= this.settings.founding_limit
     )
       return { status: "full" };
-    if (this.orders.some((o) => o.kind === "founding" && o.email === c.email))
+    if (
+      this.orders.some(
+        (o) => o.kind === "founding" && this.sameEmail(o.email, c.email),
+      )
+    )
       return { status: "used" };
     const r = this.insert(
       "founding",
@@ -310,6 +326,7 @@ export class FakeDb {
       currency: c.currency,
       amount: 0,
       profile: null,
+      engine_data: null,
       as_of: c.as_of,
       razorpay_order_id: null,
       razorpay_payment_id: null,
@@ -352,6 +369,7 @@ export class FakeDb {
       currency: a.currency as string,
       amount,
       profile: a.profile,
+      engine_data: a.engine_data ?? null,
       as_of: a.as_of as string,
       razorpay_order_id: a.razorpay_order_id as string,
       razorpay_payment_id: null,
@@ -376,8 +394,8 @@ export class FakeDb {
   rpc_paid_order_get({ p_razorpay_order_id }: Json) {
     const o = this.paidOrder(p_razorpay_order_id);
     if (!o) return null;
-    const { email, currency, amount, profile, as_of, status } = o;
-    return { email, currency, amount, profile, as_of, status };
+    const { email, currency, amount, profile, engine_data, as_of, status } = o;
+    return { email, currency, amount, profile, engine_data, as_of, status };
   }
 
   rpc_paid_issue({ p }: Json) {
@@ -395,6 +413,7 @@ export class FakeDb {
       };
     }
     if (o.status === "refunded") return { status: "refunded" };
+    if (o.status !== "created") return { status: o.status };
     if (a.amount !== o.amount || a.currency !== o.currency) {
       o.status = "failed";
       o.failure_reason = "amount-mismatch";
@@ -411,7 +430,7 @@ export class FakeDb {
       status: "paid",
       razorpay_payment_id: a.razorpay_payment_id,
       report_id: r.id,
-      failure_reason: null,
+      engine_data: null,
     });
     return {
       status: "issued",
@@ -419,15 +438,6 @@ export class FakeDb {
       report_no: r.report_no,
       token_hash_matches: true,
     };
-  }
-
-  rpc_paid_order_fail({ p_razorpay_order_id, p_reason }: Json) {
-    const o = this.paidOrder(p_razorpay_order_id);
-    if (o && o.status === "created") {
-      o.status = "failed";
-      o.failure_reason = p_reason as string;
-    }
-    return null;
   }
 
   rpc_report_refund({ p_payment_id, p_razorpay_order_id }: Json) {

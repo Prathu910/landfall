@@ -227,7 +227,7 @@ Provider references: [Function deployment](https://supabase.com/docs/guides/func
 
 ## Paid reports
 
-The paid PR report (₹699 / US$14, the first 100 free as Founding 100 after an emailed code) runs on eight more Functions. The design is [the paid report spec](superpowers/specs/2026-11-25-paid-report-design.md); the wire contract is `src/lib/orders/contract.ts`. Code is in `supabase/functions/_shared/report/`, migrations `20261125000100_paid_reports.sql`, `20261125000200_founding_claim_source.sql` and `20261125000210_refunds_before_issue.sql`, and the schedule `supabase/cron/20261125000300_report_delivery.sql`. Nothing here is live until the founder completes the setup below; do not say payments or report emails work before the rehearsal passes.
+The paid PR report (₹699 / US$14, the first 100 free as Founding 100 after an emailed code) runs on eight more Functions. The design is [the paid report spec](superpowers/specs/2026-11-25-paid-report-design.md); the wire contract is `src/lib/orders/contract.ts`. Code is in `supabase/functions/_shared/report/`, migrations `20261125000100_paid_reports.sql`, `20261125000200_founding_claim_source.sql`, `20261125000210_refunds_before_issue.sql` and `20261125000220_paid_order_snapshot.sql`, and the schedule `supabase/cron/20261125000300_report_delivery.sql`. Nothing here is live until the founder completes the setup below; do not say payments or report emails work before the rehearsal passes.
 
 | Function           | Caller               | Request                                                           | Authenticated by                   |
 | ------------------ | -------------------- | ----------------------------------------------------------------- | ---------------------------------- |
@@ -240,7 +240,7 @@ The paid PR report (₹699 / US$14, the first 100 free as Founding 100 after an 
 | `razorpay-webhook` | Razorpay             | `POST` event                                                      | `X-Razorpay-Signature` (raw body)  |
 | `report-deliver`   | pg_cron, every 5 min | `POST`                                                            | `x-deliver-secret` header          |
 
-Every browser Function follows the submission rules above: exact origins, the 16 KiB body cap, `Cache-Control: no-store`, `X-Robots-Tag: noindex`. A business outcome is HTTP 200 with `{ "kind": "error", "code": … }`; `invalid` and `signature` are 400, `verification` 403, `limited` 429 and `busy` 503 (no detail; retry). The webhook and deliver Functions have no CORS and answer `{ "ok": true }`, 401 unsigned, or 500 so the caller retries. No Function logs a body, token, email or key. Prices come only from `report_settings`; a request's amount is ignored. The report is built from the site's own static data (`REPORT_SITE_URL/data/...`), so the monthly import needs no Function redeploy.
+Every browser Function follows the submission rules above: exact origins, the 16 KiB body cap, `Cache-Control: no-store`, `X-Robots-Tag: noindex`. A business outcome is HTTP 200 with `{ "kind": "error", "code": … }`; `invalid` and `signature` are 400, `verification` 403, `limited` 429 and `busy` 503 (no detail; retry). The webhook and deliver Functions have no CORS and answer `{ "ok": true }`, 401 unsigned, or 500 so the caller retries. No Function logs a body, token, email or key. Prices come only from `report_settings`; a request's amount is ignored. The report is built from the site's own static data (`REPORT_SITE_URL/data/...`), so the monthly import needs no Function redeploy. A paid order keeps the occupation's data as it was quoted, and its report is built from that copy, so a monthly deploy between quote and payment can't stop an issue; if a paid order still can't be built (the site down), the webhook answers 500 and Razorpay retries, and the order stays `created`, never `failed`.
 
 ### Founder setup
 
@@ -295,7 +295,7 @@ psql "$STAGING_DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/cron/20261125000300_
 
 It installs `migratelens-report-delivery` (every 5 minutes: the job reads the URL and secret from Vault and posts to `report-deliver`) and `migratelens-report-retention` (03:10 UTC daily: `purge_expired_reports()`, which clears reports 12 months after issue but keeps the token hash, number and status so the link says "expired"). Reapplying updates both named jobs. Confirm runs with `select status, start_time, return_message from cron.job_run_details where jobid in (select jobid from cron.job where jobname like 'migratelens-report-%') order by start_time desc limit 10;` and pg_net replies with `select status_code, created from net._http_response order by created desc limit 10;` (expect 200).
 
-**7. Settings.** Table Editor → schema `public` → table `report_settings` (one row). Check `founding_enabled` true, `founding_limit` 100, `price_inr` 69900, `price_usd` 1400, `usd_enabled` false. Edit them there at any time, no deploy needed: raise or lower the limit, switch the founding offer off, change a price (smallest unit: paise, cents), or set `usd_enabled` true once Razorpay activates international payments. The checkout's count reads the real number of founding reports issued.
+**7. Settings.** Table Editor → schema `public` → table `report_settings` (one row). Check `founding_enabled` true, `founding_limit` 100, `price_inr` 69900, `price_usd` 1400, `usd_enabled` false. Edit them there at any time, no deploy needed: raise or lower the limit, switch the founding offer off, change a price (smallest unit: paise, cents), or set `usd_enabled` true once Razorpay activates international payments. The checkout's count reads the real number of founding reports issued. One founding report per email address, whatever its letter case (`Aarav@x.com` and `aarav@x.com` share one place; `+tags` and dots count as different addresses); emails go to the address as typed.
 
 **8. Rehearsal (test mode, on the staging preview).** Use Razorpay's test cards or test UPI and your own email:
 
@@ -309,16 +309,17 @@ Also check the three things the offline tests could not (they were built from th
 
 - **Cloudflare PDF request shape:** the PDF arrives, is the print layout (not the screen page), and fits A4. If it doesn't, compare `supabase/functions/_shared/report/pdf.ts` with the [PDF endpoint docs](https://developers.cloudflare.com/browser-rendering/rest-api/pdf-endpoint/).
 - **Resend's `Idempotency-Key` header:** in Resend → Emails, each report has one link email and at most one PDF email, even after a retried run.
+- **Resend `Idempotency-Key` reused with a different body (PDF-attached vs link-only email):** the link email's key doesn't say whether the PDF is attached, so a retry that changes the attachment reuses the key with another body. Check what Resend answers (its docs say 409) and that the email still goes out.
 - **Razorpay webhook payloads:** in Dashboard → Webhooks → the webhook's deliveries, each event got 200, and a `payment.captured` body has `payload.payment.entity` with `id`, `order_id`, `amount`, `currency` and `status: "captured"` (and a refund body `payload.refund.entity.payment_id`), as `supabase/tests/fixtures/razorpay-*.json` assume.
 
-Check also: an alert email reaches `hello@migratelens.com` when delivery fails 5 times (say, by giving a staging project a wrong `RESEND_API_KEY` for a while); a paid order whose occupation lost its data is marked `failed` (`no-data`) with an alert, for a manual refund.
+Check also: an alert email reaches `hello@migratelens.com` when delivery fails 5 times (say, by giving a staging project a wrong `RESEND_API_KEY` for a while); a paid order still issues when the site moves to a new month between Checkout and payment (it is built from the data it was quoted on). A paid order that can't be built stays `created` while the webhook answers 500; Razorpay → Webhooks shows those failing deliveries.
 
 **9. Live keys.** Switch Razorpay to live mode, generate live keys, add the live webhook with a new secret, set the three `RAZORPAY_*` secrets on production, and run one real ₹699 payment end to end, then refund it in the Dashboard.
 
 ### Founder queries for paid reports
 
 ```sql
--- Orders that need a look: failed (amount-mismatch, no-data) or paid with no report.
+-- Orders that need a look: failed (amount-mismatch; no-data on orders before 20261125000220) or paid with no report.
 select razorpay_order_id, razorpay_payment_id, status, failure_reason, amount, currency, created_at
 from public.report_orders where kind = 'paid' and (status = 'failed' or (status = 'paid' and report_id is null))
 order by created_at desc;
