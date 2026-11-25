@@ -1,5 +1,5 @@
 import { formatDate } from "../migration";
-import { SELLER } from "../orders/seller";
+import { NOT_ADVICE, SELLER, SELLER_LINE } from "../orders/seller";
 
 /**
  * The legal and contact pages, every paragraph as data (paid report spec,
@@ -10,9 +10,7 @@ export const LEGAL_UPDATED = "2026-11-25";
 export const LEGAL_REVIEWED = false;
 export const REVIEW_LINE =
   "Drafted for review: check with your lawyer before relying on this.";
-export const NOT_ADVICE =
-  "Information from published data, not migration advice.";
-export const SELLER_LINE = `${SELLER.name}, ${SELLER.city}, ${SELLER.country} · ${SELLER.email}`;
+export { NOT_ADVICE, SELLER_LINE };
 
 /** A paragraph, or one with a link inside it ("…see the {refund policy}."). */
 export type LegalParagraph =

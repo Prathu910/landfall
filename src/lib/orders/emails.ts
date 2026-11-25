@@ -5,7 +5,7 @@
  * palette, mirrored by a test). Imports carry `.ts` so Deno can load them.
  */
 import { CODE_TTL_MINUTES, type Currency } from "./contract.ts";
-import { SELLER } from "./seller.ts";
+import { NOT_ADVICE, SELLER, SELLER_LINE } from "./seller.ts";
 
 export type Email = { subject: string; html: string; text: string };
 
@@ -19,9 +19,7 @@ export const EMAIL_COLOURS = {
   green: "#3b6551",
 } as const;
 
-const NOT_ADVICE = "Information from published data, not migration advice.";
 const REFUND = `7-day no-questions refund: reply or write to ${SELLER.email}`;
-const SELLER_LINE = `${SELLER.name}, ${SELLER.city}, ${SELLER.country} · ${SELLER.email}`;
 const FONT = "Arial, Helvetica, sans-serif";
 const MONTHS = [
   "Jan",

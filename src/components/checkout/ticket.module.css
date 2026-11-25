@@ -128,6 +128,11 @@
   background: var(--check-paper);
   box-shadow: inset 0 0 0 1px var(--tk-edge);
 }
+/* The ink ticket is a light-scheme panel, so its punched hole takes the
+   page's scheme back to match the receipt paper at night. */
+:global([data-mantine-color-scheme="dark"]) .punch {
+  color-scheme: dark;
+}
 .spinner {
   flex: none;
   width: 1rem;

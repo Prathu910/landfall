@@ -28,6 +28,7 @@ import { sampleReportProfile } from "@/lib/sample";
 import { parseProfile } from "@/lib/profile-guard";
 import { resetStateRelativeAnswers, restoreProfile } from "@/lib/state-answers";
 import type { ReportSource } from "@/lib/data/report-source";
+import { snapshotCoverage } from "@/lib/data/coverage";
 import { publishedOccupationCode } from "@/lib/data/occupation-url";
 import { whereLine } from "@/lib/checkout/teaser";
 import { buildFreeResult } from "@/lib/outlook/free-result";
@@ -46,6 +47,9 @@ import { CheckFlowTheme } from "./check/check-flow-theme";
 import { CheckResult } from "./check/check-result";
 import { CheckPointsPreview } from "./check/check-points-preview";
 import styles from "./check-flow.module.css";
+
+const OCCUPATIONS_WITH_DATA = snapshotCoverage(occupationIndex).withData;
+const STATE_COUNT = new Set(stateRuleData.rules.rules.map((r) => r.state)).size;
 
 const STEPS = [
   "Your profile",
@@ -187,6 +191,11 @@ export function CheckFlow({ source }: { source: ReportSource }) {
           ),
         })}
         sample={sampleRun}
+        profile={profile}
+        asOf={asOf}
+        core={occupation.status === "ready" ? occupation.core : null}
+        occupationsWithData={OCCUPATIONS_WITH_DATA}
+        stateCount={STATE_COUNT}
         occupationName={occupationName}
         whereLine={whereLine(
           occupationName,
