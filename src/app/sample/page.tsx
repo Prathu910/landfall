@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ChevronRight, FileText } from "lucide-react";
+import { stateRuleData } from "@/components/data/state-rule-data";
 import { SampleTabs } from "@/components/report/sample-tabs";
 import type { SampleExample } from "@/components/report/sample-tabs";
 import { toOccupationEvidence } from "@/lib/data/legacy";
@@ -10,32 +11,42 @@ import {
 } from "@/lib/data/load-server";
 import { reportSource } from "@/lib/data/report-source";
 import { EXAMPLES, SAMPLE_CODES } from "@/lib/outlook/examples";
+import { buildReportPayload } from "@/lib/report-issue/build";
 import { SAMPLE_AS_OF } from "@/lib/sample";
 import { dayText, monthEnd } from "@/lib/updates/format";
 import styles from "./sample-page.module.css";
 export const metadata = { title: "Explore the sample report" };
 
 export default function SamplePage() {
+  const meta = loadSampleMeta();
+  const source = reportSource(
+    loadSampleCore(EXAMPLES[0].profile.occupation).asAt,
+    meta,
+  );
+  // The reports are built here, at build time; the page's client code only shows them.
   const examples: SampleExample[] = EXAMPLES.map(({ id, tab, profile }) => {
     const core = loadSampleCore(profile.occupation);
+    const detail = loadSampleDetail(profile.occupation);
     return {
       id,
       tab,
-      profile,
       occupation: {
         status: "ready",
         evidence: toOccupationEvidence(core),
         core,
-        detail: {
-          status: "ready",
-          detail: loadSampleDetail(profile.occupation),
-        },
+        detail: { status: "ready", detail },
       },
+      payload: buildReportPayload({
+        profile,
+        asOf: SAMPLE_AS_OF,
+        core,
+        detail,
+        rules: stateRuleData,
+        source,
+        meta: null,
+      }),
     };
   });
-  const first = examples[0].occupation;
-  if (first.status !== "ready") throw new Error("Sample needs a core");
-  const meta = loadSampleMeta();
   const dataAsAt = dayText(monthEnd(meta.asAt));
   return (
     <main id="main" className={styles.page}>
@@ -67,11 +78,9 @@ export default function SamplePage() {
         </header>
         <SampleTabs
           examples={examples}
-          asOf={SAMPLE_AS_OF}
           fixedComparisons={SAMPLE_CODES.map((code) =>
             toOccupationEvidence(loadSampleCore(code)),
           )}
-          source={reportSource(first.core.asAt, meta)}
         />
       </div>
     </main>

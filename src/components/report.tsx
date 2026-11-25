@@ -1,38 +1,31 @@
 "use client";
 import { useMemo } from "react";
-import { Button } from "@mantine/core";
-import { Pencil } from "lucide-react";
 import type { Profile } from "@/lib/migration";
 import type { ReportSource } from "@/lib/data/report-source";
-import type { OccupationCore, OccupationIndexEntry } from "@/lib/data/types";
-import { buildOutlookView } from "@/lib/outlook/view";
-import type { OccupationState, OutlookView } from "@/lib/outlook/view";
+import type { OccupationIndexEntry } from "@/lib/data/types";
 import type { OccupationEvidence } from "@/lib/report-evidence";
 import { calculationSummary } from "@/lib/submissions/summary";
 import { occupationIndex } from "./data/occupation-index";
-import { unavailableReason } from "./data/report-occupation";
 import type { ReportOccupation } from "./data/report-occupation";
-import type { OurReadResult } from "./report/use-our-read";
-import type { DetailLoad } from "./data/use-occupation-core";
 import { stateRuleData } from "./data/state-rule-data";
-import { readEnabled } from "./submissions/config";
 import { ReportFeedback } from "./feedback/report-feedback";
-import { ChartsSection } from "./report/charts-section";
-import { EvidenceSection } from "./report/evidence-section";
-import { ImproveSection } from "./report/improve-section";
 import { LoadingData } from "./report/loading-data";
-import { MethodNote } from "./report/method-note";
-import { OutlookHero } from "./report/outlook-hero";
 import { PointsPage } from "./report/points-page";
 import { PrintReport } from "./report/print-report";
 import { ReportFooter } from "./report/report-footer";
-import { RouteSection } from "./report/route-section";
+import { buildCheckReport, occupationState } from "./report/report-payload";
+import type { CheckReport, PreReportView } from "./report/report-payload";
+import {
+  ReportToolbar,
+  ReportView,
+  toolbarNote,
+} from "./report/report-renderer";
 import { SampleCta } from "./report/sample-cta";
-import { SectionChips } from "./report/section-chips";
 import section from "./report/section.module.css";
-import { useOurRead } from "./report/use-our-read";
-import { VisaRow } from "./report/visa-row";
+import type { OurReadResult } from "./report/use-our-read";
 import styles from "./report/report.module.css";
+
+export { ReportView } from "./report/report-renderer";
 
 type Props = {
   profile: Profile;
@@ -46,167 +39,103 @@ type Props = {
   comparisonIndex: OccupationIndexEntry[];
   /** Server-rendered evidence for the default comparison occupation. */
   initialComparison?: OccupationEvidence;
-  /** Offer only these comparisons, preloaded, and never fetch (the frozen /sample/). */
-  fixedComparisons?: OccupationEvidence[];
   source: ReportSource;
   /** From the calculation receipt; memory only. Absent on the sample. */
   readToken?: string | null;
 };
 
-/** The outlook reads only the core and a ready detail file. */
-function occupationState(
-  code: string,
-  status: ReportOccupation["status"],
-  core: OccupationCore | null,
-  detail: DetailLoad | null,
-): OccupationState {
-  if (status === "loading") return { status: "loading" };
-  if (status !== "ready" || !core) {
-    // A fetch that failed must not read as "SkillSelect published nothing".
-    const reason = unavailableReason(code, occupationIndex);
-    if (typeof reason === "object") {
-      return { status: "dropped", note: reason.note };
-    }
-    return reason === "loadFailed"
-      ? { status: "load-failed" }
-      : { status: "unavailable" };
-  }
-  return {
-    status: "ready",
-    core,
-    detail: detail?.status === "ready" ? detail.detail : null,
-  };
-}
+// Points-only pages print no Our read.
+const NO_READ: OurReadResult = { text: "", source: "template", pending: false };
 
-function useOutlookView(
-  profile: Profile,
-  asOf: string,
-  occupation: ReportOccupation,
-): OutlookView {
+function useCheckReport(props: Props): CheckReport {
+  const { profile, asOf, occupation, source } = props;
   const ready = occupation.status === "ready" ? occupation : null;
   const core = ready?.core ?? null;
   const detail = ready?.detail ?? null;
   const { status } = occupation;
-  // Sharpen answers change the profile, which rebuilds the whole view (spec 7).
+  // Sharpen answers change the profile, which rebuilds the whole report (spec 7).
   return useMemo(
     () =>
-      buildOutlookView({
+      buildCheckReport({
         profile,
         asOf,
         rules: stateRuleData,
-        occupation: occupationState(profile.occupation, status, core, detail),
+        source,
+        occupation: occupationState(
+          profile.occupation,
+          status,
+          core,
+          detail,
+          occupationIndex,
+        ),
       }),
-    [profile, asOf, status, core, detail],
+    [profile, asOf, source, status, core, detail],
   );
 }
 
-function Toolbar({ sample, onEdit }: Pick<Props, "sample" | "onEdit">) {
-  return (
-    <div className={`${styles.toolbar} no-print`}>
-      <span className={styles.note}>
-        {sample
-          ? "Fictional profile. Real published data."
-          : "Your personal report, built from your answers."}
-      </span>
-      {onEdit && (
-        <Button
-          variant="default"
-          size="sm"
-          leftSection={<Pencil size={13} />}
-          onClick={onEdit}
-        >
-          Edit answers
-        </Button>
-      )}
-    </div>
-  );
-}
-
-function ReportBody(props: Props & { view: OutlookView; read: OurReadResult }) {
-  const { view, read, profile, asOf, sample, source } = props;
-  if (view.kind === "loading") {
-    return (
-      <section id="outlook" className={section.band}>
-        <LoadingData />
-      </section>
-    );
-  }
-  const summary = sample
-    ? null
-    : calculationSummary(profile, view.points, asOf, source.snapshotDate);
-  if (view.kind === "points-only") {
-    return (
-      <>
-        <section id="outlook" className={section.band}>
-          <h1 className={styles.h1}>You have {view.points.base} points.</h1>
-          <p className={styles.line}>{view.line}</p>
-        </section>
-        <PointsPage page={view.pointsPage} warnings={view.points.warnings} />
-        <div className={`${section.band} no-print`}>
-          <ReportFeedback summary={summary} />
-        </div>
-        <ReportFooter text={view.footer} />
-      </>
-    );
-  }
+/** Loading, or points only: what /check/ shows when there is no report yet. */
+function PreReport(props: Props & { view: PreReportView }) {
+  const { view, profile, asOf, sample, source } = props;
+  const summary =
+    view.kind === "loading" || sample
+      ? null
+      : calculationSummary(profile, view.points, asOf, source.snapshotDate);
   return (
     <>
-      <SectionChips />
-      <OutlookHero view={view} read={read} />
-      <VisaRow visas={view.visas} />
-      <ChartsSection view={view} />
-      <RouteSection route={view.route} />
-      <ImproveSection improve={view.improve} labels={view.improveLabels} />
-      <EvidenceSection
-        evidence={view.evidence}
-        occupation={props.occupation}
-        profile={profile}
-        asOf={asOf}
-        points={view.points}
-        onAnswer={props.onAnswer}
-        comparisonIndex={props.comparisonIndex}
-        initialComparison={props.initialComparison}
-        fixedComparisons={props.fixedComparisons}
-        source={source}
+      <ReportToolbar
+        note={toolbarNote(sample ? "sample" : "issued")}
+        onEdit={props.onEdit}
       />
-      <PointsPage page={view.pointsPage} warnings={view.points.warnings} />
-      <MethodNote lines={view.methodLines} />
-      <div className={`${section.band} no-print`}>
-        <ReportFeedback summary={summary} />
-      </div>
-      <ReportFooter text={view.footer} />
-    </>
-  );
-}
-
-/** The verdict-first report, shared by /check/ and /sample/ (spec 5), with its A4 print layout. */
-export function Report(props: Props) {
-  const view = useOutlookView(props.profile, props.asOf, props.occupation);
-  const reportView = view.kind === "report" ? view : null;
-  const read = useOurRead(
-    reportView?.facts ?? null,
-    reportView?.templateRead ?? "",
-    props.readToken ?? null,
-    readEnabled,
-  );
-  // Once the print layout exists it replaces the screen report on paper.
-  const hasPrintLayout = view.kind !== "loading";
-  return (
-    <>
-      <Toolbar sample={props.sample} onEdit={props.onEdit} />
-      <article
-        className={`${styles.page} ${hasPrintLayout ? styles.screenOnly : ""}`}
-      >
-        <ReportBody {...props} view={view} read={read} />
-      </article>
-      {props.sample && <SampleCta />}
+      {view.kind === "loading" ? (
+        <article className={styles.page}>
+          <section id="outlook" className={section.band}>
+            <LoadingData />
+          </section>
+        </article>
+      ) : (
+        <article className={`${styles.page} ${styles.screenOnly}`}>
+          <section id="outlook" className={section.band}>
+            <h1 className={styles.h1}>You have {view.points.base} points.</h1>
+            <p className={styles.line}>{view.line}</p>
+          </section>
+          <PointsPage page={view.pointsPage} warnings={view.points.warnings} />
+          <div className={`${section.band} no-print`}>
+            <ReportFeedback summary={summary} />
+          </div>
+          <ReportFooter text={view.footer} />
+        </article>
+      )}
+      {sample && <SampleCta />}
       <PrintReport
         view={view}
-        profile={props.profile}
-        asOf={props.asOf}
-        source={props.source}
-        read={read}
+        profile={profile}
+        asOf={asOf}
+        source={source}
+        read={NO_READ}
       />
     </>
+  );
+}
+
+/**
+ * /check/'s report: built here in the browser, then shown by `ReportView`.
+ * Plan 3 removes this wrapper, when /check/ reads an issued payload instead.
+ */
+export function Report(props: Props) {
+  const built = useCheckReport(props);
+  if (built.kind === "pre-report") {
+    return <PreReport {...props} view={built.view} />;
+  }
+  return (
+    <ReportView
+      payload={built.payload}
+      occupation={props.occupation}
+      mode={props.sample ? "sample" : "issued"}
+      comparisonIndex={props.comparisonIndex}
+      initialComparison={props.initialComparison}
+      onEdit={props.onEdit}
+      onAnswer={props.onAnswer}
+      readToken={props.readToken}
+    />
   );
 }

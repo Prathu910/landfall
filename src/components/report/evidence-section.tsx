@@ -1,13 +1,12 @@
 "use client";
-import { useMemo, useRef } from "react";
+import { useRef } from "react";
 import type { ReportSource } from "@/lib/data/report-source";
 import type { OccupationIndexEntry } from "@/lib/data/types";
 import type { PointsResult, Profile } from "@/lib/migration";
 import type { Evidence } from "@/lib/outlook/evidence";
 import type { OccupationEvidence } from "@/lib/report-evidence";
-import { buildStateOutlookView } from "@/lib/report/state-outlook-view";
+import type { StateOutlookView } from "@/lib/report/state-outlook-view";
 import type { ReportOccupation } from "../data/report-occupation";
-import { stateRuleData } from "../data/state-rule-data";
 import { CohortEvidence } from "./cohort-evidence";
 import { CompareSection } from "./compare-section";
 import { PoolBars } from "./pool-bars";
@@ -22,9 +21,10 @@ import styles from "./evidence-section.module.css";
 
 type Props = {
   evidence: Evidence;
+  /** Built with the report; null when the occupation has no published data. */
+  stateOutlook: StateOutlookView | null;
   occupation: ReportOccupation;
   profile: Profile;
-  asOf: string;
   points: PointsResult;
   onAnswer?: (patch: Partial<Profile>) => void;
   comparisonIndex: OccupationIndexEntry[];
@@ -65,21 +65,7 @@ function Pool189({ evidence }: { evidence: Evidence }) {
 
 /** "See the evidence", folded on screen: everything behind the labels above. */
 export function EvidenceSection(props: Props) {
-  const { evidence, occupation, profile, asOf, points } = props;
-  const core = occupation.status === "ready" ? occupation.core : null;
-  const stateView = useMemo(
-    () =>
-      core
-        ? buildStateOutlookView({
-            core,
-            profile,
-            asOf,
-            points,
-            data: stateRuleData,
-          })
-        : null,
-    [core, profile, asOf, points],
-  );
+  const { evidence, stateOutlook, occupation, profile, points } = props;
   const trend = occupation.status === "ready" ? occupation.evidence.trend : [];
   const detailLoading =
     occupation.status === "ready" && occupation.detail.status === "loading";
@@ -114,9 +100,9 @@ export function EvidenceSection(props: Props) {
           ) : (
             <p className={section.empty}>{evidence.statesEmpty}</p>
           )}
-          {stateView && (
+          {stateOutlook && (
             <StateOutlookSection
-              view={stateView}
+              view={stateOutlook}
               profile={profile}
               onAnswer={props.onAnswer}
             />
