@@ -294,7 +294,7 @@ run_import() {
   choose_base "data/skillselect-$(field month)"
   # Controller ruling: closing a data PR holds the month (no import, no issue).
   if [[ $HELD == yes ]]; then
-    echo "Held: the pull request for $(field long) was closed. Delete branch $BRANCH to import it again."
+    echo "Held: the pull request for $(field long) was closed. Delete branch data/skillselect-$(field month) to import it again."
     return
   fi
   load_info ${MONTH:+--month "$MONTH"}
@@ -395,26 +395,40 @@ report_failure() {
   touch "$WORK/monthly.log"
   FAILED_STEP="$(cat "$STATE/step" 2>/dev/null || echo unknown)"
   export FAILED_STEP
-  if [[ -x node_modules/.bin/tsx ]]; then
-    run_tsx scripts/automation/failure-issue.ts report --month "$month" --log "$WORK/monthly.log"
-  else
-    report_failure_with_gh "$month"
+  # A partial install can leave tsx in place and still fail, so fall back then too.
+  if [[ -x node_modules/.bin/tsx ]] &&
+    run_tsx scripts/automation/failure-issue.ts report --month "$month" --log "$WORK/monthly.log"; then
+    return
   fi
+  echo "failure-issue.ts is unavailable; reporting with gh directly." >&2
+  report_failure_with_gh "$month"
 }
 
-# Without node_modules (npm ci failed): failure-issue.ts's title, author
-# filter and stdin body, with gh directly.
+# The issue body's log text is capped here, before formatting, so no pipe is
+# cut short (SIGPIPE would end the script with no issue).
+readonly LOG_CAP=59000
+
+# Without a working tsx (npm ci failed): failure-issue.ts's title, author
+# filter, fenced log tail and stdin body, with gh directly.
 report_failure_with_gh() {
-  local title number body fence run_url
+  local title number body fence run_url log
   title="Monthly SkillSelect update failed ($(node -p '
     const [y, m] = process.argv[1].split("-");
     ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][m - 1] + " " + y' "$1"))"
   number="$(gh_read issue list --state open --author app/github-actions --limit 200 \
     --json number,title --jq ".[] | select(.title == \"$title\") | .number" | head -n 1)"
   run_url="${GITHUB_SERVER_URL:-}/${GITHUB_REPOSITORY:-}/actions/runs/${GITHUB_RUN_ID:-}"
-  fence="$(tail -n 50 "$WORK/monthly.log" | grep -o '`*' | awk '{ if (length > n) n = length } END { s = "```"; while (length(s) <= n) s = s "`"; print s }')"
+  tail -n 50 "$WORK/monthly.log" >"$STATE/log-tail"
+  log="$(head -c "$LOG_CAP" "$STATE/log-tail")"
+  # An empty log has no backticks; grep's exit 1 must not end the script.
+  fence="$({ grep -o '`*' <<<"$log" || true; } |
+    awk '{ if (length > n) n = length } END { s = "```"; while (length(s) <= n) s = s "`"; print s }')"
   body="$(printf 'Failing step: %s\nRun: %s\n\nLast 50 log lines:\n\n%s\n%s\n%s\n' \
-    "$FAILED_STEP" "$run_url" "$fence" "$(tail -n 50 "$WORK/monthly.log")" "$fence" | head -c 60000)"
+    "$FAILED_STEP" "$run_url" "$fence" "$log" "$fence")"
+  if (($(wc -c <"$STATE/log-tail") > LOG_CAP)); then
+    body="$body
+(truncated)"
+  fi
   if [[ -n $number ]]; then
     gh_write issue comment "$number" --body-file - <<<"$body"
   else
