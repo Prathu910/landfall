@@ -6,11 +6,16 @@ All SkillSelect data is produced by the TypeScript importer in `scripts/import/`
 
 ```sh
 npm run data:import -- --as-at YYYY-MM              # monthly import: every view at that month, plus a revision check of the previous month
+npm run data:import -- --as-at YYYY-MM --keep-rounds  # the same, reading no round pages: rounds.json is kept (the monthly job)
 npm run data:import -- --as-at YYYY-MM --backfill   # fetch every unstored month in each view's window (resumable)
+npm run data:import -- --rounds-only                # the round job: read both round pages, add new rounds, rebuild the stored month; no dashboard
 npm run data:generate -- --as-at YYYY-MM            # rebuild src/data from stored raw files; no network
+npx tsx scripts/automation/detect-round.ts --dir <dir>   # prints status=new or status=none (is the current round newer than rounds.json's newest?) and newest=<its date>; saves the page in <dir>
 ```
 
-Add `--checked-at YYYY-MM-DD` to set the source check date (default: today). The first dataset is pinned to `--as-at 2026-10`; moving to a newer month is a separate, reviewed change.
+`--rounds-only` keeps `manifest.asAt` and `checkedAt` and records its `--checked-at` as `manifest.roundsCheckedAt`; with `--rounds-html <dir>` it reads saved pages instead (as `--generate-only` can), and `detect-round.ts` reads `<dir>/invitation-rounds.html` when the run has saved it there (the round job's dry runs seed that folder from `ROUNDS_HTML_DIR`). A round already in `rounds.json` keeps its saved page in `data/raw/rounds/`: a later, different copy is never written over it.
+
+Add `--checked-at YYYY-MM-DD` to set the source check date (default: today). The first dataset was `--as-at 2026-10`; new months arrive through the monthly pull request (`docs/superpowers/specs/2026-11-24-monthly-updates-design.md`).
 
 The importer:
 
@@ -20,7 +25,41 @@ The importer:
 - stores each finished view-month in `data/raw/<asAt>/` atomically, and writes a `.rev-<date>` file instead of overwriting a month the government revised;
 - writes `src/data/` only after every validation check passes, and exits 1 on any issue.
 
-After an import, run `npm run check` and `npm run build`, then commit `data/raw/` and `src/data/` together.
+After an import, run `npm run check` and `npm run build`, then commit `data/raw/` and `src/data/` together. The scheduled workflows do this themselves and open the pull request (`docs/OPERATIONS.md`, "Monthly data pipeline").
+
+Importer flags for the workflows: `--probe` (print the next month to import, no data views), `--keep-rounds` (monthly job: read no round pages), `--rounds-only` (round job) and `--report-file <file>` (a JSON run report for the pull request summary). `manifest.roundsCheckedAt` is the date the round pages were last read when that was not `checkedAt` (`docs/DATA.md`).
+
+## Scheduled jobs
+
+Workflows are in `.github/workflows/` (`monthly-data.yml`, `round-189.yml`, `page-watch.yml`). Their bodies are `scripts/automation/monthly.sh`, `round.sh` and `page-watch.sh`, with shared shell in `lib.sh` and typed helpers beside them: `next-month.ts` and `month-info.ts` (which month), `detect-round.ts`, `round-pages.ts` and `round-info.ts` (is there a new round; the round pages saved for the run), `base-branch.ts` (join the open `data-update` pull request or start from main; is the month held), `frozen-check.ts` (no merged recap section changes), `failure-issue.ts` and `gh.ts`. The PR summary is `scripts/updates/summary.ts` (view-model `src/lib/updates/summary-view.ts`). The page watcher is `scripts/page-watch/` (`npm run page-watch -- --state <file> [--dry-run]`). Dry runs: `DRY_RUN=1 BASE_REF=HEAD bash scripts/automation/monthly.sh run`. Operations, setup and rehearsal: `docs/OPERATIONS.md`.
+
+## Monthly recap facts
+
+`npm run updates:generate -- --month YYYY-MM --section round --round YYYY-MM-DD` and `-- --month YYYY-MM --section data [--spotlight <code>] [--previous-manifest <file>]` write `src/data/updates/<month>.json` (`scripts/updates/generate.ts`), the only writer of that folder. Each file is one month's frozen facts for `/updates/<month>/` and the `/updates/` index; a round-only file (`data: null`) is a full page and is in the sitemap. Each run replaces only its own section, keeps `firstGeneratedAt` and sets `updatedAt`; `--today YYYY-MM-DD` overrides the Sydney date. It exits 1 if the round is not in `rounds.json` or not in `--month`, if `--section data` is asked for a month other than `manifest.asAt`, or if the merged file fails `isRecapFacts`. `--previous-manifest` must be the previous month's manifest (for the occupations added and removed); a rerun of the same month (such as `--spotlight` swapping the pick) without it keeps the lists the first run recorded and never treats this month's own manifest as the previous one. `src/lib/updates/load-server.ts` reads the files (`listRecapMonths`, `loadRecap`).
+
+## Instagram cards
+
+```sh
+npm run social:render -- --month YYYY-MM --set round [--round YYYY-MM-DD]   # 9 PNGs in public/social/<month>/round-<date>/
+npm run social:render -- --month YYYY-MM --set month                       # 12 PNGs in public/social/<month>/month/, plus public/social/<month>/og.png
+npm run social:render -- --month YYYY-MM --set month --html-only <dir>     # each card's HTML, no Chrome
+```
+
+`scripts/social/render.ts` renders one set of the month's Instagram cards from `src/data/updates/<month>.json`: each feed card in light and dark (1080×1350), the story cover in both (1080×1920) and the OG image in light (1200×630). The round set is the round cover, card 2 and the closing card; `--round` defaults to the month's newest round. The month set is the cover, the two state cards, the spotlight and the closing card. It reuses the newest round set's card 2 (`round-light.png`, `round-dark.png`) and never re-renders it, so it exits 1 until that round set exists. `--set month` also exits 1 for a month whose facts file has no data section. `jobs.ts` lists the images and their paths.
+
+Each card opens in headless Chrome through puppeteer-core (`CHROME_PATH`, default the macOS Google Chrome). `browser-checks.ts` runs in the page before the screenshot, and any failure renders nothing, names the image and exits 1. It checks that both faces loaded, that no `.fit` or `.inner` box overflows, that story content stays within y 250 to 1580, that feed cover text stays within x 34 to 1046 (the profile-grid crop), and that `--paper` is the theme's token. `--html-only` writes the same cards as HTML files for a browser preview. The templates are in `scripts/social/templates/`. `render.test.ts` and `spotlight-render.test.ts` run in Chrome and are skipped when no Chrome binary exists.
+
+`compress.ts` quantises every PNG with sharp to a 256-colour palette (the size must not change). A render writes nothing and exits 1 if any image is over 300 KB or the set is over 2.5 MB. Each set also gets a `set.json` beside its images (`SetManifest`: kind, month, round, each image's card, format, theme, file and alt text, the `reused` files and the caption). Measured for 2026-10: largest image 134 KB, round set 0.8 MB, month set 1.2 MB. `public/social/` is in `.prettierignore`.
+
+```sh
+npm run updates:retention [-- --month YYYY-MM]   # delete files of months older than the latest 3 (default: newest folder); keeps every og.png
+```
+
+`scripts/updates/retention.ts` is the only command that deletes social images (the monthly job runs it; `social:render` never prunes).
+
+## Frozen sample
+
+`npm run sample:freeze` (`scripts/sample/freeze.ts`) writes the 2026-10 core and detail records of the `/sample/` occupations (`SAMPLE_CODES` in `src/lib/outlook/examples.ts`) and a `meta.json` to `src/data/sample/2026-10/`, regenerated in memory from `data/raw/` and the stored rounds up to 31 October 2026. `/sample/` reads only these, so a monthly import never moves its stamps. Run it only when the founder asks for the sample to be refreshed.
 
 ## State nomination lists and rule staleness
 
@@ -33,7 +72,8 @@ After an import, run `npm run check` and `npm run build`, then commit `data/raw/
 - `views.ts`: the declared views and the guardrail check.
 - `import-plan.ts`, `import-fetch.ts`, `run-view.ts`: which view-months to fetch, and fetching them.
 - `raw-store.ts`, `atomic-write.ts`: the compact raw format, revisions and atomic writes.
-- `rounds.ts`: the official 189 round pages.
+- `rounds.ts`, `round-tables.ts`, `html-tables.ts`: the official 189 round pages (occupation tables; totals, tie-break dates and the state nominations table; table and date reading).
+- `round-store.ts`: saving the current round page to `data/raw/rounds/<date>.html` (never over a stored round's page) and keeping stored rounds when the pages are re-read.
 - `generate*.ts`, `validate-generated.ts`: building and validating `src/data/`.
 
 `copy-public-data.ts` runs before `dev` and `build`. It copies `src/data/occupations/` to `public/data/occupations/`, so the static site can serve one occupation file at a time.

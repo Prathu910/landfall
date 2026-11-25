@@ -1,0 +1,20 @@
+.note {
+  margin-top: calc(var(--brand-unit) * 6);
+  padding: calc(var(--brand-unit) * 5) calc(var(--brand-unit) * 8);
+  background: var(--card);
+  border: var(--brand-rule-width) solid var(--rule);
+  border-left: var(--brand-unit) solid var(--brand-ink);
+  border-radius: calc(var(--brand-unit) * 3);
+  break-inside: avoid;
+}
+.heading {
+  margin: 0;
+  font: 650 1rem/1.5 var(--brand-font);
+  color: var(--ink);
+}
+.text {
+  margin: calc(var(--brand-unit) * 2) 0 0;
+  color: var(--muted);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}

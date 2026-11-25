@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { stateRules } from "../../data/state-rules/2026-27/index";
-import { loadOccupationCore } from "../data/load-server";
+import { frozenCore } from "../data/__fixtures__/frozen-2026-10";
 import type { Profile } from "../migration";
 import {
   realFederal,
@@ -27,7 +27,7 @@ function inputFor(profile: Profile, withCore = true): OutlookInput {
   return {
     profile,
     asOf: AS_OF,
-    core: withCore ? loadOccupationCore(profile.occupation) : null,
+    core: withCore ? frozenCore(profile.occupation) : null,
     detail: null,
     rules: RULES,
   };

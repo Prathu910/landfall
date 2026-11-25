@@ -79,3 +79,54 @@ The privacy section discloses Cloudflare Web Analytics, but nothing in the code 
 2. **Turn it off.** Disable Web Analytics in both places above and purge the cache. The privacy sentence about Cloudflare Web Analytics in `src/components/methodology/method-privacy.tsx` then needs removing in a release.
 
 **Check it worked.** `curl -s https://migratelens.com/ | grep -o 'data-cf-beacon=[^>]*'` shows a new token (or nothing, if turned off); in Chrome DevTools the Console has no CORS error and the Network tab's `rum` request succeeds; then `npm run lighthouse -- --base-url https://migratelens.com --only / --runs 1` shows Best Practices 100. Don't paste a manual beacon snippet into the code while automatic setup is on: two beacons would double-count.
+
+## Monthly data pipeline (GitHub Actions)
+
+Three workflows in `.github/workflows/` keep the published data fresh. None merges, deploys or holds a secret: each prepares a change for the founder and uses only the built-in `GITHUB_TOKEN`. The repository is public, so branches, pull requests, summaries and issues hold published data and our drafts only. Spec: `docs/superpowers/specs/2026-11-24-monthly-updates-design.md`. Scripts are in `scripts/automation/` (shell and helpers) and `scripts/page-watch/`.
+
+| Workflow           | When (UTC)            | What it does                                                                                                                                                                            |
+| ------------------ | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `monthly-data.yml` | 20:30 on days 1 to 28 | Probes the SkillSelect dashboard. When a new as-at month is out it imports it, writes the recap and Instagram cards, runs every check and opens the month's `data-update` pull request. |
+| `round-189.yml`    | 21:00 daily           | Checks the Home Affairs 189 round page. For a new round it adds the round and the recap's round section and opens (or adds to) a `data-update` pull request.                            |
+| `page-watch.yml`   | 22:00 daily           | Reads each cited state and fee page and opens an issue when its text changes. It never edits the site.                                                                                  |
+
+All three run only from `main` on `schedule` or `workflow_dispatch`. The data jobs share the concurrency group `data-update`, so they never run at once. GitHub keeps one run going and one waiting in that group: a third queued run cancels the waiting one. There is at most one open `data-update` pull request: a job that finds one works on its branch and adds to it. The pull request summary says what changed, what needs a decision and how to publish it.
+
+### One-time setup (founder)
+
+1. GitHub: Settings, Actions, General, "Workflow permissions": tick "Allow GitHub Actions to create and approve pull requests". Without it the first pull request fails.
+2. Optional: Settings, Secrets and variables, Actions, Variables: add `CF_PAGES_PROJECT` (the Cloudflare Pages project name). The pull request summary then links the Cloudflare preview. No secret or token is needed.
+3. Make sure notifications are on for the repository (issues and pull requests) so failures reach you. Assignments go to `Prathu910`. The labels `data-update` and `source-watch` are created by the workflows.
+4. Merge the branch to `main`. Scheduled workflows and `workflow_dispatch` exist only on `main`.
+5. Run the rehearsal below.
+
+### Rehearsal (after the merge)
+
+Use Actions, pick the workflow, "Run workflow" (or `gh workflow run <file>`), and read each run's summary.
+
+1. `monthly-data` with `month` = `2026-10` (and no spotlight). It re-imports a month that is already published, as a no-op check. Expected: a pull request in which `src/data/manifest.json` changes only in `checkedAt`; `src/data/updates/2026-10.json` is unchanged; `data/raw/` changes only if Home Affairs revised 2026-10, which the summary lists under "Needs your decision"; the summary renders with its images table. Close the pull request (or merge it) before step 2: the next data run joins an open data pull request. Closing it holds 2026-10, which does no harm.
+2. `monthly-data` with no inputs. This exercises the dashboard probe: expected "Nothing to do" (no newer month) and exit 0, or, if November is out, the November pull request.
+3. `round-189`. Expected: no new round, exit 0, no pull request. If a November round is already published, it opens that round's pull request instead.
+4. `page-watch`, twice. First run: "baseline stored", no issues. Second run: no issues.
+5. Note each run's duration and the pages read in `.superpowers/sdd/2026-11-24-monthly-updates-3-scheduled-jobs/progress.md`.
+
+The data jobs' "Start Chrome" step runs on every run, as a smoke test of the Chrome sandbox (the runner is `ubuntu-latest`, Ubuntu 24.04, which restricts unprivileged user namespaces). The 2026-10 month set already exists, so the rehearsal renders no cards: the first real puppeteer render, when the first new month or round arrives, is the step still untested in CI, so watch that run. Holding a month, the spotlight swap, replacing a branch and the failure issues are tested only by local dry runs until they happen. Target: rehearsal done before November's data appears (about mid-December 2026).
+
+### Reading a run
+
+- **Closing a month's pull request holds that month.** The job then exits 0 before any import, logging "Held: the pull request for {Month YYYY} was closed. Delete branch data/skillselect-{YYYY-MM} to import it again." The branch stays. A held month is also not added to any other open data pull request (`isHeld` in `base-branch.ts`). To import the month again, delete that branch. Only a pull request closed without merging holds: a branch left with no pull request (a failed `gh pr create`) is not held, and the next run replaces it (a push with `--force-with-lease` on the commit that run saw).
+- **Closing a round pull request does not hold the round.** The next daily run opens it again, replacing the branch the same way.
+- **Month data joining a round pull request** retitles it "SkillSelect data as at {date} and 189 rounds".
+- **Spotlight swap.** The recap's spotlight is the occupation the Instagram card and recap feature. Run `monthly-data` with `workflow_dispatch`, `spotlight` = the six-digit code (and `month` if more than one could be open). It changes the open data pull request only: the recap facts, the cards and the summary are regenerated and the summary is rewritten. It cannot change a month already on `main`.
+- **Failure issues.** A failed job opens an issue assigned to the founder, with the log tail, and fails the run; no pull request is opened or updated with bad data. Titles: "Monthly SkillSelect update failed (Month YYYY)", "189 round import failed (date)", "189 round check failed" for a failure before the round page was read, and "Page watch failed" for the page watcher's own job. The next successful run closes the issue. A failed run's `git status` and changed `data/raw/` files are kept as an artifact for 7 days.
+- **Page watcher issues** (label `source-watch`):
+  - "Source changed: {page}": the page's text changed. Compare the excerpt with `src/data/states.ts`, the state rules or the guide's fees, change them in a reviewed commit and close the issue.
+  - "Source unreachable: {host}": pages that were readable failed on 3 separate days.
+  - One standing issue, "Sources the watcher cannot read": pages never readable (VIC, ACT, TAS, NT and CA ANZ refuse automated reads) and pages that robots.txt disallows. It changes only when that set changes. Check those pages by hand.
+  - The baseline is the Actions cache. When it is missing (the first run, or the cache was evicted) the run stores a new baseline and opens no issues.
+- **Request rules (founder decision 25 Nov 2026).** The jobs keep a browser User-Agent. Each run requests a page at most once, with a 10 second gap between requests to the same site, and the jobs run once a day. A refusal is never retried, and anything robots.txt disallows is skipped. The round job reads the site's robots.txt once, then the current rounds page (saved for the run, so a second look reads the copy) and, only for a new round, the previous rounds page 10 seconds later; the import reads those saved pages (`scripts/automation/round-pages.ts`). The page watcher follows RFC 9309: a robots.txt that answers 401, 403, 429 or 5xx, or doesn't answer, stops that site for the run; a missing one (404 or another 4xx) allows every page. It stops asking a site after a 429, a timeout or a second 403 in the run; a page skipped that way keeps its baseline and doesn't count as a failed day. The dashboard importer keeps its own guardrail (`docs/DATA.md`).
+- **Publishing.** Merge the pull request after reading the summary. Cloudflare Pages builds `main` as for any change.
+
+### Dry runs and local checks
+
+`DRY_RUN=1 BASE_REF=HEAD bash scripts/automation/monthly.sh run` (or `round.sh`) runs the job locally on the current branch: nothing is pushed, every `gh` call is printed instead of made, and a monthly run regenerates from `data/raw/` instead of importing. `BASE_REF` defaults to `origin/main`; set it to `HEAD` while the work is unmerged. `npm run page-watch -- --state <file> --dry-run` reads the pages (about 50 requests, slowly) and opens no issue. Variables for dry-run tests are documented at the top of each script.

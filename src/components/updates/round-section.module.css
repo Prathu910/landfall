@@ -1,0 +1,26 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: calc(var(--brand-unit) * 7);
+  align-items: start;
+  margin-top: calc(var(--brand-unit) * 8);
+}
+/* A block with nothing beside its card takes the full width. */
+.single {
+  grid-template-columns: minmax(0, 1fr);
+}
+/* Cut-off moves stack beside the columns on a page without movers. */
+.moves {
+  display: grid;
+  gap: calc(var(--brand-unit) * 4.5);
+}
+.earlier {
+  margin-top: calc(var(--brand-unit) * 14);
+  padding-top: calc(var(--brand-unit) * 10);
+  border-top: var(--brand-rule-width) solid var(--brand-line);
+}
+@media screen and (max-width: 900px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

@@ -1,0 +1,5 @@
+991f892 docs: close the rehearsal pull request before the next run
+96a8fb5 chore(automation): page-watch.sh is executable like the other job scripts
+0f5411e fix(automation): hold needs a closed PR, polite round reads, page-watch failures
+759f064 fix(updates): 12px map labels at 320px, keyboard-scrollable nominations
+5dd36af fix(updates): monthly PRs pass check; dropped occupations stay in last month's sums

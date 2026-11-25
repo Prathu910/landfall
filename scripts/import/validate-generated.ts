@@ -15,7 +15,7 @@ import type {
   ScoreCounts,
   Visa,
 } from "../../src/lib/data/types";
-import type { GeneratedData } from "./generate";
+import { snapshotIdFor, type GeneratedData } from "./generate";
 
 const VISAS: Visa[] = ["189", "190", "491"];
 const CORE_LIMIT_BYTES = 50 * 1024;
@@ -90,8 +90,29 @@ function checkInvited(core: OccupationCore): string[] {
   });
 }
 
+/** The snapshot a record must carry: the manifest's, or its last month if dropped. */
+function expectedSnapshot(
+  data: GeneratedData,
+  code: string,
+): { snapshotId: string; asAt: string } {
+  const lastAsAt = data.index.find((entry) => entry.code === code)?.lastAsAt;
+  return lastAsAt
+    ? { snapshotId: snapshotIdFor(lastAsAt), asAt: lastAsAt }
+    : { snapshotId: data.manifest.snapshotId, asAt: data.manifest.asAt };
+}
+
+/** A dropped mark must name a month before this one: the code was in older data. */
+function checkDropMarks(data: GeneratedData): string[] {
+  return data.index.flatMap(({ code, lastAsAt }) =>
+    lastAsAt !== undefined && lastAsAt >= data.manifest.asAt
+      ? [
+          `${code}: lastAsAt ${lastAsAt} is not before ${data.manifest.asAt} (an occupation missing from data it should be in)`,
+        ]
+      : [],
+  );
+}
+
 function checkRecords(data: GeneratedData): string[] {
-  const { snapshotId, asAt } = data.manifest;
   const issues: string[] = [];
   if (!isManifest(data.manifest)) {
     issues.push("Manifest fails the schema guard");
@@ -106,9 +127,13 @@ function checkRecords(data: GeneratedData): string[] {
     if (!valid) {
       issues.push(`${record.code}: ${kind} record fails the schema guard`);
     }
-    if (record.snapshotId !== snapshotId || record.asAt !== asAt) {
+    const expected = expectedSnapshot(data, record.code);
+    if (
+      record.snapshotId !== expected.snapshotId ||
+      record.asAt !== expected.asAt
+    ) {
       issues.push(
-        `${record.code}: ${kind} snapshot ${record.snapshotId} does not match ${snapshotId}`,
+        `${record.code}: ${kind} snapshot ${record.snapshotId} does not match ${expected.snapshotId}`,
       );
     }
   }
@@ -174,8 +199,11 @@ function checkContinuity(
       `asAt ${asAt} is older than the newest raw month ${data.newestRawMonth}`,
     );
   }
-  const count = data.manifest.occupations.length;
-  const before = previous?.occupations.length ?? 0;
+  // Dropped occupations are carried forward, so only current codes count.
+  const current = (m: Manifest) =>
+    m.occupations.filter((entry) => entry.lastAsAt === undefined).length;
+  const count = current(data.manifest);
+  const before = previous ? current(previous) : 0;
   if (count < before * (1 - MAX_OCCUPATION_DROP)) {
     issues.push(
       `Occupation count fell from ${before} to ${count} (more than 10%)`,
@@ -215,6 +243,7 @@ export function validateGenerated(
   return [
     ...checkRecords(data),
     ...checkCodes(data),
+    ...checkDropMarks(data),
     ...checkable.flatMap(checkPool),
     ...checkable.flatMap(checkInvited),
     ...checkContinuity(data, previousManifest),

@@ -107,3 +107,21 @@ describe("raw store", () => {
     expect(readRawView(root, "2026-10", "cohorts")).toBeUndefined();
   });
 });
+
+describe("readRawView revisionsUpTo", () => {
+  it("ignores a revision fetched after revisionsUpTo", () => {
+    const root = mkdtempSync(join(tmpdir(), "raw-"));
+    const base = file("2026-11-17T01:00:00Z");
+    const revision = file("2026-12-14T01:00:00Z", "13");
+    writeRawView(root, base);
+    writeRawView(root, revision);
+    expect(
+      readRawView(root, "2026-10", "status-history", {
+        revisionsUpTo: "2026-11-17",
+      })?.fetchedAt,
+    ).toBe(base.fetchedAt);
+    expect(readRawView(root, "2026-10", "status-history")?.fetchedAt).toBe(
+      revision.fetchedAt,
+    );
+  });
+});

@@ -46,6 +46,8 @@ type Props = {
   comparisonIndex: OccupationIndexEntry[];
   /** Server-rendered evidence for the default comparison occupation. */
   initialComparison?: OccupationEvidence;
+  /** Offer only these comparisons, preloaded, and never fetch (the frozen /sample/). */
+  fixedComparisons?: OccupationEvidence[];
   source: ReportSource;
   /** From the calculation receipt; memory only. Absent on the sample. */
   readToken?: string | null;
@@ -61,8 +63,13 @@ function occupationState(
   if (status === "loading") return { status: "loading" };
   if (status !== "ready" || !core) {
     // A fetch that failed must not read as "SkillSelect published nothing".
-    const failed = unavailableReason(code, occupationIndex) === "loadFailed";
-    return failed ? { status: "load-failed" } : { status: "unavailable" };
+    const reason = unavailableReason(code, occupationIndex);
+    if (typeof reason === "object") {
+      return { status: "dropped", note: reason.note };
+    }
+    return reason === "loadFailed"
+      ? { status: "load-failed" }
+      : { status: "unavailable" };
   }
   return {
     status: "ready",
@@ -159,6 +166,7 @@ function ReportBody(props: Props & { view: OutlookView; read: OurReadResult }) {
         onAnswer={props.onAnswer}
         comparisonIndex={props.comparisonIndex}
         initialComparison={props.initialComparison}
+        fixedComparisons={props.fixedComparisons}
         source={source}
       />
       <PointsPage page={view.pointsPage} warnings={view.points.warnings} />

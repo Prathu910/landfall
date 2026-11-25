@@ -1,0 +1,20 @@
+.plain {
+  color: var(--brand-muted);
+}
+.fell,
+.rose,
+.same {
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+/* A lower lowest score is good news for waiting EOIs: green, like "Strong". */
+.fell {
+  color: var(--homepage-strong);
+}
+.rose {
+  color: var(--label-long-wait-ink);
+}
+.same {
+  color: var(--brand-muted);
+  font-weight: 400;
+}

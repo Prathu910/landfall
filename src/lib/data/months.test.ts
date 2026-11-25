@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calendarMonths, cohortWindowStart } from "./months";
+import { calendarMonths, cohortWindowStart, shiftMonth } from "./months";
 
 describe("calendarMonths", () => {
   it("lists the calendar months ending at asAt, oldest first, across a year", () => {
@@ -22,5 +22,13 @@ describe("cohortWindowStart", () => {
     expect(cohortWindowStart("2026-10")).toBe("2023-11");
     expect(cohortWindowStart("2026-12")).toBe("2024-01");
     expect(cohortWindowStart("2026-01")).toBe("2023-02");
+  });
+});
+
+describe("shiftMonth", () => {
+  it("moves by calendar months across a year", () => {
+    expect(shiftMonth("2026-01", -1)).toBe("2025-12");
+    expect(shiftMonth("2026-10", 3)).toBe("2027-01");
+    expect(shiftMonth("2026-10", 0)).toBe("2026-10");
   });
 });

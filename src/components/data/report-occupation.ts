@@ -4,6 +4,7 @@ import type {
   OccupationCore,
   OccupationIndexEntry,
 } from "../../lib/data/types";
+import { droppedNote } from "../../lib/occupation-page/dropped";
 import type { ScorecardData } from "../../lib/report/scorecard";
 import type { DetailLoad, OccupationLoad } from "./use-occupation-core";
 
@@ -41,9 +42,10 @@ export function toReportOccupation(
 /**
  * Why an "unavailable" occupation has no data: it is not in the snapshot (or
  * is the points-only choice), it is in the snapshot with no published EOIs,
- * or its published file failed to load (a network fact, not a data fact).
+ * it has dropped out of the data (its note), or its published file failed to load (a network fact, not a data fact).
  */
-export type UnavailableReason = "notIndexed" | "noData" | "loadFailed";
+export type UnavailableReason =
+  "notIndexed" | "noData" | "loadFailed" | { kind: "dropped"; note: string };
 
 export function unavailableReason(
   code: string,
@@ -51,6 +53,9 @@ export function unavailableReason(
 ): UnavailableReason {
   const entry = index.find((e) => e.code === code);
   if (!entry) return "notIndexed";
+  // Its old figures are never fetched, so the report is points only.
+  const note = droppedNote(entry);
+  if (note) return { kind: "dropped", note };
   return entry.hasData ? "loadFailed" : "noData";
 }
 

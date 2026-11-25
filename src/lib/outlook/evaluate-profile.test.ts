@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { stateRules } from "../../data/state-rules/2026-27/index";
-import { loadOccupationCore } from "../data/load-server";
+import { frozenCore } from "../data/__fixtures__/frozen-2026-10";
 import {
   realFederal,
   realLists,
@@ -22,7 +22,7 @@ function run(id: ScenarioId): ProfileOutlook {
   return evaluateProfile({
     profile,
     asOf: AS_OF,
-    core: loadOccupationCore(profile.occupation),
+    core: frozenCore(profile.occupation),
     detail: null,
     rules: RULES,
   });

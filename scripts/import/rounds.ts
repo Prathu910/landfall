@@ -1,6 +1,45 @@
+import { USER_AGENT } from "../state-lists/shared";
+import type {
+  NominationsTable,
+  RoundTotal,
+  SkippedRound,
+} from "../../src/lib/data/rounds-file";
+import {
+  decodeEntities,
+  expandSpans,
+  extractTables,
+  indexesWhere,
+  parseLongDate,
+  texts,
+  type Table,
+} from "./html-tables";
+import {
+  firstVisaTable,
+  parseNominations,
+  parseTieBreak,
+  parseTotals,
+  TIE_BREAK_COLUMN,
+  type TieBreakMisprint,
+} from "./round-tables";
+
+export { decodeEntities } from "./html-tables";
+export type { SkippedRound } from "../../src/lib/data/rounds-file";
+export type { TieBreakMisprint } from "./round-tables";
+
+export type ParsedRow = {
+  occupationName: string;
+  cutoff: number;
+  tieBreak: string | null; // YYYY-MM-DD
+  /** Present only on rows read back from rounds.json: the stored match. */
+  code?: string | null;
+};
+
 export type ParsedRound = {
   date: string;
-  rows: { occupationName: string; cutoff: number }[];
+  totals: RoundTotal[] | null;
+  tieBreak: string | null; // the totals table's 189 tie-break date
+  rows: ParsedRow[];
+  nominations: NominationsTable | null; // current-round page only
 };
 
 const BASE =
@@ -8,46 +47,6 @@ const BASE =
 export const CURRENT_ROUNDS_URL = `${BASE}invitation-rounds`;
 export const PREVIOUS_ROUNDS_URL = `${BASE}previous-rounds`;
 const SCHEMA_INPUT_ID = "ctl00_PlaceHolderMain_PageSchemaHiddenField_Input";
-
-const MONTHS = [
-  "january",
-  "february",
-  "march",
-  "april",
-  "may",
-  "june",
-  "july",
-  "august",
-  "september",
-  "october",
-  "november",
-  "december",
-];
-
-const NAMED_ENTITIES: Record<string, string> = {
-  amp: "&",
-  lt: "<",
-  gt: ">",
-  quot: '"',
-  apos: "'",
-  nbsp: " ",
-};
-
-export function decodeEntities(text: string): string {
-  return text.replace(
-    /&(#x[0-9a-f]+|#\d+|[a-z]+);/gi,
-    (whole, body: string) => {
-      if (body[0] === "#") {
-        const code =
-          body[1] === "x" || body[1] === "X"
-            ? parseInt(body.slice(2), 16)
-            : parseInt(body.slice(1), 10);
-        return String.fromCodePoint(code);
-      }
-      return NAMED_ENTITIES[body.toLowerCase()] ?? whole;
-    },
-  );
-}
 
 export function normalizeOccupationName(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]/g, "");
@@ -82,50 +81,6 @@ function arrayField(schema: Record<string, unknown>, key: string): unknown[] {
   return value;
 }
 
-function parseLongDate(text: string): string {
-  const match = /^(\d{1,2}) ([A-Za-z]+) (\d{4})$/.exec(text.trim());
-  const month = match ? MONTHS.indexOf(match[2].toLowerCase()) : -1;
-  if (!match || month < 0) throw new Error(`Unrecognised round date "${text}"`);
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${match[3]}-${pad(month + 1)}-${pad(Number(match[1]))}`;
-}
-
-function cellText(html: string): string {
-  return decodeEntities(html.replace(/<[^>]*>/g, " "))
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-type Cell = { text: string; span: number };
-type Table = Cell[][];
-
-function readCell(html: string): Cell {
-  const colspan = /^<t[dh][^>]*\scolspan="?(\d+)/i.exec(html);
-  return { text: cellText(html), span: colspan ? Number(colspan[1]) : 1 };
-}
-
-function extractTables(html: string): Table[] {
-  return (html.match(/<table[\s>][\s\S]*?<\/table>/gi) ?? []).map((table) =>
-    (table.match(/<tr[\s>][\s\S]*?<\/tr>/gi) ?? []).map((row) =>
-      (row.match(/<t[dh][\s>][\s\S]*?<\/t[dh]>/gi) ?? []).map(readCell),
-    ),
-  );
-}
-
-const texts = (row: Cell[]): string[] => row.map((cell) => cell.text);
-
-/** One label per data column: a cell spanning n columns labels all n. */
-function expandSpans(row: Cell[]): string[] {
-  return row.flatMap((cell) => Array<string>(cell.span).fill(cell.text));
-}
-
-function indexesWhere(
-  cells: string[],
-  test: (text: string, index: number) => boolean,
-): number[] {
-  return cells.flatMap((text, index) => (test(text, index) ? [index] : []));
-}
-
 const NOT_LISTED = /^(n\/?a\b|not invited|$)/i;
 /** A header naming subclass 189 alone, e.g. "189", "Subclass 189* Minimum scored". */
 const SUBCLASS_189 =
@@ -135,17 +90,15 @@ const MINIMUM_POINTS = /^minimum points score$/i;
 /** 2020-21 rounds list 4-digit unit groups: "Subclass | Occupation ID | Description". */
 const UNIT_GROUP_COLUMN = /^occupation id$/i;
 
-type BlockResult = { round: ParsedRound } | { reason: string };
+type BlockResult =
+  { round: ParsedRound; misprints: TieBreakMisprint[] } | { reason: string };
 
 /**
  * True when the round's own totals table (the first "Visa subclass" table;
  * later ones cover the programme year) lists subclass 189 alone.
  */
 function listsOnly189(tables: Table[]): boolean {
-  const totals = tables.find((table) =>
-    /^visa subclass$/i.test(table[0]?.[0]?.text ?? ""),
-  );
-  const visas = (totals ?? [])
+  const visas = (firstVisaTable(tables) ?? [])
     .slice(1)
     .map((row) => row[0]?.text ?? "")
     .filter((text) => text !== "");
@@ -216,8 +169,10 @@ export function parseRoundBlock(date: string, block: string): BlockResult {
     };
   }
   const nameColumn = header.findIndex((text) => /occupation/i.test(text));
+  const tieColumn = header.findIndex((text) => TIE_BREAK_COLUMN.test(text));
   const columns = cutoffColumns(table, headerRow, listsOnly189(tables));
-  const rows: ParsedRound["rows"] = [];
+  const rows: ParsedRow[] = [];
+  const misprints: TieBreakMisprint[] = [];
   for (const cells of table.slice(headerRow + 1).map(texts)) {
     if (cells.length === 0) continue;
     const occupationName = cells[nameColumn];
@@ -235,42 +190,120 @@ export function parseRoundBlock(date: string, block: string): BlockResult {
     }
     // Offshore/onshore columns: the lowest score invited is the cut-off.
     if (values.length > 0) {
-      rows.push({ occupationName, cutoff: Math.min(...values) });
+      const tieBreak =
+        tieColumn < 0
+          ? null
+          : parseTieBreak(
+              cells[tieColumn] ?? "",
+              date,
+              occupationName,
+              misprints,
+            );
+      rows.push({ occupationName, cutoff: Math.min(...values), tieBreak });
     }
   }
-  return { round: { date, rows } };
+  const totals = parseTotals(date, tables, misprints);
+  return { round: { date, ...totals, rows, nominations: null }, misprints };
 }
 
-export type SkippedRound = { date: string; reason: string };
 export type RoundPages = { rounds: ParsedRound[]; skipped: SkippedRound[] };
+/** Freshly parsed pages, plus each misprinted tie-break (stored as no date). */
+export type ParsedPages = RoundPages & { misprints: TieBreakMisprint[] };
+
+function contentBlock(schema: Record<string, unknown>, text: string) {
+  const item = arrayField(schema, "content").find(
+    (entry) => stringField(entry, "text") === text,
+  );
+  return item === undefined ? undefined : stringField(item, "block");
+}
+
+/**
+ * The current invitation rounds page: its round, with the "State and
+ * Territory nominations" table (null when the page has no such block).
+ */
+export function parseCurrentRound(currentHtml: string): ParsedRound {
+  return readCurrentRound(currentHtml).round;
+}
+
+/** The "Current round" block and the date its invitations were issued. */
+function currentRoundBlock(schema: Record<string, unknown>): {
+  date: string;
+  block: string;
+} {
+  const block = contentBlock(schema, "Current round");
+  if (block === undefined) throw new Error("Current round block missing");
+  const issued = /Invitations issued on (\d+ \w+ \d{4})/.exec(block);
+  if (!issued) throw new Error("Current round date missing");
+  return { date: parseLongDate(issued[1]), block };
+}
+
+/**
+ * The current round's date (YYYY-MM-DD), read without parsing its tables, so
+ * the round job's daily check needs the current page only.
+ */
+export function newestRoundDate(currentHtml: string): string {
+  return currentRoundBlock(readSchema(currentHtml)).date;
+}
+
+function readCurrentRound(currentHtml: string): {
+  round: ParsedRound;
+  misprints: TieBreakMisprint[];
+} {
+  const schema = readSchema(currentHtml);
+  const { date, block } = currentRoundBlock(schema);
+  const newest = parseRoundBlock(date, block);
+  if (!("round" in newest)) {
+    throw new Error(`Current round unreadable: ${newest.reason}`);
+  }
+  const nominations = contentBlock(schema, "State and Territory nominations");
+  return {
+    round: {
+      ...newest.round,
+      nominations:
+        nominations === undefined ? null : parseNominations(nominations),
+    },
+    misprints: newest.misprints,
+  };
+}
 
 export function parseRoundPagesDetailed(
   currentHtml: string,
   previousHtml: string,
-): RoundPages {
-  const current = readSchema(currentHtml);
-  const currentBlock = arrayField(current, "content").find(
-    (item) => stringField(item, "text") === "Current round",
-  );
-  if (!currentBlock) throw new Error("Current round block missing");
-  const block = stringField(currentBlock, "block");
-  const issued = /Invitations issued on (\d+ \w+ \d{4})/.exec(block);
-  if (!issued) throw new Error("Current round date missing");
-
-  const newest = parseRoundBlock(parseLongDate(issued[1]), block);
-  if (!("round" in newest)) {
-    throw new Error(`Current round unreadable: ${newest.reason}`);
-  }
-  const rounds = [newest.round];
+): ParsedPages {
+  const current = readCurrentRound(currentHtml);
+  const rounds = [current.round];
+  const misprints = [...current.misprints];
   const skipped: SkippedRound[] = [];
   for (const item of arrayField(readSchema(previousHtml), "criteria")) {
     const date = parseLongDate(stringField(item, "title"));
     const result = parseRoundBlock(date, stringField(item, "description"));
-    if ("round" in result) rounds.push(result.round);
-    else skipped.push({ date, reason: result.reason });
+    if ("round" in result) {
+      rounds.push(result.round);
+      misprints.push(...result.misprints);
+    } else skipped.push({ date, reason: result.reason });
   }
   rounds.sort((a, b) => b.date.localeCompare(a.date));
-  return { rounds, skipped };
+  return { rounds, skipped, misprints };
+}
+
+/**
+ * The parsed rounds dated after the newest stored round, oldest first: the
+ * rounds a round import adds. An older round missing from the stored file is
+ * not a new round. Takes a RoundsFile or rounds read back from one.
+ */
+export function newRoundDates(
+  stored: { rounds: readonly { date: string }[] },
+  parsed: RoundPages,
+): string[] {
+  // YYYY-MM-DD strings compare in calendar order.
+  const newest = stored.rounds.reduce(
+    (max, round) => (round.date > max ? round.date : max),
+    "",
+  );
+  return parsed.rounds
+    .map((round) => round.date)
+    .filter((date) => date > newest)
+    .sort();
 }
 
 export function parseRoundPages(
@@ -280,23 +313,40 @@ export function parseRoundPages(
   return parseRoundPagesDetailed(currentHtml, previousHtml).rounds;
 }
 
-export async function fetchRoundPages(): Promise<{
+/**
+ * Fetches one official round page's HTML with the browser User-Agent. A
+ * refusal is never retried (founder decision 25 Nov 2026).
+ */
+export async function fetchRoundPage(
+  url: string,
+  request: typeof fetch = fetch,
+): Promise<string> {
+  const response = await request(url, {
+    headers: { "User-Agent": USER_AGENT },
+    signal: AbortSignal.timeout(40_000),
+  });
+  if (!response.ok) {
+    throw new Error(`${url} returned HTTP ${response.status}`);
+  }
+  return response.text();
+}
+
+/** The least time between two requests to the round pages' site. */
+export const ROUND_PAGE_GAP_MS = 10_000;
+
+const wait = (ms: number) =>
+  new Promise<void>((resolve) => setTimeout(resolve, ms));
+
+/** Both round pages, one after the other, at least ROUND_PAGE_GAP_MS apart. */
+export async function fetchRoundPages(
+  request: typeof fetch = fetch,
+  sleep: (ms: number) => Promise<void> = wait,
+): Promise<{
   currentHtml: string;
   previousHtml: string;
 }> {
-  const get = async (url: string) => {
-    const response = await fetch(url, {
-      headers: { "User-Agent": "Mozilla/5.0" },
-      signal: AbortSignal.timeout(40_000),
-    });
-    if (!response.ok) {
-      throw new Error(`${url} returned HTTP ${response.status}`);
-    }
-    return response.text();
-  };
-  const [currentHtml, previousHtml] = await Promise.all([
-    get(CURRENT_ROUNDS_URL),
-    get(PREVIOUS_ROUNDS_URL),
-  ]);
+  const currentHtml = await fetchRoundPage(CURRENT_ROUNDS_URL, request);
+  await sleep(ROUND_PAGE_GAP_MS);
+  const previousHtml = await fetchRoundPage(PREVIOUS_ROUNDS_URL, request);
   return { currentHtml, previousHtml };
 }

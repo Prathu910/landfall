@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { stateRuleData } from "../../components/data/state-rule-data";
-import { loadOccupationCore, loadOccupationDetail } from "../data/load-server";
+import { frozenCore, frozenDetail } from "../data/__fixtures__/frozen-2026-10";
 import { calculatePoints } from "../migration";
 import { evaluateProfile } from "../outlook/evaluate-profile";
 import type { OutlookInput } from "../outlook/evaluate-profile";
@@ -17,8 +17,8 @@ function input(): OutlookInput {
   return {
     profile,
     asOf: SAMPLE_AS_OF,
-    core: loadOccupationCore(profile.occupation),
-    detail: loadOccupationDetail(profile.occupation),
+    core: frozenCore(profile.occupation),
+    detail: frozenDetail(profile.occupation),
     rules: stateRuleData,
   };
 }

@@ -1,0 +1,25 @@
+/* One full-width band of the recap page. Bands alternate paper and desk, as
+   in the approved mockup; cards take the other surface so they still read as
+   cards. */
+.band {
+  border-top: var(--brand-rule-width) solid var(--brand-line);
+  scroll-margin-top: var(--site-header-height);
+}
+.paper {
+  --recap-card: var(--homepage-code-fill);
+  background: var(--brand-paper);
+}
+.desk {
+  --recap-card: var(--brand-paper);
+  background: var(--brand-sage);
+}
+.shell {
+  width: min(100% - var(--brand-unit) * 8, 73.75rem);
+  margin-inline: auto;
+  padding: calc(var(--brand-unit) * 14) 0;
+}
+@media screen and (max-width: 900px) {
+  .shell {
+    padding: calc(var(--brand-unit) * 10) 0;
+  }
+}

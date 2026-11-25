@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { stateRules } from "../../data/state-rules/2026-27/index";
-import { loadOccupationCore } from "../data/load-server";
+import { frozenCore } from "../data/__fixtures__/frozen-2026-10";
 import { stateEvidence } from "../data/state-evidence";
 import type {
   MonthKey,
@@ -23,7 +23,7 @@ import { evidenceLabel, visaLabel } from "./label-state";
 import type { VisaLabel } from "./label-state";
 
 const realCore = (code: string): OccupationCore => {
-  const core = loadOccupationCore(code);
+  const core = frozenCore(code);
   if (!core) throw new Error(`missing core ${code}`);
   return core;
 };

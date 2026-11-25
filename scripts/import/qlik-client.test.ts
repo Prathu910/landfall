@@ -3,6 +3,7 @@ import {
   asAtSerial,
   BudgetExceededError,
   GuardrailError,
+  monthFromSerial,
   openQlikSession,
   type Transport,
 } from "./qlik-client";
@@ -21,6 +22,8 @@ type Script = {
   header?: string[];
   /** Rows the fake server leaves out of its last page, as a dropped page would. */
   missingRows?: number;
+  /** Serials the fake As At Month list object holds. */
+  asAtSerials?: number[];
 };
 
 function fakeTransport(script: Script) {
@@ -44,6 +47,21 @@ function fakeTransport(script: Script) {
       queueMicrotask(() => handler(JSON.stringify({ method: "OnConnected" })));
       switch (req.method) {
         case "GetLayout":
+          if (script.asAtSerials) {
+            return reply(req.id, {
+              qLayout: {
+                qListObject: {
+                  qDataPages: [
+                    {
+                      qMatrix: script.asAtSerials.map((qNum) => [
+                        { qText: "x", qNum },
+                      ]),
+                    },
+                  ],
+                },
+              },
+            });
+          }
           return reply(req.id, {
             qLayout: {
               qHyperCube: {
@@ -99,7 +117,35 @@ const open = (script: Script, maxPageReads = 10) => {
   }).then((session) => ({ session, ...fake }));
 };
 
+describe("monthFromSerial", () => {
+  it("inverts asAtSerial", () => {
+    expect(monthFromSerial(asAtSerial("2026-10"))).toBe("2026-10");
+    expect(monthFromSerial(asAtSerial("2024-02"))).toBe("2024-02");
+    expect(monthFromSerial(asAtSerial("2026-12"))).toBe("2026-12");
+    expect(monthFromSerial(asAtSerial("2027-01"))).toBe("2027-01");
+  });
+});
+
 describe("qlik client", () => {
+  it("probes with no table read and no variable change", async () => {
+    const { session, requests } = await open({
+      qcx: 3,
+      qcy: 1,
+      asAtSerials: [asAtSerial("2026-10"), asAtSerial("2026-09")],
+    });
+    expect(await session.listAsAtMonths()).toEqual(["2026-09", "2026-10"]);
+    const methods = requests.map((r) => r.method);
+    expect(methods).not.toContain("GetHyperCubeData");
+    expect(methods).not.toContain("SetStringValue");
+    expect(methods).not.toContain("SelectValues");
+    expect(session.pageReads()).toBe(0);
+  });
+
+  it("fails when the dashboard lists no month", async () => {
+    const { session } = await open({ qcx: 3, qcy: 1, asAtSerials: [] });
+    await expect(session.listAsAtMonths()).rejects.toThrow(/listed no/);
+  });
+
   it("pages a wide table by floor(10000 / width)", async () => {
     const { session, requests } = await open({ qcx: 3, qcy: 7000 });
     const table = await session.readTable("eymDb");

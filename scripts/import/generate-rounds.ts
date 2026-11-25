@@ -1,17 +1,15 @@
+import { isRoundsFile, type StoredRound } from "../../src/lib/data/rounds-file";
 import {
   normalizeOccupationName,
   type ParsedRound,
   type RoundPages,
-  type SkippedRound,
 } from "./rounds";
 
-export type MatchedRound = {
-  date: string;
-  rows: { name: string; code: string | null; cutoff: number }[];
-};
-
-/** src/data/rounds.json: parsed rounds newest first, plus rounds the parser skipped. */
-export type RoundsFile = { rounds: MatchedRound[]; skipped: SkippedRound[] };
+export type {
+  RoundsFile,
+  StoredRound,
+  StoredRow,
+} from "../../src/lib/data/rounds-file";
 
 /**
  * Reviewed source spellings that differ from the dashboard name, keyed by
@@ -26,7 +24,7 @@ export const ROUND_NAME_ALIASES: Record<string, string> = {
 };
 
 export type MatchedRounds = {
-  file: MatchedRound[]; // newest first
+  file: StoredRound[]; // newest first
   unmatched: string[]; // round names with no dashboard occupation, sorted
   /** Per code, every round newest first; null = not listed in that round. */
   cutoffs: (code: string) => { date: string; cutoff: number | null }[];
@@ -43,7 +41,26 @@ function codesByName(
   return byName;
 }
 
-/** Matches round rows to dashboard occupations by normalised name. */
+function matchName(
+  byName: Map<string, string[]>,
+  date: string,
+  occupationName: string,
+): string | null {
+  const dashboardName = ROUND_NAME_ALIASES[occupationName] ?? occupationName;
+  const codes = byName.get(normalizeOccupationName(dashboardName)) ?? [];
+  if (codes.length > 1) {
+    throw new Error(
+      `Round ${date}: "${occupationName}" matches several occupations (${codes.join(", ")})`,
+    );
+  }
+  return codes[0] ?? null;
+}
+
+/**
+ * Matches round rows to dashboard occupations by normalised name. A row read
+ * back from rounds.json keeps its stored code; a stored row with no match is
+ * matched again, so an occupation added later still gets its history.
+ */
 export function matchRounds(
   rounds: ParsedRound[],
   occupations: { code: string; name: string }[],
@@ -53,16 +70,9 @@ export function matchRounds(
   const newestFirst = [...rounds].sort((a, b) => b.date.localeCompare(a.date));
   const perRound = newestFirst.map((round) => {
     const cutoffByCode = new Map<string, number>();
-    const rows = round.rows.map(({ occupationName, cutoff }) => {
-      const dashboardName =
-        ROUND_NAME_ALIASES[occupationName] ?? occupationName;
-      const codes = byName.get(normalizeOccupationName(dashboardName)) ?? [];
-      if (codes.length > 1) {
-        throw new Error(
-          `Round ${round.date}: "${occupationName}" matches several occupations (${codes.join(", ")})`,
-        );
-      }
-      const code = codes[0] ?? null;
+    const rows = round.rows.map((row) => {
+      const { occupationName, cutoff, tieBreak } = row;
+      const code = row.code ?? matchName(byName, round.date, occupationName);
       if (code === null) {
         unmatched.add(occupationName);
       } else {
@@ -73,76 +83,51 @@ export function matchRounds(
           seen === undefined ? cutoff : Math.min(seen, cutoff),
         );
       }
-      return { name: occupationName, code, cutoff };
+      return { name: occupationName, code, cutoff, tieBreak };
     });
-    return { date: round.date, rows, cutoffByCode };
+    const stored: StoredRound = {
+      date: round.date,
+      totals: round.totals,
+      tieBreak: round.tieBreak,
+      rows,
+      nominations: round.nominations,
+    };
+    return { stored, cutoffByCode };
   });
   return {
-    file: perRound.map(({ date, rows }) => ({ date, rows })),
+    file: perRound.map(({ stored }) => stored),
     unmatched: [...unmatched].sort(),
     cutoffs: (code) =>
-      perRound.map(({ date, cutoffByCode }) => ({
-        date,
+      perRound.map(({ stored, cutoffByCode }) => ({
+        date: stored.date,
         cutoff: cutoffByCode.get(code) ?? null,
       })),
   };
 }
 
-const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
-
-function isObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
-function isStoredRow(row: unknown): boolean {
-  return (
-    isObject(row) &&
-    typeof row.name === "string" &&
-    row.name !== "" &&
-    (row.code === null || typeof row.code === "string") &&
-    typeof row.cutoff === "number" &&
-    Number.isInteger(row.cutoff)
-  );
-}
-
-function isRoundsFile(value: unknown): value is RoundsFile {
-  return (
-    isObject(value) &&
-    Array.isArray(value.rounds) &&
-    value.rounds.every(
-      (round) =>
-        isObject(round) &&
-        typeof round.date === "string" &&
-        DATE_RE.test(round.date) &&
-        Array.isArray(round.rows) &&
-        round.rows.every(isStoredRow),
-    ) &&
-    Array.isArray(value.skipped) &&
-    value.skipped.every(
-      (skip) =>
-        isObject(skip) &&
-        typeof skip.date === "string" &&
-        DATE_RE.test(skip.date) &&
-        typeof skip.reason === "string" &&
-        skip.reason !== "",
-    )
-  );
-}
-
-/** Rebuilds parsed rounds from a stored rounds.json (for --generate-only). */
+/**
+ * Rebuilds parsed rounds from a stored rounds.json (for --generate-only and
+ * for keeping stored rounds). Every v2 field comes back, including each row's
+ * stored code, so regenerating writes the same file.
+ */
 export function readRoundsFile(value: unknown): RoundPages {
   if (!isRoundsFile(value)) {
     throw new Error(
-      "src/data/rounds.json is missing or not a { rounds, skipped } file; run data:import",
+      "src/data/rounds.json is missing or not a schemaVersion 2 rounds file; run data:import",
     );
   }
   return {
     rounds: value.rounds.map((round) => ({
       date: round.date,
-      rows: round.rows.map(({ name, cutoff }) => ({
+      totals: round.totals,
+      tieBreak: round.tieBreak,
+      rows: round.rows.map(({ name, code, cutoff, tieBreak }) => ({
         occupationName: name,
         cutoff,
+        tieBreak,
+        code,
       })),
+      nominations: round.nominations,
     })),
     skipped: value.skipped.map(({ date, reason }) => ({ date, reason })),
   };

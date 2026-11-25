@@ -1,0 +1,124 @@
+/* The map's labels are sized for the width it is drawn at: the frame is a
+   size container, and on narrower frames only the codes and figures show,
+   larger, so no label renders under 12px. */
+.frame {
+  container-type: inline-size;
+}
+.map {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.shadow {
+  fill: var(--homepage-map-shadow);
+  opacity: 0.18;
+}
+.depth1 {
+  fill: var(--homepage-map-shade-1);
+}
+.depth2 {
+  fill: var(--homepage-map-shade-2);
+}
+.depth3 {
+  fill: var(--homepage-map-shade-3);
+}
+.region {
+  stroke: var(--homepage-map-edge);
+  stroke-width: 1.2;
+  stroke-linejoin: round;
+}
+.actCircle {
+  stroke: var(--homepage-map-edge-strong);
+  stroke-width: 1.4;
+}
+.connector {
+  fill: none;
+  stroke: var(--homepage-map-edge-strong);
+  stroke-width: 1.4;
+}
+.band1 {
+  fill: var(--updates-map-1);
+}
+.band2 {
+  fill: var(--updates-map-2);
+}
+.band3 {
+  fill: var(--updates-map-3);
+}
+.band4 {
+  fill: var(--updates-map-4);
+}
+/* Label sizes are map units (the viewBox is 750 wide). A frame 540px or
+   wider draws the map at 0.72x or more, so 17 units render at 12px or more. */
+.code,
+.value {
+  fill: var(--brand-ink);
+  text-anchor: middle;
+}
+.code {
+  font-family: var(--brand-font);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+.big {
+  font-family: var(--font-stamp);
+  font-size: 28px;
+  font-weight: 900;
+}
+.bigLong {
+  font-family: var(--font-stamp);
+  font-size: 24px;
+  font-weight: 900;
+}
+.small {
+  font-family: var(--brand-font);
+  font-size: 17px;
+  font-weight: 600;
+}
+/* Narrower frames drop the figure words (the tiles hold them) and grow the
+   codes and figures: 23 units at 0.53x (400px) and 31 at 0.39x (300px)
+   still render at 12px. */
+@container (width < 540px) {
+  .small {
+    display: none;
+  }
+  .code {
+    font-size: 23px;
+  }
+  .big,
+  .bigLong {
+    font-size: 30px;
+  }
+}
+/* At these sizes the south-east labels would touch, so they move apart
+   (map units: NSW up, VIC west, TAS down). */
+@container (width < 400px) {
+  .code {
+    font-size: 31px;
+  }
+  .big,
+  .bigLong {
+    font-size: 38px;
+  }
+  .label[data-state="NSW"] {
+    transform: translate(8px, -10px);
+  }
+  .label[data-state="VIC"] {
+    transform: translateX(-22px);
+  }
+  .label[data-state="TAS"] {
+    transform: translate(6px, 14px);
+  }
+}
+/* A 320px viewport draws the map about 274px wide (0.365x): 34 units render
+   at 12.4px, 33 at 12.1px. */
+@container (width < 300px) {
+  .code,
+  .big {
+    font-size: 34px;
+  }
+  .bigLong {
+    font-size: 33px;
+  }
+}

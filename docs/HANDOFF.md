@@ -1,5 +1,48 @@
 # Resume here
 
+## Founder: set up the scheduled jobs (25 November 2026)
+
+The three workflows (`monthly-data`, `round-189`, `page-watch`) are on branch `roadmap/monthly-updates` and run only after the merge to `main`. Details are in `docs/OPERATIONS.md`, "Monthly data pipeline".
+
+- [ ] GitHub, Settings, Actions, General: tick "Allow GitHub Actions to create and approve pull requests".
+- [ ] Optional: set the repository variable `CF_PAGES_PROJECT` (Cloudflare Pages project name) so pull requests link a preview.
+- [ ] Merge to `main`.
+- [ ] Rehearse with "Run workflow" (`docs/OPERATIONS.md`, "Rehearsal"), reading each run's summary and noting durations in the Plan 3 ledger:
+  - `monthly-data` with month `2026-10` (a no-op check). Close its pull request before the next run, or that run (`round-189` included) joins it.
+  - `monthly-data` with no inputs, to exercise the dashboard probe.
+  - `round-189`. If a November round is already published, it opens that round's pull request.
+  - `page-watch` twice.
+- [ ] Watch the first scheduled runs. The "Start Chrome" smoke test runs on every data run, but the first real puppeteer render (the first new month or round, about mid-December 2026) is still untested in CI.
+- Holding a month, the spotlight swap, replacing a branch and the failure path are covered only by local dry runs.
+- Closing a month's pull request holds that month (delete `data/skillselect-YYYY-MM` to import it again); closing a round pull request does not hold it.
+
+## Monthly updates, Plan 2: Instagram images (25 November 2026)
+
+The 2026-10 Instagram sets are rendered locally and committed (founder go-ahead, 24 Nov 2026; later months are rendered in CI only). Branch `roadmap/monthly-updates`, not pushed.
+
+- **Where.** Everything is under `public/social/2026-10/`. The month set is the 6-card carousel (counter 1/6 to 6/6), in this order, using the `-light` or the `-dark` files (one theme for all six):
+  1. `month/cover-<theme>.png`
+  2. `round-2026-10-15/round-<theme>.png` (the round card; the month set reuses it and never re-renders it)
+  3. `month/state-190-<theme>.png`
+  4. `month/state-491-<theme>.png`
+  5. `month/spotlight-<theme>.png`
+  6. `month/closing-<theme>.png`
+
+  The story is `month/story-cover-<theme>.png` (1080×1920). `og.png` is the recap's OG image. The round set (`round-2026-10-15/`) is a separate 3-card carousel for the 15 Oct 189 round alone: `cover-<theme>.png`, `round-<theme>.png`, `closing-<theme>.png` (counter 1/3 to 3/3), plus its own `story-cover-<theme>.png` and `og.png`.
+
+- **How to post.** Instagram is posted by hand; nothing posts automatically. The month carousel's caption and every card's alt text are in `month/set.json`: the `caption` field, and for each card the `alt` of its `images` entry. Card 2's alt text ("Card 2 of 6. ...") is in that file too, in the two entries with `"card": "round"`, which name the round-set files. The round set's `round-2026-10-15/set.json` has the round-only carousel's caption and alt text (its card 2 has no "Card N of M" prefix).
+- **Re-render.** `rm -rf public/social/2026-10`, then `npm run social:render -- --month 2026-10 --set round` and `-- --month 2026-10 --set month` (needs Chrome; `scripts/README.md`). The recap page uses `/social/<month>/og.png` when it exists, else the newest round's `og.png`, else `/og.png` (`ogImageFor`).
+
+## Monthly updates, Plan 1: recap pages (25 November 2026)
+
+Branch `roadmap/monthly-updates` (not merged, not pushed, not deployed). Spec `docs/superpowers/specs/2026-11-24-monthly-updates-design.md`; plan `docs/superpowers/plans/2026-11-24-monthly-updates-1-recap-pages.md`; ledger `.superpowers/sdd/2026-11-24-monthly-updates-1-recap-pages/progress.md` (rulings, outcomes, deferred minors). Plans 2 (Instagram images) and 3 (scheduled jobs) run next on the same branch.
+
+- **Unpinned from 2026-10, safely.** `/sample/` is frozen on 2026-10 (`src/data/sample/2026-10/`, `npm run sample:freeze`); live-data tests are sorted from frozen ones (`src/lib/data/__fixtures__/frozen-2026-10.ts`); a dropped occupation keeps its page with `lastAsAt` (`docs/DATA.md`); `rounds.json` is v2 (totals, tie-break dates, the state nominations table) and stored rounds are never re-derived; round pages are kept in `data/raw/rounds/`.
+- **Recap facts.** `npm run updates:generate` writes `src/data/updates/<YYYY-MM>.json` (a round section per 189 round, one data section per month, each frozen once merged; `scripts/README.md`). `2026-10.json` holds the 15 Oct 2026 round and the October data.
+- **Pages.** `/updates/2026-10/` (the recap) and `/updates/` (the index: dated answer, the latest month's stamp, headline and three figures, every month newest first, the points-check card). Both are in the sitemap, dated by `updatedAt`, round-only months included; the footer links "Monthly updates"; the header is unchanged. Lighthouse audits `/updates/` and the newest recap (`scripts/lighthouse/pages.ts`).
+- **Lighthouse** (`npm run lighthouse -- --only updates`, and `--only /` as a regression check): every gated score is 100 on mobile and desktop for `/updates/` (mobile LCP 0.9 s, TBT 4 ms), `/updates/2026-10/` (mobile LCP 1.1 s, TBT 7 ms) and `/`, dark accessibility 100, CPU benchmark ~4,200 (25 Nov 2026). A first run during Spotlight indexing (CPU ~860) read 95 and 84 on mobile; re-runs at normal CPU are 100. Best Practices on the recap is 100 now that its breadcrumb's `/updates/` exists.
+- **Founder review list** (from Task 11): the wording "Highest published minimum", "none published", "none recorded"; the not-listed FAQ uses Chef (the largest pool) rather than the mockup's Software Engineer.
+
 ## Lighthouse 100s (24 November 2026)
 
 Branch `roadmap/perf-100` (from `main` 9853460; not merged, not pushed, not deployed). Founder goal in `docs/STRATEGY.md`: 100 in Performance, Accessibility, Best Practices and SEO, mobile and desktop, for every SEO page type. Rules and budget: `docs/ENGINEERING.md`, "Performance budget".

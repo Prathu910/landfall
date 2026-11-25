@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { stateRules } from "../../data/state-rules/2026-27/index";
-import { loadOccupationCore, loadOccupationDetail } from "../data/load-server";
+import { frozenCore, frozenDetail } from "../data/__fixtures__/frozen-2026-10";
 import type { Profile } from "../migration";
 import {
   realFederal,
@@ -24,8 +24,8 @@ const BANNED =
 
 function setup(id: ScenarioId) {
   const profile: Profile = SCENARIOS[id];
-  const core = loadOccupationCore(profile.occupation);
-  const detail = loadOccupationDetail(profile.occupation);
+  const core = frozenCore(profile.occupation);
+  const detail = frozenDetail(profile.occupation);
   const input: OutlookInput = {
     profile,
     asOf: AS_OF,

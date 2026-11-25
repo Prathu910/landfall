@@ -16,12 +16,15 @@ export function occupationDataUrl(
 
 /**
  * The code to fetch published data for, or null when there is nothing to
- * fetch: unknown codes, the points-only choice, and indexed occupations
- * without published data (hasData false).
+ * fetch: unknown codes, the points-only choice, indexed occupations
+ * without published data (hasData false), and occupations that have dropped
+ * out of the data (lastAsAt), whose old figures are never read as current.
  */
 export function publishedOccupationCode(
   code: string,
   index: OccupationIndexEntry[],
 ): string | null {
-  return index.some((e) => e.code === code && e.hasData) ? code : null;
+  return index.some((e) => e.code === code && e.hasData && !e.lastAsAt)
+    ? code
+    : null;
 }

@@ -1,0 +1,149 @@
+/* The /updates/ index: the recap page's sage hero, the latest month as a
+   paper card with its stamp, then every month. Not a print target. */
+.page {
+  --focus-ring: var(--brand-focus);
+  background: var(--brand-sage);
+  color: var(--brand-ink);
+  font: 400 1rem/1.6 var(--brand-font);
+}
+.page h1,
+.page h2,
+.page h3 {
+  font-family: var(--brand-font);
+}
+.head {
+  padding-bottom: calc(var(--brand-unit) * 12);
+}
+.eyebrow {
+  margin-top: calc(var(--brand-unit) * 6.5);
+}
+.latest {
+  display: grid;
+  grid-template-columns: 14.375rem minmax(0, 1fr);
+  gap: calc(var(--brand-unit) * 10);
+  align-items: center;
+  margin-top: calc(var(--brand-unit) * 9);
+  padding: calc(var(--brand-unit) * 8) calc(var(--brand-unit) * 10);
+  border-radius: calc(var(--brand-unit) * 4.5);
+  background: var(--brand-paper);
+  box-shadow:
+    0 1.25rem 3rem -1.75rem
+      color-mix(in srgb, var(--shadow-ink) 40%, transparent),
+    inset 0 0 0 1px var(--brand-line),
+    inset 0 1px 0 var(--elevate-edge);
+}
+/* 230px keeps the stamp's ring text at 12px or more (BIG_STAMP.minWidth). */
+.stamp {
+  display: block;
+  width: 14.375rem;
+  height: auto;
+  filter: var(--stamp-glow);
+  mix-blend-mode: var(--stamp-blend);
+}
+.round {
+  color: var(--homepage-strong);
+}
+.data {
+  color: var(--brand-ink);
+}
+.latestTitle {
+  margin-top: calc(var(--brand-unit) * 2);
+  font-size: clamp(1.5rem, 2.8vw, 2rem);
+  font-weight: var(--headline-wght);
+  font-stretch: 108%;
+  letter-spacing: -0.02em;
+  line-height: 1.12;
+}
+.latestTitle a {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.15em;
+}
+.figures {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: calc(var(--brand-unit) * 4);
+  margin: calc(var(--brand-unit) * 6) 0 calc(var(--brand-unit) * 7);
+}
+.figure {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  padding-top: calc(var(--brand-unit) * 3.5);
+  border-top: var(--brand-rule-width) solid var(--homepage-rule);
+}
+.figure dd {
+  margin: 0;
+  font-family: var(--font-stamp);
+  font-size: clamp(1.625rem, 2.6vw, 2.125rem);
+  font-weight: 900;
+  line-height: 1;
+}
+.figure dt {
+  margin-top: calc(var(--brand-unit) * 1.5);
+  color: var(--brand-muted);
+  font-size: 0.8125rem;
+  line-height: 1.35;
+}
+.months {
+  display: grid;
+  margin: calc(var(--brand-unit) * 7) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.month {
+  display: grid;
+  grid-template-columns: 11rem minmax(0, 1fr) auto;
+  gap: calc(var(--brand-unit) * 2) calc(var(--brand-unit) * 6);
+  align-items: baseline;
+  padding: calc(var(--brand-unit) * 5) 0;
+  border-top: var(--brand-rule-width) solid var(--brand-line);
+}
+.month:last-child {
+  border-bottom: var(--brand-rule-width) solid var(--brand-line);
+}
+.monthName {
+  color: var(--brand-muted);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.monthTitle {
+  font-size: 1.1875rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+.monthTitle a {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.15em;
+}
+.roundDate {
+  color: var(--brand-muted);
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+@media screen and (max-width: 900px) {
+  .latest {
+    grid-template-columns: minmax(0, 1fr);
+    gap: calc(var(--brand-unit) * 4);
+    padding: calc(var(--brand-unit) * 6);
+  }
+  .stamp {
+    margin-inline: auto;
+  }
+  .month {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media screen and (max-width: 640px) {
+  .figures {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+  .figure {
+    padding-bottom: calc(var(--brand-unit) * 3);
+  }
+}

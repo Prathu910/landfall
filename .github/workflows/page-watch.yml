@@ -1,0 +1,95 @@
+# Daily page watcher (spec 6.11). Reads every official state nomination and
+# fee page the site cites and, when a page's text changes, opens (or comments
+# on) a `source-watch` issue for the founder with a before/after excerpt, and
+# keeps one "Sources the watcher cannot read" issue for pages that refuse
+# automated reads or that robots.txt disallows. It
+# never edits the site: the founder updates the rule or fee in a reviewed
+# change. The baseline is the previous run's page texts, kept in the Actions
+# cache; when it is missing (the first run, or evicted) the run stores a new
+# one and opens no issues. The job body is scripts/page-watch/cli.ts, run by
+# scripts/automation/page-watch.sh; a failed run opens (or comments on) the
+# "Page watch failed" issue, and the next successful run closes it.
+name: Page watch
+
+on:
+  schedule:
+    # 22:00 UTC is 08:00-09:00 in Sydney, after the data jobs.
+    - cron: "0 22 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: page-watch
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    # The baseline cache and the issues belong to main's runs only.
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: bash
+    env:
+      GH_REPO: ${{ github.repository }}
+    steps:
+      # The job never pushes, so it keeps no git credentials on disk.
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+
+      # Records the first step, so a failed install still opens the issue.
+      - name: Prepare
+        run: bash scripts/automation/page-watch.sh prepare
+
+      # Install scripts never see the token.
+      - name: Install dependencies
+        timeout-minutes: 10
+        run: env -u GH_TOKEN npm ci
+
+      # Restores the newest page-watch-* cache, the previous run's baseline.
+      - name: Restore the baseline
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/page-watch
+          key: page-watch-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: page-watch-
+
+      # Creates the source-watch label (R18), then checks the pages. Also
+      # writes the run summary to $GITHUB_STEP_SUMMARY. The script stops
+      # requesting pages after 15 minutes, so it always plans and saves.
+      - name: Check the cited pages
+        timeout-minutes: 20
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash scripts/automation/page-watch.sh run 2>&1 | tee "$RUNNER_TEMP/page-watch.log"
+
+      # Only after a successful check, so a failed run never replaces the baseline.
+      - name: Save the baseline
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/page-watch
+          key: page-watch-${{ github.run_id }}-${{ github.run_attempt }}
+
+      - name: Close any failure issue
+        timeout-minutes: 2
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash scripts/automation/page-watch.sh resolve
+
+      - name: Open or update the failure issue
+        if: failure() || cancelled()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash scripts/automation/page-watch.sh report-failure

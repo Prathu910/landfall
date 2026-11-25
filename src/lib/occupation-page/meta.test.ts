@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { occupationIndex } from "../../components/data/occupation-index";
 import { stateRuleData } from "../../components/data/state-rule-data";
-import { loadOccupationCore } from "../data/load-server";
+import { frozenCore, frozenIndex } from "../data/__fixtures__/frozen-2026-10";
 import { allMaskedCore } from "../report/__fixtures__/scorecard";
 import { SITE_URL } from "../site";
 import { occupationFaq } from "./faq";
@@ -17,7 +16,7 @@ import { occupationPath } from "./slug";
 import { stateRows } from "./states";
 import { occupationSummary } from "./summary";
 
-const core = loadOccupationCore("261313")!;
+const core = frozenCore("261313")!;
 const faq = occupationFaq(core, stateRows("261313", core, stateRuleData));
 const summary = occupationSummary(core, null);
 // allMaskedCore masks only its monthly history; its pools are unmasked.
@@ -34,7 +33,7 @@ const maskedCore = {
 
 describe("relatedOccupations", () => {
   it("shares the first four digits and excludes itself", () => {
-    const related = relatedOccupations("261313", occupationIndex);
+    const related = relatedOccupations("261313", frozenIndex());
     expect(related.length).toBeLessThanOrEqual(6);
     expect(related.every((r) => r.code.startsWith("2613"))).toBe(true);
     expect(related.map((r) => r.code)).not.toContain("261313");
@@ -96,7 +95,7 @@ describe("occupationJsonLd", () => {
 describe("sitemapEntries", () => {
   const entries = sitemapEntries(
     [core, maskedCore],
-    occupationIndex,
+    frozenIndex(),
     "2026-11-17",
     "2026-11-23",
   );
@@ -106,6 +105,20 @@ describe("sitemapEntries", () => {
     expect(urls).toContain(`${SITE_URL}/occupations/`);
     expect(urls).toContain(SITE_URL + occupationPath(core));
     expect(urls).not.toContain(SITE_URL + occupationPath(maskedCore));
+  });
+  it("dates a dropped occupation's sitemap entry by lastCheckedAt and keeps it listed", () => {
+    const marked = frozenIndex().map((e) =>
+      e.code === core.code
+        ? { ...e, lastAsAt: "2026-09", lastCheckedAt: "2026-10-20" }
+        : e,
+    );
+    const dropped = sitemapEntries(
+      [core],
+      marked,
+      "2026-11-17",
+      "2026-11-23",
+    ).find((e) => e.url === SITE_URL + occupationPath(core));
+    expect(dropped?.lastModified).toBe("2026-10-20");
   });
   it("lists the PR guide and its three visa pages", () => {
     for (const path of [
@@ -131,5 +144,22 @@ describe("sitemapEntries", () => {
     expect(dated.map((e) => e.lastModified)).toEqual(
       Array(4).fill("2026-11-23"),
     );
+  });
+});
+
+describe("a dropped occupation's own snapshot", () => {
+  const old = {
+    ...core,
+    asAt: "2026-09",
+    snapshotId: "skillselect-2026-09-30",
+  };
+  it("takes its title and coverage from its core, not the current month", () => {
+    expect(pageTitle(old)).toMatch(/Sep 2026$/);
+    const dataset = occupationJsonLd(old, faq, summary, "2026-10-20")[0] as {
+      temporalCoverage: string;
+      dateModified: string;
+    };
+    expect(dataset.temporalCoverage.endsWith("/2026-09")).toBe(true);
+    expect(dataset.dateModified).toBe("2026-10-20");
   });
 });

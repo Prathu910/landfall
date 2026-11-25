@@ -31,6 +31,7 @@ export function SiteFooter() {
               <Link href="/sample/">Sample report</Link>
               <Link href="/occupations/">Occupations</Link>
               <Link href="/states/">States</Link>
+              <Link href="/updates/">Monthly updates</Link>
             </div>
             <div>
               <h2>About the data</h2>

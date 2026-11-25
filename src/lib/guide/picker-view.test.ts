@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { occupationIndex } from "../../components/data/occupation-index";
+import { frozenIndex } from "../data/__fixtures__/frozen-2026-10";
 import { stateRuleData } from "../../components/data/state-rule-data";
 import { pathFit, type PickerSituation } from "./path-fit";
 import { pickerView } from "./picker-view";
 
-const entry = (code: string) => occupationIndex.find((e) => e.code === code)!;
+const entry = (code: string) => frozenIndex().find((e) => e.code === code)!;
 const view = (code: string, situation: PickerSituation) =>
   pickerView(pathFit(code, situation, stateRuleData), entry(code), situation);
 
@@ -56,7 +56,7 @@ describe("pickerView", () => {
   });
 
   it("drops the occupation page link when the occupation has no data", () => {
-    const noData = occupationIndex.find((e) => !e.hasData)!;
+    const noData = frozenIndex().find((e) => !e.hasData)!;
     const v = pickerView(
       pathFit(noData.code, { kind: "offshore" }, stateRuleData),
       noData,

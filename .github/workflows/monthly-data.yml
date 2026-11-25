@@ -1,0 +1,109 @@
+# Monthly SkillSelect import (spec 6.9). Probes the dashboard daily early in
+# the month and, when a new as-at month is out, imports it, writes the recap
+# and Instagram cards, runs every check and opens (or adds to) the one
+# `data-update` pull request for the founder. Nothing merges or deploys
+# without the founder. The job body is scripts/automation/monthly.sh.
+name: Monthly SkillSelect data
+
+on:
+  schedule:
+    # 20:30 UTC is 06:30-07:30 in Sydney; days 1-28 leave margin.
+    - cron: "30 20 1-28 * *"
+  workflow_dispatch:
+    inputs:
+      month:
+        description: "Import this as-at month (YYYY-MM) instead of probing. With a spotlight, the open pull request's month."
+        required: false
+        type: string
+        default: ""
+      spotlight:
+        description: "Six-digit occupation code: swap the open data pull request's spotlight."
+        required: false
+        type: string
+        default: ""
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: data-update
+  cancel-in-progress: false
+
+jobs:
+  monthly:
+    # Data branches start from main, so never run from another branch.
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    defaults:
+      run:
+        shell: bash
+    env:
+      BASE_REF: origin/main
+      CHROME_PATH: /usr/bin/google-chrome
+    steps:
+      - name: Check out main
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+
+      # Records the likely month first, so a failure from here on (npm ci,
+      # Chrome) can still open the month's failure issue.
+      - name: Prepare
+        env:
+          MONTH: ${{ inputs.month }}
+          SPOTLIGHT: ${{ inputs.spotlight }}
+        run: bash scripts/automation/monthly.sh prepare
+
+      # Ubuntu 24.04 limits unprivileged user namespaces through AppArmor,
+      # which Chrome's sandbox needs. Lifting the limit on this throwaway VM
+      # keeps the sandbox on (rather than launching Chrome with --no-sandbox).
+      # The step name goes to the failure issue, like the script's own steps.
+      - name: Start Chrome
+        run: |
+          printf 'Start Chrome\n' >"$RUNNER_TEMP/monthly-state/step"
+          if [ -e /proc/sys/kernel/apparmor_restrict_unprivileged_userns ]; then
+            sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          fi
+          # A headless start that opens a sandboxed renderer.
+          "$CHROME_PATH" --headless=new --disable-gpu --dump-dom about:blank >/dev/null
+
+      # Under the job's 120 minutes, so the failure steps still get time.
+      - name: Import, check and open the pull request
+        timeout-minutes: 105
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MONTH: ${{ inputs.month }}
+          SPOTLIGHT: ${{ inputs.spotlight }}
+          CF_PAGES_PROJECT: ${{ vars.CF_PAGES_PROJECT }}
+        run: bash scripts/automation/monthly.sh run 2>&1 | tee "$RUNNER_TEMP/monthly.log"
+
+      - name: Collect the failed run's files
+        if: failure() || cancelled()
+        run: bash scripts/automation/monthly.sh collect-failure
+
+      - name: Upload the failed run's files
+        if: failure() || cancelled()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: monthly-data-failure-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/*.log
+            ${{ runner.temp }}/import.json
+            ${{ runner.temp }}/failure-raw/
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Open or update the failure issue
+        if: failure() || cancelled()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash scripts/automation/monthly.sh report-failure

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { loadOccupationCore } from "../data/load-server";
+import { frozenCore } from "../data/__fixtures__/frozen-2026-10";
 import type { OccupationCore } from "../data/types";
 import { calculatePoints } from "../migration";
 import {
@@ -11,7 +11,7 @@ import { higherScoreCount, label189, stateVisasOnList } from "./label-189";
 
 const AS_OF = "2026-11-21";
 const core = (code: string) => {
-  const c = loadOccupationCore(code);
+  const c = frozenCore(code);
   if (!c) throw new Error(`missing core ${code}`);
   return c;
 };

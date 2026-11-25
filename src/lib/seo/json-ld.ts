@@ -9,6 +9,8 @@ export type FaqEntry = { question: string; answer: string };
 export type Crumb = { name: string; item: string };
 
 const CONTEXT = "https://schema.org";
+/** SkillSelect data is reused under this licence (docs/DATA.md). */
+const SKILLSELECT_LICENSE = "https://creativecommons.org/licenses/by/3.0/au/";
 
 export function faqPageLd(faq: FaqEntry[]): object {
   return {
@@ -41,6 +43,9 @@ export function articleLd(page: {
   url: string;
   dateModified: string;
   citations: string[];
+  datePublished?: string;
+  /** An absolute URL. */
+  image?: string;
 }): object {
   return {
     "@context": CONTEXT,
@@ -49,11 +54,60 @@ export function articleLd(page: {
     description: page.description,
     url: page.url,
     mainEntityOfPage: page.url,
+    ...(page.datePublished ? { datePublished: page.datePublished } : {}),
     dateModified: page.dateModified,
+    ...(page.image ? { image: page.image } : {}),
     isAccessibleForFree: true,
     author: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
     publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
     citation: page.citations,
+  };
+}
+
+/** Published SkillSelect figures: created by Home Affairs, reused under CC BY 3.0 AU. */
+export function datasetLd(page: {
+  name: string;
+  description: string;
+  url: string;
+  temporalCoverage: string;
+  dateModified: string;
+}): object {
+  return {
+    "@context": CONTEXT,
+    "@type": "Dataset",
+    name: page.name,
+    description: page.description,
+    url: page.url,
+    temporalCoverage: page.temporalCoverage,
+    isAccessibleForFree: true,
+    license: SKILLSELECT_LICENSE,
+    creator: { "@type": "Organization", name: "Department of Home Affairs" },
+    publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
+    dateModified: page.dateModified,
+  };
+}
+
+/** An index page and the pages it lists, in order. */
+export function collectionPageLd(page: {
+  name: string;
+  description: string;
+  url: string;
+  items: { name: string; url: string }[];
+}): object {
+  return {
+    "@context": CONTEXT,
+    "@type": "CollectionPage",
+    name: page.name,
+    description: page.description,
+    url: page.url,
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: page.items.map((item, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        ...item,
+      })),
+    },
   };
 }
 

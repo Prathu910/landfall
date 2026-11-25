@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { stateRules } from "../../data/state-rules/2026-27/index";
-import { loadOccupationCore, loadOccupationDetail } from "../data/load-server";
+import { frozenCore, frozenDetail } from "../data/__fixtures__/frozen-2026-10";
 import {
   realFederal,
   realLists,
@@ -20,12 +20,12 @@ const RULES = {
 
 function input(id: ScenarioId, over: Partial<OutlookInput> = {}): OutlookInput {
   const profile = SCENARIOS[id];
-  const core = loadOccupationCore(profile.occupation);
+  const core = frozenCore(profile.occupation);
   return {
     profile,
     asOf: AS_OF,
     core,
-    detail: core ? loadOccupationDetail(profile.occupation) : null,
+    detail: core ? frozenDetail(profile.occupation) : null,
     rules: RULES,
     ...over,
   };
@@ -120,8 +120,8 @@ describe("lodged pace", () => {
   });
 
   it("lodgedPace is null for an invalid date", () => {
-    const core = loadOccupationCore("254499")!;
-    const detail = loadOccupationDetail("254499")!;
+    const core = frozenCore("254499")!;
+    const detail = frozenDetail("254499")!;
     expect(lodgedPace(core, detail, 70, "nope", AS_OF)).toEqual({
       kind: "unknown",
     });
@@ -129,8 +129,8 @@ describe("lodged pace", () => {
 });
 
 describe("lodged pace edge cases", () => {
-  const core = loadOccupationCore("254499")!;
-  const detail = loadOccupationDetail("254499")!;
+  const core = frozenCore("254499")!;
+  const detail = frozenDetail("254499")!;
   const scoreKey = "70";
 
   function withInvited(counts: Record<string, string> | undefined) {

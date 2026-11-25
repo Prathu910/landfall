@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { contrastRatio } from "./contrast";
 import {
+  ARTWORK,
   CHART,
   CHECK_PALETTE,
   DEEP_PANEL,
@@ -14,8 +15,10 @@ import {
   QUESTION_LINE,
   SHELL_PALETTE,
   STATUS,
+  UPDATES_MAP,
 } from "./palette";
 import {
+  ARTWORK_DARK,
   CHART_DARK,
   CHECK_PALETTE_DARK,
   FOCUS_RING_DARK,
@@ -25,6 +28,7 @@ import {
   QUESTION_LINE_DARK,
   SHELL_PALETTE_DARK,
   STATUS_DARK,
+  UPDATES_MAP_DARK,
 } from "./palette-dark";
 import { TEXT_PAIRS, TEXT_PAIRS_DARK } from "./text-pairs";
 import { lightFallback } from "./light-fallback";
@@ -108,6 +112,8 @@ describe("text pairs", () => {
         expect(names).toContain(`status ${key}`);
       expect(names).toContain("question line");
       expect(names).toContain("homepage muted on desk");
+      for (const band of [1, 2, 3, 4])
+        expect(names).toContain(`updates map label on band ${band}`);
     }
   });
   it("gives input borders 3:1 on every input surface in both themes", () => {
@@ -144,6 +150,26 @@ describe("globals.css", () => {
       expectToken(`homepage-${kebab(key)}`, value, dark);
     }
     expectToken("input-border", INPUT_BORDER.light, INPUT_BORDER.dark);
+    UPDATES_MAP.forEach((fill, band) =>
+      expectToken(`updates-map-${band + 1}`, fill, UPDATES_MAP_DARK[band]),
+    );
+  });
+  it("mirrors the linework and map depth colours", () => {
+    const tokens: Record<keyof typeof ARTWORK, string> = {
+      rule: "homepage-rule",
+      mapEdge: "homepage-map-edge",
+      mapEdgeStrong: "homepage-map-edge-strong",
+      mapShade1: "homepage-map-shade-1",
+      mapShade2: "homepage-map-shade-2",
+      mapShade3: "homepage-map-shade-3",
+      mapShadow: "homepage-map-shadow",
+      guillocheA: "guilloche-a",
+      guillocheB: "guilloche-b",
+    };
+    for (const [key, name] of Object.entries(tokens)) {
+      const role = key as keyof typeof ARTWORK;
+      expectToken(name, ARTWORK[role], ARTWORK_DARK[role]);
+    }
   });
   it("mirrors the status colours", () => {
     for (const [key, { fg, bg }] of Object.entries(STATUS)) {

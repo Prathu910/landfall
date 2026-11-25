@@ -9,6 +9,16 @@ function monthAt(index: number): MonthKey {
   return `${Math.floor(index / 12)}-${month}`;
 }
 
+/** The month after `month`. */
+export function nextMonth(month: MonthKey): MonthKey {
+  return monthAt(monthIndex(month) + 1);
+}
+
+/** The month `delta` calendar months from `month` (negative goes back). */
+export function shiftMonth(month: MonthKey, delta: number): MonthKey {
+  return monthAt(monthIndex(month) + delta);
+}
+
 /**
  * The `count` calendar months ending at `asAt`, oldest first. Windows are
  * built from the calendar, never from the keys a record happens to hold: a

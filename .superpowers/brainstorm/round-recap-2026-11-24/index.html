@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Monthly update mockups</title>
+<link rel="stylesheet" href="assets/brand.css">
+<style>
+  body { background: var(--desk); }
+  .wrap { width: min(1240px, 100% - 32px); margin: 0 auto; padding: 40px 0 80px; }
+  header.g { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  header.g .logo { font-size: 20px; }
+  .pill { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; font-weight: 700; color: var(--green); }
+  h1 { font-size: clamp(30px, 4vw, 46px); font-weight: 800; font-stretch: 110%; letter-spacing: -.02em; line-height: 1.05; margin: 26px 0 0; }
+  .intro { font-size: 18px; color: var(--lede); max-width: 760px; margin: 14px 0 0; }
+  .intro li { margin: 4px 0; }
+  h2 { font-size: 26px; font-weight: 800; letter-spacing: -.015em; margin: 56px 0 6px; font-stretch: 106%; }
+  h2 small { font-size: 14px; font-weight: 600; color: var(--muted); margin-left: 8px; letter-spacing: 0; }
+  .lead { color: var(--lede); max-width: 780px; margin: 0 0 20px; }
+  .row { display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); align-items: start; }
+  .row.two { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+  figure { margin: 0; background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 12px; }
+  figure a.img { display: block; position: relative; border-radius: 8px; overflow: hidden; background: var(--desk); }
+  figure img { display: block; width: 100%; height: auto; }
+  figcaption { font-size: 14px; line-height: 1.45; margin-top: 10px; color: var(--lede); }
+  figcaption b { color: var(--ink); display: block; font-size: 15px; }
+  figcaption .dim { color: var(--muted); font-size: 12.5px; }
+  .tag { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 2px 7px; border-radius: 4px; margin-right: 6px; vertical-align: 1px; }
+  .tA { background: var(--strong-bg); color: var(--strong); }
+  .tB { background: var(--competitive-bg); color: var(--competitive); }
+  .tD { background: var(--fill); color: var(--on-fill); }
+  .scroll { max-height: 640px; overflow-y: auto; }
+  .safe-on .story a.img::before, .safe-on .story a.img::after { content: ""; position: absolute; left: 0; right: 0; background: #b4231833; border: 0 dashed #b42318; z-index: 1; }
+  .safe-on .story a.img::before { top: 0; height: 13%; border-bottom-width: 2px; }
+  .safe-on .story a.img::after { bottom: 0; height: 17.7%; border-top-width: 2px; }
+  .toggle { font: inherit; font-size: 14px; border: 1.5px solid var(--ink); background: transparent; color: var(--ink); border-radius: 999px; padding: 6px 14px; cursor: pointer; }
+  .vs { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .vs h3 { margin: 0 0 8px; font-size: 18px; }
+  .vs p { margin: 0 0 12px; color: var(--lede); font-size: 15px; }
+  .vs .row { grid-template-columns: 1fr 1fr; }
+  .box { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 22px 26px; }
+  .box ul { margin: 8px 0 0; padding-left: 20px; } .box li { margin: 6px 0; }
+  @media (max-width: 760px) { .vs, .vs .row { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="g"><span class="logo"></span><span class="pill">Design mockups · 24 Nov 2026 · not live</span></header>
+  <h1>Monthly SkillSelect update: page and Instagram mockups</h1>
+  <div class="intro">
+    <p style="margin:0">A look at what a monthly "SkillSelect update" could be: one page on the site and a set of Instagram images made from it. Nothing here is built into the real site yet.</p>
+    <ul>
+      <li>Every number is real, taken from our October 2026 data (as at 31 Oct 2026) and the 15 Oct 2026 round. <a href="notes.md">notes.md</a> lists each one and where it came from.</li>
+      <li>For Instagram there are <b>two looks</b> to choose from for the first two images: <span class="tag tA">A</span><b>Passport page</b> (security-pattern paper, ink stamps, magazine-style headings) and <span class="tag tB">B</span><b>Big stamp</b> (one huge stencil number, very little else).</li>
+      <li>Click any image to open it full size.</li>
+    </ul>
+  </div>
+
+  <h2>1. The update page <small>proposed address: migratelens.com/updates/2026-10/</small></h2>
+  <p class="lead">One page per month, in this order: a short dated answer at the top, the 189 round, 190 and 491 by state, biggest movers, how October compares with September, a "check your points" invitation, sources, and common questions. <a href="page/updates-2026-10.html">Open the working mockup</a> (the round button in its header switches light and dark).</p>
+  <div class="row two">
+    <figure><a class="img scroll" href="screens/recap-1280-light.png"><img src="screens/recap-1280-light.png" alt="Update page on a laptop, light"></a><figcaption><b>Laptop, day</b><span class="dim">1280 px wide · full page · scroll inside the frame</span></figcaption></figure>
+    <figure><a class="img scroll" href="screens/recap-1280-dark.png"><img src="screens/recap-1280-dark.png" alt="Update page on a laptop, dark"></a><figcaption><b>Laptop, night</b><span class="dim">1280 px wide · full page</span></figcaption></figure>
+    <figure><a class="img scroll" href="screens/recap-390-light.png"><img src="screens/recap-390-light.png" alt="Update page on a phone, light"></a><figcaption><b>Phone, day</b><span class="dim">390 px wide (an iPhone 15), shown at 2× · full page</span></figcaption></figure>
+    <figure><a class="img scroll" href="screens/recap-390-dark.png"><img src="screens/recap-390-dark.png" alt="Update page on a phone, dark"></a><figcaption><b>Phone, night</b><span class="dim">390 px wide, 2× · full page</span></figcaption></figure>
+  </div>
+
+  <h2>2. Instagram: pick a look <small>first two images of the post</small></h2>
+  <p class="lead">Same facts, two styles. The rest of the set below uses look A for now; it would switch to B if you prefer it.</p>
+  <div class="vs">
+    <div class="box"><h3><span class="tag tA">A</span>Passport page</h3><p>Feels like the site: a passport page with the fine wavy security pattern and ink stamps. Calmer, more to read.</p>
+      <div class="row">
+        <figure><a class="img" href="instagram/feed-cover-a-light.png"><img src="instagram/feed-cover-a-light.png" alt=""></a><figcaption><b>Cover</b><span class="dim">1080 × 1350 (portrait post)</span></figcaption></figure>
+        <figure><a class="img" href="instagram/feed-189-a-light.png"><img src="instagram/feed-189-a-light.png" alt=""></a><figcaption><b>189 round</b><span class="dim">1080 × 1350</span></figcaption></figure>
+      </div></div>
+    <div class="box"><h3><span class="tag tB">B</span>Big stamp</h3><p>One huge stencil number that reads from across the room, then a single line. Louder, stops the scroll, less detail.</p>
+      <div class="row">
+        <figure><a class="img" href="instagram/feed-cover-b-light.png"><img src="instagram/feed-cover-b-light.png" alt=""></a><figcaption><b>Cover</b><span class="dim">1080 × 1350</span></figcaption></figure>
+        <figure><a class="img" href="instagram/feed-189-b-light.png"><img src="instagram/feed-189-b-light.png" alt=""></a><figcaption><b>189 round</b><span class="dim">1080 × 1350</span></figcaption></figure>
+      </div></div>
+  </div>
+
+  <h2>3. The rest of the post <small>swipe order 3 to 6</small></h2>
+  <p class="lead">A post is six images: cover, 189, 190 by state, 491 by state, one occupation up close, and a closing image with the link and the "not migration advice" line.</p>
+  <div class="row">
+    <figure><a class="img" href="instagram/feed-190-light.png"><img src="instagram/feed-190-light.png" alt=""></a><figcaption><b><span class="tag tA">A</span>190 by state</b>Invitations held on 31 Oct, by the state that gave them. Every number is a minimum.<br><span class="dim">1080 × 1350</span></figcaption></figure>
+    <figure><a class="img" href="instagram/feed-491-light.png"><img src="instagram/feed-491-light.png" alt=""></a><figcaption><b><span class="tag tA">A</span>491 by state</b>Same, for the state-nominated regional visa.<br><span class="dim">1080 × 1350</span></figcaption></figure>
+    <figure><a class="img" href="instagram/feed-spot-light.png"><img src="instagram/feed-spot-light.png" alt=""></a><figcaption><b><span class="tag tA">A</span>Spotlight: Registered Nurses nec</b>Our sample occupation, chosen because its October data is rich.<br><span class="dim">1080 × 1350</span></figcaption></figure>
+    <figure><a class="img" href="instagram/feed-close-light.png"><img src="instagram/feed-close-light.png" alt=""></a><figcaption><b><span class="tag tA">A</span>Closing image</b>Free points check, migratelens.com, and the not-advice line.<br><span class="dim">1080 × 1350</span></figcaption></figure>
+  </div>
+
+  <h2>4. Stories <small>tall format for Stories and Reels covers</small></h2>
+  <p class="lead">Instagram puts its own buttons over the top and bottom of a story, so all the words sit in the middle. <button class="toggle" type="button" onclick="document.body.classList.toggle('safe-on')">Show the covered areas</button></p>
+  <div class="row">
+    <figure class="story"><a class="img" href="instagram/story-cover-a-light.png"><img src="instagram/story-cover-a-light.png" alt=""></a><figcaption><b><span class="tag tA">A</span>Story cover, day</b><span class="dim">1080 × 1920 · words kept clear of the top 250 px and bottom 340 px</span></figcaption></figure>
+    <figure class="story"><a class="img" href="instagram/story-189-a-light.png"><img src="instagram/story-189-a-light.png" alt=""></a><figcaption><b><span class="tag tA">A</span>Story: 189 round, day</b><span class="dim">1080 × 1920</span></figcaption></figure>
+    <figure class="story"><a class="img" href="instagram/story-cover-a-dark.png"><img src="instagram/story-cover-a-dark.png" alt=""></a><figcaption><b><span class="tag tA">A</span><span class="tag tD">Night</span>Story cover, night</b><span class="dim">1080 × 1920</span></figcaption></figure>
+  </div>
+
+  <h2>5. Night versions <small>the "passport at night" colours</small></h2>
+  <p class="lead">For accounts or posts that want the darker look. Same facts as the day versions.</p>
+  <div class="row">
+    <figure><a class="img" href="instagram/feed-cover-a-dark.png"><img src="instagram/feed-cover-a-dark.png" alt=""></a><figcaption><b><span class="tag tA">A</span>Cover, night</b><span class="dim">1080 × 1350</span></figcaption></figure>
+    <figure><a class="img" href="instagram/feed-cover-b-dark.png"><img src="instagram/feed-cover-b-dark.png" alt=""></a><figcaption><b><span class="tag tB">B</span>Cover, night</b><span class="dim">1080 × 1350</span></figcaption></figure>
+    <figure><a class="img" href="instagram/feed-189-a-dark.png"><img src="instagram/feed-189-a-dark.png" alt=""></a><figcaption><b><span class="tag tA">A</span>189 round, night</b><span class="dim">1080 × 1350</span></figcaption></figure>
+    <figure><a class="img" href="instagram/feed-190-dark.png"><img src="instagram/feed-190-dark.png" alt=""></a><figcaption><b><span class="tag tA">A</span>190 by state, night</b><span class="dim">1080 × 1350</span></figcaption></figure>
+  </div>
+
+  <h2>6. Things to decide</h2>
+  <div class="box"><ul>
+    <li><b>Look A or B</b> for Instagram (or A for the post and B for stories)?</li>
+    <li><b>State numbers are minimums.</b> The data hides every count under 20, so a state shows "at least 790". Honest, but a little odd to read. Keep it, or show only the state order (most to fewest)?</li>
+    <li><b>One page a month or one per round?</b> Rounds are irregular (June, then October). The proposal is one page per data month, posted on round day with the round and filled in when the monthly data arrives.</li>
+    <li><b>Spotlight choice:</b> rotate occupations each month, or let followers vote?</li>
+  </ul><p style="margin:12px 0 0;color:var(--muted);font-size:14px">More detail, every number and the data cautions: <a href="notes.md">notes.md</a>.</p></div>
+</div>
+<script src="assets/lib.js"></script>
+<script>document.querySelector("header.g .logo").outerHTML = R.logo();</script>
+</body>
+</html>

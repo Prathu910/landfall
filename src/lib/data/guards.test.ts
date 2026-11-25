@@ -195,4 +195,11 @@ describe("isManifest", () => {
     m.checkedAt = "yesterday";
     expect(isManifest(m)).toBe(false);
   });
+  it("accepts an optional roundsCheckedAt date and rejects a bad one", () => {
+    const m = manifest();
+    m.roundsCheckedAt = "2026-11-20";
+    expect(isManifest(m)).toBe(true);
+    m.roundsCheckedAt = "20 Nov";
+    expect(isManifest(m)).toBe(false);
+  });
 });

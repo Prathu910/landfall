@@ -10,6 +10,8 @@ import {
 const ROOT = process.cwd();
 /** Print-only trees: print is always the light design. */
 const PRINT_TSX = /src\/components\/report\/print-[\w-]+\.tsx$/;
+/** The Instagram card templates and their stylesheet, themed by tokens.ts. */
+const SOCIAL = "scripts/social";
 
 function walk(dir: string): string[] {
   return readdirSync(dir).flatMap((name) => {
@@ -22,7 +24,7 @@ function scan(
   filter: (file: string) => boolean,
   find: (source: string) => ColourHit[],
 ): string[] {
-  return walk(join(ROOT, "src"))
+  return [...walk(join(ROOT, "src")), ...walk(join(ROOT, SOCIAL))]
     .map((path) => relative(ROOT, path))
     .filter(filter)
     .flatMap((file) =>
@@ -69,9 +71,14 @@ describe("findTsxColourLiterals", () => {
 });
 
 describe("colour literals in the source", () => {
-  it("keeps CSS modules on tokens, so both themes reach them", () => {
+  it("keeps CSS modules and the card stylesheet on tokens, so both themes reach them", () => {
+    const isCardCss = (file: string) =>
+      file.startsWith(`${SOCIAL}/`) && file.endsWith(".css");
     expect(
-      scan((file) => file.endsWith(".module.css"), findCssColourLiterals),
+      scan(
+        (file) => file.endsWith(".module.css") || isCardCss(file),
+        findCssColourLiterals,
+      ),
     ).toEqual([]);
   });
   it("keeps SVG paint in TSX on tokens, outside the print tree", () => {

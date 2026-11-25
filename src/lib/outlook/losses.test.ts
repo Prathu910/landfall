@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { loadOccupationCore } from "../data/load-server";
+import { frozenCore } from "../data/__fixtures__/frozen-2026-10";
 import { emptyProfile } from "../migration";
 import type { Profile } from "../migration";
 import { buildLosses } from "./losses";
 import type { LossStart } from "./losses";
 
 const AS_OF = "2026-11-21";
-const NURSE = loadOccupationCore("254499");
+const NURSE = frozenCore("254499");
 const START: LossStart = { points: 80, eligible: true, label: "very-strong" };
 
 function profile(fields: Partial<Profile>): Profile {

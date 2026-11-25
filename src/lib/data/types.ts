@@ -77,12 +77,25 @@ export type OccupationIndexEntry = {
   code: string;
   name: string;
   hasData: boolean;
+  /**
+   * Set only on an occupation that dropped out of the SkillSelect data: the
+   * last month it was published. Its files hold that month's figures.
+   */
+  lastAsAt?: MonthKey;
+  /** The date the data was last checked while this occupation was still in it. */
+  lastCheckedAt?: string; // YYYY-MM-DD
 };
 export type Manifest = {
   schemaVersion: 1;
   snapshotId: string;
   asAt: MonthKey;
-  checkedAt: string; // YYYY-MM-DD
+  checkedAt: string; // YYYY-MM-DD, when the dashboard was read
+  /**
+   * When the round pages were last read (YYYY-MM-DD), present only when that
+   * was not on `checkedAt` (a round-only import, or a monthly import that kept
+   * the stored rounds). Read it as `roundsCheckedAt ?? checkedAt`.
+   */
+  roundsCheckedAt?: string;
   importVersion: string;
   sources: { dashboard: string; currentRounds: string; previousRounds: string };
   roundsUnmatched: string[]; // round-table occupation names with no dashboard match

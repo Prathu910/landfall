@@ -1,0 +1,20 @@
+# A robots.txt in the style of the state migration sites (Drupal), for the
+# page watcher's tests. Not a copy of any one site's file.
+User-agent: Googlebot
+Disallow: /search/
+
+User-agent: *
+Crawl-delay: 10
+# Directories
+Disallow: /core/
+Disallow: /admin/
+Allow: /admin/help/
+Disallow: /*_format=csv$
+Disallow: /news/*/print
+Disallow:
+
+User-agent: BadBot
+User-agent: mozilla
+Disallow: /private/
+
+Sitemap: https://www.example.gov.au/sitemap.xml

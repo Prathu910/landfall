@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { stateRuleData } from "../../components/data/state-rule-data";
-import { loadOccupationCore } from "../data/load-server";
+import { frozenCore } from "../data/__fixtures__/frozen-2026-10";
 import { BANNED_COPY } from "../report/copy";
 import { invitedHeading, stateRows } from "./states";
 
-const core254499 = loadOccupationCore("254499")!;
-const core261313 = loadOccupationCore("261313")!;
+const core254499 = frozenCore("254499")!;
+const core261313 = frozenCore("261313")!;
 const rows254499 = stateRows("254499", core254499, stateRuleData);
 const rows261313 = stateRows("261313", core261313, stateRuleData);
 const by = (rows: typeof rows254499, s: string) =>

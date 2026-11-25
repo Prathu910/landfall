@@ -4,6 +4,13 @@ import { occupationDataUrl, publishedOccupationCode } from "./occupation-url";
 const index = [
   { code: "261313", name: "Software Engineer", hasData: true },
   { code: "221111", name: "Accountant (General)", hasData: false },
+  {
+    code: "254499",
+    name: "Registered Nurses nec",
+    hasData: true,
+    lastAsAt: "2026-10",
+    lastCheckedAt: "2026-11-17",
+  },
 ];
 
 describe("occupationDataUrl", () => {
@@ -32,5 +39,9 @@ describe("publishedOccupationCode", () => {
     expect(publishedOccupationCode("999999", index)).toBeNull();
     expect(publishedOccupationCode("other", index)).toBeNull();
     expect(publishedOccupationCode("", index)).toBeNull();
+  });
+
+  it("returns null for an occupation that dropped out of the data", () => {
+    expect(publishedOccupationCode("254499", index)).toBeNull();
   });
 });

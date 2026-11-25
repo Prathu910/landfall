@@ -1,0 +1,25 @@
+.sources {
+  max-width: 55rem;
+  margin: calc(var(--brand-unit) * 3) 0 0;
+  padding: 0;
+  list-style: none;
+  color: var(--brand-muted);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+.sources li + li {
+  margin-top: calc(var(--brand-unit) * 2);
+}
+.notes {
+  max-width: 55rem;
+  margin-top: calc(var(--brand-unit) * 3);
+  color: var(--brand-muted);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+.sources a,
+.notes a {
+  color: var(--brand-ink);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}

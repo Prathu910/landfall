@@ -1,0 +1,53 @@
+95f62dd docs: correct held-month message and probe description
+53f35ca docs: monthly data pipeline operations
+4f41b3f fix(automation): page watcher keeps to its budget and one standing issue
+44d064b feat(automation): robots.txt rules for the page watcher
+79c279e feat(automation): daily page watcher for cited state and fee pages
+1a3a1ef fix(ci): one round check issue for failures before the page is read
+f517eea ci: 189 round workflow
+01f2a92 refactor(ci): move the data jobs' shared shell steps into lib.sh
+dc17481 fix(ci): failure issue without tsx survives empty and long logs
+ac49649 fix(automation): hold a closed month even while another data PR is open
+c77b9bd fix(ci): hold, timeouts, swap summary and early failure issues
+879f8f9 feat(updates): closing a month's PR holds it; swap rewrites its summary
+965f970 ci: monthly SkillSelect import workflow
+3d47d71 test(updates): pin the summary test's snapshot and check date
+7dd5ef0 fix(automation): fail on unreadable base, harden data PR and issue helpers
+96ae3d5 feat(automation): base branch, frozen-section check and failure issues
+0057f92 refactor(updates): keep report and set types in src/lib
+cbb32ca feat(updates): plain-English PR summary
+670b18c feat(import): --keep-rounds, --rounds-only and stored round pages
+516c31f feat(import): --probe for the newest As At Month, and a run report
+c6790a8 data: re-render 2026-10 round card with the new cutoff layout
+4a00df6 fix(updates): keep the year on a previous cutoff from an earlier year
+3be848a data: re-render 2026-10 Instagram card sets
+edeb7c5 fix(updates): cover counts the next cards, month manifest carries card 2, clearer previous cutoffs
+4d6ea4f data: 2026-10 Instagram card sets
+187ed3f feat(updates): recap OG image from the card set
+a86d84e feat(social): compression, size limits, set manifest and retention
+f73a61c feat(social): render cards with puppeteer-core
+98d57cd fix(social): fit long spotlight names and keep the stamp in place
+9ab09d8 feat(social): Look A card templates
+9d92968 feat(social): captions, alt text and hashtags
+8d8dd6b feat(social): Instagram card view-models
+b1cc161 docs: monthly updates, recap pages and the frozen sample
+09fc949 feat(updates): /updates/ index, sitemap, footer link and Lighthouse pages
+f58d58f feat(updates): /updates/YYYY-MM/ recap page
+9005c49 refactor(updates): require the occupation pages in the recap context
+1e87237 feat(updates): recap view-model, FAQ and JSON-LD
+df2a228 data: regenerate 2026-10 recap facts with all current cores
+8bcfe19 fix(updates): count hasData:false cores in the data section; test rerun wiring
+4733be5 data: 2026-10 recap facts
+3d92e0b feat(updates): updates:generate
+1e46d9a feat(updates): data facts (national, states, movers, notable 189)
+2eede89 feat(updates): spotlight pick
+c81b71f feat(updates): round facts
+8573d4a feat(updates): recap facts types, formatting and section merging
+3f3bc36 feat(data): keep pages for occupations that drop out of the data
+2327ba7 fix(import): store unpadded tie-break dates and report misprints
+660d516 feat(import): parse round totals, tie-break dates and state nominations (rounds.json v2)
+72fd148 test: pin figure tests to the frozen 2026-10 snapshot; keep invariants on live data
+f0de65c feat(sample): freeze the sample reports on the 2026-10 snapshot
+971a169 test: regenerate the frozen 2026-10 snapshot in memory
+84e617a docs: implementation plans for monthly updates
+42eb6d9 docs: design for monthly SkillSelect updates, recap pages and Instagram images

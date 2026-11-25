@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { REPORT_BANNED_COPY } from "../report/copy";
 import { SCENARIOS } from "./__fixtures__/scenarios";
 import type { ScenarioId } from "./__fixtures__/scenarios";
@@ -12,6 +12,15 @@ import type { ReportFacts } from "./read-contract";
 import { readTemplate } from "./read-template";
 import { buildRoute } from "./route";
 import { estimatedWait } from "./wait";
+
+// The no-core path names the snapshot month from src/data/manifest.json.
+// These tests read frozen 2026-10 data, so they read the frozen manifest too,
+// and a new data month can't change what they expect.
+vi.mock("../../data/manifest.json", async () => {
+  const { frozenManifest } =
+    await import("../data/__fixtures__/frozen-2026-10");
+  return { default: frozenManifest() };
+});
 
 const IDS = Object.keys(SCENARIOS) as ScenarioId[];
 

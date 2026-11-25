@@ -35,6 +35,12 @@ export type QlikSession = {
   ): Promise<void>;
   clear(field: string): Promise<void>;
   readTable(objectId: string): Promise<{ header: string[]; rows: string[][] }>;
+  /**
+   * Every As At Month the dashboard lists, oldest first. A session list
+   * object on the field: no table read, no variable or toggle change, and not
+   * counted as a page read.
+   */
+  listAsAtMonths(): Promise<MonthKey[]>;
   pageReads(): number;
   close(): void;
 };
@@ -42,6 +48,9 @@ export type QlikSession = {
 const MAX_CELLS_PER_PAGE = 10_000;
 const GUARDRAIL_ERROR_CODE = 7005;
 const GLOBAL_HANDLE = -1;
+const AS_AT_FIELD = "As At Month";
+// Far more than the dashboard will ever list (one value a month).
+const MAX_AS_AT_VALUES = 500;
 
 type Titled = { qFallbackTitle?: string };
 type Hypercube = {
@@ -57,6 +66,13 @@ export function asAtSerial(month: MonthKey): number {
   const [year, monthNumber] = month.split("-").map(Number);
   const monthEnd = Date.UTC(year, monthNumber, 0);
   return (monthEnd - Date.UTC(1899, 11, 30)) / 86_400_000;
+}
+
+/** The month a serial from `asAtSerial` (or any day within it) falls in. */
+export function monthFromSerial(serial: number): MonthKey {
+  const date = new Date(Date.UTC(1899, 11, 30) + serial * 86_400_000);
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+  return `${date.getUTCFullYear()}-${month}`;
 }
 
 const sleep = (ms: number) =>
@@ -275,6 +291,40 @@ export async function openQlikSession(
         );
       }
       return { header, rows };
+    },
+    async listAsAtMonths() {
+      const { qReturn } = await call<{ qReturn: { qHandle: number } }>(
+        app,
+        "CreateSessionObject",
+        [
+          {
+            qInfo: { qType: "ListObject" },
+            qListObjectDef: {
+              qDef: { qFieldDefs: [AS_AT_FIELD] },
+              qInitialDataFetch: [
+                { qTop: 0, qLeft: 0, qHeight: MAX_AS_AT_VALUES, qWidth: 1 },
+              ],
+            },
+          },
+        ],
+      );
+      const { qLayout } = await call<{
+        qLayout: {
+          qListObject?: {
+            qDataPages?: { qMatrix: { qNum?: number | "NaN" }[][] }[];
+          };
+        };
+      }>(qReturn.qHandle, "GetLayout", []);
+      const cells = (qLayout.qListObject?.qDataPages ?? []).flatMap((page) =>
+        page.qMatrix.map((row) => row[0]?.qNum),
+      );
+      const serials = cells.filter(
+        (value): value is number => typeof value === "number",
+      );
+      if (serials.length === 0) {
+        throw new Error(`The dashboard listed no ${AS_AT_FIELD} values`);
+      }
+      return serials.sort((a, b) => a - b).map(monthFromSerial);
     },
     pageReads: () => pageReads,
     close: () => transport.close(),

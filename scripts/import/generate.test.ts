@@ -10,10 +10,13 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
+  buildNovemberRawFixture,
   buildRawFixture,
   fixtureInput,
+  fixtureRounds,
   fixtureSkippedRounds,
   HEADERS,
+  novemberInput,
   NURSE,
   SOFTWARE_ENGINEER,
   writeFixtureView,
@@ -123,6 +126,15 @@ describe("generate", () => {
     });
   });
 
+  it("records roundsCheckedAt only when the rounds were read on another day", () => {
+    const rawRoot = buildRawFixture();
+    const read = (roundsCheckedAt?: string) =>
+      generate({ ...fixtureInput, rawRoot, roundsCheckedAt }).manifest;
+    expect(read("2026-11-20").roundsCheckedAt).toBe("2026-11-20");
+    expect("roundsCheckedAt" in read("2026-11-17")).toBe(false);
+    expect("roundsCheckedAt" in read()).toBe(false);
+  });
+
   it("writes the manifest, index and all-occupation rounds", () => {
     const data = generateFixture();
     expect(data.manifest).toMatchObject({
@@ -155,19 +167,36 @@ describe("generate", () => {
       { code: "261313", name: "Software Engineer", hasData: true },
     ]);
     expect(data.rounds).toEqual({
+      schemaVersion: 2,
       rounds: [
         {
           date: "2026-10-15",
+          totals: fixtureRounds[0].totals,
+          tieBreak: null,
           rows: [
-            { name: "Software Engineer", code: "261313", cutoff: 95 },
-            { name: "Chef", code: null, cutoff: 90 },
+            {
+              name: "Software Engineer",
+              code: "261313",
+              cutoff: 95,
+              tieBreak: "2026-09-03",
+            },
+            { name: "Chef", code: null, cutoff: 90, tieBreak: "2026-09-10" },
           ],
+          nominations: null,
         },
         {
           date: "2026-06-04",
+          totals: null,
+          tieBreak: "2026-04-24",
           rows: [
-            { name: "Registered Nurses (nec)", code: "254499", cutoff: 65 },
+            {
+              name: "Registered Nurses (nec)",
+              code: "254499",
+              cutoff: 65,
+              tieBreak: null,
+            },
           ],
+          nominations: null,
         },
       ],
       skipped: fixtureSkippedRounds,
@@ -314,6 +343,85 @@ describe("generate", () => {
     ]);
     expect(() => generate({ ...fixtureInput, rawRoot })).toThrow(
       /state-pool 2026-10.*state "AUSTRADE"/,
+    );
+  });
+});
+
+describe("generate with previous data", () => {
+  function previousOf(data: ReturnType<typeof generateFixture>) {
+    return {
+      manifest: data.manifest,
+      core: (code: string) => data.cores.find((c) => c.code === code) ?? null,
+      detail: (code: string) =>
+        data.details.find((d) => d.code === code) ?? null,
+    };
+  }
+  const november = (previous: Parameters<typeof generate>[0]["previous"]) =>
+    generate({
+      ...novemberInput,
+      rawRoot: buildNovemberRawFixture(),
+      previous,
+    });
+
+  it("keeps a dropped occupation's last data and marks it", () => {
+    const data = november(previousOf(generateFixture()));
+    const entry = (code: string) => data.index.find((e) => e.code === code);
+    expect(entry("254499")).toEqual({
+      code: "254499",
+      name: "Registered Nurses nec",
+      hasData: true,
+      lastAsAt: "2026-10",
+      lastCheckedAt: "2026-11-17",
+    });
+    expect(entry("261313")).toEqual({
+      code: "261313",
+      name: "Software Engineer",
+      hasData: true,
+    });
+    expect(
+      data.manifest.occupations.find((e) => e.code === "254499"),
+    ).toMatchObject({ lastAsAt: "2026-10", lastCheckedAt: "2026-11-17" });
+    const core = data.cores.find((c) => c.code === "254499")!;
+    expect(core.snapshotId).toBe("skillselect-2026-10-31");
+    expect(data.details.find((d) => d.code === "254499")?.asAt).toBe("2026-10");
+    expect(data.cores.map((c) => c.code)).toEqual(["254499", "261313"]);
+  });
+
+  it("keeps an earlier lastAsAt when a dropped code stays out", () => {
+    const first = november(previousOf(generateFixture()));
+    const again = generate({
+      ...novemberInput,
+      asAt: "2026-11",
+      checkedAt: "2026-12-20",
+      rawRoot: buildNovemberRawFixture(),
+      previous: previousOf(first),
+    });
+    expect(again.index.find((e) => e.code === "254499")).toMatchObject({
+      lastAsAt: "2026-10",
+      lastCheckedAt: "2026-11-17",
+    });
+  });
+
+  it("clears the marks when a code returns", () => {
+    const first = november(previousOf(generateFixture()));
+    const back = generate({
+      ...fixtureInput,
+      asAt: "2026-10",
+      rawRoot: buildRawFixture(),
+      previous: previousOf(first),
+    });
+    expect(back.index.find((e) => e.code === "254499")).toEqual({
+      code: "254499",
+      name: "Registered Nurses nec",
+      hasData: true,
+    });
+    expect(back.cores.find((c) => c.code === "254499")?.asAt).toBe("2026-10");
+  });
+
+  it("fails when a previous record file is missing", () => {
+    const previous = previousOf(generateFixture());
+    expect(() => november({ ...previous, core: () => null })).toThrow(
+      /254499: previous data files are missing/,
     );
   });
 });

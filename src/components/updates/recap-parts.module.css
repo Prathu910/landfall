@@ -1,0 +1,186 @@
+/* Shared parts of the recap's sections: kicker, heading, lead, cards,
+   captions, lists of occupations and the tables (stacked on phones). */
+.kicker {
+  color: var(--brand-muted);
+  font-family: var(--brand-font);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.heading {
+  margin-top: calc(var(--brand-unit) * 1.5);
+  font-family: var(--brand-font);
+  font-size: clamp(1.625rem, 3vw, 2.125rem);
+  font-weight: var(--headline-wght);
+  font-stretch: 108%;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.lead {
+  max-width: 47.5rem;
+  margin-top: calc(var(--brand-unit) * 3);
+  color: var(--homepage-lede);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+}
+.card {
+  min-width: 0;
+  padding: calc(var(--brand-unit) * 5.5);
+  border: var(--brand-rule-width) solid var(--brand-line);
+  border-radius: calc(var(--brand-unit) * 3.5);
+  background: var(--recap-card);
+}
+.cardTitle {
+  margin: 0 0 calc(var(--brand-unit) * 3);
+  font-family: var(--brand-font);
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+.cardTitle:not(:first-child) {
+  margin-top: calc(var(--brand-unit) * 6.5);
+}
+.cap {
+  max-width: 55rem;
+  margin-top: calc(var(--brand-unit) * 3);
+  color: var(--brand-muted);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.list li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: calc(var(--brand-unit) * 2.5);
+  align-items: baseline;
+  padding: calc(var(--brand-unit) * 2.5) 0;
+  border-bottom: var(--brand-rule-width) solid var(--homepage-rule);
+  font-size: 0.9375rem;
+}
+.list li:last-child {
+  border-bottom: 0;
+}
+.name {
+  font-weight: 600;
+}
+a.name {
+  text-decoration: underline;
+  text-decoration-color: var(--brand-line);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+a.name:hover {
+  text-decoration-color: currentColor;
+}
+.figure {
+  font-family: var(--font-stamp);
+  font-size: 1.25rem;
+  font-weight: 900;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+/* The markup puts a space before the label, so no margin is needed. */
+.figure small {
+  color: var(--brand-muted);
+  font-family: var(--brand-font);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+.tableWrap {
+  margin-top: calc(var(--brand-unit) * 7);
+  overflow-x: auto;
+  border: var(--brand-rule-width) solid var(--brand-line);
+  border-radius: calc(var(--brand-unit) * 3.5);
+  background: var(--brand-paper);
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+.table caption {
+  padding: calc(var(--brand-unit) * 3.5) calc(var(--brand-unit) * 3.5) 0;
+  font-weight: 700;
+  text-align: left;
+}
+.table th,
+.table td {
+  padding: calc(var(--brand-unit) * 2.75) calc(var(--brand-unit) * 3.5);
+  border-bottom: var(--brand-rule-width) solid var(--homepage-rule);
+  text-align: left;
+  vertical-align: baseline;
+}
+.table thead th {
+  background: var(--homepage-code-fill);
+  color: var(--brand-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+/* Column heads wrap, so the numbers keep their columns narrow. */
+.table thead .number {
+  white-space: normal;
+}
+.table tbody th {
+  min-width: 13rem;
+  font-weight: 400;
+}
+.table tbody tr:last-child > * {
+  border-bottom: 0;
+}
+.table .number {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+/* On phones each row becomes a card of label–value lines. */
+@media screen and (max-width: 640px) {
+  .stack thead {
+    display: none;
+  }
+  .stack tr {
+    display: block;
+    padding: calc(var(--brand-unit) * 3) calc(var(--brand-unit) * 3.5);
+    border-bottom: var(--brand-rule-width) solid var(--homepage-rule);
+  }
+  .stack tbody tr:last-child {
+    border-bottom: 0;
+  }
+  .stack th,
+  .stack td,
+  .stack .number {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: calc(var(--brand-unit) * 3);
+    padding: calc(var(--brand-unit) * 0.75) 0;
+    border: 0;
+    text-align: right;
+    white-space: normal;
+  }
+  .stack tbody th {
+    display: block;
+    min-width: 0;
+    padding-bottom: calc(var(--brand-unit) * 1.5);
+    font-size: 1rem;
+    text-align: left;
+  }
+  .stack td::before {
+    content: attr(data-label);
+    color: var(--brand-muted);
+    font-size: 0.8125rem;
+    text-align: left;
+  }
+}
+@media screen and (max-width: 900px) {
+  .card {
+    padding: calc(var(--brand-unit) * 4);
+  }
+}

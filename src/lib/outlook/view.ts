@@ -33,6 +33,8 @@ export type { VisaCard } from "./visa-cards";
 export type OccupationState =
   | { status: "loading" }
   | { status: "ready"; core: OccupationCore; detail: OccupationDetail | null }
+  /** Left the SkillSelect data: only its note and the points are shown. */
+  | { status: "dropped"; note: string }
   | { status: "unavailable" } // no published data: the no-core report
   /** The published file failed to load: a network fact, never a data fact. */
   | { status: "load-failed" }; // report.tsx converts ReportOccupation to this
@@ -237,6 +239,14 @@ export function buildOutlookView(input: OutlookViewInput): OutlookView {
   if (occupation.status === "load-failed") {
     const name = occupationName({ ...rest, core: null, detail: null });
     return pointsOnly(rest, LOAD_FAILED_LINE, name);
+  }
+  if (occupation.status === "dropped") {
+    const name = occupationName({ ...rest, core: null, detail: null });
+    return pointsOnly(
+      rest,
+      `${occupation.note}, so this report uses your points only.`,
+      name,
+    );
   }
   // An occupation with no published data takes the no-core path.
   const ready = occupation.status === "ready";

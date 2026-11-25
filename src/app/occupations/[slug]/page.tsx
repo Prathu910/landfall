@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { occupationIndex } from "@/components/data/occupation-index";
 import { stateRuleData } from "@/components/data/state-rule-data";
+import { DroppedNote } from "@/components/occupation/dropped-note";
 import { OccupationEvidenceFooter } from "@/components/occupation/occupation-evidence-footer";
 import { OccupationSectionNav } from "@/components/occupation/occupation-section-nav";
 import { OccupationCheckPanel } from "@/components/occupation/occupation-check-panel";
@@ -31,6 +32,7 @@ import {
   roundCards,
   roundsNote,
 } from "@/lib/occupation-page/charts";
+import { droppedNote } from "@/lib/occupation-page/dropped";
 import { occupationFaq } from "@/lib/occupation-page/faq";
 import {
   isIndexable,
@@ -97,6 +99,11 @@ export default async function OccupationPage({ params }: Props) {
   const { code, name } = core;
   const detail = loadOccupationDetail(code);
   const manifest = loadManifest();
+  const entry = occupationIndex.find((e) => e.code === code);
+  const note = entry ? droppedNote(entry) : null;
+  // A dropped occupation shows its own last month and the date it was checked.
+  const checkedAt = entry?.lastCheckedAt ?? manifest.checkedAt;
+  const figuresFrom = note ? formatMonth(core.asAt) : undefined;
   const rows = stateRows(code, core, stateRuleData);
   const sentences = occupationSummary(core, detail, stateRuleData.federal);
   const faq = occupationFaq(core, rows);
@@ -131,10 +138,11 @@ export default async function OccupationPage({ params }: Props) {
             </div>
             <div>
               <dt>Last updated</dt>
-              <dd>{formatDate(manifest.checkedAt)}</dd>
+              <dd>{formatDate(checkedAt)}</dd>
             </div>
           </dl>
         </header>
+        {note && <DroppedNote note={note} lastAsAt={core.asAt} />}
         <OccupationSummary
           chips={statusChips(core, stateRuleData.federal)}
           sentences={sentences}
@@ -142,6 +150,7 @@ export default async function OccupationPage({ params }: Props) {
         />
         <OccupationVerdict
           verdict={occupationVerdict(core, stateRuleData.federal)}
+          figuresFrom={figuresFrom}
         />
         <OccupationHowToApply links={applyLinks(code, stateRuleData.federal)} />
         <OccupationSectionNav
@@ -153,6 +162,7 @@ export default async function OccupationPage({ params }: Props) {
             <OccupationCheckPanel
               core={core}
               listed189={listed189(code, stateRuleData.federal)}
+              figuresFrom={figuresFrom}
             />
           </aside>
           <div className={styles.main}>
@@ -232,20 +242,18 @@ export default async function OccupationPage({ params }: Props) {
         <OccupationEvidenceFooter
           code={code}
           sourceText={sourceLine(core)}
-          checkedAt={manifest.checkedAt}
+          checkedAt={checkedAt}
           sources={manifest.sources}
-          snapshotId={manifest.snapshotId}
+          snapshotId={core.snapshotId}
           federalCheckedAt={stateRuleData.federal?.checkedAt}
         />
-        {occupationJsonLd(core, faq, sentences, manifest.checkedAt).map(
-          (obj, i) => (
-            <script
-              key={i}
-              type="application/ld+json"
-              dangerouslySetInnerHTML={{ __html: serializeJsonLd(obj) }}
-            />
-          ),
-        )}
+        {occupationJsonLd(core, faq, sentences, checkedAt).map((obj, i) => (
+          <script
+            key={i}
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: serializeJsonLd(obj) }}
+          />
+        ))}
       </div>
     </main>
   );

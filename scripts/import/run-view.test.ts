@@ -18,6 +18,7 @@ function recorder() {
       calls.push("read");
       return { header: ["Occupation", "Count"], rows: [["Nurse", "5"]] };
     },
+    listAsAtMonths: async () => [],
     pageReads: () => 0,
     close: () => {},
   };

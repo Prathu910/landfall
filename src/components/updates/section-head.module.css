@@ -1,0 +1,23 @@
+.head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: calc(var(--brand-unit) * 7);
+  align-items: start;
+}
+.withStamp {
+  grid-template-columns: 7.25rem minmax(0, 1fr);
+}
+/* Draws the visa stamp at the 116px the stamp's 12px text floor needs. */
+.stamp {
+  display: block;
+  width: 7.25rem;
+  height: auto;
+  color: var(--brand-ink);
+  filter: var(--stamp-glow);
+}
+@media screen and (max-width: 640px) {
+  .withStamp {
+    grid-template-columns: minmax(0, 1fr);
+    gap: calc(var(--brand-unit) * 4);
+  }
+}

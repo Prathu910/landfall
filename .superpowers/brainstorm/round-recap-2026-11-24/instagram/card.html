@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<title>Instagram card</title>
+<link rel="stylesheet" href="../assets/brand.css">
+<link rel="stylesheet" href="card.css">
+<script src="../data/figures.js"></script>
+<script src="../assets/atlas-geometry.js"></script>
+<script src="../assets/lib.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<script>
+/* One page renders every card: ?card=cover-a|cover-b|189-a|189-b|190|491|spot|close&size=feed|story&theme=light|dark */
+const F = window.FIG, { n, atLeast, day, dmy, roundStamp, rectStamp, logo, stateMap, shadeFor, esc, params } = R;
+const card = params.get("card") || "cover-a";
+const size = params.get("size") || "feed";
+const total = 6;
+const SOURCE = `Source: SkillSelect EOI data (Australian Government), CC BY 3.0 AU · <b>as at 31 Oct 2026</b>`;
+const round = F.round;
+
+function pageA(no, cls, body, { source = SOURCE, mrz = false } = {}) {
+  return `<div class="page ${cls}"><div class="guill"></div><div class="inner">
+    <div class="top">${logo()}<span class="tag">Oct 2026${no ? ` · ${no}/${total}` : ""}</span></div>
+    ${body}
+    <div class="source">${source}</div>
+    ${mrz ? `<div class="mrz">P&lt;AUSSKILLSELECT&lt;&lt;UPDATE&lt;OCTOBER&lt;2026&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;</div>` : ""}
+  </div></div>`;
+}
+
+/** Huge stencil word that fills the given width exactly, with the stamp ink edge. */
+function giant(text, { w = 912, h = 300, fs = 330 } = {}) {
+  const id = "g" + Math.random().toString(36).slice(2, 7);
+  return `<div class="giant"><svg viewBox="0 0 ${w} ${h}" role="img" aria-label="${esc(text)}"><defs><filter id="${id}" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.6" numOctaves="2" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5"/><feComponentTransfer><feFuncA type="discrete" tableValues="0 1 1 1 .78 1"/></feComponentTransfer></filter></defs>
+    <text x="0" y="${h * 0.9}" font-size="${fs}" font-weight="900" fill="currentColor" textLength="${w}" lengthAdjust="spacingAndGlyphs" filter="url(#${id})">${esc(text)}</text></svg></div>`;
+}
+
+const cards = {
+  "cover-a": () =>
+    pageA(1, "cover-a", `
+      <div class="eyebrow">SkillSelect update</div>
+      <h1 class="title">October<br>2026</h1>
+      <p class="sub">The 15 Oct 189 round and the October data for 189, 190 and 491, in five cards.</p>
+      <div class="stamps">
+        <div class="s1">${roundStamp({ top: "SUBCLASS 189 ROUND", word: [n(Number(round.total189.replace(/,/g, ""))), "INVITED"], bottom: "15 OCT 2026", tone: "green" })}</div>
+        <div class="s2">${rectStamp({ top: "SUBCLASS 190", word: "BY STATE", bottom: "AS AT 31 OCT", tone: "ink", rotate: 5 })}</div>
+        <div class="s3">${rectStamp({ top: "SUBCLASS 491", word: "BY STATE", bottom: "AS AT 31 OCT", tone: "ink", rotate: -6 })}</div>
+      </div>
+      <div class="swipe">Swipe <span></span>→</div>`, { mrz: true }),
+
+  "cover-b": () => `<div class="b"><div class="inner">
+      <div class="top">${logo()}<span class="tag">1/${total}</span></div>
+      <div class="grow"></div>
+      <div class="kicker">SkillSelect update</div>
+      <div style="margin-top:20px">${giant("OCT", { h: 360, fs: 400 })}</div>
+      <div style="margin-top:-6px">${giant("2026", { h: 360, fs: 400 })}</div>
+      <div class="rule" style="margin-top:34px"></div>
+      <p class="head" style="margin-top:28px">189, 190 and 491:<br>what the data shows.</p>
+      <div class="grow"></div>
+      <div class="source">${SOURCE}</div>
+    </div></div>`,
+
+  "189-a": () => {
+    const dist = Object.entries(round.cutoffDistribution);
+    const max = Math.max(...dist.map(([, c]) => c));
+    const pick = ["254499", "241411", "133111"];
+    const notable = pick.map((c) => F.notable189.find((x) => x.code === c) || null).filter(Boolean);
+    const notListed = F.notListed189.slice(0, 3).map((x) => x.name).join(", ");
+    return pageA(2, "a189", `
+      <div class="headgrid">
+        <div><div class="eyebrow">189 · Skilled Independent</div>
+        <h1 class="title">${round.total189} EOIs invited</h1>
+        <p class="sub">in the 189 round of 15 Oct 2026, across ${round.listed} occupations.</p></div>
+        <div>${roundStamp({ top: "SUBCLASS 189", word: "ROUND", bottom: "15 OCT 2026", tone: "green", rotate: 7 })}</div>
+      </div>
+      <div class="block"><h3>Occupations by lowest score invited</h3>
+        <div class="vcols">${dist.map(([p, c]) => `<div class="vcol"><b class="num">${c}</b><div class="vbar" style="height:${10 + (c / max) * 100}px"></div><span>${p}</span></div>`).join("")}</div>
+        <div class="axis">Lowest score invited (points) · number of occupations above each bar</div>
+      </div>
+      <div class="block">
+        <h3>Lowest score invited</h3>
+        <div class="rows">${notable.map((o) => `<div class="row"><span class="name">${esc(o.name)}</span><span><span class="val">${o.cutOct}</span><span class="was">${o.cutJun ? `Jun: ${o.cutJun}` : "Jun: not listed"}</span></span></div>`).join("")}</div>
+      </div>
+      <p class="note"><b>Not listed again:</b> ${esc(notListed)}, each last listed on 7 Nov 2024.</p>
+      <div class="grow"></div>`,
+      { source: `Sources: Home Affairs round of 15 Oct 2026; SkillSelect EOI data (Australian Government), CC BY 3.0 AU` });
+  },
+
+  "189-b": () => `<div class="b"><div class="inner">
+      <div class="top">${logo()}<span class="tag">2/${total}</span></div>
+      <div class="grow"></div>
+      <div class="kicker">189 round · 15 Oct 2026</div>
+      <div style="margin-top:26px">${giant(round.total189, { h: 330, fs: 360 })}</div>
+      <p class="head" style="margin-top:22px">EOIs invited for 189.</p>
+      <div class="rule" style="margin:40px 0 0"></div>
+      <div class="facts3" style="margin-top:40px">
+        <div><b>${round.listed}</b>occupations listed</div>
+        <div><b>${round.lowestCutoff}–${round.highestCutoff}</b>lowest scores invited, by occupation</div>
+        <div><b>${round.cutoffDistribution[65]}</b>occupations with 65 as the lowest score invited</div>
+      </div>
+      <div class="grow"></div>
+      <div class="source">Home Affairs invitation round, 15 Oct 2026 · ${SOURCE}</div>
+    </div></div>`,
+
+  state: (visa, no) => {
+    const s = F.stateInvited[visa]["2026-10"];
+    const anyMin = s.ANY.interval[0];
+    const map = stateMap({
+      values: s,
+      shade: (st) => shadeFor(s[st].interval[0]),
+      labelFor: (st) => (s[st].interval[0] === 0 ? ["<20", "each occupation"] : [n(s[st].interval[0]), "at least"]),
+      compact: true,
+    });
+    const top = Object.entries(s).filter(([k]) => k !== "ANY").sort((a, b) => b[1].interval[0] - a[1].interval[0])[0];
+    const name = { 190: "Skilled Nominated", 491: "State-nominated regional" }[visa];
+    return pageA(no, "astate", `
+      <div class="eyebrow">${visa} · ${name}</div>
+      <h1 class="title" style="font-size:80px">${visa} by state</h1>
+      <p class="sub">EOIs holding a ${visa} invitation on 31 Oct 2026, by the state that invited them. Every figure is a minimum.</p>
+      <div class="mapwrap">${map}</div>
+      <div class="legend"><span><i style="background:var(--map-4)"></i>700+</span><span><i style="background:var(--map-3)"></i>200+</span><span><i style="background:var(--map-2)"></i>20+</span><span><i style="background:var(--map-1)"></i>under 20 each</span></div>
+      <p class="note"><b>State not recorded: at least ${n(anyMin)}.</b> On 30 Sep every state was under 20 for each occupation. Counts under 20 are hidden, so true totals are higher.</p>
+      <div class="grow"></div>`);
+  },
+
+  spot: () => {
+    const s = F.spotlight["254499"];
+    const cuts = s.rounds.slice().reverse();
+    const max = Math.max(...cuts.map((r) => r.cutoff || 0));
+    const st = Object.entries(s.stateInvited190Oct).filter(([k]) => k !== "ANY")
+      .map(([k, cells]) => [k, Object.values(cells).reduce((a, t) => a + (t === "<20" ? 0 : Number(t)), 0)])
+      .sort((a, b) => b[1] - a[1]).slice(0, 4);
+    return pageA(5, "spot", `
+      <div class="spot-head">
+        <div><div class="eyebrow" style="margin-top:0">Occupation spotlight</div>
+        <h1 class="title">Registered Nurses nec</h1><div class="code">ANZSCO 254499</div></div>
+        <div>${rectStamp({ top: "189 · 15 OCT 2026", word: "70 PTS", bottom: "LOWEST INVITED", tone: "green", rotate: -5 })}</div>
+      </div>
+      <div class="facts">
+        <div class="fact"><div class="big">${n(Number(s.status["189"]["2026-10"].INVITED))}+</div><div class="lab">EOIs, at least, held a 189 invitation on 31 Oct (under 20 on 30 Sep)</div></div>
+        <div class="fact"><div class="big">${n(Number(s.pool189Total))}</div><div class="lab">EOIs in the 189 pool on 31 Oct, down from ${n(Number(s.status["189"]["2026-09"].SUBMITTED))} on 30 Sep</div></div>
+      </div>
+      <div class="block" style="margin-top:30px"><h3>Last six 189 rounds · lowest score invited</h3>
+        <div class="cols">${cuts.map((r, i) => `<div class="col ${i === cuts.length - 1 ? "latest" : ""}"><div class="c" style="height:${40 + ((r.cutoff - 60) / (max - 60)) * 110}px">${r.cutoff}</div><span>${R.months[Number(r.date.slice(5, 7)) - 1]} ${r.date.slice(2, 4)}</span></div>`).join("")}</div>
+      </div>
+      <p class="note">At 70 points, EOIs that reached the score by <b>${dmy(s.tieBreak)}</b> were invited (tie-break date). 190 invitations on 31 Oct: ${st.map(([k, v]) => `${k} at least ${n(v)}`).join(", ")}.</p>
+      <div class="grow"></div>`);
+  },
+
+  close: () =>
+    pageA(6, "closing", `
+      <div class="bigstamp">${roundStamp({ top: "MIGRATELENS", word: ["FREE", "POINTS CHECK"], bottom: "189 · 190 · 491", tone: "green", rotate: -6 })}</div>
+      <h1 class="title">Check your points free</h1>
+      <div class="url"><span>migratelens.com</span></div>
+      <p class="sub">Your points against the published invitation data for your occupation, in one report.</p>
+      <div class="grow"></div>
+      <div class="disclaim">General information, not migration advice.<small>MigrateLens is not a registered migration agent. Find one at mara.gov.au.</small></div>`),
+};
+
+let html = card === "190" ? cards.state("190", 3) : card === "491" ? cards.state("491", 4) : cards[card]();
+document.getElementById("root").innerHTML = `<div class="frame ${size}"><div class="safe" style="${size === "story" ? "" : ""}">${html}</div></div>`;
+if (size === "story") {
+  // Stories: extend the paper to the full 1920 canvas; content stays inside 250..1580.
+  const frame = document.querySelector(".frame");
+  frame.querySelector(".safe").style.cssText = "top:0;height:1920px";
+  const inner = frame.querySelector(".inner");
+  if (inner) { inner.style.paddingTop = "290px"; inner.style.paddingBottom = "380px"; }
+}
+document.fonts.ready.then(() => document.body.setAttribute("data-ready", "1"));
+</script>
+</body>
+</html>

@@ -1,13 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { stateRuleData } from "../../components/data/state-rule-data";
-import { loadOccupationCore } from "../data/load-server";
+import { frozenCore } from "../data/__fixtures__/frozen-2026-10";
 import { BANNED_COPY } from "../report/copy";
 import { no189PoolCore } from "../report/__fixtures__/scorecard";
 import { occupationFaq } from "./faq";
 import { stateRows } from "./states";
 
 const faqFor = (code: string) => {
-  const core = loadOccupationCore(code)!;
+  const core = frozenCore(code)!;
   return occupationFaq(core, stateRows(code, core, stateRuleData));
 };
 const faq261313 = faqFor("261313");
@@ -44,7 +44,7 @@ describe("occupationFaq", () => {
     expect(faq254499[1].answer).not.toMatch(/had the most/);
   });
   it("names a state only when its range is above every other state's", () => {
-    const core = loadOccupationCore("254499")!;
+    const core = frozenCore("254499")!;
     const at = (counts: Record<string, string>) => ({ [core.asAt]: counts });
     const clearLead = {
       ...core,
@@ -77,7 +77,7 @@ describe("occupationFaq", () => {
     expect(faq254499[1].answer).toMatch(
       /^For 2026–27, QLD, WA and SA list it for 190 and 491; NSW lists it for 190\./,
     );
-    const core = loadOccupationCore("254499")!;
+    const core = frozenCore("254499")!;
     const rows = stateRows("254499", core, stateRuleData).map((r) => ({
       ...r,
       onList: r.state === "WA" ? r.onList : "Not on its 2026–27 list",
@@ -88,7 +88,7 @@ describe("occupationFaq", () => {
     );
   });
   it("gives a single cut-off once, not as a range", () => {
-    const core = loadOccupationCore("254499")!;
+    const core = frozenCore("254499")!;
     const rounds189 = core.rounds189.map((r) => ({ ...r, cutoff: 65 }));
     const [, , points] = occupationFaq(
       { ...core, rounds189 },
@@ -100,7 +100,7 @@ describe("occupationFaq", () => {
     expect(points.answer).not.toMatch(/65 to 65/);
   });
   it("has its own sentence when 189 has never listed it", () => {
-    const core = loadOccupationCore("254499")!;
+    const core = frozenCore("254499")!;
     const rounds189 = core.rounds189.map((r) => ({ ...r, cutoff: null }));
     const [, , points] = occupationFaq(
       { ...core, rounds189 },
@@ -120,7 +120,7 @@ describe("occupationFaq", () => {
     expect(faq.map((f) => f.question).join(" ")).not.toMatch(/enough/);
   });
   it("says none list it when no imported list includes the code", () => {
-    const core = loadOccupationCore("254499")!;
+    const core = frozenCore("254499")!;
     const [, states] = occupationFaq(
       core,
       stateRows("000000", core, stateRuleData),
