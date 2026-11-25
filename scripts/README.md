@@ -25,7 +25,13 @@ The importer:
 - stores each finished view-month in `data/raw/<asAt>/` atomically, and writes a `.rev-<date>` file instead of overwriting a month the government revised;
 - writes `src/data/` only after every validation check passes, and exits 1 on any issue.
 
-After an import, run `npm run check` and `npm run build`, then commit `data/raw/` and `src/data/` together.
+After an import, run `npm run check` and `npm run build`, then commit `data/raw/` and `src/data/` together. The scheduled workflows do this themselves and open the pull request (`docs/OPERATIONS.md`, "Monthly data pipeline").
+
+Importer flags for the workflows: `--probe` (print the next month to import, no data views), `--keep-rounds` (monthly job: read no round pages), `--rounds-only` (round job) and `--report-file <file>` (a JSON run report for the pull request summary). `manifest.roundsCheckedAt` is the date the round pages were last read when that was not `checkedAt` (`docs/DATA.md`).
+
+## Scheduled jobs
+
+Workflows are in `.github/workflows/` (`monthly-data.yml`, `round-189.yml`, `page-watch.yml`). Their bodies are `scripts/automation/monthly.sh` and `round.sh`, with shared shell in `lib.sh` and typed helpers beside them: `next-month.ts` and `month-info.ts` (which month), `detect-round.ts` and `round-info.ts` (is there a new round), `base-branch.ts` (join the open `data-update` pull request or start from main), `frozen-check.ts` (no merged recap section changes), `failure-issue.ts` and `gh.ts`. The PR summary is `scripts/updates/summary.ts` (view-model `src/lib/updates/summary-view.ts`). The page watcher is `scripts/page-watch/` (`npm run page-watch -- --state <file> [--dry-run]`). Dry runs: `DRY_RUN=1 BASE_REF=HEAD bash scripts/automation/monthly.sh run`. Operations, setup and rehearsal: `docs/OPERATIONS.md`.
 
 ## Monthly recap facts
 

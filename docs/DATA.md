@@ -216,11 +216,16 @@ npm run data:generate -- --as-at 2026-10              # rebuild src/data from st
 - `--generate-only` rebuilds from the stored `src/data/rounds.json`, which must be schemaVersion 2 (checked by `readRoundsFile`); it writes the same file back byte for byte (a test checks this). `--rounds-html <dir>` (with `--generate-only` or `--rounds-only`) reads saved `invitation-rounds.html` and `previous-rounds.html` from `<dir>` instead, adds any new rounds to the stored ones and saves the current page to `data/raw/rounds/<date>.html`; a monthly import does the same with the fetched pages. The v2 file was built from the round pages recorded on 17 November 2026: `npm run data:generate -- --as-at 2026-10 --checked-at 2026-11-17 --rounds-html scripts/import/__fixtures__` (a `rounds.json` without `schemaVersion` is re-parsed in full, once).
 - The CLI prints parsed and skipped rounds, page reads used, revisions, the occupation count, unmatched round names and validation issues. It exits 1 on any issue.
 
-After an import:
+- **`--probe`** (with `--report-file <file>`) opens no data views: it asks the dashboard which as-at months exist and writes the next month to import (see `scripts/automation/next-month.ts`) to the run report. The monthly job uses it daily; it reads a handful of pages.
+- **`--report-file <file>`** writes a JSON run report (`ImportReport`: page reads, revisions, skipped rounds, `newRounds`, unmatched names) for the pull request summary.
+
+After an import, the monthly and round workflows do this by themselves (`docs/OPERATIONS.md`, "Monthly data pipeline"): they run `npm run check` and `npm run build`, commit `data/raw/`, `src/data/` and the recap files, and open a pull request. By hand:
 
 1. Review the printed revisions, skipped rounds and unmatched names.
 2. Run `npm run check` and `npm run build`. The evidence tests in `src/lib/report-evidence.test.ts` validate every generated occupation.
 3. Commit `data/raw/` and `src/data/` together, in a `data:` commit.
+
+Automated reads keep the importer's guardrail, a browser User-Agent, no retry of a refusal and skip anything robots.txt disallows (founder decision 25 Nov 2026, `docs/STRATEGY.md`).
 
 ## State rules
 
