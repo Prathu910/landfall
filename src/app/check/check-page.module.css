@@ -65,10 +65,6 @@
 .facts svg {
   color: var(--check-green);
 }
-.page:not(:has([data-points-check])) .heading,
-.page:not(:has([data-points-check])) .breadcrumb {
-  display: none;
-}
 .guideLink {
   margin: calc(var(--check-unit) * 4) 0 0;
   font-size: var(--check-text-sm);

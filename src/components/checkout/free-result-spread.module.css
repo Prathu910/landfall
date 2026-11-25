@@ -1,0 +1,269 @@
+/* The free result as a passport spread (paid-report-3.html: .spread, .pg,
+   .pgk, .ghost, .veil), on the check's tokens: two pages from 860px up,
+   stacked below that. */
+.spread {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  overflow: hidden;
+  border: 1px solid var(--check-line);
+  border-radius: 1.125rem;
+  background: var(--check-paper);
+  color: var(--check-ink);
+  font-family: var(--check-font);
+  box-shadow: 0 22px 50px -30px
+    color-mix(in srgb, var(--shadow-ink) 80%, transparent);
+}
+.page {
+  position: relative;
+  min-width: 0;
+  min-height: 29.375rem;
+  padding: 1.625rem 1.625rem 1.5rem;
+}
+/* The fold: each page darkens a little towards the spine. */
+.page::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 1.375rem;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--shadow-ink) 9%, transparent)
+  );
+}
+.facing {
+  /* The placeholder page and the frosted panel share one cell, so the panel
+     grows with its text instead of spilling out of the page. */
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  border-left: 1px solid var(--check-line);
+  background: var(--check-soft);
+}
+.facing > .ghost,
+.facing > .veil {
+  grid-row: 2;
+  grid-column: 1;
+}
+.facing::before {
+  right: auto;
+  left: 0;
+  background: linear-gradient(
+    270deg,
+    transparent,
+    color-mix(in srgb, var(--shadow-ink) 9%, transparent)
+  );
+}
+.running {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0;
+  color: var(--check-muted);
+  font-family: var(--font-stamp);
+  font-size: 0.8125rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  line-height: 1.4;
+}
+.running:focus {
+  outline: none;
+}
+.points {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.625rem;
+  margin: 1rem 0 0.25rem;
+}
+.big {
+  font-size: 4rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+.note {
+  margin: 0;
+  color: var(--check-muted);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+.stamps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.625rem;
+  max-width: 35rem;
+  margin: 0.875rem 0 0.375rem;
+}
+.stamp {
+  min-width: 0;
+  padding: 0.5rem 0.375rem 0.25rem;
+  border: 1px solid var(--check-line);
+  border-radius: 0.875rem;
+  background: var(--check-soft);
+}
+.lede {
+  margin: 1rem 0 0.375rem;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+.ghost {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+  opacity: 0.75;
+  filter: blur(5px);
+  pointer-events: none;
+  user-select: none;
+}
+.ghostLine {
+  display: block;
+  height: 0.75rem;
+  border-radius: 0.375rem;
+  background: var(--check-line);
+}
+.ghostLine:nth-child(1) {
+  width: 60%;
+}
+.ghostLine:nth-child(3) {
+  width: 85%;
+}
+.ghostLine:nth-child(4) {
+  width: 70%;
+}
+.ghostLine:last-child {
+  width: 50%;
+}
+.ghostBars {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.375rem;
+  height: 5.625rem;
+}
+.ghostBars i {
+  flex: 1;
+  border-radius: 0.25rem 0.25rem 0 0;
+  background: var(--chart-quiet);
+}
+.ghostGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.375rem;
+}
+.ghostGrid i {
+  height: 2.375rem;
+  border-radius: 0.5rem;
+  background: var(--check-green-soft);
+}
+.veil {
+  position: relative;
+  margin: 1rem -0.5rem 0;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: 0.875rem;
+  text-align: center;
+  background: color-mix(in srgb, var(--check-soft) 55%, transparent);
+  backdrop-filter: blur(2px);
+}
+.lock {
+  color: var(--saffron);
+}
+.heading {
+  max-width: 21.25rem;
+  margin: 0;
+  font-size: 1.375rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+.ticks {
+  display: grid;
+  gap: 0.375rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.875rem;
+  text-align: left;
+}
+.ticks li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.ticks svg {
+  flex: none;
+  color: var(--check-green);
+}
+.action {
+  width: 100%;
+  min-width: 0;
+  max-width: 23.75rem;
+}
+.sampleLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: var(--brand-target);
+  padding: 0 1.25rem;
+  border-radius: var(--check-pill);
+  background: var(--brand-ink-fill);
+  color: var(--brand-on-fill);
+  font-weight: 650;
+  text-decoration: none;
+}
+.sampleLink:focus-visible {
+  outline: 3px solid var(--check-focus);
+  outline-offset: 3px;
+}
+.was {
+  color: var(--check-muted);
+}
+.count {
+  color: var(--check-ink);
+}
+.skeleton {
+  display: block;
+  width: min(11rem, 100%);
+  height: 0.75rem;
+  border-radius: 0.375rem;
+  background: var(--check-line);
+}
+@media (max-width: 859px) {
+  .spread {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .page {
+    min-height: 0;
+  }
+  .facing {
+    min-height: 29.375rem;
+    border-top: 1px solid var(--check-line);
+    border-left: 0;
+  }
+  .page::before {
+    display: none;
+  }
+}
+/* Three stamps keep their 12px edge text only from about 116px each. */
+@media (max-width: 479px) {
+  .page {
+    padding: 1.25rem 1rem;
+  }
+  .stamps {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+  }
+  .stamp {
+    width: min(100%, 11rem);
+  }
+  .veil {
+    margin-inline: 0;
+    padding: 0.75rem 0.5rem;
+  }
+}

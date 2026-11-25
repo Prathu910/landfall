@@ -1,0 +1,8 @@
+.result {
+  display: grid;
+  gap: calc(var(--check-unit) * 3);
+  color: var(--check-ink);
+}
+.edit {
+  justify-self: start;
+}

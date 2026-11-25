@@ -5,6 +5,7 @@ import type {
   OccupationIndexEntry,
 } from "../../lib/data/types";
 import { droppedNote } from "../../lib/occupation-page/dropped";
+import type { OccupationState } from "../../lib/outlook/view";
 import type { ScorecardData } from "../../lib/report/scorecard";
 import type { DetailLoad, OccupationLoad } from "./use-occupation-core";
 
@@ -80,4 +81,29 @@ export function toScorecardData(
     default:
       return { kind: "none", reason: unavailableReason(code, index) };
   }
+}
+
+/** The outlook reads only the core and a ready detail file. */
+export function occupationState(
+  code: string,
+  occupation: ReportOccupation,
+  index: OccupationIndexEntry[],
+): OccupationState {
+  if (occupation.status === "loading") return { status: "loading" };
+  if (occupation.status !== "ready") {
+    // A fetch that failed must not read as "SkillSelect published nothing".
+    const reason = unavailableReason(code, index);
+    if (typeof reason === "object") {
+      return { status: "dropped", note: reason.note };
+    }
+    return reason === "loadFailed"
+      ? { status: "load-failed" }
+      : { status: "unavailable" };
+  }
+  const { core, detail } = occupation;
+  return {
+    status: "ready",
+    core,
+    detail: detail.status === "ready" ? detail.detail : null,
+  };
 }

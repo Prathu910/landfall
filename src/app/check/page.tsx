@@ -9,7 +9,7 @@ import styles from "./check-page.module.css";
 export const metadata: Metadata = {
   title: "Australian PR points calculator — your free check",
   description:
-    "Calculate your Australian skilled migration points for the 189, 190 and provisional 491 pathways. Get a free personal report with published occupation evidence.",
+    "Calculate your Australian skilled migration points for the 189, 190 and provisional 491 pathways, and see where they put you for each visa, free.",
   alternates: { canonical: "/check/" },
 };
 export default function CheckPage() {
@@ -32,14 +32,14 @@ export default function CheckPage() {
           </div>
           <div>
             <p className={styles.description}>
-              Start with your points. See what they mean for the 189, 190 and
-              provisional 491 pathways in your free personal report.
+              Start with your points. See where they put you for the 189, 190
+              and 491, free; your full personal report is one step further.
             </p>
             <ul className={styles.facts}>
               {[
                 "No account",
                 "No documents to upload",
-                "Email to view report",
+                "Free result, no email",
               ].map((fact) => (
                 <li key={fact}>
                   <Check size={14} aria-hidden />

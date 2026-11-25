@@ -29,27 +29,21 @@ import { parseProfile } from "@/lib/profile-guard";
 import { resetStateRelativeAnswers, restoreProfile } from "@/lib/state-answers";
 import type { ReportSource } from "@/lib/data/report-source";
 import { publishedOccupationCode } from "@/lib/data/occupation-url";
+import { whereLine } from "@/lib/checkout/teaser";
+import { buildFreeResult } from "@/lib/outlook/free-result";
 import { occupationIndex } from "./data/occupation-index";
-import { toReportOccupation } from "./data/report-occupation";
+import { occupationState, toReportOccupation } from "./data/report-occupation";
+import { stateRuleData } from "./data/state-rule-data";
 import {
   useOccupationCore,
   useOccupationDetail,
 } from "./data/use-occupation-core";
-import { Report } from "./report";
 import { CheckReviewStep } from "./check-review-step";
 import { CheckProfileStep } from "./check/check-profile-step";
 import { CheckStudyStep } from "./check/check-study-step";
 import { CheckWorkStep } from "./check/check-work-step";
-import { CalculationEmail } from "./submissions/calculation-email";
-import { configuredSubmissions } from "./submissions/config";
-import { useSubmission } from "./submissions/use-submission";
-import {
-  PRIVACY_VERSION,
-  validEmail,
-  normalizeEmail,
-} from "@/lib/submissions/contract";
-import { calculationSummary } from "@/lib/submissions/summary";
 import { CheckFlowTheme } from "./check/check-flow-theme";
+import { CheckResult } from "./check/check-result";
 import { CheckPointsPreview } from "./check/check-points-preview";
 import styles from "./check-flow.module.css";
 
@@ -64,16 +58,10 @@ export function CheckFlow({ source }: { source: ReportSource }) {
   const [profile, setProfile] = useState<Profile>({ ...emptyProfile });
   const [step, setStep] = useState(0);
   const [sampleRun, setSampleRun] = useState(false);
-  const [email, setEmail] = useState("");
-  const [emailError, setEmailError] = useState("");
-  const [token, setToken] = useState("");
-  const [verification, setVerification] = useState(0);
-  const capture = useSubmission("calculation");
-  const config = configuredSubmissions();
   const [asOf, setAsOf] = useState("2026-11-17");
   const [save, setSave] = useState(false);
   const [loaded, setLoaded] = useState(false);
-  const [report, setReport] = useState(false);
+  const [showResult, setShowResult] = useState(false);
   const [error, setError] = useState("");
   const heading = useRef<HTMLHeadingElement>(null);
   const reduceMotion = useReducedMotion();
@@ -125,6 +113,9 @@ export function CheckFlow({ source }: { source: ReportSource }) {
     useOccupationCore(publishedCode, occupationIndex),
     useOccupationDetail(publishedCode, occupationIndex),
   );
+  const occupationName =
+    occupationIndex.find((o) => o.code === profile.occupation)?.name ??
+    "Other · points check only";
   // Every answer goes through here, so the opt-in saving effect applies to all
   // and answers about the state you live in, or about the occupation, reset
   // when that changes.
@@ -136,25 +127,19 @@ export function CheckFlow({ source }: { source: ReportSource }) {
     updateMany({ [key]: value });
   const changeStep = (next: number) => {
     if (next === step) return;
-    setToken("");
     setStep(next);
     setError("");
   };
   const clear = () => {
-    setToken("");
     setError("");
     setSampleRun(false);
-    setEmail("");
-    setEmailError("");
-    capture.reset();
     setProfile({ ...emptyProfile });
     setSave(false);
-    setReport(false);
+    setShowResult(false);
     changeStep(0);
     clearSavedProfile(localStorage);
   };
-  const next = async () => {
-    if (capture.pending) return;
+  const next = () => {
     if (
       step === 0 &&
       (!profile.dob || result.missing.includes("Date of birth"))
@@ -181,55 +166,35 @@ export function CheckFlow({ source }: { source: ReportSource }) {
         "Assessment, EOI and completion dates cannot be in the future.",
       );
     if (step === 3) {
-      if (!sampleRun) {
-        if (!validEmail(email)) {
-          setEmailError("Enter a valid email address to view your report.");
-          document.getElementById("report-email")?.focus();
-          return;
-        }
-        setEmailError("");
-        const saved = await capture.submit(
-          {
-            email: normalizeEmail(email),
-            summary: calculationSummary(
-              profile,
-              result,
-              asOf,
-              source.snapshotDate,
-            ),
-            privacy_version: PRIVACY_VERSION,
-          },
-          token,
-          config,
-        );
-        if (!saved) {
-          setToken("");
-          setVerification((n) => n + 1);
-          return;
-        }
-      }
-      setReport(true);
+      setShowResult(true);
       window.scrollTo({
         top: 0,
         behavior: reduceMotion ? "instant" : "smooth",
       });
     } else changeStep(step + 1);
   };
-  if (report)
+  if (showResult)
     return (
-      <Report
-        profile={profile}
+      <CheckResult
+        free={buildFreeResult({
+          profile,
+          asOf,
+          rules: stateRuleData,
+          occupation: occupationState(
+            profile.occupation,
+            occupation,
+            occupationIndex,
+          ),
+        })}
         sample={sampleRun}
-        asOf={asOf}
-        occupation={occupation}
-        comparisonIndex={occupationIndex}
-        source={source}
-        onAnswer={updateMany}
-        readToken={sampleRun ? null : capture.readToken}
+        occupationName={occupationName}
+        whereLine={whereLine(
+          occupationName,
+          profile.onshore,
+          source.snapshotDate,
+        )}
         onEdit={() => {
-          setToken("");
-          capture.reset();
-          setReport(false);
+          setShowResult(false);
           changeStep(3);
         }}
       />
@@ -241,14 +206,13 @@ export function CheckFlow({ source }: { source: ReportSource }) {
           <form
             data-points-check
             className={styles.card}
-            aria-busy={capture.pending}
             noValidate
             onSubmit={(event) => {
               event.preventDefault();
-              void next();
+              next();
             }}
           >
-            <fieldset disabled={capture.pending} className={styles.fieldset}>
+            <fieldset className={styles.fieldset}>
               <div className={styles.stepMeta}>
                 <span className={styles.checkLabel}>
                   <ScanLine size={17} aria-hidden /> Your free points check
@@ -313,7 +277,7 @@ export function CheckFlow({ source }: { source: ReportSource }) {
                         "Your age, occupation and location help put your points in context.",
                         "Add your English level and qualifications to build your score.",
                         "Use experience and credentials you can support with evidence.",
-                        "Check the details below, then view your free personal report.",
+                        "Check the details below, then see your free result.",
                       ][step]
                     }
                   </p>
@@ -344,43 +308,24 @@ export function CheckFlow({ source }: { source: ReportSource }) {
                         profile={profile}
                         result={result}
                         asOf={asOf}
-                        occupationName={
-                          occupationIndex.find(
-                            (o) => o.code === profile.occupation,
-                          )?.name ?? "Other · points check only"
-                        }
+                        occupationName={occupationName}
                         save={save}
                         allowSave={!sampleRun}
                         onSave={setSave}
                       >
-                        {sampleRun ? (
+                        {sampleRun && (
                           <Alert color="ink">
-                            You’re exploring sample answers. No email or
-                            calculation is saved. Use “Start a new check” below
-                            to calculate your own report.
+                            You’re exploring sample answers. Nothing is saved.
+                            Use “Start a new check” below to calculate your own
+                            result.
                           </Alert>
-                        ) : (
-                          <div className={styles.emailBox}>
-                            <CalculationEmail
-                              email={email}
-                              onEmail={(value) => {
-                                setEmail(value);
-                                setEmailError("");
-                                capture.clearError();
-                              }}
-                              error={emailError}
-                              config={config}
-                              generation={verification}
-                              onToken={setToken}
-                            />
-                          </div>
                         )}
                       </CheckReviewStep>
                     )}
                   </div>
                 </motion.div>
               </AnimatePresence>
-              {(error || capture.error) && (
+              {error && (
                 <Alert
                   role="alert"
                   color="red"
@@ -388,7 +333,7 @@ export function CheckFlow({ source }: { source: ReportSource }) {
                   radius="md"
                   mt="lg"
                 >
-                  {error || capture.error}
+                  {error}
                 </Alert>
               )}
               <div className={styles.actions}>
@@ -410,33 +355,28 @@ export function CheckFlow({ source }: { source: ReportSource }) {
                   radius="md"
                   rightSection={<ArrowRight size={17} />}
                 >
-                  {capture.pending
-                    ? "Saving your calculation…"
-                    : step === 3
-                      ? sampleRun
-                        ? "View sample report"
-                        : "View my free report"
-                      : "Continue"}
+                  {step === 3
+                    ? sampleRun
+                      ? "View sample result"
+                      : "View my free result"
+                    : "Continue"}
                 </Button>
               </div>
             </fieldset>
           </form>
           <div className={styles.below}>
             <span>
-              <LockKeyhole size={13} /> Email needed for your personal report.
-              No documents needed.
+              <LockKeyhole size={13} /> No email needed for your free result. No
+              documents needed.
             </span>
             <Button
               variant="subtle"
               size="xs"
               color="ink"
-              disabled={capture.pending}
               onClick={() => {
                 setError("");
                 setSave(false);
                 setSampleRun(true);
-                setEmail("");
-                capture.clearError();
                 setProfile({ ...sampleReportProfile });
                 changeStep(0);
               }}
@@ -450,7 +390,6 @@ export function CheckFlow({ source }: { source: ReportSource }) {
             color="gray"
             size="xs"
             onClick={clear}
-            disabled={capture.pending}
           >
             {sampleRun
               ? "Start a new check"
