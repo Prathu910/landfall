@@ -7,9 +7,8 @@ import type {
 } from "../../../src/lib/updates/cards";
 import { CardPage, type CardFormat } from "./card-page";
 import { SwipeCue } from "./swipe-cue";
+import { textEm } from "../title-fit";
 
-/** Archivo 800 at 112% width averages under 0.66em a character. */
-const CHAR_EM = 0.66;
 const TITLE = {
   feed: { max: 136, width: 816 },
   story: { max: 136, width: 816 },
@@ -17,13 +16,13 @@ const TITLE = {
 } as const;
 
 /**
- * The cover title's size: as large as the mockup, smaller when its longest
+ * The cover title's size: as large as the mockup, smaller when its widest
  * line ("15 September") would not fit. The renderer still fails if it does.
  */
 function titleSize(lines: readonly string[], format: CardFormat): number {
-  const longest = Math.max(...lines.map((line) => line.length));
+  const widest = Math.max(...lines.map(textEm));
   const { max, width } = TITLE[format];
-  return Math.min(max, Math.floor(width / (longest * CHAR_EM)));
+  return Math.min(max, Math.floor(width / widest));
 }
 
 function Round({ stamp }: { stamp: StampText }) {

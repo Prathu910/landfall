@@ -464,10 +464,11 @@ p {
   gap: 20px;
   align-items: center;
 }
-.spot-head .title {
-  /* Two lines, then the render fails. */
-  max-height: 2.02em;
-  font-size: 80px;
+/* A long unbreakable word overflows its .fit title (and fails the render)
+   instead of widening the column and pushing the stamp aside. The title's
+   size and max height come from title-fit.ts. */
+.spot-head > div {
+  min-width: 0;
 }
 .code {
   margin-top: 12px;

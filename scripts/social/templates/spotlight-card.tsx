@@ -1,5 +1,6 @@
 import { RectStamp } from "../../../src/components/updates/rect-stamp";
 import type { SpotlightCard as SpotlightView } from "../../../src/lib/updates/cards";
+import { SPOTLIGHT_TITLE, fitTitle } from "../title-fit";
 import { CardPage, type CardFormat } from "./card-page";
 
 /** What the round columns measure; the heading names the rounds. */
@@ -61,7 +62,15 @@ export function SpotlightCard({
       <div className="spot-head">
         <div>
           <div className="eyebrow">{card.eyebrow}</div>
-          <h1 className="title fit">{card.name}</h1>
+          <h1
+            className="title fit"
+            style={{
+              fontSize: fitTitle(card.name, SPOTLIGHT_TITLE).size,
+              maxHeight: SPOTLIGHT_TITLE.height,
+            }}
+          >
+            {card.name}
+          </h1>
           <div className="code">{card.code}</div>
         </div>
         {card.stamp ? (

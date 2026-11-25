@@ -179,6 +179,22 @@ function buildCard(
 }
 
 /**
+ * The 20 most popular occupations with data for the month, most popular
+ * first (spec 6.8): the spotlight is chosen among them.
+ */
+export function popularOccupations(
+  cores: OccupationCore[],
+  month: MonthKey,
+): OccupationCore[] {
+  return cores
+    .filter((core) => core.asAt === month)
+    .map((core) => ({ core, floor: popularity(core) }))
+    .sort((a, b) => b.floor - a.floor || (a.core.code < b.core.code ? -1 : 1))
+    .slice(0, POPULAR_COUNT)
+    .map((entry) => entry.core);
+}
+
+/**
  * The month's spotlight: the biggest guaranteed month-on-month change among
  * the 20 most popular occupations. `rounds` is cut at the month's end (R5) and
  * cores that dropped out of the data (older `asAt`) are ignored (R6).
@@ -199,11 +215,7 @@ export function pickSpotlight(input: {
     .sort((a, b) => (a.date < b.date ? 1 : -1));
   if (rounds.length === 0) throw new Error(`No rounds up to ${month}`);
 
-  const popular = current
-    .map((core) => ({ core, floor: popularity(core) }))
-    .sort((a, b) => b.floor - a.floor || (a.core.code < b.core.code ? -1 : 1))
-    .slice(0, POPULAR_COUNT)
-    .map((entry) => entry.core);
+  const popular = popularOccupations(input.cores, month);
   const eligible = popular.filter((core) => core.code !== previousCode);
 
   const scored = eligible
