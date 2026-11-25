@@ -41,7 +41,7 @@
 }
 .links {
   display: grid;
-  grid-template-columns: auto auto;
+  grid-template-columns: auto auto auto;
   gap: calc(var(--brand-unit) * 16);
 }
 .links h2 {

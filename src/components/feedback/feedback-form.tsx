@@ -186,7 +186,7 @@ export function FeedbackForm() {
           Please don’t include passport numbers, documents, or other sensitive
           details. We store your message and any email or summary you choose to
           include. We won’t subscribe you to marketing.{" "}
-          <Link href="/methodology/#privacy">Privacy and deletion</Link>.
+          <Link href="/privacy/">Privacy and deletion</Link>.
         </p>
         {config ? (
           <Turnstile

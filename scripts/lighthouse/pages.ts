@@ -43,6 +43,11 @@ export const AUDIT_PAGES: readonly AuditPage[] = [
   { path: "/methodology/", gated: ALL },
   { path: "/sample/", gated: ALL },
   { path: "/check/", gated: ALL },
+  { path: "/terms/", gated: ALL },
+  { path: "/refunds/", gated: ALL },
+  { path: "/delivery/", gated: ALL },
+  { path: "/contact/", gated: ALL },
+  { path: "/privacy/", gated: ALL },
   { path: "/feedback/", gated: QUALITY_ONLY },
   // The 404 page itself: Lighthouse won't audit a response with a 404
   // status, so it loads the file Cloudflare serves for a missing path.

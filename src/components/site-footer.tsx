@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { loadManifest } from "@/lib/data/load-server";
+import { LEGAL_PAGES, LEGAL_SLUGS } from "@/lib/legal/copy";
 import { formatMonth } from "@/lib/report/copy";
 import { Brand } from "./brand/brand";
 import styles from "./site-footer.module.css";
@@ -37,7 +38,6 @@ export function SiteFooter() {
               <h2>About the data</h2>
               <Link href="/methodology/">Method and sources</Link>
               <Link href="/feedback/">Feedback</Link>
-              <Link href="/methodology/#privacy">Privacy</Link>
               <a
                 href="https://www.mara.gov.au/"
                 target="_blank"
@@ -45,6 +45,14 @@ export function SiteFooter() {
               >
                 Find a registered agent <ArrowUpRight size={14} aria-hidden />
               </a>
+            </div>
+            <div>
+              <h2>Policies</h2>
+              {LEGAL_SLUGS.map((slug) => (
+                <Link key={slug} href={`/${slug}/`}>
+                  {LEGAL_PAGES[slug].crumb}
+                </Link>
+              ))}
             </div>
           </nav>
         </div>
