@@ -15,6 +15,7 @@ export type FreeResult =
       stamps: FreeStamp[];
       dataMonth: string;
     }
+  | { kind: "loading"; points: PointsResult }
   | {
       kind: "points-only";
       points: PointsResult;
@@ -61,7 +62,8 @@ export function buildFreeResult(input: OutlookViewInput): FreeResult {
   if (occupation.status === "load-failed") {
     return { kind: "points-only", points, reason: "load-failed", note: null };
   }
-  // No published data, or still loading: the points are all there is to show.
+  if (occupation.status === "loading") return { kind: "loading", points };
+  // No published data: the points are all there is to show.
   if (occupation.status !== "ready") {
     return { kind: "points-only", points, reason: "unavailable", note: null };
   }

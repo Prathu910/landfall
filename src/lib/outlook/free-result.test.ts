@@ -87,6 +87,16 @@ describe("buildFreeResult", () => {
     ).toMatchObject({ kind: "points-only", reason: "load-failed" });
   });
 
+  it("loading is its own state, never points-only", () => {
+    const input = viewInput("strong");
+    const free = buildFreeResult({
+      ...input,
+      occupation: { status: "loading" },
+    });
+    expect(free.kind).toBe("loading");
+    expect(free.points).toEqual(buildFreeResult(input).points);
+  });
+
   it("never carries captions", () => {
     for (const id of IDS) {
       const free = buildFreeResult(viewInput(id));
