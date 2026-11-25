@@ -1,0 +1,103 @@
+{
+  "kind": "month",
+  "month": "2026-10",
+  "round": null,
+  "images": [
+    {
+      "card": "cover",
+      "format": "feed",
+      "theme": "light",
+      "file": "public/social/2026-10/month/cover-light.png",
+      "alt": "Card 1 of 6. SkillSelect update: October 2026. The 189 round of 15 Oct 2026 and the October data for 190 and 491, in five cards. Stamp: SUBCLASS 189 ROUND, 20,000 INVITED, 15 OCT 2026. Stamp: SUBCLASS 190, BY STATE, AS AT 31 OCT. Stamp: SUBCLASS 491, BY STATE, AS AT 31 OCT."
+    },
+    {
+      "card": "cover",
+      "format": "feed",
+      "theme": "dark",
+      "file": "public/social/2026-10/month/cover-dark.png",
+      "alt": "Card 1 of 6. SkillSelect update: October 2026. The 189 round of 15 Oct 2026 and the October data for 190 and 491, in five cards. Stamp: SUBCLASS 189 ROUND, 20,000 INVITED, 15 OCT 2026. Stamp: SUBCLASS 190, BY STATE, AS AT 31 OCT. Stamp: SUBCLASS 491, BY STATE, AS AT 31 OCT."
+    },
+    {
+      "card": "state-190",
+      "format": "feed",
+      "theme": "light",
+      "file": "public/social/2026-10/month/state-190-light.png",
+      "alt": "Card 3 of 6. 190 · Skilled Nominated. 190 by state. EOIs holding a 190 invitation on 31 Oct 2026, by the state that invited them. Every figure is a minimum. NSW at least 790; VIC at least 1,018; QLD at least 504; WA at least 705; SA at least 244; TAS at least 28; ACT at least 62; NT at least 46. State not recorded: at least 243. On 30 Sep 2026 every state was under 20 for each occupation. Counts under 20 are hidden, so true totals are higher."
+    },
+    {
+      "card": "state-190",
+      "format": "feed",
+      "theme": "dark",
+      "file": "public/social/2026-10/month/state-190-dark.png",
+      "alt": "Card 3 of 6. 190 · Skilled Nominated. 190 by state. EOIs holding a 190 invitation on 31 Oct 2026, by the state that invited them. Every figure is a minimum. NSW at least 790; VIC at least 1,018; QLD at least 504; WA at least 705; SA at least 244; TAS at least 28; ACT at least 62; NT at least 46. State not recorded: at least 243. On 30 Sep 2026 every state was under 20 for each occupation. Counts under 20 are hidden, so true totals are higher."
+    },
+    {
+      "card": "state-491",
+      "format": "feed",
+      "theme": "light",
+      "file": "public/social/2026-10/month/state-491-light.png",
+      "alt": "Card 4 of 6. 491 · State-nominated regional. 491 by state. EOIs holding a 491 invitation on 31 Oct 2026, by the state that invited them. Every figure is a minimum. NSW at least 141; VIC at least 232; QLD at least 86; WA at least 260; SA at least 121; TAS <20 each occupation; ACT at least 34; NT at least 22. State not recorded: at least 101. On 30 Sep 2026 every state was under 20 for each occupation. Counts under 20 are hidden, so true totals are higher."
+    },
+    {
+      "card": "state-491",
+      "format": "feed",
+      "theme": "dark",
+      "file": "public/social/2026-10/month/state-491-dark.png",
+      "alt": "Card 4 of 6. 491 · State-nominated regional. 491 by state. EOIs holding a 491 invitation on 31 Oct 2026, by the state that invited them. Every figure is a minimum. NSW at least 141; VIC at least 232; QLD at least 86; WA at least 260; SA at least 121; TAS <20 each occupation; ACT at least 34; NT at least 22. State not recorded: at least 101. On 30 Sep 2026 every state was under 20 for each occupation. Counts under 20 are hidden, so true totals are higher."
+    },
+    {
+      "card": "spotlight",
+      "format": "feed",
+      "theme": "light",
+      "file": "public/social/2026-10/month/spotlight-light.png",
+      "alt": "Card 5 of 6. Occupation spotlight. Registered Nurses nec, ANZSCO 254499. Stamp: 189 · 15 OCT 2026, 70 PTS, LOWEST INVITED. 2,730+ EOIs, at least, held a 189 invitation on 31 Oct 2026 (under 20 on 30 Sep 2026). 4,280 EOIs in the 189 pool on 31 Oct 2026 (7,500 on 30 Sep 2026). Last six 189 rounds, lowest score invited: 5 Sep 2024 75; 7 Nov 2024 70; 21 Aug 2025 80; 13 Nov 2025 75; 4 Jun 2026 75; 15 Oct 2026 70. At 70 points, EOIs that reached the score by 19 Nov 2025 were invited (tie-break date). 190 invitations on 31 Oct 2026: VIC at least 337, NSW at least 327, QLD at least 260, WA at least 253."
+    },
+    {
+      "card": "spotlight",
+      "format": "feed",
+      "theme": "dark",
+      "file": "public/social/2026-10/month/spotlight-dark.png",
+      "alt": "Card 5 of 6. Occupation spotlight. Registered Nurses nec, ANZSCO 254499. Stamp: 189 · 15 OCT 2026, 70 PTS, LOWEST INVITED. 2,730+ EOIs, at least, held a 189 invitation on 31 Oct 2026 (under 20 on 30 Sep 2026). 4,280 EOIs in the 189 pool on 31 Oct 2026 (7,500 on 30 Sep 2026). Last six 189 rounds, lowest score invited: 5 Sep 2024 75; 7 Nov 2024 70; 21 Aug 2025 80; 13 Nov 2025 75; 4 Jun 2026 75; 15 Oct 2026 70. At 70 points, EOIs that reached the score by 19 Nov 2025 were invited (tie-break date). 190 invitations on 31 Oct 2026: VIC at least 337, NSW at least 327, QLD at least 260, WA at least 253."
+    },
+    {
+      "card": "closing",
+      "format": "feed",
+      "theme": "light",
+      "file": "public/social/2026-10/month/closing-light.png",
+      "alt": "Card 6 of 6. Check your points free, migratelens.com. Your points against the published invitation data for your occupation, in one report. @migratelens. General information, not migration advice."
+    },
+    {
+      "card": "closing",
+      "format": "feed",
+      "theme": "dark",
+      "file": "public/social/2026-10/month/closing-dark.png",
+      "alt": "Card 6 of 6. Check your points free, migratelens.com. Your points against the published invitation data for your occupation, in one report. @migratelens. General information, not migration advice."
+    },
+    {
+      "card": "cover",
+      "format": "story",
+      "theme": "light",
+      "file": "public/social/2026-10/month/story-cover-light.png",
+      "alt": "Card 1 of 6. SkillSelect update: October 2026. The 189 round of 15 Oct 2026 and the October data for 190 and 491, in five cards. Stamp: SUBCLASS 189 ROUND, 20,000 INVITED, 15 OCT 2026. Stamp: SUBCLASS 190, BY STATE, AS AT 31 OCT. Stamp: SUBCLASS 491, BY STATE, AS AT 31 OCT."
+    },
+    {
+      "card": "cover",
+      "format": "story",
+      "theme": "dark",
+      "file": "public/social/2026-10/month/story-cover-dark.png",
+      "alt": "Card 1 of 6. SkillSelect update: October 2026. The 189 round of 15 Oct 2026 and the October data for 190 and 491, in five cards. Stamp: SUBCLASS 189 ROUND, 20,000 INVITED, 15 OCT 2026. Stamp: SUBCLASS 190, BY STATE, AS AT 31 OCT. Stamp: SUBCLASS 491, BY STATE, AS AT 31 OCT."
+    },
+    {
+      "card": "cover",
+      "format": "og",
+      "theme": "light",
+      "file": "public/social/2026-10/og.png",
+      "alt": "Card 1 of 6. SkillSelect update: October 2026. The 189 round of 15 Oct 2026 and the October data for 190 and 491, in five cards. Stamp: SUBCLASS 189 ROUND, 20,000 INVITED, 15 OCT 2026. Stamp: SUBCLASS 190, BY STATE, AS AT 31 OCT. Stamp: SUBCLASS 491, BY STATE, AS AT 31 OCT."
+    }
+  ],
+  "reused": [
+    "public/social/2026-10/round-2026-10-15/round-light.png",
+    "public/social/2026-10/round-2026-10-15/round-dark.png"
+  ],
+  "caption": "SkillSelect update for October 2026. 20,000 EOIs invited in the 189 round of 15 Oct 2026, across 159 occupations. Lowest scores invited ran 65–100. 190 and 491 EOIs by state, as at 31 Oct 2026, with every figure a minimum. Occupation spotlight: Registered Nurses nec, as at 31 Oct 2026.\nFull figures and sources: migratelens.com/updates/2026-10/\nGeneral information, not migration advice.\n\n#australiapr #skillselect #189visa #190visa #491visa"
+}

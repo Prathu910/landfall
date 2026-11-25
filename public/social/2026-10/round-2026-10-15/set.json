@@ -1,0 +1,72 @@
+{
+  "kind": "round",
+  "month": "2026-10",
+  "round": "2026-10-15",
+  "images": [
+    {
+      "card": "round-cover",
+      "format": "feed",
+      "theme": "light",
+      "file": "public/social/2026-10/round-2026-10-15/cover-light.png",
+      "alt": "Card 1 of 3. SkillSelect update · 189 round: 15 October 2026. 20,000 EOIs invited across 159 occupations. Stamp: SUBCLASS 189 ROUND, 20,000 INVITED, 15 OCT 2026."
+    },
+    {
+      "card": "round-cover",
+      "format": "feed",
+      "theme": "dark",
+      "file": "public/social/2026-10/round-2026-10-15/cover-dark.png",
+      "alt": "Card 1 of 3. SkillSelect update · 189 round: 15 October 2026. 20,000 EOIs invited across 159 occupations. Stamp: SUBCLASS 189 ROUND, 20,000 INVITED, 15 OCT 2026."
+    },
+    {
+      "card": "round",
+      "format": "feed",
+      "theme": "light",
+      "file": "public/social/2026-10/round-2026-10-15/round-light.png",
+      "alt": "189 · Skilled Independent. 20,000 EOIs invited in the 189 round of 15 Oct 2026, across 159 occupations. Lowest scores invited ran 65–100. Occupations by lowest score invited: 65 points, 44; 70 points, 36; 75 points, 9; 80 points, 36; 85 points, 19; 90 points, 10; 95 points, 3; 100 points, 2. Lowest score invited: Welfare Centre Manager 65 (4 Jun 2026: 85); Airconditioning and Refrigeration Mechanic 65 (4 Jun 2026: 80); Clinical Psychologist 90 (4 Jun 2026: 75). Listed on 4 Jun 2026, not this round (3): Fitter and Turner, Organisational Psychologist, Thoracic Medicine Specialist."
+    },
+    {
+      "card": "round",
+      "format": "feed",
+      "theme": "dark",
+      "file": "public/social/2026-10/round-2026-10-15/round-dark.png",
+      "alt": "189 · Skilled Independent. 20,000 EOIs invited in the 189 round of 15 Oct 2026, across 159 occupations. Lowest scores invited ran 65–100. Occupations by lowest score invited: 65 points, 44; 70 points, 36; 75 points, 9; 80 points, 36; 85 points, 19; 90 points, 10; 95 points, 3; 100 points, 2. Lowest score invited: Welfare Centre Manager 65 (4 Jun 2026: 85); Airconditioning and Refrigeration Mechanic 65 (4 Jun 2026: 80); Clinical Psychologist 90 (4 Jun 2026: 75). Listed on 4 Jun 2026, not this round (3): Fitter and Turner, Organisational Psychologist, Thoracic Medicine Specialist."
+    },
+    {
+      "card": "closing",
+      "format": "feed",
+      "theme": "light",
+      "file": "public/social/2026-10/round-2026-10-15/closing-light.png",
+      "alt": "Card 3 of 3. Check your points free, migratelens.com. Your points against the published invitation data for your occupation, in one report. @migratelens. General information, not migration advice."
+    },
+    {
+      "card": "closing",
+      "format": "feed",
+      "theme": "dark",
+      "file": "public/social/2026-10/round-2026-10-15/closing-dark.png",
+      "alt": "Card 3 of 3. Check your points free, migratelens.com. Your points against the published invitation data for your occupation, in one report. @migratelens. General information, not migration advice."
+    },
+    {
+      "card": "round-cover",
+      "format": "story",
+      "theme": "light",
+      "file": "public/social/2026-10/round-2026-10-15/story-cover-light.png",
+      "alt": "Card 1 of 3. SkillSelect update · 189 round: 15 October 2026. 20,000 EOIs invited across 159 occupations. Stamp: SUBCLASS 189 ROUND, 20,000 INVITED, 15 OCT 2026."
+    },
+    {
+      "card": "round-cover",
+      "format": "story",
+      "theme": "dark",
+      "file": "public/social/2026-10/round-2026-10-15/story-cover-dark.png",
+      "alt": "Card 1 of 3. SkillSelect update · 189 round: 15 October 2026. 20,000 EOIs invited across 159 occupations. Stamp: SUBCLASS 189 ROUND, 20,000 INVITED, 15 OCT 2026."
+    },
+    {
+      "card": "round-cover",
+      "format": "og",
+      "theme": "light",
+      "file": "public/social/2026-10/round-2026-10-15/og.png",
+      "alt": "Card 1 of 3. SkillSelect update · 189 round: 15 October 2026. 20,000 EOIs invited across 159 occupations. Stamp: SUBCLASS 189 ROUND, 20,000 INVITED, 15 OCT 2026."
+    }
+  ],
+  "reused": [],
+  "caption": "20,000 EOIs invited in the 189 round of 15 Oct 2026, across 159 occupations. Lowest scores invited ran 65–100.\nFull figures and sources: migratelens.com/updates/2026-10/\nGeneral information, not migration advice.\n\n#australiapr #skillselect #189visa"
+}
