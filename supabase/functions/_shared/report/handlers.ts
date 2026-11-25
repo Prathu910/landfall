@@ -6,6 +6,7 @@ import {
   emailHint,
   type OrderRequest,
   type Quote,
+  validateConfirm,
   validateOrderRequest,
   validateVerify,
 } from "../../../../src/lib/orders/contract.ts";
@@ -25,10 +26,12 @@ import {
   setting,
 } from "./endpoint.ts";
 import { prepareReport } from "./issue.ts";
-import { createRazorpayOrder } from "./razorpay.ts";
+import { issuePaid } from "./paid.ts";
+import { createRazorpayOrder, validPaymentSignature } from "./razorpay.ts";
 import { sendEmail } from "./resend.ts";
 
 export type { Deps } from "./endpoint.ts";
+export { webhookHandler } from "./webhook.ts";
 
 /** Resend settings for every email the Functions send. */
 export function emailConfig(deps: Deps) {
@@ -222,5 +225,32 @@ export function verifyHandler(deps: Deps) {
     if (result.status === "wrong")
       return fail("wrong-code", { triesLeft: result.tries_left });
     return claimFailure(result.status);
+  });
+}
+
+/**
+ * POST report-confirm: Checkout's payment signature, then the issue. When
+ * the webhook issued first, the buyer gets `pending` (the link comes by
+ * email; paid_issue keeps the first token).
+ */
+export function confirmHandler(deps: Deps) {
+  return browserEndpoint("POST", deps, async (request) => {
+    const confirm = validateConfirm(await readJson(request));
+    if (!confirm) return fail("invalid");
+    const signed = await validPaymentSignature(
+      confirm.orderId,
+      confirm.paymentId,
+      confirm.signature,
+      setting(deps, "RAZORPAY_KEY_SECRET"),
+    );
+    if (!signed) return fail("signature");
+    const outcome = await issuePaid(deps, database(deps), {
+      orderId: confirm.orderId,
+      paymentId: confirm.paymentId,
+    });
+    if (outcome.kind === "issued")
+      return ok({ kind: "issued", token: outcome.token });
+    if (outcome.kind === "existing") return fail("pending");
+    return fail("signature");
   });
 }

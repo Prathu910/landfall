@@ -366,6 +366,88 @@ export class FakeDb {
       currency: a.currency,
     };
   }
+
+  private paidOrder(id: unknown) {
+    return this.orders.find(
+      (o) => o.razorpay_order_id === id && o.kind === "paid",
+    );
+  }
+
+  rpc_paid_order_get({ p_razorpay_order_id }: Json) {
+    const o = this.paidOrder(p_razorpay_order_id);
+    if (!o) return null;
+    const { email, currency, amount, profile, as_of, status } = o;
+    return { email, currency, amount, profile, as_of, status };
+  }
+
+  rpc_paid_issue({ p }: Json) {
+    const a = p as Json;
+    const o = this.paidOrder(a.razorpay_order_id);
+    if (!o) return { status: "unknown-order" };
+    const rep = a.report as Json;
+    if (o.report_id) {
+      const r = this.reports.find((x) => x.id === o.report_id)!;
+      return {
+        status: "existing",
+        report_id: r.id,
+        report_no: r.report_no,
+        token_hash_matches: r.token_hash === rep.token_hash,
+      };
+    }
+    if (o.status === "refunded") return { status: "refunded" };
+    if (a.amount !== o.amount || a.currency !== o.currency) {
+      o.status = "failed";
+      o.failure_reason = "amount-mismatch";
+      return { status: "mismatch" };
+    }
+    if (
+      this.orders.some(
+        (x) => x.razorpay_payment_id === a.razorpay_payment_id && x !== o,
+      )
+    )
+      return { status: "mismatch" };
+    const r = this.insert("paid", o.email, o.profile as Json, rep);
+    Object.assign(o, {
+      status: "paid",
+      razorpay_payment_id: a.razorpay_payment_id,
+      report_id: r.id,
+      failure_reason: null,
+    });
+    return {
+      status: "issued",
+      report_id: r.id,
+      report_no: r.report_no,
+      token_hash_matches: true,
+    };
+  }
+
+  rpc_paid_order_fail({ p_razorpay_order_id, p_reason }: Json) {
+    const o = this.paidOrder(p_razorpay_order_id);
+    if (o && o.status === "created") {
+      o.status = "failed";
+      o.failure_reason = p_reason as string;
+    }
+    return null;
+  }
+
+  rpc_report_refund({ p_payment_id, p_razorpay_order_id }: Json) {
+    const o =
+      this.orders.find((x) => x.razorpay_payment_id === p_payment_id) ??
+      (p_razorpay_order_id ? this.paidOrder(p_razorpay_order_id) : undefined);
+    if (!o) return { status: "unknown-payment" };
+    o.status = "refunded";
+    if (
+      !o.razorpay_payment_id &&
+      !this.orders.some((x) => x.razorpay_payment_id === p_payment_id)
+    )
+      o.razorpay_payment_id = p_payment_id as string;
+    const r = this.reports.find((x) => x.id === o.report_id);
+    if (r) {
+      if (r.status === "issued") r.status = "revoked";
+      r.token_enc = null;
+    }
+    return { status: "revoked", report_id: o.report_id };
+  }
 }
 
 type Sent = {

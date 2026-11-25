@@ -24,6 +24,7 @@ PAID_FUNCTIONS = (
     "report_iso(now())", "report_with_meta('{}'::jsonb, 'ML-2611-0001', 1, now(), now())",
     "report_insert('paid', 'a@example.com', '{}'::jsonb, '{}'::jsonb)",
     "founding_claim_source('c5fa65d5-f388-4a7b-940c-1b5b78c75100')", "founding_unsent('c5fa65d5-f388-4a7b-940c-1b5b78c75100')",
+    "report_refund('pay_X', null)", "paid_order_fail('order_X', 'no-data')",
 )
 FEEDBACK = {"id": "23937e80-90fd-44f6-9ebe-c189dd536043", "category": "bug", "message": "A small test feedback message.", "email": None, "summary": None, "privacy_version": "2026-11-20"}
 
@@ -267,6 +268,42 @@ def paid_report_checks(sql, connection):
     assert json.loads(scalar("select public.report_revoke_by_payment('pay_NONE')")) == {"status": "unknown-payment"}
     assert issue("after-refund")["status"] == "existing"
     print("PASS: a refund revokes the report")
+
+    def refund(payment, order_id):
+        order_arg = "null" if order_id is None else f"'{order_id}'"
+        return json.loads(scalar(f"select public.report_refund('{payment}', {order_arg})"))
+
+    reports_before = scalar("select count(*) from public.reports")
+    call("paid_order_create", {**order, "razorpay_order_id": "order_EARLY1"})
+    assert refund("pay_EARLY1", "order_EARLY1") == {"status": "revoked", "report_id": None}
+    assert scalar("select status || ' ' || razorpay_payment_id from public.report_orders where razorpay_order_id = 'order_EARLY1'") == "refunded pay_EARLY1"
+    early = {"razorpay_order_id": "order_EARLY1", "razorpay_payment_id": "pay_EARLY1", "amount": 69900, "currency": "INR", "report": report_input("early")}
+    assert call("paid_issue", early) == {"status": "refunded"}
+    assert refund("pay_EARLY1", None)["status"] == "revoked"
+    assert refund("pay_RACE1", None)["status"] == "revoked"
+    assert refund("pay_NONE", None) == {"status": "unknown-payment"}
+    assert refund("pay_NONE", "order_NONE") == {"status": "unknown-payment"}
+    assert scalar("select count(*) from public.reports") == reports_before
+
+    call("paid_order_create", {**order, "razorpay_order_id": "order_PAR1"})
+
+    def race(step):
+        if step == "refund":
+            return refund("pay_PAR1", "order_PAR1")["status"]
+        return call("paid_issue", {**early, "razorpay_order_id": "order_PAR1", "razorpay_payment_id": "pay_PAR1", "report": report_input("par")})["status"]
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
+        outcome = dict(zip(("refund", "issue"), pool.map(race, ("refund", "issue"))))
+    assert outcome["refund"] == "revoked" and outcome["issue"] in ("issued", "refunded"), outcome
+    assert scalar("select count(*) from public.reports where status = 'issued' and token_hash = '" + sha("token-par") + "'") == "0"
+    assert scalar("select status from public.report_orders where razorpay_order_id = 'order_PAR1'") == "refunded"
+
+    call("paid_order_create", {**order, "razorpay_order_id": "order_NODATA1"})
+    scalar("select public.paid_order_fail('order_NODATA1', 'no-data')")
+    assert scalar("select status || ' ' || failure_reason from public.report_orders where razorpay_order_id = 'order_NODATA1'") == "failed no-data"
+    scalar("select public.paid_order_fail('order_RACE1', 'no-data')")
+    assert scalar("select status from public.report_orders where razorpay_order_id = 'order_RACE1'") == "refunded"
+    print("PASS: a refund before issue blocks any later issue, also when the two race; a pending order can be failed")
 
     sql("""begin;
       update public.reports set expires_at = now() where token_hash = '""" + founding_hash + """';

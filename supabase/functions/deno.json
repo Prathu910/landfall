@@ -5,8 +5,8 @@
   },
   "nodeModulesDir": "none",
   "tasks": {
-    "check": "deno check submit-calculation/index.ts submit-feedback/index.ts write-read/index.ts ../tests/submissions_test.ts ../tests/write_read_test.ts ../tests/report_engine_test.ts _shared/report/razorpay.ts ../tests/razorpay_test.ts _shared/report/resend.ts _shared/report/pdf.ts ../tests/delivery_clients_test.ts _shared/report/handlers.ts report-quote/index.ts report-order/index.ts report-verify/index.ts ../tests/report_crypto_test.ts ../tests/report_order_test.ts",
-    "test": "deno test ../tests/submissions_test.ts ../tests/write_read_test.ts ../tests/report_engine_test.ts ../tests/razorpay_test.ts ../tests/delivery_clients_test.ts ../tests/report_crypto_test.ts ../tests/report_order_test.ts"
+    "check": "deno check submit-calculation/index.ts submit-feedback/index.ts write-read/index.ts ../tests/submissions_test.ts ../tests/write_read_test.ts ../tests/report_engine_test.ts _shared/report/razorpay.ts ../tests/razorpay_test.ts _shared/report/resend.ts _shared/report/pdf.ts ../tests/delivery_clients_test.ts _shared/report/handlers.ts report-quote/index.ts report-order/index.ts report-verify/index.ts ../tests/report_crypto_test.ts ../tests/report_order_test.ts report-confirm/index.ts razorpay-webhook/index.ts ../tests/report_payment_test.ts",
+    "test": "deno test ../tests/submissions_test.ts ../tests/write_read_test.ts ../tests/report_engine_test.ts ../tests/razorpay_test.ts ../tests/delivery_clients_test.ts ../tests/report_crypto_test.ts ../tests/report_order_test.ts ../tests/report_payment_test.ts"
   },
   "lock": false
 }

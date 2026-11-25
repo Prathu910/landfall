@@ -36,3 +36,11 @@ entrypoint = "./functions/report-order/index.ts"
 [functions.report-verify]
 verify_jwt = false
 entrypoint = "./functions/report-verify/index.ts"
+
+[functions.report-confirm]
+verify_jwt = false
+entrypoint = "./functions/report-confirm/index.ts"
+
+[functions.razorpay-webhook]
+verify_jwt = false
+entrypoint = "./functions/razorpay-webhook/index.ts"

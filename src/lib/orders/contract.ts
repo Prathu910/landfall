@@ -61,9 +61,17 @@ export type ConfirmRequest = {
   paymentId: string;
   signature: string;
 };
+/**
+ * `pending`: the webhook issued first; the report is on its way by email.
+ * `signature` (400): no report for this payment (a bad signature, or an
+ * order that failed, was refunded or can't be issued); show the contact.
+ */
 export type ConfirmResponse =
   | { kind: "issued"; token: string }
-  | { kind: "error"; code: "signature" | "pending" };
+  | {
+      kind: "error";
+      code: "signature" | "pending" | "invalid" | "busy";
+    };
 
 /** Opaque here; the frontend narrows it with plan 1's payload types. */
 export type ReportPayloadJson = unknown;
