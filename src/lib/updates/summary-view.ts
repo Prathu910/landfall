@@ -5,8 +5,8 @@
  */
 import type { Manifest, MonthKey } from "../data/types";
 import { occupationPath } from "../occupation-page/slug";
-import type { ImportReport } from "../../../scripts/import/cli";
-import type { SetManifest } from "../../../scripts/social/compress";
+import type { ImportReport } from "./import-report";
+import type { SetManifest } from "./set-manifest";
 import {
   dayText,
   formatNumber,

@@ -23,6 +23,7 @@ import {
   type TieBreakMisprint,
 } from "./rounds";
 import { validateGenerated } from "./validate-generated";
+import type { ImportReport } from "../../src/lib/updates/import-report";
 
 export type CliArgs = {
   /** Null for --probe and --rounds-only, which name no month. */
@@ -45,18 +46,7 @@ export type CliArgs = {
   roundsHtml: string | null;
 };
 
-/** What a run did, written to --report-file on success and on failure. */
-export type ImportReport = {
-  mode: "probe" | "monthly" | "backfill" | "generate-only" | "rounds-only";
-  asAt: MonthKey | null;
-  newestAsAt: MonthKey | null;
-  pageReads: number;
-  budget: number | null;
-  revisions: { path: string; rowsBefore: number; rowsAfter: number }[];
-  unmatched: string[];
-  newRounds: string[];
-  durationSeconds: number;
-};
+export type { ImportReport };
 
 const RAW_ROOT = "data/raw";
 const OUT_ROOT = "src/data";

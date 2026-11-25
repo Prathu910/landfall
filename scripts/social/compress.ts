@@ -3,33 +3,12 @@
  * and the shape of the set's `set.json` manifest.
  */
 import sharp from "sharp";
-import type { MonthKey } from "../../src/lib/data/types";
-import type { CardId } from "../../src/lib/updates/cards";
-import type { CardFormat, Theme } from "./html";
+import type { SetImage, SetManifest } from "../../src/lib/updates/set-manifest";
 
 export const IMAGE_LIMIT_BYTES = 300 * 1024;
 export const SET_LIMIT_BYTES = 2.5 * 1024 * 1024;
 
-/** One image in `set.json`; `file` is relative to the repo root. */
-export type SetImage = {
-  card: CardId;
-  format: CardFormat;
-  theme: Theme;
-  file: string;
-  alt: string;
-};
-
-/** `set.json`: what the monthly job reads to build the PR and the post. */
-export type SetManifest = {
-  kind: "round" | "month";
-  month: MonthKey;
-  /** The round set's round date; null for a month set. */
-  round: string | null;
-  images: SetImage[];
-  /** Files in other sets that this set shows but does not render. */
-  reused: string[];
-  caption: string;
-};
+export type { SetImage, SetManifest };
 
 /**
  * Re-encodes a PNG as a 256-colour palette image. Throws if the result's

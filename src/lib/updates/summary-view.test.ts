@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import type { ImportReport } from "../../../scripts/import/cli";
-import type { SetManifest } from "../../../scripts/social/compress";
+import type { ImportReport } from "./import-report";
+import type { SetManifest } from "./set-manifest";
 import type { Manifest } from "../data/types";
 import { BANNED_COPY } from "../report/copy";
 import { loadRecap } from "./load-server";
@@ -167,8 +167,8 @@ describe("buildSummary, a data update", () => {
       ...monthSet.images.map((i) => i.alt),
       monthSet.caption,
     ];
-    // The publish line is fixed wording from the spec ("in a few minutes").
-    const own = md.replace(/\*\*To publish:\*\*.*/, "");
+    // The spec fixes this phrase in the publish line.
+    const own = md.replace("in a few minutes", "soon");
     const prose = names.reduce((text, n) => text.split(n).join(""), own);
     expect(BANNED_COPY.exec(prose)?.[0] ?? null).toBeNull();
   });
