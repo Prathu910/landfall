@@ -1,0 +1,92 @@
+# 189 invitation rounds (spec 6.10). Checks the Home Affairs invitation rounds
+# page daily and, when it shows a round newer than src/data/rounds.json,
+# imports the new rounds, writes each round's recap section and Instagram
+# cards, runs every check and opens (or adds to) the one `data-update` pull
+# request for the founder. Nothing merges or deploys without the founder.
+# The job body is scripts/automation/round.sh.
+name: 189 invitation rounds
+
+on:
+  schedule:
+    # 21:00 UTC is 07:00-08:00 in Sydney, after the monthly job's 20:30 start.
+    - cron: "0 21 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: data-update
+  cancel-in-progress: false
+
+jobs:
+  round:
+    # Data branches start from main, so never run from another branch.
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    defaults:
+      run:
+        shell: bash
+    env:
+      BASE_REF: origin/main
+      CHROME_PATH: /usr/bin/google-chrome
+    steps:
+      - name: Check out main
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: npm
+
+      # Records the run's date first, so a failure from here on (npm ci,
+      # Chrome, reading the page) can still open a failure issue.
+      - name: Prepare
+        run: bash scripts/automation/round.sh prepare
+
+      # Ubuntu 24.04 limits unprivileged user namespaces through AppArmor,
+      # which Chrome's sandbox needs. Lifting the limit on this throwaway VM
+      # keeps the sandbox on (rather than launching Chrome with --no-sandbox).
+      - name: Let Chrome start its sandbox
+        run: |
+          if [ -e /proc/sys/kernel/apparmor_restrict_unprivileged_userns ]; then
+            sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          fi
+          # A headless start that opens a sandboxed renderer.
+          "$CHROME_PATH" --headless=new --disable-gpu --dump-dom about:blank >/dev/null
+
+      # Under the job's 120 minutes, so the failure steps still get time.
+      - name: Import, check and open the pull request
+        timeout-minutes: 105
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CF_PAGES_PROJECT: ${{ vars.CF_PAGES_PROJECT }}
+        run: bash scripts/automation/round.sh run 2>&1 | tee "$RUNNER_TEMP/round.log"
+
+      - name: Collect the failed run's files
+        if: failure() || cancelled()
+        run: bash scripts/automation/round.sh collect-failure
+
+      - name: Upload the failed run's files
+        if: failure() || cancelled()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: round-189-failure-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/*.log
+            ${{ runner.temp }}/import.json
+            ${{ runner.temp }}/failure-raw/
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Open or update the failure issue
+        if: failure() || cancelled()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash scripts/automation/round.sh report-failure

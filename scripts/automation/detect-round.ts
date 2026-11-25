@@ -1,7 +1,9 @@
 // Usage: tsx scripts/automation/detect-round.ts
-// Prints "new" when the official current invitation rounds page shows a round
-// newer than every round in src/data/rounds.json, else "none". Fetches the
-// current page only; with ROUNDS_HTML_DIR set, reads
+// Prints `key=value` lines that round.sh reads:
+//   status  "new" when the official current invitation rounds page shows a
+//           round newer than every round in src/data/rounds.json, else "none"
+//   newest  that page's round date (YYYY-MM-DD), which names the round branch
+// Fetches the current page only; with ROUNDS_HTML_DIR set, reads
 // $ROUNDS_HTML_DIR/invitation-rounds.html instead (tests and dry runs).
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -29,6 +31,17 @@ export function detectRound(
     : "none";
 }
 
+/** The lines main prints: the status, then the current page's round date. */
+export function detectionLines(
+  storedRounds: unknown,
+  currentHtml: string,
+): string[] {
+  return [
+    `status=${detectRound(storedRounds, currentHtml)}`,
+    `newest=${newestRoundDate(currentHtml)}`,
+  ];
+}
+
 /** The current invitation rounds page, from `dir` when given. */
 export async function readCurrentRoundsPage(
   dir: string | undefined,
@@ -40,7 +53,7 @@ export async function readCurrentRoundsPage(
 async function main(): Promise<void> {
   const html = await readCurrentRoundsPage(process.env.ROUNDS_HTML_DIR);
   const stored = JSON.parse(readFileSync("src/data/rounds.json", "utf8"));
-  console.log(detectRound(stored, html));
+  console.log(detectionLines(stored, html).join("\n"));
 }
 
 // tsx runs this file as CommonJS, so there is no top-level await.

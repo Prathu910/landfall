@@ -10,7 +10,7 @@ npm run data:import -- --as-at YYYY-MM --keep-rounds  # the same, reading no rou
 npm run data:import -- --as-at YYYY-MM --backfill   # fetch every unstored month in each view's window (resumable)
 npm run data:import -- --rounds-only                # the round job: read both round pages, add new rounds, rebuild the stored month; no dashboard
 npm run data:generate -- --as-at YYYY-MM            # rebuild src/data from stored raw files; no network
-npx tsx scripts/automation/detect-round.ts          # prints "new" or "none": is the current round newer than rounds.json's newest?
+npx tsx scripts/automation/detect-round.ts          # prints status=new or status=none (is the current round newer than rounds.json's newest?) and newest=<its date>
 ```
 
 `--rounds-only` keeps `manifest.asAt` and `checkedAt` and records its `--checked-at` as `manifest.roundsCheckedAt`; with `--rounds-html <dir>` it reads saved pages instead (as `--generate-only` can), and `detect-round.ts` reads `$ROUNDS_HTML_DIR/invitation-rounds.html` when that is set. A round already in `rounds.json` keeps its saved page in `data/raw/rounds/`: a later, different copy is never written over it.

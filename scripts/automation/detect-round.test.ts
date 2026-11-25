@@ -1,7 +1,11 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import type { RoundsFile } from "../../src/lib/data/rounds-file";
-import { detectRound, readCurrentRoundsPage } from "./detect-round";
+import {
+  detectRound,
+  detectionLines,
+  readCurrentRoundsPage,
+} from "./detect-round";
 
 const FIXTURES = new URL("../import/__fixtures__/", import.meta.url).pathname;
 const current = readFileSync(`${FIXTURES}invitation-rounds.html`, "utf8");
@@ -37,6 +41,19 @@ describe("detectRound", () => {
     expect(() => detectRound({ rounds: [] }, current)).toThrow(
       /schemaVersion 2/,
     );
+  });
+});
+
+describe("detectionLines", () => {
+  it("prints the status and the current page's round date, which names the branch", () => {
+    expect(detectionLines(stored("2026-06-04"), current)).toEqual([
+      "status=new",
+      "newest=2026-10-15",
+    ]);
+    expect(detectionLines(stored("2026-10-15"), current)).toEqual([
+      "status=none",
+      "newest=2026-10-15",
+    ]);
   });
 });
 
