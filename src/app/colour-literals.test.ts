@@ -12,6 +12,15 @@ const ROOT = process.cwd();
 const PRINT_TSX = /src\/components\/report\/print-[\w-]+\.tsx$/;
 /** The Instagram card templates and their stylesheet, themed by tokens.ts. */
 const SOCIAL = "scripts/social";
+/**
+ * Files allowed literal colours, with the reason. The scans below read only
+ * CSS modules and TSX, so an entry here also documents the exemption.
+ */
+const ALLOWED: Record<string, string> = {
+  // Email clients ignore stylesheets and CSS custom properties, so the paid
+  // report's emails inline the light palette (emails.test.ts mirrors it).
+  "src/lib/orders/emails.ts": "email HTML needs inline literal colours",
+};
 
 function walk(dir: string): string[] {
   return readdirSync(dir).flatMap((name) => {
@@ -26,6 +35,7 @@ function scan(
 ): string[] {
   return [...walk(join(ROOT, "src")), ...walk(join(ROOT, SOCIAL))]
     .map((path) => relative(ROOT, path))
+    .filter((file) => !Object.hasOwn(ALLOWED, file))
     .filter(filter)
     .flatMap((file) =>
       find(readFileSync(join(ROOT, file), "utf8")).map(
@@ -71,6 +81,11 @@ describe("findTsxColourLiterals", () => {
 });
 
 describe("colour literals in the source", () => {
+  it("allowlists only files that exist", () => {
+    for (const file of Object.keys(ALLOWED)) {
+      expect(statSync(join(ROOT, file)).isFile()).toBe(true);
+    }
+  });
   it("keeps CSS modules and the card stylesheet on tokens, so both themes reach them", () => {
     const isCardCss = (file: string) =>
       file.startsWith(`${SOCIAL}/`) && file.endsWith(".css");
