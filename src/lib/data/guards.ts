@@ -176,6 +176,10 @@ export function isManifest(v: unknown): v is Manifest {
     !isMonth(v.asAt) ||
     !isStr(v.checkedAt) ||
     !DATE_RE.test(v.checkedAt) ||
+    !(
+      v.roundsCheckedAt === undefined ||
+      (isStr(v.roundsCheckedAt) && DATE_RE.test(v.roundsCheckedAt))
+    ) ||
     !isStr(v.importVersion) ||
     !isObj(v.sources) ||
     !isStr(v.sources.dashboard) ||

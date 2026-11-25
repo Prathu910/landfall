@@ -1,9 +1,11 @@
-// Usage: npm run data:import -- --as-at YYYY-MM [--backfill] [--checked-at YYYY-MM-DD]
-//        npm run data:import -- --probe [--report-file <path>]
+// Usage: npm run data:import -- --as-at YYYY-MM [--backfill | --keep-rounds] [--checked-at YYYY-MM-DD]
+//        npm run data:import -- --rounds-only [--checked-at YYYY-MM-DD] [--rounds-html <dir>]
+//        npm run data:import -- --probe
 //        npm run data:generate -- --as-at YYYY-MM [--checked-at YYYY-MM-DD] [--rounds-html <dir>]
+// Every mode except --probe also takes --report-file <path>.
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import type { MonthKey } from "../../src/lib/data/types";
+import type { Manifest, MonthKey } from "../../src/lib/data/types";
 import { generate, writeGenerated, type GeneratedData } from "./generate";
 import { readRoundsFile } from "./generate-rounds";
 import { fetchViews } from "./import-fetch";
@@ -11,10 +13,11 @@ import { readPreviousData } from "./previous-data";
 import { PAGE_READ_BUDGET, planFetches, type ImportMode } from "./import-plan";
 import { openQlikSession } from "./qlik-client";
 import { readRawView, writeRawView, type RawViewFile } from "./raw-store";
-import { keepStoredRounds, writeRoundPage } from "./round-store";
+import { keepStoredRounds, storeCurrentRoundPage } from "./round-store";
 import {
   fetchRoundPages,
-  parseCurrentRound,
+  newestRoundDate,
+  newRoundDates,
   parseRoundPagesDetailed,
   type RoundPages,
   type TieBreakMisprint,
@@ -22,7 +25,7 @@ import {
 import { validateGenerated } from "./validate-generated";
 
 export type CliArgs = {
-  /** Null only for --probe, which names no month. */
+  /** Null for --probe and --rounds-only, which name no month. */
   asAt: MonthKey | null;
   mode: ImportMode;
   /** Print the newest As At Month and write nothing. */
@@ -30,6 +33,13 @@ export type CliArgs = {
   /** Where to write the ImportReport JSON, if anywhere. */
   reportFile: string | null;
   generateOnly: boolean;
+  /** A monthly import that reads no round pages and keeps rounds.json. */
+  keepRounds: boolean;
+  /**
+   * Read the round pages only (no dashboard) and rebuild the stored month;
+   * checkedAt then becomes the manifest's roundsCheckedAt.
+   */
+  roundsOnly: boolean;
   checkedAt: string; // YYYY-MM-DD
   /** A folder holding saved invitation-rounds.html and previous-rounds.html. */
   roundsHtml: string | null;
@@ -73,6 +83,8 @@ export function parseArgs(argv: string[]): CliArgs {
   let checkedAt = localToday();
   let backfill = false;
   let generateOnly = false;
+  let keepRounds = false;
+  let roundsOnly = false;
   let roundsHtml: string | null = null;
   let probe = false;
   let reportFile: string | null = null;
@@ -84,6 +96,8 @@ export function parseArgs(argv: string[]): CliArgs {
     else if (flag === "--report-file") reportFile = argv[++i] ?? "";
     else if (flag === "--backfill") backfill = true;
     else if (flag === "--generate-only") generateOnly = true;
+    else if (flag === "--keep-rounds") keepRounds = true;
+    else if (flag === "--rounds-only") roundsOnly = true;
     else if (flag === "--rounds-html") roundsHtml = argv[++i] ?? "";
     else if (flag === "--as-at") asAt = argv[++i];
     else if (flag === "--checked-at") checkedAt = argv[++i];
@@ -105,19 +119,14 @@ export function parseArgs(argv: string[]): CliArgs {
       probe,
       reportFile,
       generateOnly: false,
+      keepRounds: false,
+      roundsOnly: false,
       checkedAt,
       roundsHtml: null,
     };
   }
-  if (asAt === undefined) throw new Error("--as-at YYYY-MM is required");
-  if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(asAt)) {
-    throw new Error(`--as-at must be YYYY-MM, got "${asAt}"`);
-  }
   if (!isCalendarDate(checkedAt ?? "")) {
     throw new Error(`--checked-at must be YYYY-MM-DD, got "${checkedAt}"`);
-  }
-  if (generateOnly && backfill) {
-    throw new Error("--generate-only fetches nothing; drop --backfill");
   }
   if (
     roundsHtml !== null &&
@@ -125,8 +134,43 @@ export function parseArgs(argv: string[]): CliArgs {
   ) {
     throw new Error("--rounds-html needs a folder");
   }
+  if (roundsOnly) {
+    const other = given.find((flag) =>
+      ["--as-at", "--backfill", "--generate-only", "--keep-rounds"].includes(
+        flag,
+      ),
+    );
+    if (other !== undefined) {
+      throw new Error(
+        `--rounds-only rebuilds the month in src/data/manifest.json; drop ${other}`,
+      );
+    }
+    return {
+      asAt: null,
+      mode: "monthly",
+      probe,
+      reportFile,
+      generateOnly: false,
+      keepRounds: false,
+      roundsOnly: true,
+      checkedAt,
+      roundsHtml,
+    };
+  }
+  if (asAt === undefined) throw new Error("--as-at YYYY-MM is required");
+  if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(asAt)) {
+    throw new Error(`--as-at must be YYYY-MM, got "${asAt}"`);
+  }
+  if (generateOnly && backfill) {
+    throw new Error("--generate-only fetches nothing; drop --backfill");
+  }
+  if (keepRounds && (backfill || generateOnly || roundsHtml !== null)) {
+    throw new Error(
+      "--keep-rounds is for a monthly import; drop --backfill, --generate-only and --rounds-html",
+    );
+  }
   if (roundsHtml !== null && !generateOnly) {
-    throw new Error("--rounds-html needs --generate-only");
+    throw new Error("--rounds-html needs --generate-only or --rounds-only");
   }
   return {
     asAt,
@@ -134,8 +178,52 @@ export function parseArgs(argv: string[]): CliArgs {
     probe,
     reportFile,
     generateOnly,
+    keepRounds,
+    roundsOnly: false,
     checkedAt,
     roundsHtml,
+  };
+}
+
+/** The month a run writes and the dates its manifest records. */
+export type GenerateTarget = {
+  asAt: MonthKey;
+  checkedAt: string;
+  /** When the round pages were last read, if known. */
+  roundsCheckedAt?: string;
+  /** Raw revisions fetched after this date are ignored. */
+  revisionsUpTo?: string;
+};
+
+/**
+ * --rounds-only rebuilds the stored month as its dashboard was checked and
+ * records today's round check. A run that reads no round pages
+ * (--keep-rounds, --generate-only) keeps the date they were last read.
+ */
+export function generateTarget(
+  args: CliArgs,
+  stored: Manifest | null,
+): GenerateTarget {
+  if (args.roundsOnly) {
+    if (stored === null) {
+      throw new Error(
+        "--rounds-only needs a valid src/data/manifest.json; run data:import first",
+      );
+    }
+    return {
+      asAt: stored.asAt,
+      checkedAt: stored.checkedAt,
+      roundsCheckedAt: args.checkedAt,
+      revisionsUpTo: stored.checkedAt,
+    };
+  }
+  const readsRoundPages = !args.generateOnly && !args.keepRounds;
+  return {
+    asAt: args.asAt as MonthKey,
+    checkedAt: args.checkedAt,
+    roundsCheckedAt: readsRoundPages
+      ? args.checkedAt
+      : (stored?.roundsCheckedAt ?? stored?.checkedAt),
   };
 }
 
@@ -178,6 +266,25 @@ function printMisprints(
   for (const m of added) console.log(`  ${m.date} ${m.where}: "${m.text}"`);
 }
 
+/** Saves the current page unless its round is stored (see storeCurrentRoundPage). */
+function saveCurrentPage(stored: RoundPages | null, currentHtml: string) {
+  const date = newestRoundDate(currentHtml);
+  const storedDates = new Set(stored?.rounds.map((round) => round.date));
+  const { path, status } = storeCurrentRoundPage(
+    RAW_ROOT,
+    storedDates,
+    date,
+    currentHtml,
+  );
+  if (status === "saved") console.log(`Stored ${path}`);
+  else if (status === "unchanged") console.log(`Unchanged ${path}`);
+  else {
+    console.log(
+      `Kept ${path}: the ${date} round is already in rounds.json, so its saved page is not replaced by the page just read, which differs`,
+    );
+  }
+}
+
 /** Parses both pages, keeps the stored rounds and saves the current page. */
 function readRoundPages(
   currentHtml: string,
@@ -191,13 +298,10 @@ function readRoundPages(
     rounds: parsed.rounds,
     skipped: parsed.skipped,
   });
-  const storedDates = new Set(stored?.rounds.map((round) => round.date));
-  report.newRounds = pages.rounds
-    .map((round) => round.date)
-    .filter((date) => !storedDates.has(date));
+  report.newRounds = newRoundDates(stored ?? { rounds: [] }, parsed);
+  console.log(`New rounds: ${report.newRounds.join(", ") || "none"}`);
   printMisprints(parsed.misprints, stored);
-  const date = parseCurrentRound(currentHtml).date;
-  console.log(`Stored ${writeRoundPage(RAW_ROOT, date, currentHtml)}`);
+  saveCurrentPage(stored, currentHtml);
   return pages;
 }
 
@@ -309,7 +413,30 @@ async function probeNewest(): Promise<MonthKey> {
 
 function modeOf(args: CliArgs): ImportReport["mode"] {
   if (args.probe) return "probe";
+  if (args.roundsOnly) return "rounds-only";
   return args.generateOnly ? "generate-only" : args.mode;
+}
+
+/** Saved pages, the stored rounds.json, or the official pages. */
+async function readRounds(
+  args: CliArgs,
+  report: ImportReport,
+): Promise<RoundPages> {
+  if (args.roundsHtml !== null) {
+    return readSavedRoundPages(args.roundsHtml, report);
+  }
+  if (args.generateOnly || args.keepRounds) {
+    const stored = readStoredRounds();
+    console.log(`Rounds kept from rounds.json: ${stored.rounds.length}`);
+    return stored;
+  }
+  return fetchRounds(report);
+}
+
+function printTarget(target: GenerateTarget): void {
+  console.log(
+    `Writing ${target.asAt}: dashboard checked ${target.checkedAt}, rounds checked ${target.roundsCheckedAt ?? target.checkedAt}`,
+  );
 }
 
 async function run(args: CliArgs, report: ImportReport): Promise<void> {
@@ -318,24 +445,21 @@ async function run(args: CliArgs, report: ImportReport): Promise<void> {
     console.log(`Newest As At Month: ${report.newestAsAt}`);
     return;
   }
-  const asAt = args.asAt as MonthKey;
-  let rounds: RoundPages;
-  if (args.roundsHtml !== null) {
-    rounds = readSavedRoundPages(args.roundsHtml, report);
-  } else if (args.generateOnly) {
-    rounds = readStoredRounds();
-  } else {
-    rounds = await fetchRounds(report);
-    await fetchRaw(args, asAt, report);
-  }
-  printSkipped(rounds);
   // Every mode that writes src/data carries dropped occupations forward.
   const previous = readPreviousData(OUT_ROOT);
+  const target = generateTarget(args, previous?.manifest ?? null);
+  report.asAt = target.asAt;
+  printTarget(target);
+  // Round pages first: a failure there costs no dashboard reads.
+  const rounds = await readRounds(args, report);
+  if (!args.generateOnly && !args.roundsOnly) {
+    await fetchRaw(args, target.asAt, report);
+  }
+  printSkipped(rounds);
   const data = generate({
+    ...target,
     previous,
     rawRoot: RAW_ROOT,
-    asAt,
-    checkedAt: args.checkedAt,
     rounds,
     importVersion: IMPORT_VERSION,
   });

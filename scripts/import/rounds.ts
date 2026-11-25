@@ -224,17 +224,33 @@ export function parseCurrentRound(currentHtml: string): ParsedRound {
   return readCurrentRound(currentHtml).round;
 }
 
+/** The "Current round" block and the date its invitations were issued. */
+function currentRoundBlock(schema: Record<string, unknown>): {
+  date: string;
+  block: string;
+} {
+  const block = contentBlock(schema, "Current round");
+  if (block === undefined) throw new Error("Current round block missing");
+  const issued = /Invitations issued on (\d+ \w+ \d{4})/.exec(block);
+  if (!issued) throw new Error("Current round date missing");
+  return { date: parseLongDate(issued[1]), block };
+}
+
+/**
+ * The current round's date (YYYY-MM-DD), read without parsing its tables, so
+ * the round job's daily check needs the current page only.
+ */
+export function newestRoundDate(currentHtml: string): string {
+  return currentRoundBlock(readSchema(currentHtml)).date;
+}
+
 function readCurrentRound(currentHtml: string): {
   round: ParsedRound;
   misprints: TieBreakMisprint[];
 } {
   const schema = readSchema(currentHtml);
-  const block = contentBlock(schema, "Current round");
-  if (block === undefined) throw new Error("Current round block missing");
-  const issued = /Invitations issued on (\d+ \w+ \d{4})/.exec(block);
-  if (!issued) throw new Error("Current round date missing");
-
-  const newest = parseRoundBlock(parseLongDate(issued[1]), block);
+  const { date, block } = currentRoundBlock(schema);
+  const newest = parseRoundBlock(date, block);
   if (!("round" in newest)) {
     throw new Error(`Current round unreadable: ${newest.reason}`);
   }
@@ -269,6 +285,26 @@ export function parseRoundPagesDetailed(
   return { rounds, skipped, misprints };
 }
 
+/**
+ * The parsed rounds dated after the newest stored round, oldest first: the
+ * rounds a round import adds. An older round missing from the stored file is
+ * not a new round. Takes a RoundsFile or rounds read back from one.
+ */
+export function newRoundDates(
+  stored: { rounds: readonly { date: string }[] },
+  parsed: RoundPages,
+): string[] {
+  // YYYY-MM-DD strings compare in calendar order.
+  const newest = stored.rounds.reduce(
+    (max, round) => (round.date > max ? round.date : max),
+    "",
+  );
+  return parsed.rounds
+    .map((round) => round.date)
+    .filter((date) => date > newest)
+    .sort();
+}
+
 export function parseRoundPages(
   currentHtml: string,
   previousHtml: string,
@@ -276,23 +312,25 @@ export function parseRoundPages(
   return parseRoundPagesDetailed(currentHtml, previousHtml).rounds;
 }
 
+/** Fetches one official round page's HTML. */
+export async function fetchRoundPage(url: string): Promise<string> {
+  const response = await fetch(url, {
+    headers: { "User-Agent": "Mozilla/5.0" },
+    signal: AbortSignal.timeout(40_000),
+  });
+  if (!response.ok) {
+    throw new Error(`${url} returned HTTP ${response.status}`);
+  }
+  return response.text();
+}
+
 export async function fetchRoundPages(): Promise<{
   currentHtml: string;
   previousHtml: string;
 }> {
-  const get = async (url: string) => {
-    const response = await fetch(url, {
-      headers: { "User-Agent": "Mozilla/5.0" },
-      signal: AbortSignal.timeout(40_000),
-    });
-    if (!response.ok) {
-      throw new Error(`${url} returned HTTP ${response.status}`);
-    }
-    return response.text();
-  };
   const [currentHtml, previousHtml] = await Promise.all([
-    get(CURRENT_ROUNDS_URL),
-    get(PREVIOUS_ROUNDS_URL),
+    fetchRoundPage(CURRENT_ROUNDS_URL),
+    fetchRoundPage(PREVIOUS_ROUNDS_URL),
   ]);
   return { currentHtml, previousHtml };
 }

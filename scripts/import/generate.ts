@@ -40,6 +40,11 @@ export type GenerateInput = {
   rawRoot: string;
   asAt: MonthKey;
   checkedAt: string;
+  /**
+   * When the round pages were last read (YYYY-MM-DD). The manifest records it
+   * only when it differs from checkedAt.
+   */
+  roundsCheckedAt?: string;
   rounds: RoundPages;
   importVersion: string;
   /** Ignore raw revisions fetched after this date (YYYY-MM-DD). */
@@ -200,6 +205,10 @@ export function generate(input: GenerateInput): GeneratedData {
       snapshotId,
       asAt: input.asAt,
       checkedAt: input.checkedAt,
+      ...(input.roundsCheckedAt !== undefined &&
+      input.roundsCheckedAt !== input.checkedAt
+        ? { roundsCheckedAt: input.roundsCheckedAt }
+        : {}),
       importVersion: input.importVersion,
       sources: {
         dashboard: DASHBOARD_PAGE_URL,

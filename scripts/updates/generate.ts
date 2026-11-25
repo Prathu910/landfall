@@ -137,10 +137,8 @@ function buildRound(
     sources: {
       currentRounds: manifest.sources.currentRounds,
       previousRounds: manifest.sources.previousRounds,
-      // R22: the round check date, once the manifest carries one.
-      checkedAt:
-        (manifest as Manifest & { roundsCheckedAt?: string }).roundsCheckedAt ??
-        manifest.checkedAt,
+      // R22: the date the round pages were last read.
+      checkedAt: manifest.roundsCheckedAt ?? manifest.checkedAt,
     },
     today: args.today,
   });

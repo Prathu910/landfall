@@ -126,6 +126,15 @@ describe("generate", () => {
     });
   });
 
+  it("records roundsCheckedAt only when the rounds were read on another day", () => {
+    const rawRoot = buildRawFixture();
+    const read = (roundsCheckedAt?: string) =>
+      generate({ ...fixtureInput, rawRoot, roundsCheckedAt }).manifest;
+    expect(read("2026-11-20").roundsCheckedAt).toBe("2026-11-20");
+    expect("roundsCheckedAt" in read("2026-11-17")).toBe(false);
+    expect("roundsCheckedAt" in read()).toBe(false);
+  });
+
   it("writes the manifest, index and all-occupation rounds", () => {
     const data = generateFixture();
     expect(data.manifest).toMatchObject({

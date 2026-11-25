@@ -8,7 +8,11 @@ import {
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import { keepStoredRounds, writeRoundPage } from "./round-store";
+import {
+  keepStoredRounds,
+  storeCurrentRoundPage,
+  writeRoundPage,
+} from "./round-store";
 import { decodeEntities, parseRoundPagesDetailed } from "./rounds";
 
 const fixture = (name: string) =>
@@ -129,5 +133,37 @@ describe("writeRoundPage", () => {
     expect(() => writeRoundPage(root, "../2026-10-15", current)).toThrow(
       /YYYY-MM-DD/,
     );
+  });
+});
+
+describe("storeCurrentRoundPage", () => {
+  let root: string;
+  afterEach(() => rmSync(root, { recursive: true, force: true }));
+  const stored = new Set(["2026-10-15"]);
+
+  it("never writes over the saved page of a stored round", () => {
+    root = mkdtempSync(join(tmpdir(), "round-store-"));
+    const path = writeRoundPage(root, "2026-10-15", current);
+    expect(storeCurrentRoundPage(root, stored, "2026-10-15", "edited")).toEqual(
+      { path, status: "kept" },
+    );
+    expect(readFileSync(path, "utf8")).toBe(current);
+    expect(storeCurrentRoundPage(root, stored, "2026-10-15", current)).toEqual({
+      path,
+      status: "unchanged",
+    });
+    expect(readdirSync(join(root, "rounds"))).toEqual(["2026-10-15.html"]);
+  });
+
+  it("saves a stored round's missing page, and a new round's page again", () => {
+    root = mkdtempSync(join(tmpdir(), "round-store-"));
+    const saved = storeCurrentRoundPage(root, stored, "2026-10-15", current);
+    expect(saved.status).toBe("saved");
+    expect(readFileSync(saved.path, "utf8")).toBe(current);
+    // Not in rounds.json yet: a re-run after a failed validation replaces it.
+    storeCurrentRoundPage(root, stored, "2026-11-12", "first read");
+    const again = storeCurrentRoundPage(root, stored, "2026-11-12", "re-read");
+    expect(again.status).toBe("saved");
+    expect(readFileSync(again.path, "utf8")).toBe("re-read");
   });
 });

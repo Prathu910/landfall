@@ -89,7 +89,13 @@ export type Manifest = {
   schemaVersion: 1;
   snapshotId: string;
   asAt: MonthKey;
-  checkedAt: string; // YYYY-MM-DD
+  checkedAt: string; // YYYY-MM-DD, when the dashboard was read
+  /**
+   * When the round pages were last read (YYYY-MM-DD), present only when that
+   * was not on `checkedAt` (a round-only import, or a monthly import that kept
+   * the stored rounds). Read it as `roundsCheckedAt ?? checkedAt`.
+   */
+  roundsCheckedAt?: string;
   importVersion: string;
   sources: { dashboard: string; currentRounds: string; previousRounds: string };
   roundsUnmatched: string[]; // round-table occupation names with no dashboard match

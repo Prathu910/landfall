@@ -6,9 +6,14 @@ All SkillSelect data is produced by the TypeScript importer in `scripts/import/`
 
 ```sh
 npm run data:import -- --as-at YYYY-MM              # monthly import: every view at that month, plus a revision check of the previous month
+npm run data:import -- --as-at YYYY-MM --keep-rounds  # the same, reading no round pages: rounds.json is kept (the monthly job)
 npm run data:import -- --as-at YYYY-MM --backfill   # fetch every unstored month in each view's window (resumable)
+npm run data:import -- --rounds-only                # the round job: read both round pages, add new rounds, rebuild the stored month; no dashboard
 npm run data:generate -- --as-at YYYY-MM            # rebuild src/data from stored raw files; no network
+npx tsx scripts/automation/detect-round.ts          # prints "new" or "none": is the current round newer than rounds.json's newest?
 ```
+
+`--rounds-only` keeps `manifest.asAt` and `checkedAt` and records its `--checked-at` as `manifest.roundsCheckedAt`; with `--rounds-html <dir>` it reads saved pages instead (as `--generate-only` can), and `detect-round.ts` reads `$ROUNDS_HTML_DIR/invitation-rounds.html` when that is set. A round already in `rounds.json` keeps its saved page in `data/raw/rounds/`: a later, different copy is never written over it.
 
 Add `--checked-at YYYY-MM-DD` to set the source check date (default: today). The first dataset was `--as-at 2026-10`; new months arrive through the monthly pull request (`docs/superpowers/specs/2026-11-24-monthly-updates-design.md`).
 
@@ -62,7 +67,7 @@ npm run updates:retention [-- --month YYYY-MM]   # delete files of months older 
 - `import-plan.ts`, `import-fetch.ts`, `run-view.ts`: which view-months to fetch, and fetching them.
 - `raw-store.ts`, `atomic-write.ts`: the compact raw format, revisions and atomic writes.
 - `rounds.ts`, `round-tables.ts`, `html-tables.ts`: the official 189 round pages (occupation tables; totals, tie-break dates and the state nominations table; table and date reading).
-- `round-store.ts`: saving the current round page to `data/raw/rounds/<date>.html` and keeping stored rounds when the pages are re-read.
+- `round-store.ts`: saving the current round page to `data/raw/rounds/<date>.html` (never over a stored round's page) and keeping stored rounds when the pages are re-read.
 - `generate*.ts`, `validate-generated.ts`: building and validating `src/data/`.
 
 `copy-public-data.ts` runs before `dev` and `build`. It copies `src/data/occupations/` to `public/data/occupations/`, so the static site can serve one occupation file at a time.

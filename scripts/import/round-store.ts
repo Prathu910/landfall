@@ -1,5 +1,5 @@
 import { existsSync, mkdirSync, readFileSync } from "node:fs";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { writeFileAtomic } from "./atomic-write";
 import type { RoundPages } from "./rounds";
 
@@ -14,15 +14,51 @@ export function writeRoundPage(
   date: string,
   html: string,
 ): string {
+  const path = roundPagePath(rawRoot, date);
+  if (existsSync(path) && readFileSync(path, "utf8") === html) return path;
+  mkdirSync(dirname(path), { recursive: true });
+  writeFileAtomic(path, html);
+  return path;
+}
+
+function roundPagePath(rawRoot: string, date: string): string {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
     throw new Error(`Round date must be YYYY-MM-DD, got "${date}"`);
   }
-  const dir = join(rawRoot, "rounds");
-  const path = join(dir, `${date}.html`);
-  if (existsSync(path) && readFileSync(path, "utf8") === html) return path;
-  mkdirSync(dir, { recursive: true });
-  writeFileAtomic(path, html);
-  return path;
+  return join(rawRoot, "rounds", `${date}.html`);
+}
+
+/**
+ * "kept": the round is already in rounds.json and its saved page differs
+ * from the one just read, so the saved page was left as it is.
+ */
+export type RoundPageWrite = {
+  path: string;
+  status: "saved" | "unchanged" | "kept";
+};
+
+/**
+ * Saves the current round's page, unless that round is already stored and
+ * its page is saved. rounds.json keeps a stored round verbatim (ruling R1),
+ * so its saved page must stay the one it was parsed from: a later copy is
+ * never written over it, even if Home Affairs has edited the page since. A
+ * round not yet stored may be saved again (a run that failed validation
+ * wrote its page but not rounds.json).
+ */
+export function storeCurrentRoundPage(
+  rawRoot: string,
+  storedDates: ReadonlySet<string>,
+  date: string,
+  html: string,
+): RoundPageWrite {
+  const path = roundPagePath(rawRoot, date);
+  if (existsSync(path)) {
+    if (readFileSync(path, "utf8") === html) {
+      return { path, status: "unchanged" };
+    }
+    if (storedDates.has(date)) return { path, status: "kept" };
+  }
+  return { path: writeRoundPage(rawRoot, date, html), status: "saved" };
 }
 
 /**

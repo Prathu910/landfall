@@ -2,7 +2,10 @@
 // PageSchemaHiddenField input the parser reads.
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
+import type { RoundsFile } from "../../src/lib/data/rounds-file";
 import {
+  newestRoundDate,
+  newRoundDates,
   normalizeOccupationName,
   parseCurrentRound,
   parseRoundBlock,
@@ -326,6 +329,59 @@ describe("parseCurrentRound", () => {
     const round = parseCurrentRound(current);
     expect(round.date).toBe("2026-10-15");
     expect(round.nominations?.programYear).toBe("2026-27");
+  });
+});
+
+describe("newestRoundDate", () => {
+  it("reads the current round's date from the current page alone", () => {
+    expect(newestRoundDate(current)).toBe("2026-10-15");
+  });
+
+  it("stops when the page has no current round date", () => {
+    const undated = current.replace(
+      "Invitations issued on 15 October 2026",
+      "Invitations issued soon",
+    );
+    expect(undated).not.toBe(current);
+    expect(() => newestRoundDate(undated)).toThrow(/date missing/);
+  });
+});
+
+describe("newRoundDates", () => {
+  const parsedFixtures = parseRoundPagesDetailed(current, previous);
+  /** A stored rounds.json holding the fixture rounds up to `date`. */
+  const storedUpTo = (date: string): RoundsFile => ({
+    schemaVersion: 2,
+    rounds: parsedFixtures.rounds
+      .filter((round) => round.date <= date)
+      .map((round) => ({
+        date: round.date,
+        totals: round.totals,
+        tieBreak: round.tieBreak,
+        rows: [],
+        nominations: round.nominations,
+      })),
+    skipped: [],
+  });
+
+  it("lists the parsed dates newer than the newest stored round", () => {
+    expect(newRoundDates(storedUpTo("2026-06-04"), parsedFixtures)).toEqual([
+      "2026-10-15",
+    ]);
+    expect(newRoundDates(storedUpTo("2026-10-15"), parsedFixtures)).toEqual([]);
+  });
+
+  it("lists several new rounds oldest first", () => {
+    expect(newRoundDates(storedUpTo("2025-11-13"), parsedFixtures)).toEqual([
+      "2026-06-04",
+      "2026-10-15",
+    ]);
+  });
+
+  it("never lists an older round missing from the stored file", () => {
+    const stored = storedUpTo("2026-10-15");
+    stored.rounds = stored.rounds.filter((r) => r.date !== "2026-06-04");
+    expect(newRoundDates(stored, parsedFixtures)).toEqual([]);
   });
 });
 
