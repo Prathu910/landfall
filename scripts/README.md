@@ -10,10 +10,10 @@ npm run data:import -- --as-at YYYY-MM --keep-rounds  # the same, reading no rou
 npm run data:import -- --as-at YYYY-MM --backfill   # fetch every unstored month in each view's window (resumable)
 npm run data:import -- --rounds-only                # the round job: read both round pages, add new rounds, rebuild the stored month; no dashboard
 npm run data:generate -- --as-at YYYY-MM            # rebuild src/data from stored raw files; no network
-npx tsx scripts/automation/detect-round.ts          # prints status=new or status=none (is the current round newer than rounds.json's newest?) and newest=<its date>
+npx tsx scripts/automation/detect-round.ts --dir <dir>   # prints status=new or status=none (is the current round newer than rounds.json's newest?) and newest=<its date>; saves the page in <dir>
 ```
 
-`--rounds-only` keeps `manifest.asAt` and `checkedAt` and records its `--checked-at` as `manifest.roundsCheckedAt`; with `--rounds-html <dir>` it reads saved pages instead (as `--generate-only` can), and `detect-round.ts` reads `$ROUNDS_HTML_DIR/invitation-rounds.html` when that is set. A round already in `rounds.json` keeps its saved page in `data/raw/rounds/`: a later, different copy is never written over it.
+`--rounds-only` keeps `manifest.asAt` and `checkedAt` and records its `--checked-at` as `manifest.roundsCheckedAt`; with `--rounds-html <dir>` it reads saved pages instead (as `--generate-only` can), and `detect-round.ts` reads `<dir>/invitation-rounds.html` when the run has saved it there (the round job's dry runs seed that folder from `ROUNDS_HTML_DIR`). A round already in `rounds.json` keeps its saved page in `data/raw/rounds/`: a later, different copy is never written over it.
 
 Add `--checked-at YYYY-MM-DD` to set the source check date (default: today). The first dataset was `--as-at 2026-10`; new months arrive through the monthly pull request (`docs/superpowers/specs/2026-11-24-monthly-updates-design.md`).
 
@@ -31,7 +31,7 @@ Importer flags for the workflows: `--probe` (print the next month to import, no 
 
 ## Scheduled jobs
 
-Workflows are in `.github/workflows/` (`monthly-data.yml`, `round-189.yml`, `page-watch.yml`). Their bodies are `scripts/automation/monthly.sh` and `round.sh`, with shared shell in `lib.sh` and typed helpers beside them: `next-month.ts` and `month-info.ts` (which month), `detect-round.ts` and `round-info.ts` (is there a new round), `base-branch.ts` (join the open `data-update` pull request or start from main), `frozen-check.ts` (no merged recap section changes), `failure-issue.ts` and `gh.ts`. The PR summary is `scripts/updates/summary.ts` (view-model `src/lib/updates/summary-view.ts`). The page watcher is `scripts/page-watch/` (`npm run page-watch -- --state <file> [--dry-run]`). Dry runs: `DRY_RUN=1 BASE_REF=HEAD bash scripts/automation/monthly.sh run`. Operations, setup and rehearsal: `docs/OPERATIONS.md`.
+Workflows are in `.github/workflows/` (`monthly-data.yml`, `round-189.yml`, `page-watch.yml`). Their bodies are `scripts/automation/monthly.sh`, `round.sh` and `page-watch.sh`, with shared shell in `lib.sh` and typed helpers beside them: `next-month.ts` and `month-info.ts` (which month), `detect-round.ts`, `round-pages.ts` and `round-info.ts` (is there a new round; the round pages saved for the run), `base-branch.ts` (join the open `data-update` pull request or start from main; is the month held), `frozen-check.ts` (no merged recap section changes), `failure-issue.ts` and `gh.ts`. The PR summary is `scripts/updates/summary.ts` (view-model `src/lib/updates/summary-view.ts`). The page watcher is `scripts/page-watch/` (`npm run page-watch -- --state <file> [--dry-run]`). Dry runs: `DRY_RUN=1 BASE_REF=HEAD bash scripts/automation/monthly.sh run`. Operations, setup and rehearsal: `docs/OPERATIONS.md`.
 
 ## Monthly recap facts
 

@@ -1,6 +1,8 @@
 // Usage:
-//   tsx scripts/automation/failure-issue.ts report (--month YYYY-MM | --round YYYY-MM-DD | --round-check) --log <file>
-//   tsx scripts/automation/failure-issue.ts resolve (--month YYYY-MM | --round YYYY-MM-DD | --round-check)
+//   tsx scripts/automation/failure-issue.ts report <key> --log <file>
+//   tsx scripts/automation/failure-issue.ts resolve <key>
+// where <key> is --month YYYY-MM, --round YYYY-MM-DD, --round-check or
+// --page-watch.
 // `report` opens a failure issue (assigned to the founder) or comments on the
 // open one with the same title; `resolve` closes it with a comment linking
 // the successful run. The repo is public: bodies hold no secrets, only the
@@ -51,6 +53,9 @@ export function roundFailureTitle(date: string): string {
  * Chrome, the fetch) have no round date, so they share this one issue.
  */
 export const ROUND_CHECK_TITLE = "189 round check failed";
+
+/** The page watcher's failures (the job itself, not a page it reads). */
+export const PAGE_WATCH_TITLE = "Page watch failed";
 
 export function failureIssueAction(
   open: OpenIssue[],
@@ -154,16 +159,17 @@ function flagIn(argv: string[], name: string): string {
 
 const flag = (name: string): string => flagIn(process.argv, name);
 
-const KEYS = ["--month", "--round", "--round-check"];
+const KEYS = ["--month", "--round", "--round-check", "--page-watch"];
 
-/** The one place a CLI turns `--month`, `--round` or `--round-check` into a title. */
+/** The one place a CLI turns its issue key into a title. */
 export function titleFromArgs(argv: string[]): string {
   const keys = KEYS.filter((key) => argv.includes(key));
   if (keys.length !== 1)
     throw new Error(
-      "Give one of --month YYYY-MM, --round YYYY-MM-DD or --round-check",
+      "Give one of --month YYYY-MM, --round YYYY-MM-DD, --round-check or --page-watch",
     );
   if (keys[0] === "--round-check") return ROUND_CHECK_TITLE;
+  if (keys[0] === "--page-watch") return PAGE_WATCH_TITLE;
   if (keys[0] === "--month")
     return monthlyFailureTitle(flagIn(argv, "--month"));
   return roundFailureTitle(flagIn(argv, "--round"));
@@ -188,7 +194,7 @@ function main(): void {
     console.log(resolveFailure(gh, title, runUrl()) ? "closed" : "none open");
   } else {
     throw new Error(
-      "Usage: failure-issue.ts report|resolve (--month YYYY-MM | --round YYYY-MM-DD | --round-check)",
+      "Usage: failure-issue.ts report|resolve (--month YYYY-MM | --round YYYY-MM-DD | --round-check | --page-watch)",
     );
   }
 }

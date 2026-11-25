@@ -14,8 +14,11 @@
 #                use HEAD (R15).
 #   DRY_RUN=1    no dashboard import (data:generate instead), and every git
 #                push and gh call is printed, not run; gh reads return nothing,
-#                except DRY_RUN_OPEN_PRS (JSON for `gh pr list`, read by gh.ts)
-#                and DRY_RUN_PR_BODY (a file for `gh pr view`), for local tests.
+#                except DRY_RUN_OPEN_PRS (JSON for `gh pr list`, read by gh.ts),
+#                DRY_RUN_CLOSED_PRS (JSON for `gh pr list --state closed`),
+#                DRY_RUN_HEAD_PRS (JSON for the open PRs on a branch the run
+#                replaces) and DRY_RUN_PR_BODY (a file for `gh pr view`), for
+#                local tests.
 #   TODAY        optional YYYY-MM-DD for the run's Sydney date (reproducible
 #                local runs); Actions leaves it unset.
 #   RUNNER_TEMP  where the logs, import report and PR body go (Actions sets it).
@@ -34,8 +37,9 @@ readonly CODE_RE='^[0-9]{6}$'
 WORK="${RUNNER_TEMP:-${TMPDIR:-/tmp}/monthly-data}"
 STATE="$WORK/monthly-state"
 
-INFO=""      # month-info.ts output for the target month
-TARGET=""    # the as-at month this run imports
+INFO=""       # month-info.ts output for the target month
+TARGET=""     # the as-at month this run imports
+MAIN_MONTH="" # main's next month, whose issue a failure before the join files under
 REGENERATED=0
 
 field() { sed -n "s/^$1=//p" <<<"$INFO"; }
@@ -122,9 +126,10 @@ render_month_set() {
   npm run social:render -- --month "$TARGET" --set month
 }
 
+# --month: a round-only folder for a later month never counts as the latest.
 prune_images() {
   step "Prune old Instagram sets"
-  npm run updates:retention
+  npm run updates:retention -- --month "$TARGET"
 }
 
 write_summary() {
@@ -145,8 +150,9 @@ run_import() {
   fetch_main
   # Before the base is known, main's next month names a fresh branch.
   load_info ${MONTH:+--month "$MONTH"}
-  remember_month "$(field month)"
-  choose_base "data/skillselect-$(field month)"
+  MAIN_MONTH="$(field month)"
+  remember_month "$MAIN_MONTH"
+  choose_base "data/skillselect-$MAIN_MONTH"
   # Controller ruling: closing a data PR holds the month (no import, no issue).
   if [[ $HELD == yes ]]; then
     echo "Held: the pull request for $(field long) was closed. Delete branch data/skillselect-$(field month) to import it again."
@@ -157,7 +163,7 @@ run_import() {
   probe
   if [[ -z $TARGET ]]; then
     echo "The dashboard has nothing newer than $(field manifest_month). Nothing to do."
-    resolve_failure --month "$(field month)"
+    resolve_month_failures "$(field month)"
     return
   fi
   [[ $TARGET == "$(field month)" ]] || fail "next-month.ts chose $TARGET, not $(field month)"
@@ -181,9 +187,26 @@ run_import() {
   else
     push_branch
     open_or_update_pr "SkillSelect data as at $(field short)" \
-      "Added the SkillSelect data as at $(field short); the summary has a new section for it. New commits:"
+      "Added the SkillSelect data as at $(field short); the summary has a new section for it. New commits:" \
+      "$(joined_title)"
   fi
-  resolve_failure --month "$TARGET"
+  resolve_month_failures "$TARGET"
+}
+
+# A round PR that the month's data joins is retitled to name the data first.
+joined_title() {
+  if [[ -n $PR && $BRANCH != "data/skillselect-$(field month)" ]]; then
+    echo "SkillSelect data as at $(field short) and 189 rounds"
+  fi
+}
+
+# A success closes the month's failure issue and the one a failure before the
+# join filed under main's next month.
+resolve_month_failures() {
+  local month
+  while IFS= read -r month; do
+    resolve_failure --month "$month"
+  done < <(printf '%s\n' "$1" ${MAIN_MONTH:+"$MAIN_MONTH"} | sort -u)
 }
 
 # Spec 6.8: rerun the data section with the founder's pick on the open PR.

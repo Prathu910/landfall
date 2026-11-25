@@ -1,18 +1,16 @@
-// Usage: tsx scripts/automation/detect-round.ts
+// Usage: tsx scripts/automation/detect-round.ts --dir <dir>
 // Prints `key=value` lines that round.sh reads:
 //   status  "new" when the official current invitation rounds page shows a
 //           round newer than every round in src/data/rounds.json, else "none"
 //   newest  that page's round date (YYYY-MM-DD), which names the round branch
-// Fetches the current page only; with ROUNDS_HTML_DIR set, reads
-// $ROUNDS_HTML_DIR/invitation-rounds.html instead (tests and dry runs).
+// The page comes from <dir>/invitation-rounds.html when the run has it
+// already (a second detection, or a dry run's saved pages); otherwise it is
+// requested once, after the robots.txt check, and saved there
+// (round-pages.ts).
 import { readFileSync } from "node:fs";
-import { join } from "node:path";
 import { isRoundsFile } from "../../src/lib/data/rounds-file";
-import {
-  CURRENT_ROUNDS_URL,
-  fetchRoundPage,
-  newestRoundDate,
-} from "../import/rounds";
+import { newestRoundDate } from "../import/rounds";
+import { liveDeps, savedRoundPage } from "./round-pages";
 
 /** "new" when the current page's round is newer than every stored round. */
 export function detectRound(
@@ -42,16 +40,11 @@ export function detectionLines(
   ];
 }
 
-/** The current invitation rounds page, from `dir` when given. */
-export async function readCurrentRoundsPage(
-  dir: string | undefined,
-): Promise<string> {
-  if (dir) return readFileSync(join(dir, "invitation-rounds.html"), "utf8");
-  return fetchRoundPage(CURRENT_ROUNDS_URL);
-}
-
 async function main(): Promise<void> {
-  const html = await readCurrentRoundsPage(process.env.ROUNDS_HTML_DIR);
+  const index = process.argv.indexOf("--dir");
+  const dir = index === -1 ? undefined : process.argv[index + 1];
+  if (!dir) throw new Error("Usage: detect-round.ts --dir <dir>");
+  const html = await savedRoundPage(dir, "current", liveDeps());
   const stored = JSON.parse(readFileSync("src/data/rounds.json", "utf8"));
   console.log(detectionLines(stored, html).join("\n"));
 }

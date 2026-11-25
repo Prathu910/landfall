@@ -6,7 +6,7 @@
 # and the issue key) before calling anything here. The functions read and set
 # these globals:
 #   BASE_REF, DRY_RUN, TODAY   set below from the environment
-#   BRANCH, PR, HELD           set by choose_base
+#   BRANCH, PR, HELD, TIP      set by choose_base
 #   COMMITS                    commit_paths appends each subject
 # shellcheck shell=bash
 
@@ -22,7 +22,8 @@ TODAY="${TODAY:-$(TZ=Australia/Sydney date +%F)}"
 
 BRANCH=""  # the branch the run commits to (base-branch.ts chooses it)
 PR=""      # the open data PR's number when joining one
-HELD=""    # yes when the fresh branch is on origin with no open PR (closed)
+HELD=""    # yes when the fresh branch is on origin and its PR was closed unmerged
+TIP=""     # the fresh branch's commit on origin when this run starts it again
 COMMITS=() # subjects of the commits this run made
 
 fail() {
@@ -80,7 +81,9 @@ choose_base() {
   PR="$(sed -n 's/^pr=//p' <<<"$out")"
   # shellcheck disable=SC2034 # read by the sourcing script
   HELD="$(sed -n 's/^held=//p' <<<"$out")"
+  TIP="$(sed -n 's/^tip=//p' <<<"$out")"
   [[ -n $BRANCH ]] || fail "base-branch.ts printed no branch"
+  [[ -z $TIP || $TIP =~ ^[0-9a-f]{40}$ ]] || fail "base-branch.ts printed a bad tip: $TIP"
   if [[ -z $PR ]]; then
     echo "No open $LABEL pull request; the run starts $BRANCH from main."
     return
@@ -125,13 +128,35 @@ require_clean_tree() {
 $left"
 }
 
-push_branch() {
-  step "Push $BRANCH"
+# Open pull requests from the branch, labelled or not, as "#12, #13".
+# DRY_RUN_HEAD_PRS stands in for gh's JSON in a dry run.
+open_prs_on_branch() {
+  local json
   if [[ $DRY_RUN == 1 ]]; then
-    print_dry git push origin "HEAD:refs/heads/$BRANCH"
+    print_dry gh pr list --head "$BRANCH" --state open --json number,headRefName >&2
+    json="${DRY_RUN_HEAD_PRS:-[]}"
   else
-    git push origin "HEAD:refs/heads/$BRANCH"
+    json="$(gh pr list --head "$BRANCH" --state open --json number,headRefName)"
   fi
+  node -p 'JSON.parse(process.argv[1]).filter((pr) => pr.headRefName === process.argv[2])
+    .map((pr) => "#" + pr.number).join(", ")' "$json" "$BRANCH"
+}
+
+# A branch origin already has (TIP: its pull request was closed, or never
+# opened after a failed `gh pr create`) is replaced, but only while origin
+# still has the tip this run saw and no open pull request uses it.
+push_branch() {
+  local args=(origin "HEAD:refs/heads/$BRANCH") open
+  if [[ -z $TIP ]]; then
+    step "Push $BRANCH"
+  else
+    open="$(open_prs_on_branch)"
+    [[ -z $open ]] ||
+      fail "Pull request $open is open on $BRANCH without the $LABEL label; label it or close it, then run again."
+    step "Replace $BRANCH, left by an earlier run"
+    args=("--force-with-lease=refs/heads/$BRANCH:$TIP" "${args[@]}")
+  fi
+  if [[ $DRY_RUN == 1 ]]; then print_dry git push "${args[@]}"; else git push "${args[@]}"; fi
 }
 
 # A comment on the joined PR saying what this run added.
@@ -142,11 +167,14 @@ $(printf -- '- %s\n' "${COMMITS[@]}")"
 }
 
 # Spec 6.9 step 8: a new PR titled $1 for the founder, or the joined PR's
-# appended body and a comment that starts with $2.
+# appended body and a comment that starts with $2. A third argument retitles
+# the joined PR.
 open_or_update_pr() {
   step "Open or update the pull request"
   if [[ -n $PR ]]; then
-    gh_write pr edit "$PR" --body-file "$WORK/pr-body.md"
+    local edit=(pr edit "$PR" --body-file "$WORK/pr-body.md")
+    if [[ -n ${3:-} ]]; then edit+=(--title "$3"); fi
+    gh_write "${edit[@]}"
     comment_on_pr "$2"
     return
   fi

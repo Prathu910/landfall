@@ -1,3 +1,4 @@
+import { USER_AGENT } from "../state-lists/shared";
 import type {
   NominationsTable,
   RoundTotal,
@@ -312,10 +313,16 @@ export function parseRoundPages(
   return parseRoundPagesDetailed(currentHtml, previousHtml).rounds;
 }
 
-/** Fetches one official round page's HTML. */
-export async function fetchRoundPage(url: string): Promise<string> {
-  const response = await fetch(url, {
-    headers: { "User-Agent": "Mozilla/5.0" },
+/**
+ * Fetches one official round page's HTML with the browser User-Agent. A
+ * refusal is never retried (founder decision 25 Nov 2026).
+ */
+export async function fetchRoundPage(
+  url: string,
+  request: typeof fetch = fetch,
+): Promise<string> {
+  const response = await request(url, {
+    headers: { "User-Agent": USER_AGENT },
     signal: AbortSignal.timeout(40_000),
   });
   if (!response.ok) {
@@ -324,13 +331,22 @@ export async function fetchRoundPage(url: string): Promise<string> {
   return response.text();
 }
 
-export async function fetchRoundPages(): Promise<{
+/** The least time between two requests to the round pages' site. */
+export const ROUND_PAGE_GAP_MS = 10_000;
+
+const wait = (ms: number) =>
+  new Promise<void>((resolve) => setTimeout(resolve, ms));
+
+/** Both round pages, one after the other, at least ROUND_PAGE_GAP_MS apart. */
+export async function fetchRoundPages(
+  request: typeof fetch = fetch,
+  sleep: (ms: number) => Promise<void> = wait,
+): Promise<{
   currentHtml: string;
   previousHtml: string;
 }> {
-  const [currentHtml, previousHtml] = await Promise.all([
-    fetchRoundPage(CURRENT_ROUNDS_URL),
-    fetchRoundPage(PREVIOUS_ROUNDS_URL),
-  ]);
+  const currentHtml = await fetchRoundPage(CURRENT_ROUNDS_URL, request);
+  await sleep(ROUND_PAGE_GAP_MS);
+  const previousHtml = await fetchRoundPage(PREVIOUS_ROUNDS_URL, request);
   return { currentHtml, previousHtml };
 }

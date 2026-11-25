@@ -8,6 +8,7 @@ import {
   resolveFailure,
   ROUND_CHECK_TITLE,
   roundFailureTitle,
+  PAGE_WATCH_TITLE,
   titleFromArgs,
 } from "./failure-issue";
 
@@ -32,6 +33,16 @@ describe("titleFromArgs", () => {
       "189 round check failed",
     );
     expect(ROUND_CHECK_TITLE).toBe("189 round check failed");
+  });
+
+  it("gives the page watcher its own issue", () => {
+    expect(titleFromArgs(["--page-watch", "--log", "x"])).toBe(
+      "Page watch failed",
+    );
+    expect(PAGE_WATCH_TITLE).toBe("Page watch failed");
+    expect(() => titleFromArgs(["--page-watch", "--round-check"])).toThrow(
+      /one of/,
+    );
   });
 
   it("rejects no key, two keys, a missing value and a raw title", () => {

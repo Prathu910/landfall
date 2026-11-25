@@ -86,7 +86,7 @@ describe("readPage", () => {
 
   it("never retries: a refusal or a server error costs one request", async () => {
     for (const [code, kind, stops] of [
-      [403, "refused", true],
+      [403, "refused", false],
       [429, "refused", true],
       [404, "refused", false],
       [503, "error", false],
@@ -95,6 +95,7 @@ describe("readPage", () => {
       expect(await readPage("https://a.gov.au/p", deps)).toEqual({
         result: { ok: false, kind, reason: `HTTP ${code}` },
         stopsHost: stops,
+        forbidden: code === 403,
       });
       expect(requests).toHaveLength(1);
     }
@@ -114,6 +115,7 @@ describe("readPage", () => {
     expect(await readPage("https://a.gov.au/p", slow.deps)).toEqual({
       result: { ok: false, kind: "timeout", reason: "no answer within 30 s" },
       stopsHost: true,
+      forbidden: false,
     });
     expect(slow.requests).toHaveLength(1);
     const broken = fake(() =>
@@ -138,17 +140,39 @@ describe("readRobots", () => {
     expect(read).toMatchObject({ note: null, stop: null });
   });
 
-  it("allows everything when robots.txt is missing, and says so when it is unknown", async () => {
-    expect(await readRobots("a.gov.au", fake(noRobots).deps)).toEqual({
+  it("allows everything when robots.txt is missing: a 404 or another 4xx (RFC 9309)", async () => {
+    for (const code of [404, 410, 400])
+      expect(
+        await readRobots("a.gov.au", fake(() => status(code)).deps),
+      ).toEqual({ rules: [], note: null, stop: null });
+  });
+
+  it("stops the host on a 401 or 403 robots.txt: refused", async () => {
+    for (const code of [401, 403])
+      expect(
+        await readRobots("a.gov.au", fake(() => status(code)).deps),
+      ).toEqual({
+        rules: [],
+        note: `a.gov.au: robots.txt answered HTTP ${code}; the site's pages were not requested.`,
+        stop: { ok: false, kind: "refused", reason: `HTTP ${code}` },
+      });
+  });
+
+  it("stops the host on a 5xx or a network error: unreachable (RFC 9309)", async () => {
+    expect(await readRobots("a.gov.au", fake(() => status(503)).deps)).toEqual({
       rules: [],
-      note: null,
-      stop: null,
+      note: "a.gov.au: robots.txt answered HTTP 503; the site's pages were not requested.",
+      stop: { ok: false, kind: "error", reason: "HTTP 503" },
     });
-    const unknown = await readRobots("a.gov.au", fake(() => status(500)).deps);
-    expect(unknown).toEqual({
+    const broken = fake(() =>
+      Object.assign(new TypeError("fetch failed"), {
+        cause: { code: "ECONNRESET" },
+      }),
+    );
+    expect(await readRobots("a.gov.au", broken.deps)).toEqual({
       rules: [],
-      note: "a.gov.au: robots.txt unknown (HTTP 500); treated as allowing every page.",
-      stop: null,
+      note: "a.gov.au: robots.txt could not be read (network error (ECONNRESET)); the site's pages were not requested.",
+      stop: { ok: false, kind: "error", reason: "network error (ECONNRESET)" },
     });
   });
 });
@@ -179,7 +203,26 @@ describe("readAll", () => {
     expect(results["https://www.example.gov.au/visas"].ok).toBe(true);
   });
 
-  it("asks a host nothing more after a 403, giving its other pages the same reason", async () => {
+  it("keeps asking a host after one page's 403", async () => {
+    const { deps, pages } = fake((url) =>
+      url.endsWith("/robots.txt")
+        ? noRobots()
+        : url.endsWith("/1")
+          ? status(403)
+          : page(),
+    );
+    const urls = ["https://act.gov.au/1", "https://act.gov.au/2"];
+    const { results } = await readAll(urls, new Set(), deps);
+    expect(pages()).toEqual(urls);
+    expect(results["https://act.gov.au/1"]).toEqual({
+      ok: false,
+      kind: "refused",
+      reason: "HTTP 403",
+    });
+    expect(results["https://act.gov.au/2"].ok).toBe(true);
+  });
+
+  it("asks a host nothing more after a second 403, giving its other pages the same reason", async () => {
     const { deps, pages } = fake((url) =>
       url.endsWith("/robots.txt")
         ? noRobots()
@@ -194,7 +237,11 @@ describe("readAll", () => {
       "https://nsw.gov.au/1",
     ];
     const { results } = await readAll(urls, new Set(), deps);
-    expect(pages()).toEqual(["https://act.gov.au/1", "https://nsw.gov.au/1"]);
+    expect(pages()).toEqual([
+      "https://act.gov.au/1",
+      "https://nsw.gov.au/1",
+      "https://act.gov.au/2",
+    ]);
     for (const url of urls.slice(0, 3))
       expect(results[url]).toEqual({
         ok: false,
@@ -202,6 +249,56 @@ describe("readAll", () => {
         reason: "HTTP 403",
       });
     expect(results["https://nsw.gov.au/1"].ok).toBe(true);
+  });
+
+  it("skips, not fails, a page with a baseline when its host stopped", async () => {
+    const { deps, pages } = fake((url) =>
+      url.endsWith("/robots.txt") ? noRobots() : status(429),
+    );
+    const urls = [
+      "https://qld.gov.au/1",
+      "https://qld.gov.au/2",
+      "https://qld.gov.au/3",
+    ];
+    const { results } = await readAll(
+      urls,
+      new Set(),
+      deps,
+      new Set(["https://qld.gov.au/2"]),
+    );
+    expect(pages()).toEqual(["https://qld.gov.au/1"]);
+    // The page that was asked keeps its own failure; a page never read keeps the host's.
+    expect(results["https://qld.gov.au/1"]).toMatchObject({ kind: "refused" });
+    expect(results["https://qld.gov.au/2"]).toEqual({
+      ok: false,
+      kind: "skipped",
+      reason: "not requested: qld.gov.au stopped earlier this run (HTTP 429)",
+    });
+    expect(results["https://qld.gov.au/3"]).toEqual({
+      ok: false,
+      kind: "refused",
+      reason: "HTTP 429",
+    });
+  });
+
+  it("skips a baselined page when robots.txt stops its host", async () => {
+    const { deps, pages } = fake((url) =>
+      url.endsWith("/robots.txt") ? status(503) : page(),
+    );
+    const { results, notes } = await readAll(
+      ["https://sa.gov.au/1", "https://sa.gov.au/2"],
+      new Set(),
+      deps,
+      new Set(["https://sa.gov.au/1"]),
+    );
+    expect(pages()).toEqual([]);
+    expect(results["https://sa.gov.au/1"]).toMatchObject({ kind: "skipped" });
+    expect(results["https://sa.gov.au/2"]).toEqual({
+      ok: false,
+      kind: "error",
+      reason: "HTTP 503",
+    });
+    expect(notes[0]).toMatch(/sa\.gov\.au: robots\.txt answered HTTP 503/);
   });
 
   it("asks a host nothing more after a timeout, on robots.txt or a page", async () => {

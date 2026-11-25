@@ -1,11 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import type { RoundsFile } from "../../src/lib/data/rounds-file";
-import {
-  detectRound,
-  detectionLines,
-  readCurrentRoundsPage,
-} from "./detect-round";
+import { detectRound, detectionLines } from "./detect-round";
 
 const FIXTURES = new URL("../import/__fixtures__/", import.meta.url).pathname;
 const current = readFileSync(`${FIXTURES}invitation-rounds.html`, "utf8");
@@ -54,11 +50,5 @@ describe("detectionLines", () => {
       "status=none",
       "newest=2026-10-15",
     ]);
-  });
-});
-
-describe("readCurrentRoundsPage", () => {
-  it("reads invitation-rounds.html from the given folder instead of fetching", async () => {
-    expect(await readCurrentRoundsPage(FIXTURES)).toBe(current);
   });
 });

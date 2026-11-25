@@ -13,11 +13,12 @@
 #                    return nothing, except DRY_RUN_OPEN_PRS (JSON for
 #                    `gh pr list`, read by gh.ts) and DRY_RUN_PR_BODY (a file
 #                    for `gh pr view`), for local tests.
-#   DRY_RUN_HEAD_PRS dry runs only: JSON for `gh pr list --head <branch>`, the
-#                    open pull requests on a closed round PR's branch.
-#   ROUNDS_HTML_DIR  dry runs only: the folder of saved invitation-rounds.html
-#                    and previous-rounds.html that stands in for the official
-#                    pages (detect-round.ts and the import's --rounds-html).
+#   DRY_RUN_CLOSED_PRS, DRY_RUN_HEAD_PRS
+#                    dry runs only: JSON for `gh pr list --head <branch>`, the
+#                    closed and the open pull requests on the round branch.
+#   ROUNDS_HTML_DIR  dry runs only: a folder of saved invitation-rounds.html
+#                    and previous-rounds.html, copied into the run's round
+#                    pages folder so that nothing is requested.
 #   TODAY            optional YYYY-MM-DD for the run's Sydney date (reproducible
 #                    local runs); Actions leaves it unset.
 #   RUNNER_TEMP      where the logs, import report and PR body go (Actions sets it).
@@ -34,6 +35,9 @@ readonly DATE_RE='^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$'
 
 WORK="${RUNNER_TEMP:-${TMPDIR:-/tmp}/round-189}"
 STATE="$WORK/round-state"
+# The run's copies of the official round pages (round-pages.ts): each page is
+# requested at most once, 10 s apart, and the import reads them from here.
+ROUND_PAGES="$WORK/rounds-html"
 
 STATUS=""        # detect-round.ts: new or none
 NEWEST=""        # the round date on the current invitation rounds page
@@ -57,14 +61,20 @@ prepare() {
   rm -f "$STATE/step" "$STATE/round" "$WORK/import.json" "$WORK/build.log" \
     "$WORK/pr-body.md" "$WORK/pr-body.next.md" "$WORK/existing-body.md" \
     "$WORK/previous-manifest.json"
+  rm -rf "$ROUND_PAGES"
+  mkdir -p "$ROUND_PAGES"
+  if [[ -n ${ROUNDS_HTML_DIR:-} ]]; then
+    cp "$ROUNDS_HTML_DIR/invitation-rounds.html" "$ROUNDS_HTML_DIR/previous-rounds.html" "$ROUND_PAGES/"
+  fi
   remember_round check
 }
 
 # Spec 6.10 "Detect", against the checked-out branch's src/data/rounds.json.
+# The current page is requested once per run; a second detection reads it back.
 detect() {
   step "$1"
   local out
-  out="$(run_tsx scripts/automation/detect-round.ts)"
+  out="$(run_tsx scripts/automation/detect-round.ts --dir "$ROUND_PAGES")"
   printf '%s\n' "$out"
   STATUS="$(sed -n 's/^status=//p' <<<"$out")"
   NEWEST="$(sed -n 's/^newest=//p' <<<"$out")"
@@ -72,15 +82,19 @@ detect() {
   [[ $NEWEST =~ $DATE_RE ]] || fail "detect-round.ts printed no round date"
 }
 
+# The previous rounds page, once, at least 10 s after the current one.
+fetch_previous_page() {
+  step "Read the previous rounds page"
+  [[ $DRY_RUN != 1 || -n ${ROUNDS_HTML_DIR:-} ]] ||
+    fail "A dry run imports saved round pages only; set ROUNDS_HTML_DIR"
+  run_tsx scripts/automation/round-pages.ts --dir "$ROUND_PAGES" --page previous
+}
+
+# The import reads the pages this run saved; it requests nothing itself.
 import_rounds() {
   step "Import the 189 rounds"
-  local args=(--rounds-only --checked-at "$TODAY" --report-file "$WORK/import.json")
-  if [[ -n ${ROUNDS_HTML_DIR:-} ]]; then
-    args+=(--rounds-html "$ROUNDS_HTML_DIR")
-  elif [[ $DRY_RUN == 1 ]]; then
-    fail "A dry run imports saved round pages only; set ROUNDS_HTML_DIR"
-  fi
-  npm run data:import -- "${args[@]}"
+  npm run data:import -- --rounds-only --checked-at "$TODAY" \
+    --report-file "$WORK/import.json" --rounds-html "$ROUND_PAGES"
 }
 
 # The import report's new round dates, oldest first, with their info.
@@ -165,46 +179,15 @@ days_text() {
   echo "$text"
 }
 
-# Open pull requests from the branch, labelled or not, as "#12, #13".
-# DRY_RUN_HEAD_PRS stands in for gh's JSON in a dry run.
-open_prs_on_branch() {
-  local json
-  if [[ $DRY_RUN == 1 ]]; then
-    print_dry gh pr list --head "$BRANCH" --state open --json number,headRefName >&2
-    json="${DRY_RUN_HEAD_PRS:-[]}"
-  else
-    json="$(gh pr list --head "$BRANCH" --state open --json number,headRefName)"
-  fi
-  node -p 'JSON.parse(process.argv[1]).filter((pr) => pr.headRefName === process.argv[2])
-    .map((pr) => "#" + pr.number).join(", ")' "$json" "$BRANCH"
-}
-
-# Round PRs are not held (controller ruling): a closed round PR's branch is
-# replaced, but only while origin still has the tip this run saw and no open
-# pull request uses it.
-push_round_branch() {
-  local old="" open
-  if [[ -z $PR && $HELD == yes ]]; then
-    old="$(git ls-remote --heads origin "refs/heads/$BRANCH" | cut -f1)"
-  fi
-  # No old tip (no closed PR, or the branch has gone since): a plain push.
-  if [[ -z $old ]]; then
-    push_branch
-    return
-  fi
-  open="$(open_prs_on_branch)"
-  [[ -z $open ]] ||
-    fail "Pull request $open is open on $BRANCH without the $LABEL label; label it or close it, then run again."
-  step "Replace $BRANCH, the branch of a closed pull request"
-  local args=("--force-with-lease=refs/heads/$BRANCH:$old" origin "HEAD:refs/heads/$BRANCH")
-  if [[ $DRY_RUN == 1 ]]; then print_dry git push "${args[@]}"; else git push "${args[@]}"; fi
-}
-
-# Any success closes the round check's issue and the page round's issue.
+# Any success closes the round check's issue, the page round's issue and the
+# issue of every round this run added.
 resolve_round_failures() {
   step "Close any round check failure issue"
   run_tsx scripts/automation/failure-issue.ts resolve --round-check
-  resolve_failure --round "$NEWEST"
+  local date
+  while IFS= read -r date; do
+    resolve_failure --round "$date"
+  done < <(printf '%s\n' "$NEWEST" ${NEW_ROUNDS[@]+"${NEW_ROUNDS[@]}"} | sort -u)
 }
 
 run_round() {
@@ -229,6 +212,7 @@ run_round() {
     git switch -C "$BRANCH"
   fi
   cp src/data/manifest.json "$WORK/previous-manifest.json"
+  fetch_previous_page
   import_rounds
   load_new_rounds
   generate_and_render
@@ -249,7 +233,9 @@ run_round() {
   if [[ ${#COMMITS[@]} == 0 ]]; then
     echo "No changes to publish."
   else
-    push_round_branch
+    # Round PRs are not held (controller ruling): a branch left by a closed
+    # (or never opened) round PR is replaced at the tip this run saw.
+    push_branch
     open_or_update_pr "189 round$plural of $days" \
       "Added the 189 round$plural of $days; the summary has a new section for $each. New commits:"
   fi

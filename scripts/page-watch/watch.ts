@@ -46,7 +46,7 @@ export type WatchInput = {
   /** The one "Sources the watcher cannot read" issue, open or closed. */
   standingIssue: StandingIssue | null;
   today: string;
-  /** Run notes for the summary (robots.txt unknown, time budget reached). */
+  /** Run notes for the summary (a host robots.txt stopped, time budget reached). */
   notes: string[];
 };
 export type WatchPlan = {

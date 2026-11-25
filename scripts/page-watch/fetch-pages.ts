@@ -2,8 +2,9 @@
 // automated jobs (25 Nov 2026, docs/STRATEGY.md): at most one request per
 // page per day (so no retries), a gap of at least HOST_GAP_MS per site, never
 // retry a refusal, and skip any URL that robots.txt disallows. A host that
-// answers 403 or 429, or doesn't answer, is not asked again that run, and a
-// run stops requesting at its deadline so it always saves state and summary.
+// answers 429, doesn't answer, refuses or fails its robots.txt, or answers 403
+// to a second page is not asked again that run, and a run stops requesting at
+// its deadline so it always saves state and summary.
 import { isLoginPage, normaliseResponse } from "./normalise";
 import {
   isAllowed,
@@ -18,7 +19,10 @@ export const HOST_GAP_MS = 10_000;
 export const TIMEOUT_MS = 30_000;
 const ACCEPT =
   "text/html,application/xhtml+xml,text/csv,application/pdf;q=0.9,*/*;q=0.8";
-const STOPS_HOST = new Set([403, 429]);
+/** A page answer that stops its host at once; a 403 does on the second page. */
+const STOPS_HOST = new Set([429]);
+const FORBIDDEN = 403;
+const FORBIDDEN_LIMIT = 2;
 
 export type ReadDeps = {
   fetch: typeof fetch;
@@ -61,41 +65,40 @@ async function request(url: string, deps: ReadDeps): Promise<Reply> {
 
 const NO_ANSWER = `no answer within ${TIMEOUT_MS / 1000} s`;
 
-/** One request, never retried. `stopsHost` when the site refused (403, 429) or didn't answer. */
-export async function readPage(
-  url: string,
-  deps: ReadDeps,
-): Promise<{ result: WatchResult; stopsHost: boolean }> {
+export type PageRead = {
+  result: WatchResult;
+  /** The site asked us to stop (429) or didn't answer. */
+  stopsHost: boolean;
+  /** The page answered 403, which stops its host the second time in a run. */
+  forbidden: boolean;
+};
+
+/** One request, never retried. */
+export async function readPage(url: string, deps: ReadDeps): Promise<PageRead> {
+  const read = (result: WatchResult, stopsHost = false, forbidden = false) => ({
+    result,
+    stopsHost,
+    forbidden,
+  });
   const reply = await request(url, deps);
   if (reply.kind === "timeout")
-    return {
-      result: { ok: false, kind: "timeout", reason: NO_ANSWER },
-      stopsHost: true,
-    };
+    return read({ ok: false, kind: "timeout", reason: NO_ANSWER }, true);
   if (reply.kind === "error")
-    return {
-      result: { ok: false, kind: "error", reason: reply.reason },
-      stopsHost: false,
-    };
+    return read({ ok: false, kind: "error", reason: reply.reason });
   const { status, type, body } = reply;
   if (status >= 400)
-    return {
-      result: {
+    return read(
+      {
         ok: false,
         kind: status < 500 ? "refused" : "error",
         reason: `HTTP ${status}`,
       },
-      stopsHost: STOPS_HOST.has(status),
-    };
+      STOPS_HOST.has(status),
+      status === FORBIDDEN,
+    );
   if (/html/i.test(type) && isLoginPage(body.toString("utf8")))
-    return {
-      result: { ok: false, kind: "refused", reason: "a sign-in page" },
-      stopsHost: false,
-    };
-  return {
-    result: { ok: true, page: normaliseResponse(body, type, url) },
-    stopsHost: false,
-  };
+    return read({ ok: false, kind: "refused", reason: "a sign-in page" });
+  return read({ ok: true, page: normaliseResponse(body, type, url) });
 }
 
 export type RobotsRead = {
@@ -104,37 +107,41 @@ export type RobotsRead = {
   stop: WatchResult | null;
 };
 
-/** A missing file (404) allows everything; an unreadable one is unknown: allowed, with a note. */
+/**
+ * RFC 9309: a robots.txt the site doesn't have (404 or any other 4xx) allows
+ * everything; 401 and 403 refuse the site, as does 429; a 5xx, a network
+ * error or no answer leaves it unreachable, so its pages are not requested.
+ */
 export async function readRobots(
   host: string,
   deps: ReadDeps,
 ): Promise<RobotsRead> {
+  const stopped = (stop: WatchResult, what: string): RobotsRead => ({
+    rules: [],
+    note: `${host}: robots.txt ${what}; the site's pages were not requested.`,
+    stop,
+  });
   const reply = await request(`https://${host}/robots.txt`, deps);
   if (reply.kind === "timeout")
-    return {
-      rules: [],
-      note: `${host}: robots.txt got ${NO_ANSWER}; the site's pages were not requested.`,
-      stop: { ok: false, kind: "timeout", reason: NO_ANSWER },
-    };
+    return stopped(
+      { ok: false, kind: "timeout", reason: NO_ANSWER },
+      `got ${NO_ANSWER}`,
+    );
   if (reply.kind === "error")
-    return {
-      rules: [],
-      note: `${host}: robots.txt unknown (${reply.reason}); treated as allowing every page.`,
-      stop: null,
-    };
-  if (reply.status === 404) return { rules: [], note: null, stop: null };
-  if (reply.status === 429)
-    return {
-      rules: [],
-      note: `${host}: robots.txt answered HTTP 429; the site's pages were not requested.`,
-      stop: { ok: false, kind: "refused", reason: "HTTP 429" },
-    };
-  if (reply.status >= 400)
-    return {
-      rules: [],
-      note: `${host}: robots.txt unknown (HTTP ${reply.status}); treated as allowing every page.`,
-      stop: null,
-    };
+    return stopped(
+      { ok: false, kind: "error", reason: reply.reason },
+      `could not be read (${reply.reason})`,
+    );
+  const { status } = reply;
+  const reason = `HTTP ${status}`;
+  if (status === 401 || status === 403 || status === 429)
+    return stopped(
+      { ok: false, kind: "refused", reason },
+      `answered ${reason}`,
+    );
+  if (status >= 500)
+    return stopped({ ok: false, kind: "error", reason }, `answered ${reason}`);
+  if (status >= 400) return { rules: [], note: null, stop: null };
   return {
     rules: parseRobots(
       reply.body.toString("utf8"),
@@ -171,11 +178,17 @@ function stepsFor(urls: string[]): Step[] {
 
 export type ReadAll = { results: Record<string, WatchResult>; notes: string[] };
 
-/** Reads `urls` (each at most once); `alreadyRead` were read today and are not requested again. */
+/**
+ * Reads `urls` (each at most once); `alreadyRead` were read today and are not
+ * requested again. A page not requested because its host stopped is
+ * "skipped" when it has a baseline (`baselined`), so the stop doesn't count
+ * as a failed day; a page never read takes the host's failure.
+ */
 export async function readAll(
   urls: string[],
   alreadyRead: Set<string>,
   deps: ReadDeps,
+  baselined: Set<string> = new Set(),
 ): Promise<ReadAll> {
   const results: Record<string, WatchResult> = {};
   const notes: string[] = [];
@@ -183,6 +196,7 @@ export async function readAll(
     results[url] = { ok: false, kind: "skipped", reason: "already read today" };
   const robots = new Map<string, RobotsRule[]>();
   const stopped = new Map<string, WatchResult>();
+  const forbidden = new Map<string, number>();
   const lastRequest = new Map<string, number>();
   let previous = -Infinity;
   let outOfTime = false;
@@ -193,8 +207,16 @@ export async function readAll(
     const { host, url } = step;
     const stop = stopped.get(host);
     if (stop) {
-      if (url) results[url] = stop;
-      if (url) deps.log(`not requested (${host} refused earlier): ${url}`);
+      if (url === null) continue;
+      results[url] =
+        !stop.ok && baselined.has(url)
+          ? {
+              ok: false,
+              kind: "skipped",
+              reason: `not requested: ${host} stopped earlier this run (${stop.reason})`,
+            }
+          : stop;
+      deps.log(`not requested (${host} stopped earlier): ${url}`);
       continue;
     }
     if (url && !isAllowed(robots.get(host) ?? [], url)) {
@@ -226,9 +248,13 @@ export async function readAll(
       if (read.note) notes.push(read.note);
       if (read.stop) stopped.set(host, read.stop);
     } else {
-      const { result, stopsHost } = await readPage(url, deps);
+      const read = await readPage(url, deps);
+      const { result } = read;
       results[url] = result;
-      if (stopsHost) stopped.set(host, result);
+      const refusals = (forbidden.get(host) ?? 0) + (read.forbidden ? 1 : 0);
+      forbidden.set(host, refusals);
+      if (read.stopsHost || refusals >= FORBIDDEN_LIMIT)
+        stopped.set(host, result);
       deps.log(`${result.ok ? "read" : `failed (${result.reason})`}: ${url}`);
     }
     previous = deps.now();

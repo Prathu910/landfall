@@ -3,7 +3,12 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import type { RoundsFile } from "../../src/lib/data/rounds-file";
+import { USER_AGENT } from "../state-lists/shared";
 import {
+  CURRENT_ROUNDS_URL,
+  PREVIOUS_ROUNDS_URL,
+  ROUND_PAGE_GAP_MS,
+  fetchRoundPages,
   newestRoundDate,
   newRoundDates,
   normalizeOccupationName,
@@ -390,5 +395,48 @@ describe("normalizeOccupationName", () => {
     expect(normalizeOccupationName("ICT Business Analyst (261111)")).toBe(
       "ictbusinessanalyst261111",
     );
+  });
+});
+
+describe("fetchRoundPages", () => {
+  it("asks for each page once, in turn, 10 s apart, with the browser User-Agent", async () => {
+    let clock = 0;
+    const requests: { url: string; at: number; agent: string | null }[] = [];
+    const request = (async (
+      input: string | URL | Request,
+      init?: RequestInit,
+    ) => {
+      requests.push({
+        url: String(input),
+        at: clock,
+        agent: new Headers(init?.headers).get("User-Agent"),
+      });
+      clock += 300;
+      return new Response(`<html>${String(input)}</html>`);
+    }) as typeof fetch;
+    const pages = await fetchRoundPages(request, async (ms) => {
+      clock += ms;
+    });
+    expect(requests.map((r) => r.url)).toEqual([
+      CURRENT_ROUNDS_URL,
+      PREVIOUS_ROUNDS_URL,
+    ]);
+    expect(requests[1].at - requests[0].at).toBeGreaterThanOrEqual(
+      ROUND_PAGE_GAP_MS,
+    );
+    expect(requests.every((r) => r.agent === USER_AGENT)).toBe(true);
+    expect(pages.previousHtml).toContain("previous-rounds");
+  });
+
+  it("never retries a refusal", async () => {
+    let calls = 0;
+    const request = (async () => {
+      calls += 1;
+      return new Response("no", { status: 403 });
+    }) as typeof fetch;
+    await expect(fetchRoundPages(request, async () => {})).rejects.toThrow(
+      /HTTP 403/,
+    );
+    expect(calls).toBe(1);
   });
 });

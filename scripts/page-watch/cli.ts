@@ -168,6 +168,11 @@ async function main(): Promise<void> {
       .filter(([, entry]) => entry.checkedOn === today)
       .map(([url]) => url),
   );
+  const baselined = new Set(
+    Object.entries(state ?? {})
+      .filter(([, entry]) => entry.hash !== "")
+      .map(([url]) => url),
+  );
   const { results, notes } = await readAll(
     sources.map((source) => source.url),
     readToday,
@@ -179,6 +184,7 @@ async function main(): Promise<void> {
       userAgent: USER_AGENT,
       deadline: Date.now() + RUN_BUDGET_MS,
     },
+    baselined,
   );
   const plan = planWatch({
     sources,
