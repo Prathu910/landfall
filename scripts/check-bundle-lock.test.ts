@@ -78,7 +78,7 @@ describe("check-bundle-lock", () => {
         (s) => `${file}: ${s}`,
       );
     });
-    expect(BUILDER_SENTINELS).toHaveLength(3);
+    expect(BUILDER_SENTINELS).toHaveLength(4);
     expect(hits).toEqual([]);
   });
 });

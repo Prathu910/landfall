@@ -4674,7 +4674,7 @@ var GROUP_LABELS = {
   unverified: "Rules being checked",
   "not-open": "Not open to you now"
 };
-var FOOTER = "Not advice to apply. Rules change; check the official page.";
+var STATE_PANEL_FOOTER = "Not advice to apply. Rules change; check the official page.";
 var ANY_STATE_NOTE = "EOIs not tied to one state; not counted in any state's group";
 function panelId(visa, state) {
   return `state-${visa}-${state}`;
@@ -4724,7 +4724,7 @@ function buildStatePanel(outcome, rules, points, asOf) {
       href: rules.resultsUrl,
       text: `${name} published results (past results, not a prediction)`
     },
-    footer: FOOTER
+    footer: STATE_PANEL_FOOTER
   };
 }
 
