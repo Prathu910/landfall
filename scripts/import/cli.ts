@@ -2,7 +2,7 @@
 //        npm run data:import -- --rounds-only [--checked-at YYYY-MM-DD] [--rounds-html <dir>]
 //        npm run data:import -- --probe
 //        npm run data:generate -- --as-at YYYY-MM [--checked-at YYYY-MM-DD] [--rounds-html <dir>]
-// Every mode except --probe also takes --report-file <path>.
+// Every mode also takes --report-file <path>.
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import type { Manifest, MonthKey } from "../../src/lib/data/types";

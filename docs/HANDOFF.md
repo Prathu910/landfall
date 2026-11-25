@@ -8,7 +8,7 @@ The three workflows (`monthly-data`, `round-189`, `page-watch`) are on branch `r
 - [ ] Optional: set the repository variable `CF_PAGES_PROJECT` (Cloudflare Pages project name) so pull requests link a preview.
 - [ ] Merge to `main`.
 - [ ] Rehearse with "Run workflow": `monthly-data` with month `2026-10` (a no-op check), `round-189`, and `page-watch` twice. Read each run's summary and note durations in the Plan 3 ledger.
-- [ ] Watch the first scheduled runs. The Chrome sandbox step on ubuntu-24.04 is first exercised when the first new month renders (about mid-December 2026).
+- [ ] Watch the first scheduled runs. The Chrome sandbox step on `ubuntu-latest` (currently Ubuntu 24.04) is first exercised when the first new month renders (about mid-December 2026).
 - Closing a month's pull request holds that month (delete `data/skillselect-YYYY-MM` to import it again); closing a round pull request does not hold it.
 
 ## Monthly updates, Plan 2: Instagram images (25 November 2026)

@@ -113,7 +113,7 @@ The month set of 2026-10 already exists, so the rehearsal does not start Chrome.
 
 ### Reading a run
 
-- **Closing a month's pull request holds that month.** The job then exits 0 before any import, with "held: PR closed". The branch `data/skillselect-YYYY-MM` stays. To import the month again, delete that branch.
+- **Closing a month's pull request holds that month.** The job then exits 0 before any import, logging "Held: the pull request for {Month YYYY} was closed. Delete branch data/skillselect-{YYYY-MM} to import it again." The branch stays. A held month is also not added to any other open data pull request (`isHeld` in `base-branch.ts`). To import the month again, delete that branch.
 - **Closing a round pull request does not hold the round.** The next daily run opens it again.
 - **Spotlight swap.** The recap's spotlight is the occupation the Instagram card and recap feature. Run `monthly-data` with `workflow_dispatch`, `spotlight` = the six-digit code (and `month` if more than one could be open). It changes the open data pull request only: the recap facts, the cards and the summary are regenerated and the summary is rewritten. It cannot change a month already on `main`.
 - **Failure issues.** A failed job opens an issue assigned to the founder, with the log tail, and fails the run; no pull request is opened or updated with bad data. Titles: "Monthly SkillSelect update failed (Month YYYY)", "189 round import failed (date)", and "189 round check failed" for a failure before the round page was read. The next successful run closes the issue. A failed run's `git status` and changed `data/raw/` files are kept as an artifact for 7 days.
