@@ -10,6 +10,8 @@ import {
 } from "../../src/lib/updates/cards";
 import { roundsNewestFirst } from "../../src/lib/updates/round-view";
 import type { RecapFacts } from "../../src/lib/updates/types";
+import { caption, altText } from "../../src/lib/updates/social-copy";
+import type { SetManifest } from "./compress";
 import type { HtmlJob, Theme } from "./html";
 
 /** One PNG: a card in one format and theme. `--html-only` takes the same jobs. */
@@ -139,4 +141,40 @@ export function parseRenderArgs(argv: string[]): RenderArgs {
     ...(round === undefined ? {} : { round }),
     ...(htmlOnly === undefined ? {} : { htmlOnly }),
   };
+}
+
+/** `set.json` for a set's jobs (spec 6.7): image alt text, reused files and the caption. */
+export function setManifest(
+  facts: RecapFacts,
+  args: RenderArgs,
+  jobs: RenderJob[],
+): SetManifest {
+  const round =
+    args.set === "round"
+      ? (args.round ?? roundsNewestFirst(facts)[0]?.date ?? null)
+      : null;
+  const cards =
+    args.set === "month"
+      ? monthSetCards(facts)
+      : roundSetCards(facts, round as string);
+  return {
+    kind: args.set,
+    month: facts.month,
+    round,
+    images: jobs.map((job) => ({
+      card: job.card.id,
+      format: job.format,
+      theme: job.theme,
+      file: job.out,
+      alt: altText(job.card),
+    })),
+    reused: args.set === "month" ? reusedRoundFiles(facts) : [],
+    caption: caption(args.set, cards, facts),
+  };
+}
+
+/** Where a set's `set.json` goes: beside its images. */
+export function manifestPath(jobs: RenderJob[]): string {
+  const [first] = jobs;
+  return `${first.out.slice(0, first.out.lastIndexOf("/"))}/set.json`;
 }

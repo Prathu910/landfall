@@ -31,3 +31,6 @@ scripts/state-lists/__fixtures__/
 
 # The user's local Claude Code settings (not project code).
 .claude/settings.local.json
+
+# Rendered Instagram sets and their set.json: written by social:render.
+public/social/

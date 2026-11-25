@@ -2,7 +2,9 @@
  * `npm run social:render -- --month YYYY-MM --set round|month`: renders a
  * set's Instagram cards in headless Chrome (puppeteer-core) to
  * `public/social/` (spec 6.7). Each card is checked in the page first
- * (browser-checks.ts); one failure renders nothing and exits 1. With
+ * (browser-checks.ts); one failure renders nothing and exits 1. Each PNG is
+ * quantised (compress.ts); an image or set over its size limit also writes
+ * nothing and exits 1. A `set.json` manifest is written beside the images. With
  * `--html-only <dir>` it writes each card's HTML there instead, for a preview.
  */
 import {
@@ -18,12 +20,15 @@ import { pathToFileURL } from "node:url";
 import puppeteer from "puppeteer-core";
 import { loadRecap } from "../../src/lib/updates/load-server";
 import type { RecapFacts } from "../../src/lib/updates/types";
+import { checkLimits, quantise } from "./compress";
 import { checkCard } from "./browser-checks";
 import { CARD_SIZES, cardHtml, writeCardHtml } from "./html";
 import {
   jobsFor,
   parseRenderArgs,
+  manifestPath,
   reusedRoundFiles,
+  setManifest,
   type RenderJob,
 } from "./jobs";
 
@@ -81,12 +86,14 @@ export async function openRenderer(
   };
 }
 
-/** Every job's PNG, in order; throws on the first card that fails a check. */
+/** Every job's compressed PNG, in order; throws on the first card that fails a check. */
 async function renderAll(jobs: RenderJob[]): Promise<Buffer[]> {
   const renderer = await openRenderer();
   try {
     const pngs: Buffer[] = [];
-    for (const job of jobs) pngs.push(await renderer.render(job));
+    for (const job of jobs) {
+      pngs.push(await quantise(await renderer.render(job)));
+    }
     return pngs;
   } finally {
     await renderer.close();
@@ -117,12 +124,22 @@ async function main(): Promise<void> {
     }
     if (args.set === "month") requireReusedFiles(facts);
     const pngs = await renderAll(jobs);
+    const problems = checkLimits(
+      jobs.map((job, i) => ({ path: job.out, bytes: pngs[i].length })),
+    );
+    if (problems.length > 0) throw new Error(problems.join("\n"));
     jobs.forEach((job, i) => {
       const file = join(ROOT, job.out);
       mkdirSync(dirname(file), { recursive: true });
       writeFileSync(file, pngs[i]);
       console.log(`Wrote ${job.out}`);
     });
+    const manifest = manifestPath(jobs);
+    writeFileSync(
+      join(ROOT, manifest),
+      `${JSON.stringify(setManifest(facts, args, jobs), null, 2)}\n`,
+    );
+    console.log(`Wrote ${manifest}`);
   } catch (error) {
     console.error(error instanceof Error ? error.message : error);
     process.exitCode = 1;

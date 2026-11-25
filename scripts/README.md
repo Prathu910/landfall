@@ -38,6 +38,14 @@ npm run social:render -- --month YYYY-MM --set month --html-only <dir>     # eac
 
 Each card opens in headless Chrome through puppeteer-core (`CHROME_PATH`, default the macOS Google Chrome). `browser-checks.ts` runs in the page before the screenshot, and any failure renders nothing, names the image and exits 1. It checks that both faces loaded, that no `.fit` or `.inner` box overflows, that story content stays within y 250 to 1580, that feed cover text stays within x 34 to 1046 (the profile-grid crop), and that `--paper` is the theme's token. `--html-only` writes the same cards as HTML files for a browser preview. The templates are in `scripts/social/templates/`. `render.test.ts` and `spotlight-render.test.ts` run in Chrome and are skipped when no Chrome binary exists.
 
+`compress.ts` quantises every PNG with sharp to a 256-colour palette (the size must not change). A render writes nothing and exits 1 if any image is over 300 KB or the set is over 2.5 MB. Each set also gets a `set.json` beside its images (`SetManifest`: kind, month, round, each image's card, format, theme, file and alt text, the `reused` files and the caption). Measured for 2026-10: largest image 134 KB, round set 0.8 MB, month set 1.2 MB. `public/social/` is in `.prettierignore`.
+
+```sh
+npm run updates:retention [-- --month YYYY-MM]   # delete files of months older than the latest 3 (default: newest folder); keeps every og.png
+```
+
+`scripts/updates/retention.ts` is the only command that deletes social images (the monthly job runs it; `social:render` never prunes).
+
 ## Frozen sample
 
 `npm run sample:freeze` (`scripts/sample/freeze.ts`) writes the 2026-10 core and detail records of the `/sample/` occupations (`SAMPLE_CODES` in `src/lib/outlook/examples.ts`) and a `meta.json` to `src/data/sample/2026-10/`, regenerated in memory from `data/raw/` and the stored rounds up to 31 October 2026. `/sample/` reads only these, so a monthly import never moves its stamps. Run it only when the founder asks for the sample to be refreshed.

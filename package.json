@@ -16,6 +16,7 @@
     "updates:generate": "tsx scripts/updates/generate.ts",
     "sample:freeze": "tsx scripts/sample/freeze.ts",
     "og:image": "tsx scripts/og-image/render.ts",
+    "updates:retention": "tsx scripts/updates/retention.ts",
     "social:render": "tsx scripts/social/render.ts",
     "data:state-lists": "tsx scripts/state-lists/cli.ts",
     "predev": "tsx scripts/copy-public-data.ts",
