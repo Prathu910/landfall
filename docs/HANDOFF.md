@@ -4,8 +4,17 @@
 
 The 2026-10 Instagram sets are rendered locally and committed (founder go-ahead, 24 Nov 2026; later months are rendered in CI only). Branch `roadmap/monthly-updates`, not pushed.
 
-- **Where.** `public/social/2026-10/round-2026-10-15/` (3 cards in light and dark, the story cover in both, `og.png`) and `public/social/2026-10/month/` (cover, 190, 491, spotlight, closing, story cover; light and dark), plus `public/social/2026-10/og.png` (the recap's OG image). Each set's `set.json` holds every image's alt text and the caption.
-- **How to post.** Use the month set as the first carousel (6 feed cards: cover, then the round card from `round-2026-10-15/round-*.png`, 190, 491, spotlight, closing): upload the `-light` or the `-dark` files, not both. Paste the caption and each image's alt text from the month `set.json`. The story cover is `story-cover-*.png`. Instagram is posted by hand; nothing posts automatically.
+- **Where.** Everything is under `public/social/2026-10/`. The month set is the 6-card carousel (counter 1/6 to 6/6), in this order, using the `-light` or the `-dark` files (one theme for all six):
+  1. `month/cover-<theme>.png`
+  2. `round-2026-10-15/round-<theme>.png` (the round card; the month set reuses it and never re-renders it)
+  3. `month/state-190-<theme>.png`
+  4. `month/state-491-<theme>.png`
+  5. `month/spotlight-<theme>.png`
+  6. `month/closing-<theme>.png`
+
+  The story is `month/story-cover-<theme>.png` (1080×1920). `og.png` is the recap's OG image. The round set (`round-2026-10-15/`) is a separate 3-card carousel for the 15 Oct 189 round alone: `cover-<theme>.png`, `round-<theme>.png`, `closing-<theme>.png` (counter 1/3 to 3/3), plus its own `story-cover-<theme>.png` and `og.png`.
+
+- **How to post.** Instagram is posted by hand; nothing posts automatically. The month carousel's caption and every card's alt text are in `month/set.json`: the `caption` field, and for each card the `alt` of its `images` entry. Card 2's alt text ("Card 2 of 6. ...") is in that file too, in the two entries with `"card": "round"`, which name the round-set files. The round set's `round-2026-10-15/set.json` has the round-only carousel's caption and alt text (its card 2 has no "Card N of M" prefix).
 - **Re-render.** `rm -rf public/social/2026-10`, then `npm run social:render -- --month 2026-10 --set round` and `-- --month 2026-10 --set month` (needs Chrome; `scripts/README.md`). The recap page uses `/social/<month>/og.png` when it exists, else the newest round's `og.png`, else `/og.png` (`ogImageFor`).
 
 ## Monthly updates, Plan 1: recap pages (25 November 2026)

@@ -69,12 +69,22 @@ describe("set manifest", () => {
     const manifest = setManifest(facts, args, jobs);
     expect(manifest.kind).toBe("month");
     expect(manifest.round).toBeNull();
-    expect(manifest.images).toHaveLength(jobs.length);
+    expect(manifest.images).toHaveLength(jobs.length + 2);
     expect(manifest.images.every((image) => image.alt.length > 0)).toBe(true);
     expect(manifest.reused).toEqual([
       expect.stringMatching(/\/round-[\d-]+\/round-light\.png$/),
       expect.stringMatching(/\/round-[\d-]+\/round-dark\.png$/),
     ]);
     expect(manifest.caption).toContain("migratelens.com/updates/2026-10/");
+  });
+
+  it("carries card 2's alt text and files from the round set", () => {
+    const manifest = setManifest(facts, args, jobs);
+    const two = manifest.images.filter((image) => image.card === "round");
+    expect(two.map((image) => image.file)).toEqual(manifest.reused);
+    expect(two.map((image) => image.theme)).toEqual(["light", "dark"]);
+    for (const image of two) {
+      expect(image.alt).toMatch(/^Card 2 of 6\. /);
+    }
   });
 });

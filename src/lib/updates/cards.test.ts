@@ -125,6 +125,23 @@ describe("round set", () => {
   });
 });
 
+describe("the cover's sub-line", () => {
+  const word = /in the next (\w+) cards\./;
+  const words = ["one", "two", "three", "four", "five", "six", "seven"];
+
+  it.each([
+    ["a round month", oct],
+    ["a month without a round", noRound(oct)],
+    ["a data-only month", dataOnly],
+  ])("counts the cards after the cover in %s", (_name, facts) => {
+    const cards = monthSetCards(facts);
+    const cover = cards[0] as Extract<CardView, { id: "cover" }>;
+    const said = words.indexOf(word.exec(cover.sub)?.[1] ?? "") + 1;
+    expect(said).toBe(cards.length - 1);
+    expect(cover.position?.of).toBe(cards.length);
+  });
+});
+
 describe("a month without a round", () => {
   it("drops card 2 and the cover's round stamp", () => {
     const cards = monthSetCards(dataOnly);

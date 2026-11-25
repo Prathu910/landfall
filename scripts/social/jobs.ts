@@ -89,6 +89,27 @@ export function reusedRoundFiles(facts: RecapFacts): string[] {
   return THEMES.map((theme) => `${dir}/round-${theme}.png`);
 }
 
+/**
+ * Card 2's entries for the month manifest: the round set's files, with the
+ * alt text numbered by place in the carousel (the round card itself has no
+ * position, so the round set's own alt text has no "Card 2 of 6").
+ */
+function reusedRoundImages(
+  facts: RecapFacts,
+  cards: CardView[],
+): SetManifest["images"] {
+  const round = cards.find((card) => card.id === "round");
+  if (!round) return [];
+  const alt = altText({ ...round, position: { index: 2, of: cards.length } });
+  return reusedRoundFiles(facts).map((file, i) => ({
+    card: "round",
+    format: "feed",
+    theme: THEMES[i],
+    file,
+    alt,
+  }));
+}
+
 /** The jobs for the parsed command, with a plain error for a missing section. */
 export function jobsFor(facts: RecapFacts, args: RenderArgs): RenderJob[] {
   if (args.set === "month") {
@@ -157,17 +178,21 @@ export function setManifest(
     args.set === "month"
       ? monthSetCards(facts)
       : roundSetCards(facts, round as string);
+  const images = jobs.map((job) => ({
+    card: job.card.id,
+    format: job.format,
+    theme: job.theme,
+    file: job.out,
+    alt: altText(job.card),
+  }));
   return {
     kind: args.set,
     month: facts.month,
     round,
-    images: jobs.map((job) => ({
-      card: job.card.id,
-      format: job.format,
-      theme: job.theme,
-      file: job.out,
-      alt: altText(job.card),
-    })),
+    images:
+      args.set === "month"
+        ? [...images, ...reusedRoundImages(facts, cards)]
+        : images,
     reused: args.set === "month" ? reusedRoundFiles(facts) : [],
     caption: caption(args.set, cards, facts),
   };

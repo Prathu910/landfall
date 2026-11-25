@@ -151,7 +151,7 @@ function coverCard(
   cardsAfter: number,
 ): CoverCard {
   const round = newestRound(facts);
-  const cards = `in ${countWord(cardsAfter)} cards.`;
+  const cards = `in the next ${countWord(cardsAfter)} cards.`;
   const month = formatLongMonth(facts.month).split(" ")[0];
   return {
     id: "cover",
@@ -214,7 +214,7 @@ function picksView(section: RoundSection): RoundCard["picks"] {
     items: cardPicks.map((move) => ({
       name: move.name,
       current: String(move.current),
-      previous: `${dayText(previousRound.date)}: ${move.previous}`,
+      previous: `was ${move.previous} on ${withoutYear(dayText(previousRound.date))}`,
     })),
   };
 }
