@@ -61,6 +61,12 @@ npm run updates:retention [-- --month YYYY-MM]   # delete files of months older 
 
 `npm run sample:freeze` (`scripts/sample/freeze.ts`) writes the 2026-10 core and detail records of the `/sample/` occupations (`SAMPLE_CODES` in `src/lib/outlook/examples.ts`) and a `meta.json` to `src/data/sample/2026-10/`, regenerated in memory from `data/raw/` and the stored rounds up to 31 October 2026. `/sample/` reads only these, so a monthly import never moves its stamps. Run it only when the founder asks for the sample to be refreshed.
 
+## Report engine bundle
+
+`npm run engine:bundle` (`scripts/report-engine/bundle.ts`) bundles `src/lib/report-issue/server-entry.ts` with esbuild (ESM, `platform: "neutral"`, not minified) into `supabase/functions/_shared/report-engine.js`, which is committed; its types are the hand-written `report-engine.d.ts` beside it. A plugin points every import of `src/data/manifest.json` and `occupation-index.json` at the holders in `src/lib/report-issue/live-json.ts`, which the engine fills with the month it is handed, and refuses any other JSON, so no data is bundled. Re-run it whenever `src/lib/outlook`, `src/lib/report`, `src/lib/state-outlook`, `src/lib/report-issue` or `src/lib/migration.ts` change: `scripts/report-engine/bundle.test.ts` fails until the committed bundle matches a fresh one. The engine fixture in `src/lib/report-issue/__fixtures__/` (one fixed input and the payload the site code builds from it, checked by `build.test.ts` and by `supabase/tests/report_engine_test.ts` against the bundle) is rewritten with `UPDATE_FIXTURES=1 npx vitest run src/lib/report-issue/build.test.ts` when the builder's output changes on purpose.
+
+`scripts/check-bundle-lock.ts` runs after every build: it fails when a locked page (`LOCKED_PAGES`, now `/sample/`) loads a JS chunk holding one of the builder-only sentences in `src/lib/report-issue/sentinels.ts`.
+
 ## State nomination lists and rule staleness
 
 `npm run data:state-lists` (optionally `-- --only federal|wa|sa|qld|nsw --checked-at YYYY-MM-DD`) re-imports the state occupation lists and the federal occupation list into `src/data/state-rules/` (`scripts/state-lists/`). `scripts/check-rule-staleness.ts` runs before every build and prints a warning, never a failure, for state rules checked more than 45 days ago. Sources and the monthly re-verify routine are under "State rules" in [`docs/DATA.md`](../docs/DATA.md).

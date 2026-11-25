@@ -1,0 +1,2318 @@
+{
+  "schema": 1,
+  "view": {
+    "kind": "report",
+    "headline": {
+      "who": "Rahul's report.",
+      "h1": "Your way in is state nomination, not 189.",
+      "fact": "189 hasn't listed Software Engineer in any of the last 4 rounds, since November 2024. The Northern Territory has invited Software Engineer EOIs at or below your 90 points with nomination in 6 of the last 6 months.",
+      "best": "190 or 491 in the Northern Territory (we're still checking the Northern Territory's rules).",
+      "why": "Stamp shows your best visa. 190 Northern Territory is Competitive: under-20 invitations at or below your points in at least 2 of the last 3 months. 189 is Not currently invited: your occupation wasn't listed in any of the last 4 invitation rounds. Confirm your English and skills assessment dates."
+    },
+    "whoDetail": "Software Engineer, 85 points, offshore. Data to October 2026.",
+    "stamp": {
+      "kind": "single",
+      "visa": "190",
+      "state": "NT",
+      "label": "competitive",
+      "points": 90,
+      "tooFew": false
+    },
+    "stampRing": "SUBCLASS 190 NT",
+    "stampBottom": "OCT 2026 • 90 POINTS",
+    "wait": "States don't publish a queue. The Northern Territory invited at or below your points in 6 of the last 6 months.",
+    "visas": [
+      {
+        "visa": "189",
+        "shape": "rect",
+        "top": "189 ANY STATE",
+        "stampWord": "Not invited",
+        "points": 85,
+        "label": "not-invited",
+        "ink": "not-invited",
+        "title": "189 Independent",
+        "caption": "Not listed since November 2024. 2,004–2,023 EOIs score higher.",
+        "flagText": null,
+        "flagHref": null
+      },
+      {
+        "visa": "190",
+        "shape": "hex",
+        "top": "190 NT",
+        "stampWord": "Competitive",
+        "points": 90,
+        "label": "competitive",
+        "ink": "competitive",
+        "title": "190 Nominated",
+        "caption": "The Northern Territory invited under 20 EOIs at or below your points in October 2026.",
+        "flagText": "We're still checking the Northern Territory's rules.",
+        "flagHref": null
+      },
+      {
+        "visa": "491",
+        "shape": "oval",
+        "top": "491 NT",
+        "stampWord": "Competitive",
+        "points": 100,
+        "label": "competitive",
+        "ink": "competitive",
+        "title": "491 Regional",
+        "caption": "The Northern Territory invited under 20 EOIs at or below your points in October 2026.",
+        "flagText": "We're still checking the Northern Territory's rules.",
+        "flagHref": null
+      }
+    ],
+    "cutoffs": {
+      "columns": [
+        {
+          "month": "Sep 24",
+          "cutoff": 100
+        },
+        {
+          "month": "Nov 24",
+          "cutoff": 95
+        },
+        {
+          "month": "Aug 25",
+          "cutoff": null
+        },
+        {
+          "month": "Nov 25",
+          "cutoff": null
+        },
+        {
+          "month": "Jun 26",
+          "cutoff": null
+        },
+        {
+          "month": "Oct 26",
+          "cutoff": null
+        }
+      ],
+      "you": 85,
+      "target": null,
+      "pass": null,
+      "aria": "Last 6 189 round cut-offs, oldest first: Sep 24 100, Nov 24 95, Aug 25 not listed, Nov 25 not listed, Jun 26 not listed, Oct 26 not listed. You are at 85."
+    },
+    "cutoffsEmpty": null,
+    "queue": {
+      "kind": "pool",
+      "unit": 50,
+      "title": "A queue that isn't moving",
+      "groups": [
+        {
+          "key": "ahead",
+          "label": "Ahead: 2,004–2,023",
+          "squares": 40,
+          "emphasis": true
+        },
+        {
+          "key": "tied",
+          "label": "Tied with you: 1,213",
+          "squares": 24,
+          "emphasis": false
+        },
+        {
+          "key": "behind",
+          "label": "Behind: about 6,240",
+          "squares": 125,
+          "emphasis": false
+        }
+      ],
+      "aria": "2,004 to 2,023 ahead, 1,213 tied, about 6,240 behind, in a pool that isn't being invited."
+    },
+    "queueEmpty": null,
+    "route": {
+      "steps": [
+        {
+          "title": "Today",
+          "sub": "21 Nov 2026",
+          "points": 85,
+          "label": "not-invited"
+        },
+        {
+          "title": "Check state rules",
+          "sub": "Northern Territory and Tasmania",
+          "points": null,
+          "label": null
+        },
+        {
+          "title": "Submit EOI",
+          "sub": "190 Northern Territory + 491 Northern Territory",
+          "points": null,
+          "label": null
+        },
+        {
+          "title": "Keep 189 ticked",
+          "sub": "it costs nothing",
+          "points": null,
+          "label": null
+        }
+      ],
+      "deadlines": [
+        {
+          "date": "2027-06-05",
+          "title": "English test expires",
+          "sub": "5 Jun 2027",
+          "afterStep": 2
+        }
+      ]
+    },
+    "improve": {
+      "mode": "points-not-problem",
+      "banner": "Points aren't what's holding you back. 189 needs to start listing your occupation again.",
+      "moves": [
+        {
+          "id": "naati",
+          "title": "NAATI CCL test, +5",
+          "detail": "One test in a community language.",
+          "why": "At 90, 189 is still Not currently invited. Your occupation wasn't listed in any of the last 4 invitation rounds.",
+          "from": {
+            "points": 85,
+            "label": "not-invited"
+          },
+          "to": {
+            "points": 90,
+            "label": "not-invited"
+          },
+          "visa": "189",
+          "best": false,
+          "date": null
+        },
+        {
+          "id": "professional-year",
+          "title": "Professional Year, +5",
+          "detail": "A Professional Year program in your field, about 12 months.",
+          "why": "At 90, 189 is still Not currently invited. Your occupation wasn't listed in any of the last 4 invitation rounds.",
+          "from": {
+            "points": 85,
+            "label": "not-invited"
+          },
+          "to": {
+            "points": 90,
+            "label": "not-invited"
+          },
+          "visa": "189",
+          "best": false,
+          "date": null
+        },
+        {
+          "id": "experience",
+          "title": "8 years' overseas experience, +5",
+          "detail": "Happens on its own when you reach 8 years.",
+          "why": "At 90, 189 is still Not currently invited. Your occupation wasn't listed in any of the last 4 invitation rounds.",
+          "from": {
+            "points": 85,
+            "label": "not-invited"
+          },
+          "to": {
+            "points": 90,
+            "label": "not-invited"
+          },
+          "visa": "189",
+          "best": false,
+          "date": null
+        },
+        {
+          "id": "combined",
+          "title": "Both together, +10",
+          "detail": "NAATI CCL test and Professional Year together.",
+          "why": "At 95, 189 is still Not currently invited. Your occupation wasn't listed in any of the last 4 invitation rounds.",
+          "from": {
+            "points": 85,
+            "label": "not-invited"
+          },
+          "to": {
+            "points": 95,
+            "label": "not-invited"
+          },
+          "visa": "189",
+          "best": false,
+          "date": null
+        }
+      ],
+      "losses": [
+        {
+          "date": "2027-06-05",
+          "kind": "eligibility",
+          "title": "English test expires, 5 Jun 2027",
+          "detail": "A valid English test is a basic requirement, not a points loss. Without one you can't be invited for any of the three visas until you retake it.",
+          "from": {
+            "points": 85,
+            "label": "not-invited"
+          },
+          "to": {
+            "points": 65,
+            "label": "not-eligible"
+          }
+        }
+      ],
+      "plain": [],
+      "pointsHelpStates": false,
+      "opener": null
+    },
+    "improveLabels": true,
+    "facts": {
+      "occupation": "Software Engineer",
+      "dataMonth": "October 2026",
+      "situation": "state",
+      "lodged": false,
+      "stamp": {
+        "visa": "190",
+        "state": "Northern Territory",
+        "label": "Competitive"
+      },
+      "visas": [
+        {
+          "visa": "189",
+          "label": "Not currently invited",
+          "state": null,
+          "points": 85,
+          "caption": "Your occupation wasn't listed in any of the last 4 invitation rounds. The last round that listed it was in November 2024."
+        },
+        {
+          "visa": "190",
+          "label": "Competitive",
+          "state": "Northern Territory",
+          "points": 90,
+          "caption": "The Northern Territory is Competitive: under-20 invitations at or below your points in at least 2 of the last 3 months. We're still checking the Northern Territory's rules."
+        },
+        {
+          "visa": "491",
+          "label": "Competitive",
+          "state": "Northern Territory",
+          "points": 100,
+          "caption": "The Northern Territory is Competitive: under-20 invitations at or below your points in at least 2 of the last 3 months. We're still checking the Northern Territory's rules."
+        }
+      ],
+      "counts": [
+        {
+          "name": "189 EOIs with a higher score",
+          "text": "2,004–2,023",
+          "numbers": [
+            2004,
+            2023
+          ]
+        },
+        {
+          "name": "189 EOIs tied at your points",
+          "text": "1,213",
+          "numbers": [
+            1213
+          ]
+        },
+        {
+          "name": "189 cut-offs of the last listed rounds, newest first",
+          "text": "95, 100, 100",
+          "numbers": [
+            95,
+            100,
+            100
+          ]
+        },
+        {
+          "name": "189 rounds of the last 6 with a cut-off at or below your points",
+          "text": "0",
+          "numbers": [
+            0,
+            6
+          ]
+        },
+        {
+          "name": "190 Northern Territory invitations at or below your points in October 2026",
+          "text": "under 20",
+          "numbers": [
+            20
+          ]
+        },
+        {
+          "name": "491 Northern Territory invitations at or below your points in October 2026",
+          "text": "under 20",
+          "numbers": [
+            20
+          ]
+        }
+      ],
+      "route": [
+        "Today (November 2026, 85 points, Not currently invited)",
+        "Check state rules (Northern Territory and Tasmania)",
+        "Submit EOI (190 Northern Territory + 491 Northern Territory)",
+        "Deadline: English test expires (June 2027)",
+        "Keep 189 ticked (it costs nothing)"
+      ],
+      "wait": "States don't publish a queue. The Northern Territory invited at or below your points in 6 of the last 6 months.",
+      "changes": [
+        {
+          "title": "NAATI CCL test",
+          "fromPoints": 85,
+          "toPoints": 90,
+          "toLabel": "Not currently invited",
+          "month": null
+        },
+        {
+          "title": "Professional Year",
+          "fromPoints": 85,
+          "toPoints": 90,
+          "toLabel": "Not currently invited",
+          "month": null
+        },
+        {
+          "title": "8 years' overseas experience",
+          "fromPoints": 85,
+          "toPoints": 90,
+          "toLabel": "Not currently invited",
+          "month": null
+        },
+        {
+          "title": "NAATI CCL test and Professional Year",
+          "fromPoints": 85,
+          "toPoints": 95,
+          "toLabel": "Not currently invited",
+          "month": null
+        },
+        {
+          "title": "Your English test expires",
+          "fromPoints": 85,
+          "toPoints": 65,
+          "toLabel": "Not eligible yet",
+          "month": "June 2027"
+        }
+      ],
+      "extraNumbers": [
+        65,
+        5,
+        15,
+        5,
+        5,
+        5,
+        10,
+        20,
+        3,
+        4,
+        6,
+        60
+      ]
+    },
+    "templateRead": "More points won't fix this while 189 isn't inviting your occupation. Your occupation wasn't listed in any of the last 4 invitation rounds. The last round that listed it was in November 2024. Your way in now is 190 in the Northern Territory: with nomination you'd have 90 points. The Northern Territory is Competitive: under-20 invitations at or below your points in at least 2 of the last 3 months. We're still checking the Northern Territory's rules. NAATI CCL test would take you to 90, and 189 would still be Not currently invited. This read uses published SkillSelect figures up to October 2026.",
+    "points": {
+      "base": 85,
+      "subclass190": 90,
+      "subclass491": 100,
+      "categories": [
+        {
+          "key": "age",
+          "label": "Age",
+          "points": 30,
+          "max": 30
+        },
+        {
+          "key": "english",
+          "label": "English proficiency",
+          "points": 20,
+          "max": 20
+        },
+        {
+          "key": "employment",
+          "label": "Skilled employment",
+          "points": 10,
+          "max": 20
+        },
+        {
+          "key": "qualification",
+          "label": "Highest qualification",
+          "points": 15,
+          "max": 20
+        },
+        {
+          "key": "australian-study",
+          "label": "Australian study",
+          "points": 0,
+          "max": 5
+        },
+        {
+          "key": "regional-study",
+          "label": "Regional Australian study",
+          "points": 0,
+          "max": 5
+        },
+        {
+          "key": "specialist-education",
+          "label": "Specialist education",
+          "points": 0,
+          "max": 10
+        },
+        {
+          "key": "professional-year",
+          "label": "Professional Year",
+          "points": 0,
+          "max": 5
+        },
+        {
+          "key": "community-language",
+          "label": "Credentialled community language",
+          "points": 0,
+          "max": 5
+        },
+        {
+          "key": "partner",
+          "label": "Partner qualifications",
+          "points": 10,
+          "max": 10
+        }
+      ],
+      "missing": [],
+      "warnings": [
+        "Employment assumes qualifying skilled work in the last 10 years; combined points are capped at 20.",
+        "Add a valid skills assessment issue date to check the modeled assessment requirement."
+      ],
+      "eligible": null,
+      "ineligibleReasons": [],
+      "uncheckedDates": [
+        "assessmentDate"
+      ]
+    },
+    "pointsPage": {
+      "fields": [
+        {
+          "label": "Name",
+          "value": "Rahul"
+        },
+        {
+          "label": "Occupation",
+          "value": "Software Engineer (261313)"
+        },
+        {
+          "label": "Date of birth",
+          "value": "18 Jan 1996, age 30"
+        },
+        {
+          "label": "Where you are",
+          "value": "Offshore"
+        },
+        {
+          "label": "Skills assessment",
+          "value": "Not given"
+        },
+        {
+          "label": "English test",
+          "value": "Superior, valid to 5 Jun 2027"
+        }
+      ],
+      "rows": [
+        {
+          "label": "Age",
+          "detail": "30",
+          "points": 30
+        },
+        {
+          "label": "English proficiency",
+          "detail": "Superior",
+          "points": 20
+        },
+        {
+          "label": "Skilled employment",
+          "detail": "6 years overseas",
+          "points": 10
+        },
+        {
+          "label": "Highest qualification",
+          "detail": "Bachelor or master's degree",
+          "points": 15
+        },
+        {
+          "label": "Partner qualifications",
+          "detail": "Single",
+          "points": 10
+        }
+      ],
+      "zero": "Australian study, Regional Australian study, Specialist education, Professional Year, Credentialled community language",
+      "totals": [
+        {
+          "points": 85,
+          "label": "189 Independent"
+        },
+        {
+          "points": 90,
+          "label": "190 with nomination (+5)"
+        },
+        {
+          "points": 100,
+          "label": "491 with nomination (+15)"
+        }
+      ],
+      "mrz": [
+        "P<MLNRAHUL<<REPORT<<<<<<<<<<<<<<<<<<<<<<<<<<",
+        "261313<189<85<190<90<491<100<<OCT2026<<<<<<<"
+      ]
+    },
+    "evidence": {
+      "rounds": {
+        "you": 85,
+        "rows": [
+          {
+            "date": "15 Oct 2026",
+            "cutoff": "Not listed",
+            "verdict": null
+          },
+          {
+            "date": "4 Jun 2026",
+            "cutoff": "Not listed",
+            "verdict": null
+          },
+          {
+            "date": "13 Nov 2025",
+            "cutoff": "Not listed",
+            "verdict": null
+          },
+          {
+            "date": "21 Aug 2025",
+            "cutoff": "Not listed",
+            "verdict": null
+          },
+          {
+            "date": "7 Nov 2024",
+            "cutoff": "95",
+            "verdict": "Short by 10"
+          },
+          {
+            "date": "5 Sep 2024",
+            "cutoff": "100",
+            "verdict": "Short by 15"
+          },
+          {
+            "date": "13 Jun 2024",
+            "cutoff": "100",
+            "verdict": "Short by 15"
+          },
+          {
+            "date": "18 Dec 2023",
+            "cutoff": "Not listed",
+            "verdict": null
+          },
+          {
+            "date": "25 May 2023",
+            "cutoff": "Not listed",
+            "verdict": null
+          },
+          {
+            "date": "8 Dec 2022",
+            "cutoff": "85",
+            "verdict": "Enough"
+          },
+          {
+            "date": "22 Aug 2022",
+            "cutoff": "Not listed",
+            "verdict": null
+          },
+          {
+            "date": "21 Apr 2022",
+            "cutoff": "Not listed",
+            "verdict": null
+          },
+          {
+            "date": "21 Jan 2022",
+            "cutoff": "Not listed",
+            "verdict": null
+          }
+        ]
+      },
+      "roundsEmpty": "No 189 round in the published results lists Software Engineer.",
+      "pool": {
+        "note": "9,464 Software Engineer EOIs waiting, as at Oct 2026.",
+        "bars": [
+          {
+            "score": 25,
+            "label": "25",
+            "count": "under 20",
+            "share": 0.006121134020618557,
+            "side": "lower"
+          },
+          {
+            "score": 30,
+            "label": "30",
+            "count": "under 20",
+            "share": 0.006121134020618557,
+            "side": "lower"
+          },
+          {
+            "score": 35,
+            "label": "35",
+            "count": "under 20",
+            "share": 0.006121134020618557,
+            "side": "lower"
+          },
+          {
+            "score": 40,
+            "label": "40",
+            "count": "under 20",
+            "share": 0.006121134020618557,
+            "side": "lower"
+          },
+          {
+            "score": 45,
+            "label": "45",
+            "count": "30",
+            "share": 0.019329896907216496,
+            "side": "lower"
+          },
+          {
+            "score": 50,
+            "label": "50",
+            "count": "83",
+            "share": 0.053479381443298966,
+            "side": "lower"
+          },
+          {
+            "score": 55,
+            "label": "55",
+            "count": "206",
+            "share": 0.1327319587628866,
+            "side": "lower"
+          },
+          {
+            "score": 60,
+            "label": "60",
+            "count": "406",
+            "share": 0.2615979381443299,
+            "side": "lower"
+          },
+          {
+            "score": 65,
+            "label": "65",
+            "count": "1,219",
+            "share": 0.7854381443298969,
+            "side": "lower"
+          },
+          {
+            "score": 70,
+            "label": "70",
+            "count": "1,393",
+            "share": 0.8975515463917526,
+            "side": "lower"
+          },
+          {
+            "score": 75,
+            "label": "75",
+            "count": "1,552",
+            "share": 1,
+            "side": "lower"
+          },
+          {
+            "score": 80,
+            "label": "80",
+            "count": "1,338",
+            "share": 0.8621134020618557,
+            "side": "lower"
+          },
+          {
+            "score": 85,
+            "label": "85 (you)",
+            "count": "1,213",
+            "share": 0.7815721649484536,
+            "side": "you"
+          },
+          {
+            "score": 90,
+            "label": "90",
+            "count": "1,132",
+            "share": 0.729381443298969,
+            "side": "higher"
+          },
+          {
+            "score": 95,
+            "label": "95",
+            "count": "608",
+            "share": 0.3917525773195876,
+            "side": "higher"
+          },
+          {
+            "score": 100,
+            "label": "100",
+            "count": "229",
+            "share": 0.14755154639175258,
+            "side": "higher"
+          },
+          {
+            "score": 105,
+            "label": "105",
+            "count": "35",
+            "share": 0.022551546391752577,
+            "side": "higher"
+          },
+          {
+            "score": 110,
+            "label": "110",
+            "count": "under 20",
+            "share": 0.006121134020618557,
+            "side": "higher"
+          }
+        ],
+        "aria": "189 pool by points: 25: under 20, 30: under 20, 35: under 20, 40: under 20, 45: 30, 50: 83, 55: 206, 60: 406, 65: 1,219, 70: 1,393, 75: 1,552, 80: 1,338, 85: 1,213, 90: 1,132, 95: 608, 100: 229, 105: 35, 110: under 20. You are at 85."
+      },
+      "poolEmpty": "SkillSelect hasn't published any 189 EOI counts for Software Engineer.",
+      "cohort": {
+        "title": "What happened to EOIs from a year ago",
+        "sub": "Software Engineer 189 EOIs submitted in November 2025 (all scores), as at October 2026.",
+        "outcomes": {
+          "kind": "ready",
+          "month": "2025-11",
+          "basis": "your-month",
+          "basisNote": null,
+          "sentence": "Of the 501–558 Software Engineer EOIs from Nov 2025, as at Oct 2026: 0 are invited and under 20 (so may be zero) have a visa application lodged.",
+          "numbers": {
+            "invited": "0",
+            "lodged": "under 20",
+            "waiting": "501",
+            "closed": "under 20",
+            "hold": "under 20"
+          },
+          "bar": {
+            "invited": {
+              "min": 0,
+              "max": 0
+            },
+            "lodged": {
+              "min": 0,
+              "max": 19
+            },
+            "waiting": {
+              "min": 501,
+              "max": 501
+            },
+            "closed": {
+              "min": 0,
+              "max": 19
+            }
+          },
+          "outcomes": [
+            {
+              "key": "invited",
+              "label": "Invited, not yet lodged",
+              "count": "0",
+              "interval": {
+                "min": 0,
+                "max": 0
+              }
+            },
+            {
+              "key": "lodged",
+              "label": "Lodged a visa",
+              "count": "under 20",
+              "interval": {
+                "min": 0,
+                "max": 19
+              }
+            },
+            {
+              "key": "waiting",
+              "label": "Still waiting",
+              "count": "501",
+              "interval": {
+                "min": 501,
+                "max": 501
+              }
+            },
+            {
+              "key": "closed",
+              "label": "Closed",
+              "count": "under 20",
+              "interval": {
+                "min": 0,
+                "max": 19
+              }
+            },
+            {
+              "key": "hold",
+              "label": "On hold",
+              "count": "under 20",
+              "interval": {
+                "min": 0,
+                "max": 19
+              }
+            }
+          ],
+          "statusNote": "Each EOI is counted once, in its status as at Oct 2026; EOIs that lodged or closed may have been invited earlier.",
+          "closedNote": "Closed means expired, withdrawn or finalised (finalised includes granted visas).",
+          "nearby": [
+            {
+              "month": "2025-09",
+              "label": "Sep 2025",
+              "invited": "under 20",
+              "lodged": "under 20",
+              "waiting": "501",
+              "closed": "under 20",
+              "isYours": false
+            },
+            {
+              "month": "2025-10",
+              "label": "Oct 2025",
+              "invited": "0",
+              "lodged": "under 20",
+              "waiting": "490",
+              "closed": "under 20",
+              "isYours": false
+            },
+            {
+              "month": "2025-11",
+              "label": "Nov 2025",
+              "invited": "0",
+              "lodged": "under 20",
+              "waiting": "501",
+              "closed": "under 20",
+              "isYours": true
+            },
+            {
+              "month": "2025-12",
+              "label": "Dec 2025",
+              "invited": "0",
+              "lodged": "under 20",
+              "waiting": "314",
+              "closed": "under 20",
+              "isYours": false
+            },
+            {
+              "month": "2026-01",
+              "label": "Jan 2026",
+              "invited": "0",
+              "lodged": "under 20",
+              "waiting": "368",
+              "closed": "under 20",
+              "isYours": false
+            }
+          ]
+        }
+      },
+      "states": [
+        {
+          "visa": "190",
+          "title": "190 by state, at your 90 points",
+          "sub": "Software Engineer invitations issued each month, at or below your 90 points, over the last 6 months: the latest month with any, and how many months had some.",
+          "rows": [
+            {
+              "state": "NT",
+              "latest": "Oct 2026: under 20 (may be zero)",
+              "months": "6 of the last 6 months",
+              "label": "competitive",
+              "flag": "We're still checking the Northern Territory's rules.",
+              "rules": "Rules being checked."
+            },
+            {
+              "state": "TAS",
+              "latest": "Oct 2026: under 20 (may be zero)",
+              "months": "4 of the last 6 months",
+              "label": "long-wait",
+              "flag": "We're still checking Tasmania's rules.",
+              "rules": "Rules being checked."
+            },
+            {
+              "state": "ACT",
+              "latest": "Jul 2026: under 20 (may be zero)",
+              "months": "3 of the last 6 months",
+              "label": "long-wait",
+              "flag": "We're still checking the Australian Capital Territory's rules.",
+              "rules": "Rules being checked."
+            },
+            {
+              "state": "VIC",
+              "latest": "Jun 2026: under 39 (may be zero)",
+              "months": "2 of the last 6 months",
+              "label": "long-wait",
+              "flag": "We're still checking Victoria's rules.",
+              "rules": "Rules being checked."
+            },
+            {
+              "state": "WA",
+              "latest": "Jun 2026: under 20 (may be zero)",
+              "months": "2 of the last 6 months",
+              "label": "long-wait",
+              "flag": "We're still checking Western Australia's rules.",
+              "rules": "Rules being checked."
+            },
+            {
+              "state": "NSW",
+              "latest": "None in the last 6 months",
+              "months": "0 of the last 6 months",
+              "label": "long-wait",
+              "flag": "Answer the state questions to confirm it.",
+              "rules": "2 rules need your answers."
+            },
+            {
+              "state": "QLD",
+              "latest": "Jun 2026: under 20 (may be zero)",
+              "months": "2 of the last 6 months",
+              "label": "not-open",
+              "flag": null,
+              "rules": "On the Queensland 2026–27 list for 190 only for those living in Australia."
+            },
+            {
+              "state": "SA",
+              "latest": "Jun 2026: under 20 (may be zero)",
+              "months": "2 of the last 6 months",
+              "label": "not-open",
+              "flag": null,
+              "rules": "On the South Australia 2026–27 list for 190 only for those living in Australia."
+            }
+          ]
+        },
+        {
+          "visa": "491",
+          "title": "491 by state, at your 100 points",
+          "sub": "Software Engineer invitations issued each month, at or below your 100 points, over the last 6 months: the latest month with any, and how many months had some.",
+          "rows": [
+            {
+              "state": "NT",
+              "latest": "Oct 2026: under 20 (may be zero)",
+              "months": "5 of the last 6 months",
+              "label": "competitive",
+              "flag": "We're still checking the Northern Territory's rules.",
+              "rules": "Rules being checked."
+            },
+            {
+              "state": "TAS",
+              "latest": "Oct 2026: under 20 (may be zero)",
+              "months": "4 of the last 6 months",
+              "label": "competitive",
+              "flag": "We're still checking Tasmania's rules.",
+              "rules": "Rules being checked."
+            },
+            {
+              "state": "ACT",
+              "latest": "Sep 2026: under 20 (may be zero)",
+              "months": "2 of the last 6 months",
+              "label": "long-wait",
+              "flag": "We're still checking the Australian Capital Territory's rules.",
+              "rules": "Rules being checked."
+            },
+            {
+              "state": "VIC",
+              "latest": "Jun 2026: under 20 (may be zero)",
+              "months": "2 of the last 6 months",
+              "label": "long-wait",
+              "flag": "We're still checking Victoria's rules.",
+              "rules": "Rules being checked."
+            },
+            {
+              "state": "WA",
+              "latest": "Jun 2026: under 20 (may be zero)",
+              "months": "2 of the last 6 months",
+              "label": "long-wait",
+              "flag": "Answer the state questions to confirm it.",
+              "rules": "1 rule needs your answers."
+            },
+            {
+              "state": "SA",
+              "latest": "Jun 2026: under 20 (may be zero)",
+              "months": "2 of the last 6 months",
+              "label": "not-open",
+              "flag": null,
+              "rules": "On the South Australia 2026–27 list for 491 only for those living in Australia."
+            },
+            {
+              "state": "QLD",
+              "latest": "Sep 2026: under 20 (may be zero)",
+              "months": "1 of the last 6 months",
+              "label": "not-open",
+              "flag": null,
+              "rules": "On the Queensland 2026–27 list for 491 only for those living in Australia."
+            },
+            {
+              "state": "NSW",
+              "latest": "None in the last 6 months",
+              "months": "0 of the last 6 months",
+              "label": "not-open",
+              "flag": null,
+              "rules": "Closed for 491 in 2026–27."
+            }
+          ]
+        }
+      ],
+      "statesEmpty": "No state invitations are published for Software Engineer."
+    },
+    "methodLines": [
+      "Very strong: your points are above every 189 cut-off in your occupation's last 3 listed rounds, and fewer than 20 EOIs score higher.",
+      "Strong: your points meet every cut-off in those 3 rounds.",
+      "Competitive: your points meet the lowest of those 3 cut-offs, but not all of them.",
+      "Long wait: your occupation is still listed, but your points are below all 3 cut-offs.",
+      "Not currently invited: your occupation wasn't listed in any of the last 4 rounds.",
+      "Not eligible yet: under 65 points, or a basic requirement isn't met.",
+      "190 and 491: each state is labelled from its invitations at or below your points (with nomination) over the last 3 to 6 months, and its rules. The visa takes its best state.",
+      "The stamp shows your best visa. If none is Competitive or better, it covers all three.",
+      "Estimated wait: an estimate from published history, never a percentage. For a submitted 189 EOI it divides the EOIs roughly ahead of you by the latest month's invitations at your score; for a state it counts the recent months with invitations at or below your points.",
+      "Future points assume today's points test; the announced reforms could change them."
+    ],
+    "footer": "This is our best reading of the data, not a guarantee. It comes from published SkillSelect figures up to October 2026. Home Affairs and the states can change round sizes, cut-offs and rules at any time, so your real result may be different. MigrateLens isn't a registered migration agent; for advice on your own case, talk to one.",
+    "dataMonth": "October 2026"
+  },
+  "stateOutlook": {
+    "subtitle": "How each state's 2026–27 nomination rules read against your answers, beside the invitations each state published at or below your points (SkillSelect, as at Oct 2026). The groups describe published evidence, not your chances.",
+    "summaryByVisa": {
+      "190": "No state shows strong published evidence for your profile yet.",
+      "491": "No state shows strong published evidence for your profile yet."
+    },
+    "tilesByVisa": {
+      "190": [
+        {
+          "state": "NSW",
+          "group": "needs-answers",
+          "label": "New South Wales",
+          "fragment": "under 20 invited, so may be zero",
+          "lead": {
+            "headline": "Under 20 invited",
+            "detail": "at 90 points or below, so may be zero"
+          },
+          "href": "#state-190-NSW"
+        },
+        {
+          "state": "ACT",
+          "group": "unverified",
+          "label": "Australian Capital Territory",
+          "fragment": "under 20 invited, so may be zero",
+          "lead": {
+            "headline": "Under 20 invited",
+            "detail": "at 90 points or below, so may be zero"
+          },
+          "href": "#state-190-ACT"
+        },
+        {
+          "state": "NT",
+          "group": "unverified",
+          "label": "Northern Territory",
+          "fragment": "under 20 invited, so may be zero",
+          "lead": {
+            "headline": "Under 20 invited",
+            "detail": "at 90 points or below, so may be zero"
+          },
+          "href": "#state-190-NT"
+        },
+        {
+          "state": "TAS",
+          "group": "unverified",
+          "label": "Tasmania",
+          "fragment": "under 20 invited, so may be zero",
+          "lead": {
+            "headline": "Under 20 invited",
+            "detail": "at 90 points or below, so may be zero"
+          },
+          "href": "#state-190-TAS"
+        },
+        {
+          "state": "VIC",
+          "group": "unverified",
+          "label": "Victoria",
+          "fragment": "no invitations recorded at your score in 12 months",
+          "lead": {
+            "headline": "No invitations recorded",
+            "detail": "at your score in 12 months"
+          },
+          "href": "#state-190-VIC"
+        },
+        {
+          "state": "WA",
+          "group": "unverified",
+          "label": "Western Australia",
+          "fragment": "under 20 invited, so may be zero",
+          "lead": {
+            "headline": "Under 20 invited",
+            "detail": "at 90 points or below, so may be zero"
+          },
+          "href": "#state-190-WA"
+        },
+        {
+          "state": "QLD",
+          "group": "not-open",
+          "label": "Queensland",
+          "fragment": "On the Queensland 2026–27 list for 190 only for those living in Australia",
+          "lead": null,
+          "href": "#state-190-QLD"
+        },
+        {
+          "state": "SA",
+          "group": "not-open",
+          "label": "South Australia",
+          "fragment": "On the South Australia 2026–27 list for 190 only for those living in Australia",
+          "lead": null,
+          "href": "#state-190-SA"
+        }
+      ],
+      "491": [
+        {
+          "state": "WA",
+          "group": "needs-answers",
+          "label": "Western Australia",
+          "fragment": "under 20 invited, so may be zero",
+          "lead": {
+            "headline": "Under 20 invited",
+            "detail": "at 100 points or below, so may be zero"
+          },
+          "href": "#state-491-WA"
+        },
+        {
+          "state": "ACT",
+          "group": "unverified",
+          "label": "Australian Capital Territory",
+          "fragment": "under 20 invited, so may be zero",
+          "lead": {
+            "headline": "Under 20 invited",
+            "detail": "at 100 points or below, so may be zero"
+          },
+          "href": "#state-491-ACT"
+        },
+        {
+          "state": "NT",
+          "group": "unverified",
+          "label": "Northern Territory",
+          "fragment": "under 20 invited, so may be zero",
+          "lead": {
+            "headline": "Under 20 invited",
+            "detail": "at 100 points or below, so may be zero"
+          },
+          "href": "#state-491-NT"
+        },
+        {
+          "state": "TAS",
+          "group": "unverified",
+          "label": "Tasmania",
+          "fragment": "under 20 invited, so may be zero",
+          "lead": {
+            "headline": "Under 20 invited",
+            "detail": "at 100 points or below, so may be zero"
+          },
+          "href": "#state-491-TAS"
+        },
+        {
+          "state": "VIC",
+          "group": "unverified",
+          "label": "Victoria",
+          "fragment": "under 20 invited, so may be zero",
+          "lead": {
+            "headline": "Under 20 invited",
+            "detail": "at 100 points or below, so may be zero"
+          },
+          "href": "#state-491-VIC"
+        },
+        {
+          "state": "NSW",
+          "group": "not-open",
+          "label": "New South Wales",
+          "fragment": "Closed for 491 in 2026–27",
+          "lead": null,
+          "href": "#state-491-NSW"
+        },
+        {
+          "state": "QLD",
+          "group": "not-open",
+          "label": "Queensland",
+          "fragment": "On the Queensland 2026–27 list for 491 only for those living in Australia",
+          "lead": null,
+          "href": "#state-491-QLD"
+        },
+        {
+          "state": "SA",
+          "group": "not-open",
+          "label": "South Australia",
+          "fragment": "On the South Australia 2026–27 list for 491 only for those living in Australia",
+          "lead": null,
+          "href": "#state-491-SA"
+        }
+      ]
+    },
+    "panelsByVisa": {
+      "190": [
+        {
+          "id": "state-190-NSW",
+          "heading": "New South Wales · 190",
+          "groupLabel": "Needs your answers",
+          "streamName": "Living offshore",
+          "canApply": [
+            {
+              "key": "nsw-190-offshore:0",
+              "text": "Add your skills assessment issue date",
+              "mark": "?",
+              "checkedNote": "From your points check"
+            },
+            {
+              "key": "nsw-190-offshore:1",
+              "text": "At least 65 points for 190 with nomination",
+              "mark": "✓",
+              "checkedNote": "From your points check"
+            },
+            {
+              "key": "nsw-190-offshore:2",
+              "text": "On the federal occupation list for 190",
+              "mark": "✓",
+              "source": "https://immi.homeaffairs.gov.au/visas/working-in-australia/skill-occupation-list",
+              "checkedNote": "checked 23 Nov 2026"
+            },
+            {
+              "key": "nsw-190-offshore:3",
+              "text": "Open in 2026–27",
+              "mark": "✓",
+              "source": "https://www.nsw.gov.au/visas-and-migration/skilled-visas/skilled-nominated-visa-subclass-190",
+              "checkedNote": "checked 17 Nov 2026"
+            },
+            {
+              "key": "nsw-190-offshore:4",
+              "text": "Open to those living offshore",
+              "mark": "✓",
+              "source": "https://www.nsw.gov.au/visas-and-migration/skilled-visas/skilled-nominated-visa-subclass-190",
+              "checkedNote": "checked 17 Nov 2026"
+            },
+            {
+              "key": "nsw-190-offshore:5",
+              "text": "On the New South Wales 2026–27 list for 190",
+              "mark": "✓",
+              "source": "https://www.nsw.gov.au/visas-and-migration/skilled-visas/nsw-skills-lists",
+              "checkedNote": "checked 17 Nov 2026"
+            },
+            {
+              "key": "nsw-190-offshore:6",
+              "text": "How many continuous months, up to now, have you lived outside Australia?",
+              "mark": "?",
+              "source": "https://www.nsw.gov.au/visas-and-migration/skilled-visas/skilled-nominated-visa-subclass-190",
+              "checkedNote": "checked 17 Nov 2026"
+            }
+          ],
+          "data": [
+            "1,719–1,757 EOIs for the 190 visa name New South Wales and have 90 points or more (as at Oct 2026)",
+            "No invitations recorded at 90 points or below (as at Oct 2026)",
+            "No invitations recorded at 90 points or below (as at Sep 2026)",
+            "No invitations recorded at 90 points or below (as at Aug 2026)"
+          ],
+          "pointsThere": [
+            "90 federal points with nomination"
+          ],
+          "resultsLink": null,
+          "footer": "Not advice to apply. Rules change; check the official page."
+        },
+        {
+          "id": "state-190-ACT",
+          "heading": "Australian Capital Territory · 190",
+          "groupLabel": "Rules being checked",
+          "streamName": "Canberra residents",
+          "canApply": [
+            {
+              "key": "act-190-canberra-resident:0",
+              "text": "Add your skills assessment issue date",
+              "mark": "?",
+              "checkedNote": "From your points check"
+            },
+            {
+              "key": "act-190-canberra-resident:1",
+              "text": "At least 65 points for 190 with nomination",
+              "mark": "✓",
+              "checkedNote": "From your points check"
+            },
+            {
+              "key": "act-190-canberra-resident:2",
+              "text": "On the federal occupation list for 190",
+              "mark": "✓",
+              "source": "https://immi.homeaffairs.gov.au/visas/working-in-australia/skill-occupation-list",
+              "checkedNote": "checked 23 Nov 2026"
+            },
+            {
+              "key": "act-190-canberra-resident:3",
+              "text": "Open in 2026–27",
+              "mark": "?",
+              "source": "https://www.act.gov.au/migration/resources/canberra-matrix-invitation-round",
+              "checkedNote": "Not yet verified on the official page"
+            },
+            {
+              "key": "act-190-canberra-resident:4",
+              "text": "Open to those living in Australian Capital Territory",
+              "mark": "?",
+              "source": "https://www.act.gov.au/migration/skilled-migrants/190-nomination-criteria/canberra-resident-applicant-eligibility",
+              "checkedNote": "Not yet verified on the official page"
+            },
+            {
+              "key": "act-190-canberra-resident:5",
+              "text": "On the Australian Capital Territory occupation list",
+              "mark": "?",
+              "source": "https://www.act.gov.au/migration/skilled-migrants/act-nominated-migration-program-occupation-list",
+              "checkedNote": "Not yet verified on the official page"
+            },
+            {
+              "key": "act-190-canberra-resident:6",
+              "text": "At least 6 months living in Australian Capital Territory",
+              "mark": "?",
+              "source": "https://www.act.gov.au/__data/assets/pdf_file/0008/2992049/ACT-Nomination-Guidelines-Canberra-Resident-February-2026.pdf",
+              "checkedNote": "Not yet verified on the official page"
+            }
+          ],
+          "data": [
+            "388–445 EOIs for the 190 visa name Australian Capital Territory and have 90 points or more (as at Oct 2026)",
+            "No invitations recorded at 90 points or below (as at Oct 2026)",
+            "No invitations recorded at 90 points or below (as at Sep 2026)",
+            "No invitations recorded at 90 points or below (as at Aug 2026)"
+          ],
+          "pointsThere": [
+            "90 federal points with nomination",
+            "Australian Capital Territory ranks with its own Canberra Matrix, which is not calculated here."
+          ],
+          "resultsLink": {
+            "href": "https://www.act.gov.au/migration/resources/canberra-matrix-invitation-round",
+            "text": "Australian Capital Territory published results (past results, not a prediction)"
+          },
+          "footer": "Not advice to apply. Rules change; check the official page."
+        },
+        {
+          "id": "state-190-NT",
+          "heading": "Northern Territory · 190",
+          "groupLabel": "Rules being checked",
+          "streamName": "NT resident",
+          "canApply": [
+            {
+              "key": "nt-190-resident:closure",
+              "text": "Reported closed for 190 in 2026–27, not yet verified on the official page",
+              "mark": "?",
+              "source": "https://theterritory.com.au/migrate/migrate-to-work/northern-territory-government-visa-nomination",
+              "checkedNote": "Not yet verified on the official page"
+            },
+            {
+              "key": "nt-190-resident:0",
+              "text": "Add your skills assessment issue date",
+              "mark": "?",
+              "checkedNote": "From your points check"
+            },
+            {
+              "key": "nt-190-resident:1",
+              "text": "At least 65 points for 190 with nomination",
+              "mark": "✓",
+              "checkedNote": "From your points check"
+            },
+            {
+              "key": "nt-190-resident:2",
+              "text": "On the federal occupation list for 190",
+              "mark": "✓",
+              "source": "https://immi.homeaffairs.gov.au/visas/working-in-australia/skill-occupation-list",
+              "checkedNote": "checked 23 Nov 2026"
+            },
+            {
+              "key": "nt-190-resident:4",
+              "text": "Open to those living in Northern Territory",
+              "mark": "?",
+              "source": "https://theterritory.com.au/migrate/migrate-to-work/northern-territory-government-visa-nomination/eligibility",
+              "checkedNote": "Not yet verified on the official page"
+            },
+            {
+              "key": "nt-190-resident:5",
+              "text": "No 2026–27 occupation list published",
+              "mark": "?",
+              "source": "https://theterritory.com.au/migrate/migrate-to-work/northern-territory-government-visa-nomination",
+              "checkedNote": "Not yet verified on the official page"
+            },
+            {
+              "key": "nt-190-resident:6",
+              "text": "At least 24 months living in Northern Territory",
+              "mark": "?",
+              "source": "https://theterritory.com.au/migrate/migrate-to-work/northern-territory-government-visa-nomination/eligibility",
+              "checkedNote": "Not yet verified on the official page"
+            },
+            {
+              "key": "nt-190-resident:7",
+              "text": "At least 24 months working in Northern Territory in your nominated occupation",
+              "mark": "?",
+              "source": "https://theterritory.com.au/migrate/migrate-to-work/northern-territory-government-visa-nomination/eligibility",
+              "checkedNote": "Not yet verified on the official page"
+            }
+          ],
+          "data": [
+            "155–212 EOIs for the 190 visa name Northern Territory and have 90 points or more (as at Oct 2026)",
+            "Under 20 invited at 90 points or below, so may be zero (as at Oct 2026)",
+            "No invitations recorded at 90 points or below (as at Sep 2026)",
+            "No invitations recorded at 90 points or below (as at Aug 2026)"
+          ],
+          "pointsThere": [
+            "90 federal points with nomination"
+          ],
+          "resultsLink": null,
+          "footer": "Not advice to apply. Rules change; check the official page."
+        },
+        {
+          "id": "state-190-TAS",
+          "heading": "Tasmania · 190",
+          "groupLabel": "Rules being checked",
+          "streamName": "Tasmanian Skilled Employment (TSE): priority role",
+          "canApply": [
+            {
+              "key": "tas-190-tse-priority:0",
+              "text": "Add your skills assessment issue date",
+              "mark": "?",
+              "checkedNote": "From your points check"
+            },
+            {
+              "key": "tas-190-tse-priority:1",
+              "text": "At least 65 points for 190 with nomination",
+              "mark": "✓",
+              "checkedNote": "From your points check"
+            },
+            {
+              "key": "tas-190-tse-priority:2",
+              "text": "On the federal occupation list for 190",
+              "mark": "✓",
+              "source": "https://immi.homeaffairs.gov.au/visas/working-in-australia/skill-occupation-list",
+              "checkedNote": "checked 23 Nov 2026"
+            },
+            {
+              "key": "tas-190-tse-priority:3",
+              "text": "Open in 2026–27",
+              "mark": "?",
+              "source": "https://www.migration.tas.gov.au/news/2024-25_program_open_to_rois",
+              "checkedNote": "Not yet verified on the official page"
+            },
+            {
+              "key": "tas-190-tse-priority:4",
+              "text": "Open to those living in Tasmania",
+              "mark": "?",
+              "source": "https://www.migration.tas.gov.au/skilled_migration/skilled-workers-and-graduates-living-in-Tasmania/tasmanian-skilled-employment-pathways-tse/accordion/190-tse-minimum-requirements",
+              "checkedNote": "Not yet verified on the official page"
+            },
+            {
+              "key": "tas-190-tse-priority:5",
+              "text": "No 2026–27 occupation list published",
+              "mark": "?",
+              "source": "https://www.migration.tas.gov.au/skilled_migration/skilled-workers-and-graduates-living-in-Tasmania/additional_information,_exclusions_and_definitions/accordion/occupational_caveats_for_tasmanian_skilled_employment_pathway",
+              "checkedNote": "Not yet verified on the official page"
+            },
+            {
+              "key": "tas-190-tse-priority:6",
+              "text": "At least 9 months working in Tasmania in your nominated occupation or one Tasmania treats as related (same first 3 ANZSCO digits)",
+              "mark": "?",
+              "source": "https://www.migration.tas.gov.au/skilled_migration/skilled-workers-and-graduates-living-in-Tasmania/tasmanian-skilled-employment-pathways-tse/accordion/190-tse-minimum-requirements",
+              "checkedNote": "Not yet verified on the official page"
+            }
+          ],
+          "data": [
+            "173–230 EOIs for the 190 visa name Tasmania and have 90 points or more (as at Oct 2026)",
+            "Under 20 invited at 90 points or below, so may be zero (as at Oct 2026)",
+            "No invitations recorded at 90 points or below (as at Sep 2026)",
+            "No invitations recorded at 90 points or below (as at Aug 2026)"
+          ],
+          "pointsThere": [
+            "90 federal points with nomination",
+            "Tasmania ranks with its own Tasmanian priority attributes, which is not calculated here."
+          ],
+          "resultsLink": {
+            "href": "https://www.migration.tas.gov.au/news/processing_times_and_allocation_usage",
+            "text": "Tasmania published results (past results, not a prediction)"
+          },
+          "footer": "Not advice to apply. Rules change; check the official page."
+        },
+        {
+          "id": "state-190-VIC",
+          "heading": "Victoria · 190",
+          "groupLabel": "Rules being checked",
+          "streamName": "Skilled Nominated (190) Registration of Interest",
+          "canApply": [
+            {
+              "key": "vic-190-roi:0",
+              "text": "Add your skills assessment issue date",
+              "mark": "?",
+              "checkedNote": "From your points check"
+            },
+            {
+              "key": "vic-190-roi:1",
+              "text": "At least 65 points for 190 with nomination",
+              "mark": "✓",
+              "checkedNote": "From your points check"
+            },
+            {
+              "key": "vic-190-roi:2",
+              "text": "On the federal occupation list for 190",
+              "mark": "✓",
+              "source": "https://immi.homeaffairs.gov.au/visas/working-in-australia/skill-occupation-list",
+              "checkedNote": "checked 23 Nov 2026"
+            },
+            {
+              "key": "vic-190-roi:3",
+              "text": "Open in 2026–27",
+              "mark": "?",
+              "source": "https://liveinmelbourne.vic.gov.au/migrate/skilled-migration-visas/2026-27-skilled-visa-nomination-program",
+              "checkedNote": "Not yet verified on the official page"
+            },
+            {
+              "key": "vic-190-roi:4",
+              "text": "Open to those living in Victoria, in another state or offshore",
+              "mark": "?",
+              "source": "https://liveinmelbourne.vic.gov.au/migrate/skilled-migration-visas/2026-27-skilled-visa-nomination-program",
+              "checkedNote": "Not yet verified on the official page"
+            },
+            {
+              "key": "vic-190-roi:5",
+              "text": "Any occupation on the federal list for 190",
+              "mark": "?",
+              "source": "https://liveinmelbourne.vic.gov.au/migrate/skilled-migration-visas/2026-27-skilled-visa-nomination-program",
+              "checkedNote": "Not yet verified on the official page"
+            },
+            {
+              "key": "vic-190-roi:restriction:0",
+              "text": "Restriction, not checked here: 65+ points including nomination points and a valid skills assessment. Earnings claimed in the ROI must come from skilled employment (ANZSCO skill levels 1–3) in Victoria. No minimum work experience or hours",
+              "mark": "?",
+              "source": "https://liveinmelbourne.vic.gov.au/migrate/skilled-migration-visas/2026-27-skilled-visa-nomination-program",
+              "checkedNote": "Not yet verified on the official page"
+            }
+          ],
+          "data": [
+            "1,098–1,136 EOIs for the 190 visa name Victoria and have 90 points or more (as at Oct 2026)",
+            "No invitations recorded at 90 points or below (as at Oct 2026)",
+            "No invitations recorded at 90 points or below (as at Sep 2026)",
+            "No invitations recorded at 90 points or below (as at Aug 2026)"
+          ],
+          "pointsThere": [
+            "90 federal points with nomination",
+            "Victoria ranks with its own Victorian Points Test (VPT), which is not calculated here."
+          ],
+          "resultsLink": null,
+          "footer": "Not advice to apply. Rules change; check the official page."
+        },
+        {
+          "id": "state-190-WA",
+          "heading": "Western Australia · 190",
+          "groupLabel": "Rules being checked",
+          "streamName": "General stream (Schedule 2)",
+          "canApply": [
+            {
+              "key": "wa-general-schedule-2:0",
+              "text": "Add your skills assessment issue date",
+              "mark": "?",
+              "checkedNote": "From your points check"
+            },
+            {
+              "key": "wa-general-schedule-2:1",
+              "text": "At least 65 points for 190 with nomination",
+              "mark": "✓",
+              "checkedNote": "From your points check"
+            },
+            {
+              "key": "wa-general-schedule-2:2",
+              "text": "On the federal occupation list for 190",
+              "mark": "✓",
+              "source": "https://immi.homeaffairs.gov.au/visas/working-in-australia/skill-occupation-list",
+              "checkedNote": "checked 23 Nov 2026"
+            },
+            {
+              "key": "wa-general-schedule-2:3",
+              "text": "Open in 2026–27",
+              "mark": "✓",
+              "source": "https://migration.wa.gov.au/our-services-support/state-nominated-migration-program#invitation-rounds",
+              "checkedNote": "checked 17 Nov 2026"
+            },
+            {
+              "key": "wa-general-schedule-2:4",
+              "text": "Open to those living in Western Australia, in another state or offshore",
+              "mark": "✓",
+              "source": "https://migration.wa.gov.au/sites/default/files/2026-11/SNMP%20Criteria%2026-27.pdf",
+              "checkedNote": "checked 17 Nov 2026"
+            },
+            {
+              "key": "wa-general-schedule-2:5",
+              "text": "On the Western Australia 2026–27 list for 190 under General stream (Schedule 2)",
+              "mark": "✓",
+              "source": "https://migration.wa.gov.au/v2_occupation_search/occupation-search?combine=&_format=csv",
+              "checkedNote": "checked 17 Nov 2026"
+            },
+            {
+              "key": "wa-general-schedule-2:6",
+              "text": "A job offer in Western Australia",
+              "mark": "?",
+              "source": "https://migration.wa.gov.au/our-services-support/state-nominated-migration-program#eligibility",
+              "checkedNote": "Not yet verified on the official page"
+            }
+          ],
+          "data": [
+            "668–687 EOIs for the 190 visa name Western Australia and have 90 points or more (as at Oct 2026)",
+            "No invitations recorded at 90 points or below (as at Oct 2026)",
+            "No invitations recorded at 90 points or below (as at Sep 2026)",
+            "No invitations recorded at 90 points or below (as at Aug 2026)"
+          ],
+          "pointsThere": [
+            "90 federal points with nomination"
+          ],
+          "resultsLink": {
+            "href": "https://migration.wa.gov.au/our-services-support/state-nominated-migration-program#invitation-rounds",
+            "text": "Western Australia published results (past results, not a prediction)"
+          },
+          "footer": "Not advice to apply. Rules change; check the official page."
+        },
+        {
+          "id": "state-190-QLD",
+          "heading": "Queensland · 190",
+          "groupLabel": "Not open to you now",
+          "streamName": null,
+          "canApply": [
+            {
+              "key": "qld-onshore:first-fail",
+              "text": "Skilled workers living in Queensland",
+              "mark": "✗",
+              "finding": "Not open to those living offshore",
+              "source": "https://www.migration.qld.gov.au/visa-options/skilled-visas/skilled-workers-living-in-queensland",
+              "checkedNote": "checked 17 Nov 2026"
+            },
+            {
+              "key": "qld-offshore:first-fail",
+              "text": "Skilled workers living offshore",
+              "mark": "✗",
+              "finding": "On the Queensland 2026–27 list for 190 only for those living in Australia",
+              "source": "https://www.migration.qld.gov.au/occupation-lists/offshore-queensland-skilled-occupation-lists-(qsol)",
+              "checkedNote": "checked 17 Nov 2026"
+            },
+            {
+              "key": "qld-graduate:first-fail",
+              "text": "Graduates of a Queensland university",
+              "mark": "✗",
+              "finding": "Not open to those living offshore",
+              "source": "https://www.migration.qld.gov.au/visa-options/skilled-visas/graduates-of-a-queensland-university",
+              "checkedNote": "checked 17 Nov 2026"
+            },
+            {
+              "key": "qld-building:first-fail",
+              "text": "Building and construction workers",
+              "mark": "✗",
+              "finding": "Not open to those living offshore",
+              "source": "https://www.migration.qld.gov.au/visa-options/skilled-visas/building-and-construction-workers",
+              "checkedNote": "checked 17 Nov 2026"
+            },
+            {
+              "key": "qld-small-business:first-fail",
+              "text": "Small business owners in regional Queensland",
+              "mark": "✗",
+              "finding": "Not open to those living offshore",
+              "source": "https://www.migration.qld.gov.au/visa-options/skilled-visas",
+              "checkedNote": "checked 17 Nov 2026"
+            }
+          ],
+          "data": [
+            "404–442 EOIs for the 190 visa name Queensland and have 90 points or more (as at Oct 2026)",
+            "No invitations recorded at 90 points or below (as at Oct 2026)",
+            "No invitations recorded at 90 points or below (as at Sep 2026)",
+            "No invitations recorded at 90 points or below (as at Aug 2026)"
+          ],
+          "pointsThere": [
+            "90 federal points with nomination"
+          ],
+          "resultsLink": null,
+          "footer": "Not advice to apply. Rules change; check the official page."
+        },
+        {
+          "id": "state-190-SA",
+          "heading": "South Australia · 190",
+          "groupLabel": "Not open to you now",
+          "streamName": null,
+          "canApply": [
+            {
+              "key": "sa-graduates:first-fail",
+              "text": "South Australian Graduates",
+              "mark": "✗",
+              "finding": "Not open to those living offshore",
+              "source": "https://migration.sa.gov.au/before-applying/visa-options-and-pathways/skilled-migrants/skilled-employment-in-south-australia",
+              "checkedNote": "checked 17 Nov 2026"
+            },
+            {
+              "key": "sa-skilled-employment:first-fail",
+              "text": "Skilled Employment in South Australia",
+              "mark": "✗",
+              "finding": "Not open to those living offshore",
+              "source": "https://migration.sa.gov.au/before-applying/visa-options-and-pathways/skilled-migrants/skilled-employment-in-south-australia",
+              "checkedNote": "checked 17 Nov 2026"
+            },
+            {
+              "key": "sa-outer-regional:first-fail",
+              "text": "Outer Regional Skilled Employment",
+              "mark": "✗",
+              "finding": "Not open to those living offshore",
+              "source": "https://migration.sa.gov.au/before-applying/visa-options-and-pathways/skilled-migrants/skilled-employment-in-south-australia",
+              "checkedNote": "checked 17 Nov 2026"
+            },
+            {
+              "key": "sa-offshore:first-fail",
+              "text": "Offshore",
+              "mark": "✗",
+              "finding": "On the South Australia 2026–27 list for 190 only for those living in Australia",
+              "source": "https://migration.sa.gov.au/before-applying/work-in-sa/occupation-lists/occupations-list",
+              "checkedNote": "checked 17 Nov 2026"
+            }
+          ],
+          "data": [
+            "620–658 EOIs for the 190 visa name South Australia and have 90 points or more (as at Oct 2026)",
+            "No invitations recorded at 90 points or below (as at Oct 2026)",
+            "No invitations recorded at 90 points or below (as at Sep 2026)",
+            "No invitations recorded at 90 points or below (as at Aug 2026)"
+          ],
+          "pointsThere": [
+            "90 federal points with nomination"
+          ],
+          "resultsLink": {
+            "href": "https://migration.sa.gov.au/news",
+            "text": "South Australia published results (past results, not a prediction)"
+          },
+          "footer": "Not advice to apply. Rules change; check the official page."
+        }
+      ],
+      "491": [
+        {
+          "id": "state-491-WA",
+          "heading": "Western Australia · 491",
+          "groupLabel": "Needs your answers",
+          "streamName": "General stream (Schedule 2)",
+          "canApply": [
+            {
+              "key": "wa-general-schedule-2:0",
+              "text": "Add your skills assessment issue date",
+              "mark": "?",
+              "checkedNote": "From your points check"
+            },
+            {
+              "key": "wa-general-schedule-2:1",
+              "text": "At least 65 points for 491 with nomination",
+              "mark": "✓",
+              "checkedNote": "From your points check"
+            },
+            {
+              "key": "wa-general-schedule-2:2",
+              "text": "On the federal occupation list for 491",
+              "mark": "✓",
+              "source": "https://immi.homeaffairs.gov.au/visas/working-in-australia/skill-occupation-list",
+              "checkedNote": "checked 23 Nov 2026"
+            },
+            {
+              "key": "wa-general-schedule-2:3",
+              "text": "Open in 2026–27",
+              "mark": "✓",
+              "source": "https://migration.wa.gov.au/our-services-support/state-nominated-migration-program#invitation-rounds",
+              "checkedNote": "checked 17 Nov 2026"
+            },
+            {
+              "key": "wa-general-schedule-2:4",
+              "text": "Open to those living in Western Australia, in another state or offshore",
+              "mark": "✓",
+              "source": "https://migration.wa.gov.au/sites/default/files/2026-11/SNMP%20Criteria%2026-27.pdf",
+              "checkedNote": "checked 17 Nov 2026"
+            },
+            {
+              "key": "wa-general-schedule-2:5",
+              "text": "On the Western Australia 2026–27 list for 491 under General stream (Schedule 2)",
+              "mark": "✓",
+              "source": "https://migration.wa.gov.au/v2_occupation_search/occupation-search?combine=&_format=csv",
+              "checkedNote": "checked 17 Nov 2026"
+            }
+          ],
+          "data": [
+            "845–883 EOIs for the 491 visa name Western Australia and have 100 points or more (as at Oct 2026)",
+            "No invitations recorded at 100 points or below (as at Oct 2026)",
+            "No invitations recorded at 100 points or below (as at Sep 2026)",
+            "No invitations recorded at 100 points or below (as at Aug 2026)"
+          ],
+          "pointsThere": [
+            "100 federal points with nomination"
+          ],
+          "resultsLink": {
+            "href": "https://migration.wa.gov.au/our-services-support/state-nominated-migration-program#invitation-rounds",
+            "text": "Western Australia published results (past results, not a prediction)"
+          },
+          "footer": "Not advice to apply. Rules change; check the official page."
+        },
+        {
+          "id": "state-491-ACT",
+          "heading": "Australian Capital Territory · 491",
+          "groupLabel": "Rules being checked",
+          "streamName": "Canberra residents",
+          "canApply": [
+            {
+              "key": "act-491-canberra-resident:0",
+              "text": "Add your skills assessment issue date",
+              "mark": "?",
+              "checkedNote": "From your points check"
+            },
+            {
+              "key": "act-491-canberra-resident:1",
+              "text": "At least 65 points for 491 with nomination",
+              "mark": "✓",
+              "checkedNote": "From your points check"
+            },
+            {
+              "key": "act-491-canberra-resident:2",
+              "text": "On the federal occupation list for 491",
+              "mark": "✓",
+              "source": "https://immi.homeaffairs.gov.au/visas/working-in-australia/skill-occupation-list",
+              "checkedNote": "checked 23 Nov 2026"
+            },
+            {
+              "key": "act-491-canberra-resident:3",
+              "text": "Open in 2026–27",
+              "mark": "?",
+              "source": "https://www.act.gov.au/migration/resources/canberra-matrix-invitation-round",
+              "checkedNote": "Not yet verified on the official page"
+            },
+            {
+              "key": "act-491-canberra-resident:4",
+              "text": "Open to those living in Australian Capital Territory",
+              "mark": "?",
+              "source": "https://www.act.gov.au/migration/skilled-migrants/491-nomination-criteria/491-nomination-canberra-resident-applicant-eligibility",
+              "checkedNote": "Not yet verified on the official page"
+            },
+            {
+              "key": "act-491-canberra-resident:5",
+              "text": "On the Australian Capital Territory occupation list",
+              "mark": "?",
+              "source": "https://www.act.gov.au/migration/skilled-migrants/act-nominated-migration-program-occupation-list",
+              "checkedNote": "Not yet verified on the official page"
+            },
+            {
+              "key": "act-491-canberra-resident:6",
+              "text": "At least 3 months living in Australian Capital Territory",
+              "mark": "?",
+              "source": "https://www.act.gov.au/migration/skilled-migrants/491-nomination-criteria/491-nomination-canberra-resident-applicant-eligibility",
+              "checkedNote": "Not yet verified on the official page"
+            }
+          ],
+          "data": [
+            "286–343 EOIs for the 491 visa name Australian Capital Territory and have 100 points or more (as at Oct 2026)",
+            "No invitations recorded at 100 points or below (as at Oct 2026)",
+            "Under 20 invited at 100 points or below, so may be zero (as at Sep 2026)",
+            "No invitations recorded at 100 points or below (as at Aug 2026)"
+          ],
+          "pointsThere": [
+            "100 federal points with nomination",
+            "Australian Capital Territory ranks with its own Canberra Matrix, which is not calculated here."
+          ],
+          "resultsLink": {
+            "href": "https://www.act.gov.au/migration/resources/canberra-matrix-invitation-round",
+            "text": "Australian Capital Territory published results (past results, not a prediction)"
+          },
+          "footer": "Not advice to apply. Rules change; check the official page."
+        },
+        {
+          "id": "state-491-NT",
+          "heading": "Northern Territory · 491",
+          "groupLabel": "Rules being checked",
+          "streamName": "NT resident (by exception)",
+          "canApply": [
+            {
+              "key": "nt-491-resident:0",
+              "text": "Add your skills assessment issue date",
+              "mark": "?",
+              "checkedNote": "From your points check"
+            },
+            {
+              "key": "nt-491-resident:1",
+              "text": "At least 65 points for 491 with nomination",
+              "mark": "✓",
+              "checkedNote": "From your points check"
+            },
+            {
+              "key": "nt-491-resident:2",
+              "text": "On the federal occupation list for 491",
+              "mark": "✓",
+              "source": "https://immi.homeaffairs.gov.au/visas/working-in-australia/skill-occupation-list",
+              "checkedNote": "checked 23 Nov 2026"
+            },
+            {
+              "key": "nt-491-resident:3",
+              "text": "Open in 2026–27, with restrictions",
+              "mark": "?",
+              "source": "https://theterritory.com.au/migrate/migrate-to-work/northern-territory-government-visa-nomination",
+              "checkedNote": "Not yet verified on the official page"
+            },
+            {
+              "key": "nt-491-resident:4",
+              "text": "Open to those living in Northern Territory",
+              "mark": "?",
+              "source": "https://theterritory.com.au/migrate/migrate-to-work/additional-requirements-for-onshore-applicants",
+              "checkedNote": "Not yet verified on the official page"
+            },
+            {
+              "key": "nt-491-resident:5",
+              "text": "No 2026–27 occupation list published",
+              "mark": "?",
+              "source": "https://theterritory.com.au/migrate/migrate-to-work/northern-territory-government-visa-nomination",
+              "checkedNote": "Not yet verified on the official page"
+            },
+            {
+              "key": "nt-491-resident:6",
+              "text": "At least 12 months living in Northern Territory",
+              "mark": "?",
+              "source": "https://theterritory.com.au/migrate/migrate-to-work/additional-requirements-for-onshore-applicants",
+              "checkedNote": "Not yet verified on the official page"
+            },
+            {
+              "key": "nt-491-resident:7",
+              "text": "At least 6 months working in Northern Territory in your nominated occupation",
+              "mark": "?",
+              "source": "https://theterritory.com.au/migrate/migrate-to-work/additional-requirements-for-onshore-applicants",
+              "checkedNote": "Not yet verified on the official page"
+            },
+            {
+              "key": "nt-491-resident:restriction:0",
+              "text": "Restriction, not checked here: By exception only: onshore NT Graduate or NT Resident candidates with a 'visa deadline' before 30 September 2027 (a substantive visa expiring with no 485 option, turning 45, or a birthday that drops 491 points below 65)",
+              "mark": "?",
+              "source": "https://theterritory.com.au/migrate/migrate-to-work/northern-territory-government-visa-nomination",
+              "checkedNote": "Not yet verified on the official page"
+            }
+          ],
+          "data": [
+            "194–251 EOIs for the 491 visa name Northern Territory and have 100 points or more (as at Oct 2026)",
+            "Under 20 invited at 100 points or below, so may be zero (as at Oct 2026)",
+            "No invitations recorded at 100 points or below (as at Sep 2026)",
+            "No invitations recorded at 100 points or below (as at Aug 2026)"
+          ],
+          "pointsThere": [
+            "100 federal points with nomination"
+          ],
+          "resultsLink": null,
+          "footer": "Not advice to apply. Rules change; check the official page."
+        },
+        {
+          "id": "state-491-TAS",
+          "heading": "Tasmania · 491",
+          "groupLabel": "Rules being checked",
+          "streamName": "Tasmanian Skilled Employment (TSE)",
+          "canApply": [
+            {
+              "key": "tas-491-tse:0",
+              "text": "Add your skills assessment issue date",
+              "mark": "?",
+              "checkedNote": "From your points check"
+            },
+            {
+              "key": "tas-491-tse:1",
+              "text": "At least 65 points for 491 with nomination",
+              "mark": "✓",
+              "checkedNote": "From your points check"
+            },
+            {
+              "key": "tas-491-tse:2",
+              "text": "On the federal occupation list for 491",
+              "mark": "✓",
+              "source": "https://immi.homeaffairs.gov.au/visas/working-in-australia/skill-occupation-list",
+              "checkedNote": "checked 23 Nov 2026"
+            },
+            {
+              "key": "tas-491-tse:3",
+              "text": "Open in 2026–27",
+              "mark": "?",
+              "source": "https://www.migration.tas.gov.au/news/2024-25_program_open_to_rois",
+              "checkedNote": "Not yet verified on the official page"
+            },
+            {
+              "key": "tas-491-tse:4",
+              "text": "Open to those living in Tasmania",
+              "mark": "?",
+              "source": "https://www.migration.tas.gov.au/skilled_migration/skilled-workers-and-graduates-living-in-Tasmania/tasmanian-skilled-employment-pathways-tse/491-accordion/491-tse-priority-attributes",
+              "checkedNote": "Not yet verified on the official page"
+            },
+            {
+              "key": "tas-491-tse:5",
+              "text": "No 2026–27 occupation list published",
+              "mark": "?",
+              "source": "https://www.migration.tas.gov.au/skilled_migration/skilled-workers-and-graduates-living-in-Tasmania/additional_information,_exclusions_and_definitions/accordion/occupational_caveats_for_tasmanian_skilled_employment_pathway",
+              "checkedNote": "Not yet verified on the official page"
+            },
+            {
+              "key": "tas-491-tse:6",
+              "text": "At least 12 months working in Tasmania in your nominated occupation",
+              "mark": "?",
+              "source": "https://www.migration.tas.gov.au/skilled_migration/skilled-workers-and-graduates-living-in-Tasmania/tasmanian-skilled-employment-pathways-tse/491-accordion/491-tse-priority-attributes",
+              "checkedNote": "Not yet verified on the official page"
+            }
+          ],
+          "data": [
+            "163–239 EOIs for the 491 visa name Tasmania and have 100 points or more (as at Oct 2026)",
+            "Under 20 invited at 100 points or below, so may be zero (as at Oct 2026)",
+            "Under 20 invited at 100 points or below, so may be zero (as at Sep 2026)",
+            "No invitations recorded at 100 points or below (as at Aug 2026)"
+          ],
+          "pointsThere": [
+            "100 federal points with nomination",
+            "Tasmania ranks with its own Tasmanian priority attributes, which is not calculated here."
+          ],
+          "resultsLink": {
+            "href": "https://www.migration.tas.gov.au/news/processing_times_and_allocation_usage",
+            "text": "Tasmania published results (past results, not a prediction)"
+          },
+          "footer": "Not advice to apply. Rules change; check the official page."
+        },
+        {
+          "id": "state-491-VIC",
+          "heading": "Victoria · 491",
+          "groupLabel": "Rules being checked",
+          "streamName": "Skilled Work Regional (491) Registration of Interest",
+          "canApply": [
+            {
+              "key": "vic-491-roi:closure",
+              "text": "Reported closed for 491 in 2026–27, not yet verified on the official page",
+              "mark": "?",
+              "source": "https://liveinmelbourne.vic.gov.au/migrate/skilled-migration-visas/491",
+              "checkedNote": "Not yet verified on the official page"
+            },
+            {
+              "key": "vic-491-roi:0",
+              "text": "Add your skills assessment issue date",
+              "mark": "?",
+              "checkedNote": "From your points check"
+            },
+            {
+              "key": "vic-491-roi:1",
+              "text": "At least 65 points for 491 with nomination",
+              "mark": "✓",
+              "checkedNote": "From your points check"
+            },
+            {
+              "key": "vic-491-roi:2",
+              "text": "On the federal occupation list for 491",
+              "mark": "✓",
+              "source": "https://immi.homeaffairs.gov.au/visas/working-in-australia/skill-occupation-list",
+              "checkedNote": "checked 23 Nov 2026"
+            },
+            {
+              "key": "vic-491-roi:4",
+              "text": "Open to those living in Victoria, in another state or offshore",
+              "mark": "?",
+              "source": "https://liveinmelbourne.vic.gov.au/migrate/skilled-migration-visas/2026-27-skilled-visa-nomination-program",
+              "checkedNote": "Not yet verified on the official page"
+            },
+            {
+              "key": "vic-491-roi:5",
+              "text": "Any occupation on the federal list for 491",
+              "mark": "?",
+              "source": "https://liveinmelbourne.vic.gov.au/migrate/skilled-migration-visas/2026-27-skilled-visa-nomination-program",
+              "checkedNote": "Not yet verified on the official page"
+            }
+          ],
+          "data": [
+            "447–485 EOIs for the 491 visa name Victoria and have 100 points or more (as at Oct 2026)",
+            "No invitations recorded at 100 points or below (as at Oct 2026)",
+            "No invitations recorded at 100 points or below (as at Sep 2026)",
+            "No invitations recorded at 100 points or below (as at Aug 2026)"
+          ],
+          "pointsThere": [
+            "100 federal points with nomination",
+            "Victoria ranks with its own Victorian Points Test (VPT), which is not calculated here."
+          ],
+          "resultsLink": null,
+          "footer": "Not advice to apply. Rules change; check the official page."
+        },
+        {
+          "id": "state-491-NSW",
+          "heading": "New South Wales · 491",
+          "groupLabel": "Not open to you now",
+          "streamName": null,
+          "canApply": [
+            {
+              "key": "first-fail",
+              "text": "Closed in 2026–27",
+              "mark": "✗",
+              "finding": "Closed for 491 in 2026–27",
+              "source": "https://www.nsw.gov.au/visas-and-migration/skilled-visas/skilled-work-regional-visa-subclass-491",
+              "checkedNote": "checked 17 Nov 2026"
+            }
+          ],
+          "data": [
+            "892–930 EOIs for the 491 visa name New South Wales and have 100 points or more (as at Oct 2026)",
+            "No invitations recorded at 100 points or below (as at Oct 2026)",
+            "No invitations recorded at 100 points or below (as at Sep 2026)",
+            "No invitations recorded at 100 points or below (as at Aug 2026)"
+          ],
+          "pointsThere": [
+            "100 federal points with nomination"
+          ],
+          "resultsLink": null,
+          "footer": "Not advice to apply. Rules change; check the official page."
+        },
+        {
+          "id": "state-491-QLD",
+          "heading": "Queensland · 491",
+          "groupLabel": "Not open to you now",
+          "streamName": null,
+          "canApply": [
+            {
+              "key": "qld-onshore:first-fail",
+              "text": "Skilled workers living in Queensland",
+              "mark": "✗",
+              "finding": "Not open to those living offshore",
+              "source": "https://www.migration.qld.gov.au/visa-options/skilled-visas/skilled-workers-living-in-queensland",
+              "checkedNote": "checked 17 Nov 2026"
+            },
+            {
+              "key": "qld-offshore:first-fail",
+              "text": "Skilled workers living offshore",
+              "mark": "✗",
+              "finding": "On the Queensland 2026–27 list for 491 only for those living in Australia",
+              "source": "https://www.migration.qld.gov.au/occupation-lists/offshore-queensland-skilled-occupation-lists-(qsol)",
+              "checkedNote": "checked 17 Nov 2026"
+            },
+            {
+              "key": "qld-graduate:first-fail",
+              "text": "Graduates of a Queensland university",
+              "mark": "✗",
+              "finding": "Not open to those living offshore",
+              "source": "https://www.migration.qld.gov.au/visa-options/skilled-visas/graduates-of-a-queensland-university",
+              "checkedNote": "checked 17 Nov 2026"
+            },
+            {
+              "key": "qld-building:first-fail",
+              "text": "Building and construction workers",
+              "mark": "✗",
+              "finding": "Not open to those living offshore",
+              "source": "https://www.migration.qld.gov.au/visa-options/skilled-visas/building-and-construction-workers",
+              "checkedNote": "checked 17 Nov 2026"
+            },
+            {
+              "key": "qld-small-business:first-fail",
+              "text": "Small business owners in regional Queensland",
+              "mark": "✗",
+              "finding": "Not open to those living offshore",
+              "source": "https://www.migration.qld.gov.au/visa-options/skilled-visas",
+              "checkedNote": "checked 17 Nov 2026"
+            }
+          ],
+          "data": [
+            "208–284 EOIs for the 491 visa name Queensland and have 100 points or more (as at Oct 2026)",
+            "No invitations recorded at 100 points or below (as at Oct 2026)",
+            "Under 20 invited at 100 points or below, so may be zero (as at Sep 2026)",
+            "No invitations recorded at 100 points or below (as at Aug 2026)"
+          ],
+          "pointsThere": [
+            "100 federal points with nomination"
+          ],
+          "resultsLink": null,
+          "footer": "Not advice to apply. Rules change; check the official page."
+        },
+        {
+          "id": "state-491-SA",
+          "heading": "South Australia · 491",
+          "groupLabel": "Not open to you now",
+          "streamName": null,
+          "canApply": [
+            {
+              "key": "sa-graduates:first-fail",
+              "text": "South Australian Graduates",
+              "mark": "✗",
+              "finding": "Not open to those living offshore",
+              "source": "https://migration.sa.gov.au/before-applying/visa-options-and-pathways/skilled-migrants/skilled-employment-in-south-australia",
+              "checkedNote": "checked 17 Nov 2026"
+            },
+            {
+              "key": "sa-skilled-employment:first-fail",
+              "text": "Skilled Employment in South Australia",
+              "mark": "✗",
+              "finding": "Not open to those living offshore",
+              "source": "https://migration.sa.gov.au/before-applying/visa-options-and-pathways/skilled-migrants/skilled-employment-in-south-australia",
+              "checkedNote": "checked 17 Nov 2026"
+            },
+            {
+              "key": "sa-outer-regional:first-fail",
+              "text": "Outer Regional Skilled Employment",
+              "mark": "✗",
+              "finding": "Not open to those living offshore",
+              "source": "https://migration.sa.gov.au/before-applying/visa-options-and-pathways/skilled-migrants/skilled-employment-in-south-australia",
+              "checkedNote": "checked 17 Nov 2026"
+            },
+            {
+              "key": "sa-offshore:first-fail",
+              "text": "Offshore",
+              "mark": "✗",
+              "finding": "On the South Australia 2026–27 list for 491 only for those living in Australia",
+              "source": "https://migration.sa.gov.au/before-applying/work-in-sa/occupation-lists/occupations-list",
+              "checkedNote": "checked 17 Nov 2026"
+            }
+          ],
+          "data": [
+            "448–505 EOIs for the 491 visa name South Australia and have 100 points or more (as at Oct 2026)",
+            "No invitations recorded at 100 points or below (as at Oct 2026)",
+            "No invitations recorded at 100 points or below (as at Sep 2026)",
+            "No invitations recorded at 100 points or below (as at Aug 2026)"
+          ],
+          "pointsThere": [
+            "100 federal points with nomination"
+          ],
+          "resultsLink": {
+            "href": "https://migration.sa.gov.au/news",
+            "text": "South Australia published results (past results, not a prediction)"
+          },
+          "footer": "Not advice to apply. Rules change; check the official page."
+        }
+      ]
+    },
+    "anyStateByVisa": {
+      "190": {
+        "label": "Any state",
+        "fragment": "under 20 invited, so may be zero",
+        "note": "EOIs not tied to one state; not counted in any state's group"
+      },
+      "491": {
+        "label": "Any state",
+        "fragment": "under 20 invited, so may be zero",
+        "note": "EOIs not tied to one state; not counted in any state's group"
+      }
+    },
+    "defaultVisa": "190",
+    "questions": [
+      {
+        "field": "assessmentDate",
+        "kind": "date",
+        "text": "When was your skills assessment issued?",
+        "help": "The date on your assessment letter. Your points check uses it to confirm the assessment is still valid.",
+        "affects": [
+          "Australian Capital Territory",
+          "New South Wales",
+          "Northern Territory",
+          "Queensland",
+          "South Australia",
+          "Tasmania",
+          "Victoria",
+          "Western Australia"
+        ],
+        "affectsText": "Affects: every state and territory"
+      },
+      {
+        "field": "monthsLivingOffshore",
+        "kind": "months",
+        "text": "How many months in a row, up to now, have you lived outside Australia?",
+        "help": "Whole months, counted back from today. A break restarts the count.",
+        "affects": [
+          "New South Wales"
+        ],
+        "affectsText": "Affects: New South Wales",
+        "max": 600
+      }
+    ]
+  },
+  "profile": {
+    "name": "Rahul",
+    "dob": "1996-01-18",
+    "occupation": "261313",
+    "english": "superior",
+    "englishDate": "2024-06-05",
+    "qualification": "bachelor",
+    "overseasYears": 6,
+    "australianYears": 0,
+    "ausStudy": false,
+    "regionalStudy": false,
+    "specialistEducation": false,
+    "professionalYear": false,
+    "professionalYearDate": "",
+    "communityLanguage": false,
+    "communityLanguageExpiry": "",
+    "partner": "single",
+    "onshore": false,
+    "state": "",
+    "visaExpiry": "",
+    "assessmentDate": "",
+    "assessmentExpiry": "",
+    "eoiDate": ""
+  },
+  "asOf": "2026-11-21",
+  "source": {
+    "snapshotDate": "2026-10-31",
+    "checkedAt": "2026-11-17",
+    "dashboardUrl": "https://api.dynamic.reports.employment.gov.au/anonap/extensions/hSKLS02_SkillSelect_EOI_Data/hSKLS02_SkillSelect_EOI_Data.html",
+    "roundsUrl": "https://immi.homeaffairs.gov.au/visas/working-in-australia/skillselect/invitation-rounds",
+    "previousRoundsUrl": "https://immi.homeaffairs.gov.au/visas/working-in-australia/skillselect/previous-rounds"
+  },
+  "meta": {
+    "reportNo": "ML-0042",
+    "version": 1,
+    "issuedAt": "2026-11-21T03:00:00.000Z",
+    "correctableUntil": "2026-12-21T03:00:00.000Z",
+    "revisionsLeft": 2
+  }
+}

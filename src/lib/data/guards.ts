@@ -3,6 +3,7 @@ import type {
   Manifest,
   OccupationCore,
   OccupationDetail,
+  OccupationIndexEntry,
   RecordSchemaVersion,
 } from "./types";
 
@@ -191,21 +192,34 @@ export function isManifest(v: unknown): v is Manifest {
   ) {
     return false;
   }
+  return uniqueEntries(
+    v.occupations,
+    (o) =>
+      (o.group === null || isStr(o.group)) && byVisa(isCountText)(o.totals),
+  );
+}
+
+function isIndexEntry(o: unknown): o is Obj & { code: string } {
+  return (
+    isObj(o) &&
+    isStr(o.code) &&
+    isStr(o.name) &&
+    typeof o.hasData === "boolean" &&
+    validDropMarks(o)
+  );
+}
+
+/** Index entries (plus `extraOk`), each code once. */
+function uniqueEntries(list: unknown[], extraOk: (o: Obj) => boolean): boolean {
   const seen = new Set<string>();
-  for (const o of v.occupations) {
-    if (
-      !isObj(o) ||
-      !isStr(o.code) ||
-      !isStr(o.name) ||
-      typeof o.hasData !== "boolean" ||
-      !(o.group === null || isStr(o.group)) ||
-      !byVisa(isCountText)(o.totals) ||
-      !validDropMarks(o) ||
-      seen.has(o.code)
-    ) {
-      return false;
-    }
+  for (const o of list) {
+    if (!isIndexEntry(o) || !extraOk(o) || seen.has(o.code)) return false;
     seen.add(o.code);
   }
   return true;
+}
+
+/** occupation-index.json: code, name and hasData for every occupation. */
+export function isOccupationIndex(v: unknown): v is OccupationIndexEntry[] {
+  return Array.isArray(v) && uniqueEntries(v, () => true);
 }

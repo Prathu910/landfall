@@ -4,6 +4,7 @@ import {
   isManifest,
   isOccupationCore,
   isOccupationDetail,
+  isOccupationIndex,
 } from "./guards";
 
 function core(): Record<string, unknown> {
@@ -201,5 +202,25 @@ describe("isManifest", () => {
     expect(isManifest(m)).toBe(true);
     m.roundsCheckedAt = "20 Nov";
     expect(isManifest(m)).toBe(false);
+  });
+});
+
+describe("isOccupationIndex", () => {
+  const entry = { code: "261313", name: "Software Engineer", hasData: true };
+  it("accepts entries, with or without the drop marks", () => {
+    const dropped = {
+      code: "261312",
+      name: "Developer Programmer",
+      hasData: true,
+      lastAsAt: "2026-08",
+      lastCheckedAt: "2026-09-15",
+    };
+    expect(isOccupationIndex([entry, dropped])).toBe(true);
+  });
+  it("rejects a bad entry, half the drop marks and duplicate codes", () => {
+    expect(isOccupationIndex({ entries: [entry] })).toBe(false);
+    expect(isOccupationIndex([{ ...entry, hasData: "yes" }])).toBe(false);
+    expect(isOccupationIndex([{ ...entry, lastAsAt: "2026-08" }])).toBe(false);
+    expect(isOccupationIndex([entry, entry])).toBe(false);
   });
 });
