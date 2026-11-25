@@ -149,7 +149,8 @@ const md = buildSummary({ kind: "data", month: "2026-10", ... });
 expect(md.split("\n")[0]).toBe("SkillSelect data as at 31 Oct 2026 (snapshot skillselect-2026-10-31), checked 17 Nov 2026. Validation passed; `npm run check` and `npm run build` passed.");
 expect(md).toContain("189 pool: 181,076–182,254 → 166,555–167,904");
 expect(md).toContain("Spotlight: Registered Nurses nec (254499)");
-expect(md).toContain("To publish: merge this pull request. Cloudflare deploys it in a few minutes. To skip this month, close it.");
+// Superseded in Task 6 (closing holds the month): see publishLine in summary-view.ts.
+expect(md).toContain("To publish: merge this pull request. Cloudflare deploys it in a few minutes.");
 expect(buildSummary({ ..., report: { ...r, pageReads: 231 } })).toMatch(/Page reads: 231 of 250/);
 expect(buildSummary({ ..., report: withRevision("data/raw/2026-10/status-history.rev-2026-12-14.json", 1200, 1203), publishedDataMonths: ["2026-10"] })).toMatch(/published recap affected/);
 expect(buildSummary({ ..., previewBase: null })).not.toMatch(/pages\.dev/);

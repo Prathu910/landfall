@@ -4,6 +4,7 @@
  * is public, so it holds published data and our drafts only.
  */
 import type { Manifest, MonthKey } from "../data/types";
+import { formatLongMonth } from "../report/copy";
 import { occupationPath } from "../occupation-page/slug";
 import type { ImportReport } from "./import-report";
 import type { SetManifest } from "./set-manifest";
@@ -224,9 +225,28 @@ export function buildSummary(input: SummaryInput): string {
       input.sets.flatMap((s) => setLines(s, input)),
     ),
     ...previewLines(input),
-    "**To publish:** merge this pull request. Cloudflare deploys it in a few minutes. To skip this month, close it.",
+    publishLine(input),
     "",
   ].join("\n");
+}
+
+/** The branch a data month's own pull request uses (and the monthly job's hold check reads). */
+export function monthBranch(month: MonthKey): string {
+  return `data/skillselect-${month}`;
+}
+
+/**
+ * Item 10. Closing a month's own pull request holds that month (controller
+ * ruling, Plan 3 Task 6): the monthly job skips it while its branch exists.
+ */
+export function publishLine(input: SummaryInput): string {
+  const publish =
+    "**To publish:** merge this pull request. Cloudflare deploys it in a few minutes.";
+  const branch = monthBranch(input.month);
+  if (input.kind === "data" && input.branch === branch) {
+    return `${publish} To hold this update, close it and keep its branch: the monthly job skips ${formatLongMonth(input.month)} while \`${branch}\` exists. Delete that branch and the job imports ${formatLongMonth(input.month)} again.`;
+  }
+  return `${publish} Closing it does not hold this update: the next scheduled run imports it again.`;
 }
 
 /** "Added 12 Dec: 189 round of 10 Dec 2026", or the data-month form. */
@@ -254,4 +274,75 @@ export function appendSection(
   const next = existingBody.indexOf("\n## ", start + 1);
   const tail = next === -1 ? "" : `\n${existingBody.slice(next + 1)}`;
   return `${existingBody.slice(0, start)}${block}${tail}`;
+}
+
+/** The parts a spotlight swap changes: from each heading to the next listed one (null: the section's end). */
+const SWAP_PARTS: [string, string | null][] = [
+  ["### Notable movers and spotlight", "### Needs your decision"],
+  ["### Images", null],
+];
+
+/** Where `line` starts as a whole line of `text`, or -1. */
+function lineStart(text: string, line: string): number {
+  if (text.startsWith(`${line}\n`)) return 0;
+  const at = text.indexOf(`\n${line}\n`);
+  return at === -1 ? -1 : at + 1;
+}
+
+/** [start, end) of the month's data section: its "## Added …" section, else the body's top. */
+function dataSectionRange(body: string, month: MonthKey): [number, number] {
+  const suffix = `: SkillSelect data as at ${dayText(monthEnd(month))}`;
+  const heading = body
+    .split("\n")
+    .find((line) => line.startsWith("## Added ") && line.endsWith(suffix));
+  const sectionEnd = (from: number) => {
+    const next = body.indexOf("\n## ", from);
+    return next === -1 ? body.length : next + 1;
+  };
+  if (heading) {
+    const start = lineStart(body, heading) + heading.length + 1;
+    return [start, sectionEnd(start)];
+  }
+  if (body.startsWith(`SkillSelect data as at ${longDayText(monthEnd(month))}`))
+    return [0, sectionEnd(0)];
+  throw new Error(`The pull request body has no data section for ${month}`);
+}
+
+function replacePart(
+  section: string,
+  summary: string,
+  from: string,
+  to: string | null,
+): string {
+  const range = (text: string): [number, number] => {
+    const start = lineStart(text, from);
+    const end = to === null ? text.length : lineStart(text, to);
+    if (start === -1 || end === -1 || end < start)
+      throw new Error(`No "${from}" part to replace`);
+    return [start, end];
+  };
+  const [oldStart, oldEnd] = range(section);
+  const [newStart, newEnd] = range(summary);
+  const old = section.slice(oldStart, oldEnd);
+  const trailing = /\s*$/.exec(old)?.[0] ?? "";
+  const part = summary.slice(newStart, newEnd).trimEnd() + trailing;
+  return section.slice(0, oldStart) + part + section.slice(oldEnd);
+}
+
+/**
+ * The body after a spotlight swap (spec 6.8): the month's movers and
+ * spotlight, images (alt text and caption), preview and publish line come
+ * from the regenerated `summary`; everything else, including what the import
+ * reported under "Needs your decision", is kept.
+ */
+export function replaceSwapParts(
+  body: string,
+  summary: string,
+  month: MonthKey,
+): string {
+  const [start, end] = dataSectionRange(body, month);
+  let section = body.slice(start, end);
+  for (const [from, to] of SWAP_PARTS)
+    section = replacePart(section, summary, from, to);
+  return body.slice(0, start) + section + body.slice(end);
 }

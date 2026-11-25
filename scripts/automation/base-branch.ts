@@ -1,7 +1,9 @@
 // Usage: tsx scripts/automation/base-branch.ts --fresh <branch>
-// Prints `branch=…` and `pr=…` lines for $GITHUB_OUTPUT. At most one
-// `data-update` pull request may be open: a job that finds one works on its
-// branch and appends to it; none means the job starts `fresh`.
+// Prints `branch=…`, `pr=…` and `held=…` lines for $GITHUB_OUTPUT. At most
+// one `data-update` pull request may be open: a job that finds one works on
+// its branch and appends to it; none means the job starts `fresh`, unless
+// `fresh` is already on origin (its pull request was closed: `held=yes`).
+import { spawnSync } from "node:child_process";
 import { realGh, type Gh } from "./gh";
 
 export type OpenPr = {
@@ -48,6 +50,38 @@ export function listOpenDataUpdates(gh: Gh): OpenPr[] {
   return JSON.parse(out) as OpenPr[];
 }
 
+/**
+ * Controller ruling (Plan 3 Task 6): closing a data PR holds its update. A
+ * fresh branch that is already on origin while no data PR is open belongs to
+ * a closed PR, so the job imports nothing until the founder deletes it.
+ */
+export function isHeld(choice: BaseChoice, freshOnOrigin: boolean): boolean {
+  return choice.kind === "new" && freshOnOrigin;
+}
+
+/** Runs git and returns its exit status. */
+export type GitStatus = (args: string[]) => number | null;
+
+const realGitStatus: GitStatus = (args) =>
+  spawnSync("git", args, { stdio: ["ignore", "ignore", "inherit"] }).status;
+
+/** Whether origin has the branch; `git ls-remote --exit-code` exits 2 for none. */
+export function onOrigin(
+  branch: string,
+  git: GitStatus = realGitStatus,
+): boolean {
+  const status = git([
+    "ls-remote",
+    "--exit-code",
+    "--heads",
+    "origin",
+    `refs/heads/${branch}`,
+  ]);
+  if (status === 0) return true;
+  if (status === 2) return false;
+  throw new Error(`git ls-remote origin failed (exit ${status})`);
+}
+
 /** The `$GITHUB_OUTPUT` lines for a choice; `pr=` is empty for a new branch. */
 export function outputLines(choice: BaseChoice): string[] {
   return [
@@ -61,7 +95,10 @@ function main(): void {
   const fresh = index === -1 ? undefined : process.argv[index + 1];
   if (!fresh) throw new Error("Usage: base-branch.ts --fresh <branch>");
   const choice = chooseBase(listOpenDataUpdates(realGh()), fresh);
-  console.log(outputLines(choice).join("\n"));
+  const held = choice.kind === "new" && isHeld(choice, onOrigin(fresh));
+  console.log(
+    [...outputLines(choice), `held=${held ? "yes" : "no"}`].join("\n"),
+  );
 }
 
 // tsx runs this file as CommonJS, so there is no top-level await.

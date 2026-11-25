@@ -8,6 +8,7 @@ import { loadRecap } from "./load-server";
 import {
   appendSection,
   buildSummary,
+  replaceSwapParts,
   previewOrigin,
   sectionHeading,
   type SummaryInput,
@@ -120,7 +121,14 @@ describe("buildSummary, a data update", () => {
     );
     expect(md).toContain("/occupations/registered-nurses-nec-254499/");
     expect(md.trimEnd().split("\n").pop()).toBe(
-      "**To publish:** merge this pull request. Cloudflare deploys it in a few minutes. To skip this month, close it.",
+      "**To publish:** merge this pull request. Cloudflare deploys it in a few minutes. Closing it does not hold this update: the next scheduled run imports it again.",
+    );
+  });
+
+  it("says closing the month's own pull request holds it until its branch goes", () => {
+    const own = buildSummary({ ...base, branch: "data/skillselect-2026-10" });
+    expect(own.trimEnd().split("\n").pop()).toBe(
+      "**To publish:** merge this pull request. Cloudflare deploys it in a few minutes. To hold this update, close it and keep its branch: the monthly job skips October 2026 while `data/skillselect-2026-10` exists. Delete that branch and the job imports October 2026 again.",
     );
   });
 
@@ -252,5 +260,52 @@ describe("appendSection", () => {
     expect(
       sectionHeading({ ...base, month: "2026-11", today: "2026-12-12" }),
     ).toBe("Added 12 Dec: SkillSelect data as at 30 Nov 2026");
+  });
+});
+
+describe("replaceSwapParts", () => {
+  const md = buildSummary(base);
+  // A swap's summary: a new spotlight and caption, and no import report.
+  const swapped = md
+    .replace("Spotlight: Registered Nurses nec", "Spotlight: Chef")
+    .replace("SkillSelect update for October 2026.", "Swapped caption.")
+    .replace(
+      /### Needs your decision\n\n[^#]*/,
+      "### Needs your decision\n\nNothing needs a decision.\n\n",
+    );
+  const roundSection =
+    "## Added 20 Nov: 189 round of 19 Nov 2026\n\nround words\n";
+
+  it("replaces the spotlight, images and publish line at the top of the body", () => {
+    const body = `${md.trimEnd()}\n\n${roundSection}`;
+    const out = replaceSwapParts(body, swapped, "2026-10");
+    expect(out).toContain("Spotlight: Chef");
+    expect(out).toContain("Swapped caption.");
+    expect(out).not.toContain("Spotlight: Registered Nurses nec");
+    // The import's decisions and the later round section stay.
+    expect(out).toContain("- Coverage-window check:");
+    expect(out.endsWith(roundSection)).toBe(true);
+    expect(out.startsWith("SkillSelect data as at 31 October 2026")).toBe(true);
+  });
+
+  it("replaces them inside the month's appended section", () => {
+    const body = appendSection(
+      "189 round of 15 October 2026, checked 17 November 2026.\n",
+      md,
+      "Added 18 Nov: SkillSelect data as at 31 Oct 2026",
+    );
+    const out = replaceSwapParts(body, swapped, "2026-10");
+    expect(out.startsWith("189 round of 15 October 2026")).toBe(true);
+    expect(out).toContain(
+      "## Added 18 Nov: SkillSelect data as at 31 Oct 2026\n\nSkillSelect data as at 31 October 2026",
+    );
+    expect(out).toContain("Spotlight: Chef");
+    expect(out).toContain("- Coverage-window check:");
+  });
+
+  it("refuses a body with no data section for the month", () => {
+    expect(() => replaceSwapParts("round words\n", swapped, "2026-10")).toThrow(
+      /no data section for 2026-10/,
+    );
   });
 });

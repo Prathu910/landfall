@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { chooseBase, listOpenDataUpdates, outputLines } from "./base-branch";
+import {
+  chooseBase,
+  isHeld,
+  listOpenDataUpdates,
+  onOrigin,
+  outputLines,
+} from "./base-branch";
 
 describe("chooseBase", () => {
   it("starts a new branch when nothing is open", () => {
@@ -66,5 +72,38 @@ describe("outputs and listing", () => {
     expect(calls[0]).toEqual(
       expect.arrayContaining(["pr", "list", "data-update", "open"]),
     );
+  });
+});
+
+describe("isHeld", () => {
+  const fresh = { kind: "new", branch: "data/skillselect-2026-11" } as const;
+  it("holds a fresh branch that is already on origin (its PR was closed)", () => {
+    expect(isHeld(fresh, true)).toBe(true);
+    expect(isHeld(fresh, false)).toBe(false);
+  });
+  it("never holds a join: the open PR's branch is always on origin", () => {
+    expect(isHeld({ kind: "join", branch: "data/x", number: 3 }, true)).toBe(
+      false,
+    );
+  });
+});
+
+describe("onOrigin", () => {
+  it("asks ls-remote for the exact head and reads its exit code", () => {
+    const calls: string[][] = [];
+    const git = (status: number | null) => (args: string[]) => {
+      calls.push(args);
+      return status;
+    };
+    expect(onOrigin("data/skillselect-2026-11", git(0))).toBe(true);
+    expect(onOrigin("data/skillselect-2026-11", git(2))).toBe(false);
+    expect(calls[0]).toEqual([
+      "ls-remote",
+      "--exit-code",
+      "--heads",
+      "origin",
+      "refs/heads/data/skillselect-2026-11",
+    ]);
+    expect(() => onOrigin("b", git(128))).toThrow(/exit 128/);
   });
 });

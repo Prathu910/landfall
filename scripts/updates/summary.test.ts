@@ -57,6 +57,34 @@ describe("parseSummaryArgs", () => {
   });
 });
 
+describe("parseSummaryArgs --swap-into", () => {
+  const swap = ["--month", "2026-10", "--kind", "data", "--branch", "b"];
+  it("needs no import report for a swap", () => {
+    expect(parseSummaryArgs([...swap, "--swap-into", "body.md"])).toMatchObject(
+      { swapInto: "body.md", importReport: null },
+    );
+  });
+  it("rejects a swap of a round or alongside --append-to", () => {
+    expect(() =>
+      parseSummaryArgs([...ok, "--swap-into", "x", "--append-to", "y"]),
+    ).toThrow(/don't go together/);
+    expect(() =>
+      parseSummaryArgs([
+        "--month",
+        "2026-10",
+        "--kind",
+        "round",
+        "--round",
+        "2026-10-15",
+        "--branch",
+        "b",
+        "--swap-into",
+        "x",
+      ]),
+    ).toThrow(/--kind data/);
+  });
+});
+
 describe("warningLines", () => {
   it("keeps WARNING lines without the label", () => {
     expect(

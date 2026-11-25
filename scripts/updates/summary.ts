@@ -1,7 +1,9 @@
 /**
  * `npm run updates:summary`: prints the PR description for a data update
  * (spec 6.12). With --append-to <body.md> it adds a dated section to that
- * body instead and prints the whole body. Reads CF_PAGES_PROJECT (optional)
+ * body instead and prints the whole body. With --swap-into <body.md> (a
+ * spotlight swap) it replaces that body's spotlight, images and publish line
+ * for the month, keeps the rest, and needs no --import-report. Reads CF_PAGES_PROJECT (optional)
  * for the preview links. Needs no network.
  */
 import { execFileSync } from "node:child_process";
@@ -20,6 +22,7 @@ import {
   appendSection,
   buildSummary,
   previewOrigin,
+  replaceSwapParts,
   sectionHeading,
   type Coverage,
   type SummaryInput,
@@ -40,6 +43,7 @@ const FLAGS = [
   "--build-log",
   "--branch",
   "--append-to",
+  "--swap-into",
   "--today",
 ];
 
@@ -48,10 +52,12 @@ export type SummaryArgs = {
   kind: "data" | "round";
   round: string | null;
   previousManifest: string | null;
-  importReport: string;
+  /** Null only with --swap-into, which keeps the import's own lines. */
+  importReport: string | null;
   buildLog: string | null;
   branch: string;
   appendTo: string | null;
+  swapInto: string | null;
   today: string;
 };
 
@@ -83,6 +89,11 @@ export function parseSummaryArgs(argv: string[]): SummaryArgs {
     throw new Error("--kind round needs --round YYYY-MM-DD");
   }
   if (kind === "data" && round) throw new Error("--round is for --kind round");
+  const swapInto = values.get("--swap-into") ?? null;
+  if (swapInto && kind !== "data")
+    throw new Error("--swap-into is for --kind data");
+  if (swapInto && values.has("--append-to"))
+    throw new Error("--swap-into and --append-to don't go together");
   const today = values.get("--today") ?? sydneyDate(new Date());
   if (!DATE.test(today)) throw new Error("--today must be YYYY-MM-DD");
   return {
@@ -90,10 +101,13 @@ export function parseSummaryArgs(argv: string[]): SummaryArgs {
     kind,
     round,
     previousManifest: values.get("--previous-manifest") ?? null,
-    importReport: need("--import-report"),
+    importReport: swapInto
+      ? (values.get("--import-report") ?? null)
+      : need("--import-report"),
     buildLog: values.get("--build-log") ?? null,
     branch: need("--branch"),
     appendTo: values.get("--append-to") ?? null,
+    swapInto,
     today,
   };
 }
@@ -188,6 +202,19 @@ export function publishedDataMonths(current: MonthKey): MonthKey[] {
   }
 }
 
+/** A swap reads nothing; its "Needs your decision" lines are not used. */
+const SWAP_REPORT: ImportReport = {
+  mode: "generate-only",
+  asAt: null,
+  newestAsAt: null,
+  pageReads: 0,
+  budget: null,
+  revisions: [],
+  unmatched: [],
+  newRounds: [],
+  durationSeconds: 0,
+};
+
 function main(): void {
   try {
     const args = parseSummaryArgs(process.argv.slice(2));
@@ -201,7 +228,9 @@ function main(): void {
       previousManifest: args.previousManifest
         ? readManifest(args.previousManifest)
         : null,
-      report: readJson(args.importReport) as ImportReport,
+      report: args.importReport
+        ? (readJson(args.importReport) as ImportReport)
+        : SWAP_REPORT,
       buildWarnings: args.buildLog
         ? warningLines(readFileSync(args.buildLog, "utf8"))
         : [],
@@ -214,6 +243,11 @@ function main(): void {
       today: args.today,
     };
     const body = buildSummary(input);
+    if (args.swapInto) {
+      const existing = readFileSync(args.swapInto, "utf8");
+      process.stdout.write(replaceSwapParts(existing, body, args.month));
+      return;
+    }
     if (!args.appendTo) {
       process.stdout.write(body);
       return;
