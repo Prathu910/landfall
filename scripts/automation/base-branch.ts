@@ -51,12 +51,18 @@ export function listOpenDataUpdates(gh: Gh): OpenPr[] {
 }
 
 /**
- * Controller ruling (Plan 3 Task 6): closing a data PR holds its update. A
- * fresh branch that is already on origin while no data PR is open belongs to
- * a closed PR, so the job imports nothing until the founder deletes it.
+ * Controller ruling (Plan 3 Task 6): closing a data PR holds its update. The
+ * month's own `fresh` branch on origin, when it isn't the branch of the PR
+ * being joined, belongs to a closed PR, so the job imports nothing (not even
+ * into another open data PR) until the founder deletes it.
  */
-export function isHeld(choice: BaseChoice, freshOnOrigin: boolean): boolean {
-  return choice.kind === "new" && freshOnOrigin;
+export function isHeld(
+  choice: BaseChoice,
+  fresh: string,
+  freshOnOrigin: boolean,
+): boolean {
+  const joiningFresh = choice.kind === "join" && choice.branch === fresh;
+  return freshOnOrigin && !joiningFresh;
 }
 
 /** Runs git and returns its exit status. */
@@ -95,7 +101,7 @@ function main(): void {
   const fresh = index === -1 ? undefined : process.argv[index + 1];
   if (!fresh) throw new Error("Usage: base-branch.ts --fresh <branch>");
   const choice = chooseBase(listOpenDataUpdates(realGh()), fresh);
-  const held = choice.kind === "new" && isHeld(choice, onOrigin(fresh));
+  const held = isHeld(choice, fresh, onOrigin(fresh));
   console.log(
     [...outputLines(choice), `held=${held ? "yes" : "no"}`].join("\n"),
   );

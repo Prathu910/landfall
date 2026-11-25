@@ -264,16 +264,22 @@ export function sectionHeading(input: SummaryInput): string {
  * the same heading (a re-run on the same day) is replaced, not repeated.
  */
 export function appendSection(
-  existingBody: string,
+  rawBody: string,
   sectionBody: string,
   heading: string,
 ): string {
+  const existingBody = toLf(rawBody);
   const block = `## ${heading}\n\n${sectionBody.trim()}\n`;
   const start = existingBody.indexOf(`## ${heading}\n`);
   if (start === -1) return `${existingBody.trimEnd()}\n\n${block}`;
   const next = existingBody.indexOf("\n## ", start + 1);
   const tail = next === -1 ? "" : `\n${existingBody.slice(next + 1)}`;
   return `${existingBody.slice(0, start)}${block}${tail}`;
+}
+
+/** GitHub's web editor saves PR bodies with CRLF line ends. */
+function toLf(text: string): string {
+  return text.replace(/\r\n/g, "\n");
 }
 
 /** The parts a spotlight swap changes: from each heading to the next listed one (null: the section's end). */
@@ -336,10 +342,12 @@ function replacePart(
  * reported under "Needs your decision", is kept.
  */
 export function replaceSwapParts(
-  body: string,
-  summary: string,
+  rawBody: string,
+  rawSummary: string,
   month: MonthKey,
 ): string {
+  const body = toLf(rawBody);
+  const summary = toLf(rawSummary);
   const [start, end] = dataSectionRange(body, month);
   let section = body.slice(start, end);
   for (const [from, to] of SWAP_PARTS)

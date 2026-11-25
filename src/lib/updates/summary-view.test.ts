@@ -303,6 +303,20 @@ describe("replaceSwapParts", () => {
     expect(out).toContain("- Coverage-window check:");
   });
 
+  it("reads a body that GitHub's web editor saved with CRLF", () => {
+    const body = `${md.trimEnd()}\n\n${roundSection}`.replace(/\n/g, "\r\n");
+    const out = replaceSwapParts(body, swapped, "2026-10");
+    expect(out).toContain("Spotlight: Chef");
+    expect(out).not.toContain("\r");
+    expect(out.endsWith(roundSection)).toBe(true);
+    const appended = appendSection(
+      "first\r\n\r\n## Added 12 Dec: x\r\n\r\nold\r\n",
+      "new",
+      "Added 12 Dec: x",
+    );
+    expect(appended).toBe("first\n\n## Added 12 Dec: x\n\nnew\n");
+  });
+
   it("refuses a body with no data section for the month", () => {
     expect(() => replaceSwapParts("round words\n", swapped, "2026-10")).toThrow(
       /no data section for 2026-10/,

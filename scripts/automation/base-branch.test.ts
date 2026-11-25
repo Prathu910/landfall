@@ -76,15 +76,25 @@ describe("outputs and listing", () => {
 });
 
 describe("isHeld", () => {
-  const fresh = { kind: "new", branch: "data/skillselect-2026-11" } as const;
+  const fresh = "data/skillselect-2026-11";
+  const start = { kind: "new", branch: fresh } as const;
   it("holds a fresh branch that is already on origin (its PR was closed)", () => {
-    expect(isHeld(fresh, true)).toBe(true);
-    expect(isHeld(fresh, false)).toBe(false);
+    expect(isHeld(start, fresh, true)).toBe(true);
+    expect(isHeld(start, fresh, false)).toBe(false);
   });
-  it("never holds a join: the open PR's branch is always on origin", () => {
-    expect(isHeld({ kind: "join", branch: "data/x", number: 3 }, true)).toBe(
-      false,
-    );
+  it("holds the month even when another data PR (a round) is open", () => {
+    const round = {
+      kind: "join",
+      branch: "data/round-2026-12-10",
+      number: 12,
+    } as const;
+    expect(isHeld(round, fresh, true)).toBe(true);
+    expect(isHeld(round, fresh, false)).toBe(false);
+  });
+  it("doesn't hold when the open PR is the month's own branch", () => {
+    expect(
+      isHeld({ kind: "join", branch: fresh, number: 3 }, fresh, true),
+    ).toBe(false);
   });
 });
 
