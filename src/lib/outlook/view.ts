@@ -91,11 +91,15 @@ const LOAD_FAILED_LINE =
 const NO_OCCUPATION = "No occupation chosen";
 const COMBINED_RING = "189 • 190 • 491";
 
+/** Builder-only: the bundle lock looks for it in pages that only render (sentinels.ts). */
+export const FOOTER_CAVEAT =
+  "Home Affairs and the states can change round sizes, cut-offs and rules at any time, so your real result may be different.";
+
 function footerText(month: string): string {
   return (
     "This is our best reading of the data, not a guarantee. " +
     `It comes from published SkillSelect figures up to ${month}. ` +
-    "Home Affairs and the states can change round sizes, cut-offs and rules at any time, so your real result may be different. " +
+    `${FOOTER_CAVEAT} ` +
     "MigrateLens isn't a registered migration agent; for advice on your own case, talk to one."
   );
 }

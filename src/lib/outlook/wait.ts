@@ -22,7 +22,9 @@ export type LodgedPace = {
 export type EstimatedWait = { text: string; pace: LodgedPace | null };
 
 const NO_DATA_TEXT = "We can't estimate one without data.";
-const NO_PACE_TEXT = "No recent invitations at your score to measure a pace.";
+/** Builder-only: also a bundle-lock sentinel (sentinels.ts). */
+export const NO_PACE_TEXT =
+  "No recent invitations at your score to measure a pace.";
 
 /** 189 rounds held in the 12 months up to and including `asOf`. */
 function roundsInLastYear(core: OccupationCore, asOf: string): number {
