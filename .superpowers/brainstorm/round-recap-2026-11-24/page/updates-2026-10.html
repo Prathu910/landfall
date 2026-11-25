@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SkillSelect October 2026 update: 189 round, 190 and 491 by state | MigrateLens</title>
+<meta name="description" content="As at 31 Oct 2026: the 15 Oct 2026 189 round invited 20,000 EOIs across 159 occupations (lowest scores 65–100). 190 and 491 invitations by state, biggest movers and the pool by points.">
+<link rel="stylesheet" href="../assets/brand.css">
+<link rel="stylesheet" href="page.css">
+<script src="../data/figures.js"></script>
+<script src="../assets/atlas-geometry.js"></script>
+<script src="../assets/lib.js"></script>
+</head>
+<body>
+<header class="site-header"><div class="shell">
+  <a href="#" class="logo" id="logo"></a>
+  <nav aria-label="Main navigation">
+    <a href="/guide/">Guide</a><a href="/occupations/">Occupations</a><a href="/sample/">Sample report</a><a href="/states/">States</a><a href="/methodology/">Method</a>
+  </nav>
+  <button class="theme-btn" type="button" aria-label="Appearance" onclick="toggleTheme()"><svg width="18" height="18" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg></button>
+  <a class="btn" href="/check/">Check my points ↗</a>
+  <button class="menu-btn" type="button" aria-label="Open navigation"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+</div></header>
+
+<main id="main"></main>
+
+<footer class="site-footer"><div class="shell">
+  <div class="ft">
+    <div><span class="logo" id="flogo"></span><p style="margin:14px 0 0;font-size:14px">Australian skilled migration,<br>seen through the data.</p><div class="snap">Published SkillSelect snapshot <b>Oct 2026</b></div></div>
+    <div><h4>Explore</h4><a href="/check/">Check my points</a><a href="/guide/">PR guide: 189, 190, 491</a><a href="/sample/">Sample report</a><a href="/occupations/">Occupations</a><a href="/states/">States</a><a href="/updates/">Monthly updates</a></div>
+    <div><h4>About the data</h4><a href="/methodology/">Method and sources</a><a href="/feedback/">Feedback</a><a href="/methodology/#privacy">Privacy</a><a href="https://www.mara.gov.au/">Find a registered agent</a></div>
+  </div>
+  <div class="fb"><span>MigrateLens gives general information from published data. We are not registered migration agents and don't give migration advice.</span><span>© 2026 MigrateLens</span></div>
+</div></footer>
+
+<script>
+const F = window.FIG, { n, atLeast, range, day, dmy, esc, roundStamp, rectStamp, logo, stateMap, shadeFor } = R;
+document.getElementById("logo").innerHTML = logo();
+document.getElementById("flogo").innerHTML = logo();
+function toggleTheme() {
+  const el = document.documentElement;
+  const dark = el.dataset.theme ? el.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  el.dataset.theme = dark ? "light" : "dark";
+}
+
+const round = F.round, nat = F.national, total189 = round.total189;
+const summed = (iv) => (iv[0] === 0 ? `under ${n(iv[1] + 1)}` : range(iv));
+const diff = (a, b) => [b[0] - a[1], b[1] - a[0]];
+const occ = (o) => `<a href="${o.href}">${esc(o.name)}</a>`;
+const STATE = { ACT: "ACT", NSW: "New South Wales", NT: "Northern Territory", QLD: "Queensland", SA: "South Australia", TAS: "Tasmania", VIC: "Victoria", WA: "Western Australia" };
+const ORDER = ["NSW", "VIC", "QLD", "WA", "SA", "TAS", "ACT", "NT"];
+const s190 = F.stateInvited["190"]["2026-10"], s491 = F.stateInvited["491"]["2026-10"];
+const topState = (s) => Object.entries(s).filter(([k]) => k !== "ANY").sort((a, b) => b[1].interval[0] - a[1].interval[0])[0];
+const [t190, t491] = [topState(s190), topState(s491)];
+
+/* ---------- hero ---------- */
+const hero = `
+<div class="shell">
+  <div class="crumbs"><a href="/">Home</a> › <a href="/updates/">Updates</a> › October 2026</div>
+  <div class="hero">
+    <div>
+      <span class="eyebrow">SkillSelect update · October 2026</span>
+      <h1>SkillSelect October 2026: ${total189} EOIs invited in the 189 round</h1>
+      <p class="answer"><strong>As at 31 October 2026:</strong> Home Affairs invited ${total189} EOIs for the 189 visa on 15 October 2026, across ${round.listed} occupations, with the lowest score invited ranging from ${round.lowestCutoff} to ${round.highestCutoff} points by occupation. State invitations picked up in October: at least ${n(t190[1].interval[0])} EOIs held a 190 invitation from ${STATE[t190[0]]}, the most of any state, after every state was under 20 per occupation on 30 September.</p>
+      <div class="dateline"><span>Published <b>24 Nov 2026</b></span><span>Data as at <b>31 Oct 2026</b></span><span>189 round <b>15 Oct 2026</b></span><span>Sources checked <b>17 Nov 2026</b></span></div>
+      <div class="hero-actions"><a class="btn" href="/check/">Check my points free ↗</a><a class="btn ghost" href="#faq">Questions</a></div>
+    </div>
+    <aside class="passport" aria-label="Key figures">
+      <div class="guill"></div>
+      <div class="ptop"><span>Key figures</span><span>No. 2026-10</span></div>
+      <div class="stampbox">${roundStamp({ top: "SUBCLASS 189 ROUND", word: [total189, "INVITED"], bottom: "15 OCT 2026", tone: "green" })}</div>
+      <div class="pgrid">
+        <div class="kv"><div class="v">${round.listed}</div><div class="k">occupations listed in the 15 Oct round</div></div>
+        <div class="kv"><div class="v">${round.lowestCutoff}–${round.highestCutoff}</div><div class="k">lowest score invited, by occupation (points)</div></div>
+        <div class="kv"><div class="v">~${R.about(nat["189"].pool["2026-10"].interval)}</div><div class="k">EOIs in the 189 pool on 31 Oct (${range(nat["189"].pool["2026-10"].interval)})</div></div>
+        <div class="kv"><div class="v">${n(nat["189"].invited["2026-10"].interval[0])}+</div><div class="k">EOIs holding a 189 invitation on 31 Oct (a minimum)</div></div>
+      </div>
+      <div class="mrz">P&lt;AUSSKILLSELECT&lt;&lt;UPDATE&lt;OCTOBER&lt;2026&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;</div>
+    </aside>
+  </div>
+</div>`;
+
+/* ---------- 189 ---------- */
+const dist = Object.entries(round.cutoffDistribution), dmax = Math.max(...dist.map(([, c]) => c));
+const pts = F.pool189ByPoints.filter((p) => p.score >= 40 && p.score <= 110), pmax = Math.max(...pts.map((p) => p.interval[1]));
+const changeTag = (o) => o.cutJun == null ? `<span class="same">not listed</span>` : `<span>${o.cutJun} ` + (o.cutOct < o.cutJun ? `<span class="down">(−${o.cutJun - o.cutOct})</span>` : o.cutOct > o.cutJun ? `<span class="up">(+${o.cutOct - o.cutJun})</span>` : `<span class="same">(same)</span>`) + `</span>`;
+const s189 = `
+<section class="section" id="s189"><div class="shell">
+  <div class="sec-head"><div class="visa">${rectStamp({ top: "SUBCLASS", word: "189", bottom: "INDEPENDENT", tone: "green" })}</div>
+  <div><div class="sec-num">189 · Skilled Independent</div><h2>The 15 October 2026 round</h2>
+  <p class="lead">Home Affairs invited <b>${total189} EOIs</b> on 15 October 2026, its first 189 round since ${day(round.previousDate)}. The round listed ${round.listed} occupations (161 table rows; two occupations appear twice). For ${round.cutoffDistribution[65]} of them the lowest score invited was 65, the pass mark; the highest was ${round.highestCutoff}. At the lowest score, only EOIs with an earlier tie-break date were invited.</p></div></div>
+  <div class="grid2">
+    <div class="card"><h3>Occupations by lowest score invited</h3>
+      <div class="vcols">${dist.map(([p, c]) => `<div class="vcol"><b>${c}</b><div class="vb" style="height:${6 + (c / dmax) * 140}px"></div><span class="pt">${p}</span></div>`).join("")}</div>
+      <p class="cap">Points along the bottom; the number above each bar is how many of the ${round.listed} occupations had that as their lowest score invited.</p>
+      <h3 style="margin-top:26px">Listed in October, not in June (${round.newlyListed.length})</h3>
+      <ul class="mlist">${F.newlyListedDetail.slice(0, 7).map((o) => `<li><a href="${o.href}">${esc(o.name)}</a><span class="ch">${o.cutoff} <small>pts</small></span></li>`).join("")}</ul>
+      <p class="cap">and ${round.newlyListed.length - 7} more. Listed in June but not October: ${round.notListedAgain.join(", ")}.</p></div>
+    <div class="card"><h3>The 189 pool by points, 31 Oct 2026</h3>
+      <div class="hbars">${pts.map((p) => `<div class="hb ${p.score === 65 ? "pass" : ""}"><span class="s">${p.score}</span><span class="t"><span class="max" style="width:${(p.interval[1] / pmax) * 100}%"></span><span class="min" style="width:${(p.interval[0] / pmax) * 100}%"></span></span><span class="c">${summed(p.interval)}</span></div>`).join("")}</div>
+      <div class="key"><span><i style="background:var(--bar-strong)"></i>published counts</span><span><i style="background:repeating-linear-gradient(135deg,var(--bar) 0 2px,transparent 2px 6px)"></i>plus hidden counts (under 20 each)</span></div>
+      <p class="cap">EOIs waiting in the pool (status SUBMITTED), all occupations. One person can hold several EOIs. Counts under 20 per occupation are hidden, so each score is a range.</p></div>
+  </div>
+  <div class="tablewrap"><table class="stack">
+    <thead><tr><th>Occupation</th><th class="n">Lowest score invited, 15 Oct</th><th class="n">4 Jun round</th><th class="n">Tie-break date</th><th class="n">189 pool, 31 Oct</th><th class="n">Holding a 189 invitation, 31 Oct</th></tr></thead>
+    <tbody>${F.notable189.slice(0, 10).map((o) => `<tr><td>${occ(o)}</td><td class="n" data-label="Lowest score invited, 15 Oct"><span class="cut">${o.cutOct}</span></td><td class="n" data-label="4 Jun round">${changeTag(o)}</td><td class="n" data-label="Tie-break date">${o.tieBreak ? dmy(o.tieBreak) : "—"}</td><td class="n" data-label="189 pool, 31 Oct">${n(o.pool)}</td><td class="n" data-label="Holding a 189 invitation">${o.invitedOct === "<20" ? "under 20" : `at least ${n(Number(o.invitedOct))}`}</td></tr>`).join("")}</tbody>
+  </table></div>
+  <p class="cap">The ten listed occupations with the largest 189 pools. <b>Tie-break date:</b> at the lowest score, EOIs that reached it on or before this date were invited. Invitation counts are a minimum: EOIs that had already lodged a visa application by 31 Oct are no longer counted as invited.</p>
+  <div class="card" style="margin-top:24px"><h3>Large 189 pools the round did not list</h3>
+    <ul class="mlist">${F.notListed189.map((o) => `<li><span>${occ(o)}<br><span class="cap" style="margin:0">Not listed in the last ${o.roundsNotListed} rounds; last listed ${day(o.lastListed.date)} at ${o.lastListed.cutoff}</span></span><span class="ch">${n(o.pool)} <small>EOIs in pool</small></span></li>`).join("")}</ul>
+    <p class="cap">All six are on the Home Affairs 189 occupation list (checked ${day(F.federalListCheckedAt)}). Not listed means the round invited none of them; it isn't a zero cut-off.</p></div>
+</div></section>`;
+
+/* ---------- 190 / 491 ---------- */
+function stateSection(visa, s, alt) {
+  const sep = F.stateInvited[visa]["2026-09"];
+  const nom = F.nominations[visa];
+  const top = F.stateTop[visa];
+  const map = stateMap({ values: s, shade: (st) => shadeFor(s[st].interval[0]), labelFor: (st) => (s[st].interval[0] === 0 ? ["<20", "each occupation"] : [n(s[st].interval[0]), "at least"]) });
+  const tiles = ORDER.map((st) => {
+    const v = s[st], t = top[st][0];
+    return `<div class="tile"><div class="st"><span>${STATE[st]}</span><i style="background:var(--map-${shadeFor(v.interval[0])})"></i></div>
+      <div class="big">${v.interval[0] === 0 ? `under 20<small>for each occupation</small>` : `<small style="margin-left:0">at least</small>${n(v.interval[0])}`}</div>
+      <div class="sm">${t ? `Most: ${esc(t.name)} (${t.interval[0] === t.interval[1] ? n(t.interval[0]) : "at least " + n(t.interval[0])})` : "No occupation reached 20"}<br>+ ${n(v.maskedCells)} hidden small counts</div></div>`;
+  }).join("");
+  const name = visa === "190" ? "Skilled Nominated" : "Skilled Work Regional, state-nominated";
+  return `
+<section class="section ${alt ? "alt" : ""}" id="s${visa}"><div class="shell">
+  <div class="sec-head"><div class="visa">${rectStamp({ top: "SUBCLASS", word: visa, bottom: visa === "190" ? "NOMINATED" : "REGIONAL", tone: "ink", rotate: 4 })}</div>
+  <div><div class="sec-num">${visa} · ${name}</div><h2>${visa} invitations by state, October 2026</h2>
+  <p class="lead">EOIs holding a ${visa} invitation on 31 October 2026, by the state or territory that invited them. On 30 September every state was under 20 for each occupation. Each figure below is a minimum: the data hides counts under 20 for each occupation, and those are left out.</p></div></div>
+  <div class="statewrap">
+    <div class="card">${map}<div class="key"><span><i style="background:var(--map-4)"></i>700+</span><span><i style="background:var(--map-3)"></i>200+</span><span><i style="background:var(--map-2)"></i>20+</span><span><i style="background:var(--map-1)"></i>under 20 each</span></div></div>
+    <div class="tiles">${tiles}
+      <div class="tile any"><div class="st"><span>State not recorded</span></div><div class="big"><small>at least</small>${n(s.ANY.interval[0])}</div><div class="sm">Invited EOIs where the data doesn't name the state. Never added to a state.</div></div></div>
+  </div>
+  <div class="official card"><h3 style="font-size:15px">Home Affairs nominations, 2026–27 program year to 30 Sep 2026</h3>
+    <div style="overflow-x:auto"><table><thead><tr>${["ACT", "NSW", "NT", "QLD", "SA", "TAS", "VIC", "WA"].map((k) => `<th>${k}</th>`).join("")}</tr></thead><tbody><tr>${["ACT", "NSW", "NT", "QLD", "SA", "TAS", "VIC", "WA"].map((k) => `<td>${esc(nom[k])}</td>`).join("")}</tr></tbody></table></div>
+    <p class="cap">A different measure: nominations Home Affairs counted from 1 Jul to 30 Sep 2026, as published on its invitation rounds page. "&lt;5" is published that way.</p></div>
+</div></section>`;
+}
+
+/* ---------- movers ---------- */
+const fell = round.changes.down.slice(0, 6), rose = round.changes.up.slice(0, 6), pool = F.movers.fell.slice(0, 6);
+const href = (code) => (F.movers.fell.concat(F.movers.rose).find((m) => m.code === code) || {}).href || `/occupations/${code}/`;
+const slug = (name, code) => `/occupations/${name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "")}-${code}/`;
+const movers = `
+<section class="section" id="movers"><div class="shell">
+  <div class="sec-num">Biggest movers</div><h2>Which occupations moved most</h2>
+  <p class="lead">Lowest score invited compared with the previous 189 round (4 Jun 2026), and the 189 pools that changed most between 30 Sep and 31 Oct. ${round.newlyListed.length} occupations were listed in October but not in June; ${round.notListedAgain.length} were listed in June but not in October.</p>
+  <div class="movers">
+    <div class="card"><h3>Lowest score invited fell</h3><ul class="mlist">${fell.map((c) => `<li><a href="${slug(c.name, c.code)}">${esc(c.name)}</a><span class="ch">${c.jun} → ${c.oct}</span></li>`).join("")}</ul><p class="cap">${round.changes.down.length} occupations fell, ${round.changes.same} were unchanged.</p></div>
+    <div class="card"><h3>Lowest score invited rose</h3><ul class="mlist">${rose.map((c) => `<li><a href="${slug(c.name, c.code)}">${esc(c.name)}</a><span class="ch">${c.jun} → ${c.oct}</span></li>`).join("")}</ul><p class="cap">${round.changes.up.length} occupations rose.</p></div>
+    <div class="card"><h3>189 pool fell most</h3><ul class="mlist">${pool.map((m) => `<li><a href="${m.href}">${esc(m.name)}</a><span class="ch">${n(m.sep)} → ${n(m.oct)}</span></li>`).join("")}</ul><p class="cap">EOIs leave the pool when invited, closed or expired; the data doesn't say which for each EOI.</p></div>
+  </div>
+</div></section>`;
+
+/* ---------- compare ---------- */
+const row = (label, visa, kind, fmtSep, fmtOct) => `<tr><td>${label}</td><td class="n">${fmtSep(nat[visa][kind]["2026-09"].interval)}</td><td class="n">${fmtOct(nat[visa][kind]["2026-10"].interval)}</td></tr>`;
+const minFmt = (iv) => (iv[0] === 0 ? `under ${n(iv[1] + 1)}` : `at least ${n(iv[0])}`);
+const compare = `
+<section class="section alt" id="compare"><div class="shell">
+  <div class="sec-num">Month on month</div><h2>How October compares with September</h2>
+  <p class="lead">The 189 pool fell by ${n(-diff(nat["189"].pool["2026-09"].interval, nat["189"].pool["2026-10"].interval)[1])}–${n(-diff(nat["189"].pool["2026-09"].interval, nat["189"].pool["2026-10"].interval)[0])} EOIs over the month, while EOIs holding a 189 invitation went from under ${n(nat["189"].invited["2026-09"].interval[1] + 1)} to at least ${n(nat["189"].invited["2026-10"].interval[0])}. The 190 and 491 pools changed by under 2% each.</p>
+  <div class="tablewrap compare"><table>
+    <thead><tr><th>All occupations</th><th class="n">30 Sep 2026</th><th class="n">31 Oct 2026</th></tr></thead>
+    <tbody>
+      ${row("189 pool (EOIs)", "189", "pool", range, range)}
+      ${row("Holding a 189 invitation", "189", "invited", minFmt, minFmt)}
+      ${row("190 pool (EOIs)", "190", "pool", range, range)}
+      ${row("Holding a 190 invitation", "190", "invited", minFmt, minFmt)}
+      ${row("491 pool (EOIs)", "491", "pool", range, range)}
+      ${row("Holding a 491 invitation", "491", "invited", minFmt, minFmt)}
+    </tbody></table></div>
+  <ul class="cautions">
+    <li><b>Invitations are a snapshot, not a monthly total.</b> They count EOIs holding an invitation on the day; EOIs that already lodged drop out, so these are minimums. We never add months together.</li>
+    <li><b>Visas are separate.</b> One EOI can choose 189, 190 and 491, so the rows can't be added up.</li>
+    <li><b>A pool change isn't new interest.</b> EOIs arrive, are invited, close and expire; the data doesn't separate these.</li>
+    <li><b>Ranges</b> come from counts under 20 that the data hides for each occupation.</li>
+  </ul>
+</div></section>`;
+
+/* ---------- cta, method, faq ---------- */
+const cta = `
+<section class="section" style="border-top:0"><div class="shell">
+  <div class="cta"><div><h2>Where do your points sit?</h2><p>Check your points free against the published invitation data for your occupation: 189, 190 and 491 in one report.</p>
+    <div class="hero-actions"><a class="btn" href="/check/">Check my points ↗</a><a class="btn ghost" href="/sample/">See a sample report</a></div></div>
+    <div class="stampbox">${roundStamp({ top: "MIGRATELENS", word: ["FREE", "POINTS CHECK"], bottom: "189 · 190 · 491", tone: "green", rotate: -6, paper: "#12202c" })}</div></div>
+</div></section>`;
+
+const faq = [
+  ["When was the latest 189 invitation round?", `15 October 2026. Home Affairs invited ${total189} EOIs for the 189 visa across ${round.listed} occupations. The round before it was on ${day(round.previousDate)}.`],
+  ["What was the lowest score invited for 189 in October 2026?", `It depends on the occupation: from ${round.lowestCutoff} to ${round.highestCutoff} points. ${round.cutoffDistribution[65]} occupations had 65 as their lowest score invited. For Registered Nurses nec it was 70 (75 in June), with a tie-break date of 19 Nov 2025.`],
+  ["Was Software Engineer invited in the October 2026 round?", `No. Software Engineer wasn't listed in the 15 Oct 2026 round, or in the three rounds before it. It was last listed on 7 Nov 2024, at 95 points. On 31 Oct 2026 its 189 pool held 9,464 EOIs.`],
+  ["Which state gave the most 190 invitations in October 2026?", `${STATE[t190[0]]}: at least ${n(t190[1].interval[0])} EOIs held a 190 invitation from it on 31 Oct 2026, then ${ORDER.filter((k) => k !== t190[0]).map((k) => [k, s190[k].interval[0]]).sort((a, b) => b[1] - a[1]).slice(0, 2).map(([k, v]) => `${STATE[k]} (at least ${n(v)})`).join(" and ")}. These are minimums: the data hides counts under 20 for each occupation.`],
+  ["Is this migration advice?", "No. It is general information from published government data. MigrateLens is not a registered migration agent. For advice on your situation, find a registered migration agent at mara.gov.au."],
+];
+const method = `
+<section class="section alt" id="method"><div class="shell">
+  <div class="sec-num">Method and sources</div>
+  <p class="method">Pools and invitations: SkillSelect EOI data (Australian Government), snapshot as at 31 Oct 2026, checked 17 Nov 2026, reused under CC BY 3.0 AU. The 189 round, tie-break dates and nomination table: Home Affairs <i>SkillSelect invitation rounds</i> page (round of 15 Oct 2026). Counts are EOIs; one person can hold several. Counts under 20 are shown as "under 20" or as a range, never as a number. 491 means the state-nominated stream only. <a href="/methodology/">How we read the data</a></p>
+</div></section>
+<section class="section" id="faq"><div class="shell faq">
+  <div class="sec-num">Questions</div><h2>October 2026 SkillSelect questions</h2>
+  ${faq.map(([q, a], i) => `<details ${i < 2 ? "open" : ""}><summary>${esc(q)}</summary><p>${a}</p></details>`).join("")}
+</div></section>`;
+
+document.getElementById("main").innerHTML = hero + s189 + stateSection("190", s190, true) + stateSection("491", s491, false) + movers + compare + cta + method;
+</script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+html, body { margin: 0; background: var(--desk); }
+body { width: 1080px; overflow: hidden; }
+.frame { position: relative; width: 1080px; height: 1350px; overflow: hidden; background: var(--desk); }
+.frame.story { height: 1920px; }
+.safe { position: absolute; left: 0; right: 0; top: 0; height: 1350px; display: flex; flex-direction: column; }
+.story .safe { top: 250px; height: 1330px; }
+
+/* ---------- Direction A: passport page ---------- */
+.page {
+  position: absolute; inset: 44px; border-radius: 30px; background: var(--paper);
+  box-shadow: 0 18px 50px -24px light-dark(#12202c55, #000000aa), inset 0 0 0 1.5px var(--line);
+  overflow: hidden;
+}
+.story .page { inset: 44px 44px; }
+.page .guill { --guill-img: url("../assets/report-passport-a.svg"); opacity: calc(var(--guill-opacity) * .9); }
+.page::after {
+  content: ""; position: absolute; inset: 18px; border-radius: 20px; pointer-events: none;
+  border: 1.5px solid var(--rule); outline: 1px solid var(--rule); outline-offset: 5px;
+}
+.inner { position: relative; z-index: 1; display: flex; flex-direction: column; height: 100%; padding: 74px 88px 58px; gap: 0; }
+
+.top { display: flex; justify-content: space-between; align-items: center; font-size: 30px; color: var(--muted); }
+.top .logo { font-size: 36px; color: var(--ink); }
+.top .tag { letter-spacing: .14em; text-transform: uppercase; font-weight: 600; font-size: 24px; }
+.eyebrow { margin-top: 40px; font-size: 26px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--green); }
+.title { margin: 14px 0 0; font-weight: 800; font-stretch: 112%; letter-spacing: -0.025em; line-height: .98; font-size: 86px; }
+.sub { margin: 22px 0 0; font-size: 34px; line-height: 1.32; color: var(--lede); max-width: 830px; }
+.grow { flex: 1; min-height: 0; }
+.source { font-size: 22px; line-height: 1.35; color: var(--muted); border-top: 1.5px solid var(--rule); padding-top: 20px; margin-top: 18px; }
+.source b { color: var(--ink); font-weight: 600; }
+.mrz { font-family: Menlo, "Courier New", monospace; font-size: 25px; letter-spacing: .12em; color: var(--muted); opacity: .75; white-space: nowrap; overflow: hidden; margin-top: 10px; }
+
+/* cover A */
+.cover-a .title { font-size: 136px; margin-top: 18px; }
+.cover-a .stamps { position: relative; flex: 1; }
+.cover-a .stamps .s1 { position: absolute; width: 400px; right: 0; top: 0; }
+.cover-a .stamps .s2 { position: absolute; width: 250px; left: 0; top: 30px; }
+.cover-a .stamps .s3 { position: absolute; width: 240px; left: 190px; top: 190px; }
+.swipe { font-size: 30px; font-weight: 700; color: var(--ink); display: flex; gap: 14px; align-items: center; }
+.swipe span { display: inline-block; width: 64px; height: 3px; background: var(--saffron); }
+
+/* 189 A */
+.dist { margin-top: 40px; display: grid; grid-template-columns: 1fr 330px; gap: 30px; align-items: start; }
+.dist h3, .block h3 { margin: 0 0 16px; font-size: 25px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+.bars { display: grid; gap: 9px; }
+.bar { display: grid; grid-template-columns: 78px 1fr 64px; align-items: center; gap: 14px; font-size: 29px; }
+.bar .pts { font-family: var(--font-stamp); font-size: 38px; color: var(--ink); }
+.bar .track { height: 30px; background: var(--bar-gap); border-radius: 4px; overflow: hidden; }
+.bar .fill { height: 100%; background: var(--bar-strong); border-radius: 4px; }
+.bar .count { font-weight: 700; text-align: right; }
+.rows { display: grid; gap: 0; margin-top: 4px; }
+.row { display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: baseline; font-size: 31px; padding: 13px 0; border-bottom: 1.5px solid var(--rule); }
+.row:last-child { border-bottom: 0; }
+.row .name { font-weight: 600; }
+.row .val { font-family: var(--font-stamp); font-size: 44px; line-height: 1; color: var(--green); }
+.row .was { font-size: 25px; color: var(--muted); font-family: var(--font); margin-left: 12px; }
+.block { margin-top: 38px; }
+.note { font-size: 26px; line-height: 1.38; color: var(--muted); margin: 14px 0 0; }
+.note b { color: var(--ink); }
+
+/* maps */
+.state-map { width: 100%; height: auto; display: block; }
+.map-code { font-family: var(--font); font-weight: 700; fill: var(--map-label); letter-spacing: .08em; }
+.map-big { font-family: var(--font-stamp); font-weight: 900; fill: var(--ink); }
+.map-small { font-family: var(--font); font-weight: 600; fill: var(--muted); }
+.mapwrap { margin: 4px auto 0; width: 790px; max-width: calc(100% + 40px); }
+.legend { display: flex; flex-wrap: wrap; gap: 10px 26px; font-size: 25px; color: var(--muted); align-items: center; }
+.legend i { display: inline-block; width: 30px; height: 20px; border-radius: 4px; margin-right: 8px; vertical-align: -3px; border: 1px solid var(--map-edge); }
+
+/* spotlight */
+.spot-head { display: grid; grid-template-columns: 1fr 300px; gap: 20px; align-items: center; margin-top: 30px; }
+.spot-head .title { font-size: 80px; }
+.code { font-size: 26px; letter-spacing: .14em; color: var(--muted); font-weight: 700; margin-top: 12px; }
+.facts { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px; }
+.fact { background: var(--paper-2); border: 1.5px solid var(--line); border-radius: 18px; padding: 22px 26px; }
+.fact .big { font-family: var(--font-stamp); font-size: 66px; line-height: 1; }
+.fact .lab { font-size: 25px; line-height: 1.32; color: var(--lede); margin-top: 8px; }
+.cols { display: flex; gap: 14px; align-items: flex-end; height: 190px; margin-top: 8px; }
+.col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: 22px; color: var(--muted); }
+.col .c { width: 100%; background: var(--fill); color: var(--on-fill); font-family: var(--font-stamp); font-size: 36px; text-align: center; padding-top: 6px; border-radius: 4px 4px 0 0; }
+.col.latest .c { background: var(--green); color: var(--on-fill); }
+
+/* closing */
+.closing .bigstamp { width: 470px; margin: 34px auto 0; }
+.closing .title { text-align: center; font-size: 96px; margin-top: 26px; }
+.closing .url { text-align: center; font-size: 46px; font-weight: 700; margin-top: 22px; letter-spacing: .01em; }
+.closing .url span { border-bottom: 4px solid var(--saffron); }
+.closing .sub { text-align: center; margin: 22px auto 0; }
+.disclaim { text-align: center; font-size: 27px; color: var(--ink); font-weight: 600; margin-top: 10px; }
+.disclaim small { display: block; font-weight: 400; color: var(--muted); font-size: 24px; margin-top: 6px; }
+
+/* ---------- Direction B: bold stamp ---------- */
+.b { position: absolute; inset: 0; background: var(--desk); }
+.b .inner { padding: 96px 84px 80px; }
+.b .top .logo { font-size: 38px; }
+.b .giant { font-family: var(--font-stamp); font-weight: 900; line-height: .82; color: var(--green); letter-spacing: -.01em; filter: var(--stamp-glow); }
+.b .giant svg { display: block; width: 100%; height: auto; overflow: visible; }
+.b .giant text { font-family: var(--font-stamp); }
+.b .kicker { font-size: 34px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--ink); }
+.b .head { font-size: 64px; font-weight: 800; font-stretch: 112%; letter-spacing: -.02em; line-height: 1.02; margin: 0; }
+.b .facts3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border-top: 3px solid var(--ink); }
+.b .facts3 div { padding: 22px 22px 0 0; font-size: 27px; line-height: 1.3; color: var(--lede); }
+.b .facts3 b { display: block; font-family: var(--font-stamp); font-size: 64px; line-height: 1; color: var(--ink); font-weight: 900; margin-bottom: 6px; }
+.b .rule { height: 6px; width: 120px; background: var(--saffron); }
+.b .source { border-top-color: var(--line); }
+
+.headgrid { display: grid; grid-template-columns: 1fr 250px; gap: 10px; align-items: center; }
+.headgrid .title { font-size: 74px; }
+.headgrid .sub { font-size: 31px; margin-top: 14px; }
+.vcols { display: flex; gap: 16px; align-items: flex-end; }
+.vcol { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.vcol b { font-size: 28px; }
+.vcol .vbar { width: 100%; background: var(--bar-strong); border-radius: 4px 4px 0 0; }
+.vcol span { font-family: var(--font-stamp); font-size: 38px; line-height: 1; border-top: 2px solid var(--ink); width: 100%; text-align: center; padding-top: 8px; }
+.axis { font-size: 22px; color: var(--muted); margin-top: 10px; }
+.a189 .block { margin-top: 26px; }
+.a189 .row { font-size: 29px; padding: 7px 0; }
