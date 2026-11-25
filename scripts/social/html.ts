@@ -31,11 +31,13 @@ export type HtmlJob = {
 };
 
 const ROOT = resolve(__dirname, "..", "..");
-const SIZES: Record<CardFormat, { width: number; height: number }> = {
-  feed: FEED,
-  story: STORY,
-  og: OG,
-};
+/** Each format's canvas in CSS px (device scale 1). */
+export const CARD_SIZES: Record<CardFormat, { width: number; height: number }> =
+  {
+    feed: FEED,
+    story: STORY,
+    og: OG,
+  };
 
 function fontUrl(path: string): string {
   return pathToFileURL(join(ROOT, "node_modules", path)).href;
@@ -75,7 +77,7 @@ export function cardHtml(
   format: CardFormat,
   theme: Theme,
 ): string {
-  const { width, height } = SIZES[format];
+  const { width, height } = CARD_SIZES[format];
   const size = `width:${width}px;height:${height}px`;
   const body = renderToStaticMarkup(template(card, format));
   return [

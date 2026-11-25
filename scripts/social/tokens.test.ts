@@ -5,7 +5,7 @@ import { SHELL_PALETTE_DARK } from "../../src/lib/brand/palette-dark";
 import { monthSetCards, roundSetCards } from "../../src/lib/updates/cards";
 import { loadRecap } from "../../src/lib/updates/load-server";
 import { cardHtml } from "./html";
-import { cardTokenCss } from "./tokens";
+import { cardColour, cardTokenCss } from "./tokens";
 
 const THEMES = ["light", "dark"] as const;
 const FORMATS = ["feed", "story", "og"] as const;
@@ -53,5 +53,15 @@ describe("cardTokenCss", () => {
       `--paper:${SHELL_PALETTE_DARK.paper};`,
     );
     expect(cardTokenCss("dark")).toContain(`--ink:${SHELL_PALETTE_DARK.ink};`);
+  });
+});
+
+describe("cardColour", () => {
+  it("reads one role in one theme", () => {
+    expect(cardColour("paper", "light")).toBe(SHELL_PALETTE.paper);
+    expect(cardColour("paper", "dark")).toBe(SHELL_PALETTE_DARK.paper);
+    expect(() => cardColour("nonsense", "dark")).toThrow(
+      "No card colour --nonsense",
+    );
   });
 });

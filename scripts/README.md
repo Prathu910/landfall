@@ -26,6 +26,18 @@ After an import, run `npm run check` and `npm run build`, then commit `data/raw/
 
 `npm run updates:generate -- --month YYYY-MM --section round --round YYYY-MM-DD` and `-- --month YYYY-MM --section data [--spotlight <code>] [--previous-manifest <file>]` write `src/data/updates/<month>.json` (`scripts/updates/generate.ts`), the only writer of that folder. Each file is one month's frozen facts for `/updates/<month>/` and the `/updates/` index; a round-only file (`data: null`) is a full page and is in the sitemap. Each run replaces only its own section, keeps `firstGeneratedAt` and sets `updatedAt`; `--today YYYY-MM-DD` overrides the Sydney date. It exits 1 if the round is not in `rounds.json` or not in `--month`, if `--section data` is asked for a month other than `manifest.asAt`, or if the merged file fails `isRecapFacts`. `--previous-manifest` must be the previous month's manifest (for the occupations added and removed); a rerun of the same month (such as `--spotlight` swapping the pick) without it keeps the lists the first run recorded and never treats this month's own manifest as the previous one. `src/lib/updates/load-server.ts` reads the files (`listRecapMonths`, `loadRecap`).
 
+## Instagram cards
+
+```sh
+npm run social:render -- --month YYYY-MM --set round [--round YYYY-MM-DD]   # 9 PNGs in public/social/<month>/round-<date>/
+npm run social:render -- --month YYYY-MM --set month                       # 12 PNGs in public/social/<month>/month/, plus public/social/<month>/og.png
+npm run social:render -- --month YYYY-MM --set month --html-only <dir>     # each card's HTML, no Chrome
+```
+
+`scripts/social/render.ts` renders one set of the month's Instagram cards from `src/data/updates/<month>.json`: each feed card in light and dark (1080×1350), the story cover in both (1080×1920) and the OG image in light (1200×630). The round set is the round cover, card 2 and the closing card; `--round` defaults to the month's newest round. The month set is the cover, the two state cards, the spotlight and the closing card. It reuses the newest round set's card 2 (`round-light.png`, `round-dark.png`) and never re-renders it, so it exits 1 until that round set exists. `--set month` also exits 1 for a month whose facts file has no data section. `jobs.ts` lists the images and their paths.
+
+Each card opens in headless Chrome through puppeteer-core (`CHROME_PATH`, default the macOS Google Chrome). `browser-checks.ts` runs in the page before the screenshot, and any failure renders nothing, names the image and exits 1. It checks that both faces loaded, that no `.fit` or `.inner` box overflows, that story content stays within y 250 to 1580, that feed cover text stays within x 34 to 1046 (the profile-grid crop), and that `--paper` is the theme's token. `--html-only` writes the same cards as HTML files for a browser preview. The templates are in `scripts/social/templates/`. `render.test.ts` and `spotlight-render.test.ts` run in Chrome and are skipped when no Chrome binary exists.
+
 ## Frozen sample
 
 `npm run sample:freeze` (`scripts/sample/freeze.ts`) writes the 2026-10 core and detail records of the `/sample/` occupations (`SAMPLE_CODES` in `src/lib/outlook/examples.ts`) and a `meta.json` to `src/data/sample/2026-10/`, regenerated in memory from `data/raw/` and the stored rounds up to 31 October 2026. `/sample/` reads only these, so a monthly import never moves its stamps. Run it only when the founder asks for the sample to be refreshed.

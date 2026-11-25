@@ -93,6 +93,13 @@ const SWITCHES: Record<string, Pair> = {
   ],
 };
 
+/** One colour role's value in one theme, as `cardTokenCss` writes it. */
+export function cardColour(role: string, theme: Theme): string {
+  const pair = COLOURS[role];
+  if (!pair) throw new Error(`No card colour --${role}`);
+  return pair[theme === "light" ? 0 : 1];
+}
+
 /** `:root{color-scheme:…;--paper:…}` for one theme. */
 export function cardTokenCss(theme: Theme): string {
   const side = theme === "light" ? 0 : 1;

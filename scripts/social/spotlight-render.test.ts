@@ -9,9 +9,8 @@ import { loadRecap } from "../../src/lib/updates/load-server";
 import { popularOccupations } from "../../src/lib/updates/spotlight";
 import { loadAllCores } from "../updates/generate";
 import { cardHtml } from "./html";
+import { DEFAULT_CHROME } from "./render";
 
-const DEFAULT_CHROME =
-  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const chrome = process.env.CHROME_PATH ?? DEFAULT_CHROME;
 
 const oct = loadRecap("2026-10");
