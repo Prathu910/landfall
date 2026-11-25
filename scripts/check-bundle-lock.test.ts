@@ -2,7 +2,11 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { BUILDER_SENTINELS } from "../src/lib/report-issue/sentinels";
-import { chunksForPage, findSentinels } from "./check-bundle-lock";
+import {
+  chunkListProblems,
+  chunksForPage,
+  findSentinels,
+} from "./check-bundle-lock";
 
 const PAGE = `<!DOCTYPE html><html><head>
 <link rel="preload" as="script" fetchPriority="low" href="/_next/static/chunks/webpack-838d.js"/>
@@ -28,6 +32,30 @@ describe("check-bundle-lock", () => {
       "/_next/static/chunks/webpack-838d.js",
       "/_next/static/chunks/main-app-8973.js",
       "/_next/static/chunks/app/sample/page-296b.js",
+    ]);
+  });
+
+  it("accepts a page that loads its own route chunk", () => {
+    expect(chunkListProblems("sample/index.html", chunksForPage(PAGE))).toEqual(
+      [],
+    );
+  });
+
+  // Changed script markup or an asset prefix must not switch the lock off.
+  it("fails a page that loads no chunks", () => {
+    expect(chunkListProblems("sample/index.html", [])).toEqual([
+      "sample/index.html loads no /_next/static chunks, so the lock cannot check it",
+    ]);
+  });
+
+  it("fails a page without its own route chunk", () => {
+    const chunks = [
+      "/_next/static/chunks/main-app-8973.js",
+      "/_next/static/chunks/app/check/page-e486.js",
+      "/_next/static/chunks/app/sample/extra/page-1a2b.js",
+    ];
+    expect(chunkListProblems("sample/index.html", chunks)).toEqual([
+      "sample/index.html loads no app/sample/page-*.js chunk, so the lock may be missing its code",
     ]);
   });
 
