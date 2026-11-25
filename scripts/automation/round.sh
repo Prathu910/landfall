@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # The 189 round job (spec 6.10), run by .github/workflows/round-189.yml.
 #
-#   bash scripts/automation/round.sh prepare          clear old state and record the run's date
+#   bash scripts/automation/round.sh prepare          clear old state and file failures under the round check
 #   bash scripts/automation/round.sh run              import any new rounds and open the pull request
 #   bash scripts/automation/round.sh collect-failure  save a failed run's git status and raw files
 #   bash scripts/automation/round.sh report-failure   open or comment on the failure issue
@@ -13,6 +13,8 @@
 #                    return nothing, except DRY_RUN_OPEN_PRS (JSON for
 #                    `gh pr list`, read by gh.ts) and DRY_RUN_PR_BODY (a file
 #                    for `gh pr view`), for local tests.
+#   DRY_RUN_HEAD_PRS dry runs only: JSON for `gh pr list --head <branch>`, the
+#                    open pull requests on a closed round PR's branch.
 #   ROUNDS_HTML_DIR  dry runs only: the folder of saved invitation-rounds.html
 #                    and previous-rounds.html that stands in for the official
 #                    pages (detect-round.ts and the import's --rounds-html).
@@ -40,7 +42,8 @@ ROUND_MONTHS=()  # each new round's data month (round-info.ts)
 ROUND_DAYS=()    # each new round's "15 Oct 2026"
 ROUND_ON_BASE=() # yes when BASE_REF already has the round's section
 
-# The failure issue's date: the run's date until the round's is known.
+# The failure issue's key: "check" (the shared "189 round check failed"
+# issue) until the round page is read, then the round's date.
 remember_round() { printf '%s\n' "$1" >"$STATE/round"; }
 
 check_inputs() {
@@ -54,7 +57,7 @@ prepare() {
   rm -f "$STATE/step" "$STATE/round" "$WORK/import.json" "$WORK/build.log" \
     "$WORK/pr-body.md" "$WORK/pr-body.next.md" "$WORK/existing-body.md" \
     "$WORK/previous-manifest.json"
-  remember_round "$TODAY"
+  remember_round check
 }
 
 # Spec 6.10 "Detect", against the checked-out branch's src/data/rounds.json.
@@ -162,25 +165,46 @@ days_text() {
   echo "$text"
 }
 
-# Round PRs are not held (summary publish line): a closed round PR's branch is
-# replaced, but only while origin still has the tip this run saw.
+# Open pull requests from the branch, labelled or not, as "#12, #13".
+# DRY_RUN_HEAD_PRS stands in for gh's JSON in a dry run.
+open_prs_on_branch() {
+  local json
+  if [[ $DRY_RUN == 1 ]]; then
+    print_dry gh pr list --head "$BRANCH" --state open --json number,headRefName >&2
+    json="${DRY_RUN_HEAD_PRS:-[]}"
+  else
+    json="$(gh pr list --head "$BRANCH" --state open --json number,headRefName)"
+  fi
+  node -p 'JSON.parse(process.argv[1]).filter((pr) => pr.headRefName === process.argv[2])
+    .map((pr) => "#" + pr.number).join(", ")' "$json" "$BRANCH"
+}
+
+# Round PRs are not held (controller ruling): a closed round PR's branch is
+# replaced, but only while origin still has the tip this run saw and no open
+# pull request uses it.
 push_round_branch() {
-  if [[ -n $PR || $HELD != yes ]]; then
+  local old="" open
+  if [[ -z $PR && $HELD == yes ]]; then
+    old="$(git ls-remote --heads origin "refs/heads/$BRANCH" | cut -f1)"
+  fi
+  # No old tip (no closed PR, or the branch has gone since): a plain push.
+  if [[ -z $old ]]; then
     push_branch
     return
   fi
-  local old
-  old="$(git ls-remote --heads origin "refs/heads/$BRANCH" | cut -f1)"
-  [[ -n $old ]] || fail "origin has no $BRANCH to replace"
+  open="$(open_prs_on_branch)"
+  [[ -z $open ]] ||
+    fail "Pull request $open is open on $BRANCH without the $LABEL label; label it or close it, then run again."
   step "Replace $BRANCH, the branch of a closed pull request"
   local args=("--force-with-lease=refs/heads/$BRANCH:$old" origin "HEAD:refs/heads/$BRANCH")
   if [[ $DRY_RUN == 1 ]]; then print_dry git push "${args[@]}"; else git push "${args[@]}"; fi
 }
 
+# Any success closes the round check's issue and the page round's issue.
 resolve_round_failures() {
+  step "Close any round check failure issue"
+  run_tsx scripts/automation/failure-issue.ts resolve --round-check
   resolve_failure --round "$NEWEST"
-  # A failure before the page was read is filed under the run's date.
-  if [[ $TODAY != "$NEWEST" ]]; then resolve_failure --round "$TODAY"; fi
 }
 
 run_round() {
@@ -235,20 +259,27 @@ run_round() {
 report_failure() {
   local round
   round="$(cat "$STATE/round" 2>/dev/null || true)"
-  if [[ ! $round =~ $DATE_RE ]]; then
-    echo "The run failed before it recorded a date, so no failure issue was opened." >&2
-    return
+  if [[ $round == check ]]; then
+    report_failure_issue "$WORK/round.log" failure_title --round-check
+  elif [[ $round =~ $DATE_RE ]]; then
+    report_failure_issue "$WORK/round.log" failure_title --round "$round"
+  else
+    echo "The run failed before prepare recorded the issue, so no failure issue was opened." >&2
   fi
-  report_failure_issue --round "$round" failure_title "$WORK/round.log"
 }
 
-# failure-issue.ts's title, for reporting without tsx.
+# failure-issue.ts's title for `--round-check` or `--round YYYY-MM-DD`, for
+# reporting without tsx.
 # shellcheck disable=SC2329 # called by report_failure_issue
 failure_title() {
+  if [[ $1 == --round-check ]]; then
+    echo "189 round check failed"
+    return
+  fi
   local day
   day="$(node -p '
     const [y, m, d] = process.argv[1].split("-");
-    Number(d) + " " + ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][m - 1] + " " + y' "$1")" || return
+    Number(d) + " " + ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][m - 1] + " " + y' "$2")" || return
   echo "189 round import failed ($day)"
 }
 

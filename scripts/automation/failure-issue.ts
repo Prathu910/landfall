@@ -1,6 +1,6 @@
 // Usage:
-//   tsx scripts/automation/failure-issue.ts report (--month YYYY-MM | --round YYYY-MM-DD) --log <file>
-//   tsx scripts/automation/failure-issue.ts resolve (--month YYYY-MM | --round YYYY-MM-DD)
+//   tsx scripts/automation/failure-issue.ts report (--month YYYY-MM | --round YYYY-MM-DD | --round-check) --log <file>
+//   tsx scripts/automation/failure-issue.ts resolve (--month YYYY-MM | --round YYYY-MM-DD | --round-check)
 // `report` opens a failure issue (assigned to the founder) or comments on the
 // open one with the same title; `resolve` closes it with a comment linking
 // the successful run. The repo is public: bodies hold no secrets, only the
@@ -45,6 +45,12 @@ export function roundFailureTitle(date: string): string {
   const [year, m, d] = date.split("-");
   return `189 round import failed (${Number(d)} ${MONTHS[Number(m) - 1]} ${year})`;
 }
+
+/**
+ * The round job's failures before it has read the round page (npm ci,
+ * Chrome, the fetch) have no round date, so they share this one issue.
+ */
+export const ROUND_CHECK_TITLE = "189 round check failed";
 
 export function failureIssueAction(
   open: OpenIssue[],
@@ -139,18 +145,28 @@ export function resolveFailure(gh: Gh, title: string, runUrl: string): boolean {
   return true;
 }
 
-function flag(name: string): string {
-  const index = process.argv.indexOf(name);
-  const value = index === -1 ? undefined : process.argv[index + 1];
+function flagIn(argv: string[], name: string): string {
+  const index = argv.indexOf(name);
+  const value = index === -1 ? undefined : argv[index + 1];
   if (!value) throw new Error(`Missing ${name}`);
   return value;
 }
 
-/** The one place a CLI turns `--month` or `--round` into a title. */
-function titleFromFlags(): string {
-  if (process.argv.includes("--month"))
-    return monthlyFailureTitle(flag("--month"));
-  return roundFailureTitle(flag("--round"));
+const flag = (name: string): string => flagIn(process.argv, name);
+
+const KEYS = ["--month", "--round", "--round-check"];
+
+/** The one place a CLI turns `--month`, `--round` or `--round-check` into a title. */
+export function titleFromArgs(argv: string[]): string {
+  const keys = KEYS.filter((key) => argv.includes(key));
+  if (keys.length !== 1)
+    throw new Error(
+      "Give one of --month YYYY-MM, --round YYYY-MM-DD or --round-check",
+    );
+  if (keys[0] === "--round-check") return ROUND_CHECK_TITLE;
+  if (keys[0] === "--month")
+    return monthlyFailureTitle(flagIn(argv, "--month"));
+  return roundFailureTitle(flagIn(argv, "--round"));
 }
 
 function runUrl(): string {
@@ -162,7 +178,7 @@ function runUrl(): string {
 
 function main(): void {
   const mode = process.argv[2];
-  const title = titleFromFlags();
+  const title = titleFromArgs(process.argv.slice(3));
   const gh = realGh();
   if (mode === "report") {
     const log = readFileSync(flag("--log"), "utf8");
@@ -172,7 +188,7 @@ function main(): void {
     console.log(resolveFailure(gh, title, runUrl()) ? "closed" : "none open");
   } else {
     throw new Error(
-      "Usage: failure-issue.ts report|resolve (--month YYYY-MM | --round YYYY-MM-DD)",
+      "Usage: failure-issue.ts report|resolve (--month YYYY-MM | --round YYYY-MM-DD | --round-check)",
     );
   }
 }

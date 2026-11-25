@@ -240,16 +240,16 @@ report_failure() {
     echo "The run failed before it chose a month, so no failure issue was opened." >&2
     return
   fi
-  report_failure_issue --month "$month" failure_title "$WORK/monthly.log"
+  report_failure_issue "$WORK/monthly.log" failure_title --month "$month"
 }
 
-# failure-issue.ts's title, for reporting without tsx.
+# failure-issue.ts's title for `--month YYYY-MM`, for reporting without tsx.
 # shellcheck disable=SC2329 # called by report_failure_issue
 failure_title() {
   local month
   month="$(node -p '
     const [y, m] = process.argv[1].split("-");
-    ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][m - 1] + " " + y' "$1")" || return
+    ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][m - 1] + " " + y' "$2")" || return
   echo "Monthly SkillSelect update failed ($month)"
 }
 

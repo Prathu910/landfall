@@ -6,7 +6,9 @@ import {
   monthlyFailureTitle,
   reportFailure,
   resolveFailure,
+  ROUND_CHECK_TITLE,
   roundFailureTitle,
+  titleFromArgs,
 } from "./failure-issue";
 
 const title = "Monthly SkillSelect update failed (Nov 2026)";
@@ -17,6 +19,29 @@ describe("titles", () => {
     expect(roundFailureTitle("2026-11-04")).toBe(
       "189 round import failed (4 Nov 2026)",
     );
+  });
+});
+
+describe("titleFromArgs", () => {
+  it("builds the title from exactly one key flag", () => {
+    expect(titleFromArgs(["--month", "2026-11", "--log", "x"])).toBe(title);
+    expect(titleFromArgs(["--round", "2026-11-04"])).toBe(
+      "189 round import failed (4 Nov 2026)",
+    );
+    expect(titleFromArgs(["--round-check", "--log", "x"])).toBe(
+      "189 round check failed",
+    );
+    expect(ROUND_CHECK_TITLE).toBe("189 round check failed");
+  });
+
+  it("rejects no key, two keys, a missing value and a raw title", () => {
+    expect(() => titleFromArgs([])).toThrow(/one of/);
+    expect(() => titleFromArgs(["--title", "anything"])).toThrow(/one of/);
+    expect(() =>
+      titleFromArgs(["--round-check", "--round", "2026-11-04"]),
+    ).toThrow(/one of/);
+    expect(() => titleFromArgs(["--month"])).toThrow(/Missing --month/);
+    expect(() => titleFromArgs(["--round", "2026-11"])).toThrow();
   });
 });
 

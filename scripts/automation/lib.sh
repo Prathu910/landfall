@@ -171,21 +171,22 @@ collect_failure() {
     tar --null -T - -cf - | tar -xf - -C "$WORK/failure-raw" || true
 }
 
-# report_failure_issue FLAG KEY TITLE_FUNCTION LOG: failure-issue.ts with
-# `FLAG KEY` (--month YYYY-MM or --round YYYY-MM-DD), or gh directly under the
-# title that `TITLE_FUNCTION KEY` prints.
+# report_failure_issue LOG TITLE_FUNCTION KEY...: failure-issue.ts with the
+# issue's key flags (--month YYYY-MM, --round YYYY-MM-DD or --round-check),
+# or gh directly under the title that `TITLE_FUNCTION KEY...` prints.
 report_failure_issue() {
-  local flag="$1" key="$2" title_function="$3" log="$4" title
+  local log="$1" title_function="$2" title
+  shift 2
   touch "$log"
   FAILED_STEP="$(cat "$STATE/step" 2>/dev/null || echo unknown)"
   export FAILED_STEP
   # A partial install can leave tsx in place and still fail, so fall back then too.
   if [[ -x node_modules/.bin/tsx ]] &&
-    run_tsx scripts/automation/failure-issue.ts report "$flag" "$key" --log "$log"; then
+    run_tsx scripts/automation/failure-issue.ts report "$@" --log "$log"; then
     return
   fi
   echo "failure-issue.ts is unavailable; reporting with gh directly." >&2
-  title="$("$title_function" "$key")"
+  title="$("$title_function" "$@")"
   report_failure_with_gh "$title" "$log"
 }
 

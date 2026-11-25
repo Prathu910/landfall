@@ -45,8 +45,8 @@ jobs:
           node-version: 22
           cache: npm
 
-      # Records the run's date first, so a failure from here on (npm ci,
-      # Chrome, reading the page) can still open a failure issue.
+      # Files failures from here on (npm ci, Chrome, reading the page) under
+      # the one "189 round check failed" issue until the round date is known.
       - name: Prepare
         run: bash scripts/automation/round.sh prepare
 
