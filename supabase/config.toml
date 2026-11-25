@@ -44,3 +44,11 @@ entrypoint = "./functions/report-confirm/index.ts"
 [functions.razorpay-webhook]
 verify_jwt = false
 entrypoint = "./functions/razorpay-webhook/index.ts"
+
+[functions.report-get]
+verify_jwt = false
+entrypoint = "./functions/report-get/index.ts"
+
+[functions.report-revise]
+verify_jwt = false
+entrypoint = "./functions/report-revise/index.ts"

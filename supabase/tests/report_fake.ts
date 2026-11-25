@@ -448,6 +448,91 @@ export class FakeDb {
     }
     return { status: "revoked", report_id: o.report_id };
   }
+
+  rpc_report_rate({ p_key, p_limit }: Json) {
+    const key = `${p_key}@${Math.floor(this.now / MINUTE)}`;
+    const hits = (this.rateHits.get(key) ?? 0) + 1;
+    this.rateHits.set(key, hits);
+    return hits <= (p_limit as number);
+  }
+
+  private byHash(hash: unknown) {
+    return this.reports.find((r) => r.token_hash === hash);
+  }
+
+  rpc_report_by_token({ p_token_hash }: Json) {
+    const r = this.byHash(p_token_hash);
+    if (!r) return { status: "missing" };
+    if (r.status === "revoked") return { status: "revoked" };
+    if (r.status === "expired" || r.expires_at <= this.now)
+      return { status: "expired" };
+    return {
+      status: "issued",
+      payload: r.payload,
+      version: r.version,
+      profile: r.profile,
+      report_no: r.report_no,
+    };
+  }
+
+  private closed(r: Report, now: number) {
+    return (
+      r.status !== "issued" ||
+      r.expires_at <= now ||
+      now >= r.first_issued_at + 7 * DAY
+    );
+  }
+
+  rpc_report_revise_source({ p_token_hash }: Json) {
+    const r = this.byHash(p_token_hash);
+    if (!r) return { status: "missing" };
+    if (this.closed(r, this.now)) return { status: "closed" };
+    if (r.version >= 4) return { status: "limit" };
+    return {
+      status: "open",
+      report_id: r.id,
+      report_no: r.report_no,
+      version: r.version,
+      profile: r.profile,
+      engine_data: r.engine_data,
+      data_as_at: r.data_as_at,
+      first_issued_at: iso(r.first_issued_at),
+    };
+  }
+
+  rpc_report_revise({ p }: Json) {
+    const a = p as Json;
+    const r = this.byHash(a.token_hash);
+    if (!r) return { status: "missing" };
+    if (this.closed(r, this.now)) return { status: "closed" };
+    if (r.version >= 4) return { status: "limit" };
+    const profile = a.profile as Json | undefined;
+    if (profile && profile.occupation !== r.profile.occupation)
+      return { status: "occupation-changed" };
+    Object.assign(r, {
+      version: r.version + 1,
+      issued_at: this.now,
+      profile: profile ?? r.profile,
+      token_enc: (a.token_enc as string) ?? r.token_enc,
+      pdf_status: "pending",
+      email_status: "pending",
+      pdf_attempts: 0,
+      email_attempts: 0,
+      next_attempt_at: this.now,
+      email_next_at: this.now,
+      lease_until: null,
+      link_email_sent: false,
+      pdf_email_sent: false,
+      alert_sent: false,
+    });
+    r.payload = this.withMeta(r, a.payload as Json);
+    return {
+      status: "revised",
+      version: r.version,
+      report_no: r.report_no,
+      report_id: r.id,
+    };
+  }
 }
 
 type Sent = {
@@ -589,4 +674,30 @@ export function lastCode(w: World): string {
   const match = /\b(\d{6})\b/.exec(text);
   if (!match) throw new Error("no code in the last email");
   return match[1];
+}
+
+/** Issues a Founding 100 report through report-order and report-verify; returns its token. */
+export async function issueFounding(
+  w: World,
+  email = "buyer@example.com",
+): Promise<string> {
+  const { orderHandler, verifyHandler } =
+    await import("../functions/_shared/report/handlers.ts");
+  const order = await orderHandler(w.deps)(
+    browser("report-order", {
+      profile: PROFILE,
+      email,
+      currency: "INR",
+      consent: true,
+      asOf: AS_OF,
+      turnstile_token: "ok",
+    }),
+  );
+  const { claimId } = await order.json();
+  const verified = await verifyHandler(w.deps)(
+    browser("report-verify", { claimId, code: lastCode(w) }),
+  );
+  const body = await verified.json();
+  if (body.kind !== "issued") throw new Error(JSON.stringify(body));
+  return body.token;
 }

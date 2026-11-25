@@ -75,18 +75,22 @@ export type ConfirmResponse =
 
 /** Opaque here; the frontend narrows it with plan 1's payload types. */
 export type ReportPayloadJson = unknown;
+/** `profile` is the stored answers, for "Edit answers" (token holder only). */
 export type ReportGetResponse =
-  | { kind: "report"; payload: ReportPayloadJson }
+  | { kind: "report"; payload: ReportPayloadJson; profile: unknown }
   | { kind: "revoked" }
   | { kind: "expired" }
-  | { kind: "not-found" };
+  | { kind: "not-found" }
+  /** 400 malformed token, 429 over 30 a minute, 503 server fault. */
+  | { kind: "error"; code: "invalid" | "limited" | "busy" };
 
 export type ReviseRequest = { token: string; profile: unknown };
 export type ReviseResponse =
   | { kind: "revised"; version: number }
   | {
       kind: "error";
-      code: "closed" | "limit" | "invalid" | "occupation-changed";
+      /** `invalid` (400): malformed, an unknown token or a profile the server refuses. */
+      code: "closed" | "limit" | "invalid" | "occupation-changed" | "busy";
     };
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

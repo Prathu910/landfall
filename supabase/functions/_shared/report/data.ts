@@ -104,3 +104,30 @@ export function storedEngineData(raw: RawEngineData): StoredEngineData {
 export function dataMonthOf(raw: RawEngineData): string {
   return (raw.manifest as { asAt: string }).asAt;
 }
+
+/**
+ * Version 1's data for a revision: the stored core and detail, with the
+ * live index and state rules, and the live manifest pinned to the stored
+ * month and check date, so the data month and source dates never change.
+ * Null when the stored data no longer parses; site down throws.
+ */
+export async function rebuildEngineData(
+  siteUrl: string,
+  stored: unknown,
+  fetcher: typeof fetch,
+): Promise<EngineData | null> {
+  if (!record(stored) || !record(stored.core)) return null;
+  const month = await loadMonth(siteUrl, fetcher);
+  if (!record(month.manifest)) return null;
+  const manifest = {
+    ...month.manifest,
+    asAt: stored.core.asAt,
+    checkedAt: stored.checkedAt ?? month.manifest.checkedAt,
+  };
+  return parseEngineData({
+    ...month,
+    manifest,
+    core: stored.core,
+    detail: stored.detail ?? null,
+  });
+}
