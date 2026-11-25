@@ -1,4 +1,4 @@
-import { existsSync } from "node:fs";
+import { existsSync, readdirSync } from "node:fs";
 import path from "node:path";
 import type { Metadata } from "next";
 import { occupationIndex } from "@/components/data/occupation-index";
@@ -16,7 +16,12 @@ import { serializeJsonLd } from "@/lib/seo/json-ld";
 import { SITE_NAME } from "@/lib/site";
 import { formatLongMonth } from "@/lib/updates/format";
 import { listRecapMonths, loadRecap } from "@/lib/updates/load-server";
-import { recapDescription, recapJsonLd, recapTitle } from "@/lib/updates/meta";
+import {
+  ogImageFor,
+  recapDescription,
+  recapJsonLd,
+  recapTitle,
+} from "@/lib/updates/meta";
 import { buildRecapView, type RecapView } from "@/lib/updates/recap-view";
 import type { RecapFacts } from "@/lib/updates/types";
 import styles from "./page.module.css";
@@ -40,11 +45,19 @@ function requireMonth(value: string): MonthKey {
   return month;
 }
 
-/** The month's own card once Plan 2 renders it, else the site image. */
-function ogImage(month: MonthKey): string {
-  const own = `/social/${month}/og.png`;
-  return existsSync(path.join(process.cwd(), "public", own)) ? own : "/og.png";
+/** The month's social cards under `public/`, relative to it. */
+function socialFiles(month: MonthKey): ReadonlySet<string> {
+  const dir = path.join(process.cwd(), "public", "social", month);
+  if (!existsSync(dir)) return new Set();
+  return new Set(
+    readdirSync(dir, { recursive: true, encoding: "utf8" }).map(
+      (file) => `social/${month}/${file}`,
+    ),
+  );
 }
+
+const ogImage = (month: MonthKey): string =>
+  ogImageFor(month, socialFiles(month));
 
 function recap(month: MonthKey): { facts: RecapFacts; view: RecapView } {
   const facts = loadRecap(month);

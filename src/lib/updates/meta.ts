@@ -1,3 +1,4 @@
+import type { MonthKey } from "../data/types";
 import { pageDescription } from "../occupation-page/meta";
 import { articleLd, breadcrumbLd, datasetLd, faqPageLd } from "../seo/json-ld";
 import { SITE_NAME, SITE_URL } from "../site";
@@ -69,4 +70,24 @@ export function recapJsonLd(
       view.breadcrumb.map((c) => ({ name: c.name, item: absolute(c.href) })),
     ),
   ];
+}
+
+/**
+ * The recap's OG image: the month's own card, else its newest round's card,
+ * else the site image. `publicFiles` holds paths relative to `public/`
+ * (no leading slash).
+ */
+export function ogImageFor(
+  month: MonthKey,
+  publicFiles: ReadonlySet<string>,
+): string {
+  const own = `social/${month}/og.png`;
+  if (publicFiles.has(own)) return `/${own}`;
+  const rounds = [...publicFiles]
+    .filter(
+      (f) => f.startsWith(`social/${month}/round-`) && f.endsWith("/og.png"),
+    )
+    .sort();
+  const newest = rounds.at(-1);
+  return newest ? `/${newest}` : "/og.png";
 }

@@ -1,5 +1,13 @@
 # Resume here
 
+## Monthly updates, Plan 2: Instagram images (25 November 2026)
+
+The 2026-10 Instagram sets are rendered locally and committed (founder go-ahead, 24 Nov 2026; later months are rendered in CI only). Branch `roadmap/monthly-updates`, not pushed.
+
+- **Where.** `public/social/2026-10/round-2026-10-15/` (3 cards in light and dark, the story cover in both, `og.png`) and `public/social/2026-10/month/` (cover, 190, 491, spotlight, closing, story cover; light and dark), plus `public/social/2026-10/og.png` (the recap's OG image). Each set's `set.json` holds every image's alt text and the caption.
+- **How to post.** Use the month set as the first carousel (6 feed cards: cover, then the round card from `round-2026-10-15/round-*.png`, 190, 491, spotlight, closing): upload the `-light` or the `-dark` files, not both. Paste the caption and each image's alt text from the month `set.json`. The story cover is `story-cover-*.png`. Instagram is posted by hand; nothing posts automatically.
+- **Re-render.** `rm -rf public/social/2026-10`, then `npm run social:render -- --month 2026-10 --set round` and `-- --month 2026-10 --set month` (needs Chrome; `scripts/README.md`). The recap page uses `/social/<month>/og.png` when it exists, else the newest round's `og.png`, else `/og.png` (`ogImageFor`).
+
 ## Monthly updates, Plan 1: recap pages (25 November 2026)
 
 Branch `roadmap/monthly-updates` (not merged, not pushed, not deployed). Spec `docs/superpowers/specs/2026-11-24-monthly-updates-design.md`; plan `docs/superpowers/plans/2026-11-24-monthly-updates-1-recap-pages.md`; ledger `.superpowers/sdd/2026-11-24-monthly-updates-1-recap-pages/progress.md` (rulings, outcomes, deferred minors). Plans 2 (Instagram images) and 3 (scheduled jobs) run next on the same branch.

@@ -3,7 +3,7 @@ import { SITE_URL } from "../site";
 import { pagesFor } from "./__fixtures__/occupation-pages";
 import { dataOnly, roundOnly } from "./__fixtures__/recap-facts";
 import { loadRecap } from "./load-server";
-import { recapDescription, recapJsonLd, recapTitle } from "./meta";
+import { ogImageFor, recapDescription, recapJsonLd, recapTitle } from "./meta";
 import { buildRecapView } from "./recap-view";
 
 const oct = loadRecap("2026-10");
@@ -82,5 +82,27 @@ describe("recapJsonLd", () => {
       recapJsonLd(roundOnly, buildRecapView(roundOnly, ctx), OG) as Ld[]
     ).map((o) => o["@type"]);
     expect(types).toEqual(["Article", "FAQPage", "BreadcrumbList"]);
+  });
+});
+
+describe("ogImageFor", () => {
+  const own = "social/2026-10/og.png";
+  const round = (date: string) => `social/2026-10/round-${date}/og.png`;
+
+  it("prefers the month's own card", () => {
+    const files = new Set([own, round("2026-10-15")]);
+    expect(ogImageFor("2026-10", files)).toBe("/social/2026-10/og.png");
+  });
+
+  it("falls back to the newest round's card", () => {
+    const files = new Set([round("2026-10-01"), round("2026-10-15")]);
+    expect(ogImageFor("2026-10", files)).toBe(
+      "/social/2026-10/round-2026-10-15/og.png",
+    );
+  });
+
+  it("falls back to the site image, ignoring other months", () => {
+    const files = new Set(["social/2026-09/og.png"]);
+    expect(ogImageFor("2026-10", files)).toBe("/og.png");
   });
 });
