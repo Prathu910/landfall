@@ -16,7 +16,14 @@ import {
 const readJson = <T>(file: string): T =>
   JSON.parse(readFileSync(file, "utf8")) as T;
 
-const manifest = readJson<Manifest>("src/data/manifest.json");
+// The opening line states the snapshot and check date, so those are pinned
+// to 2026-10: a new month (or a re-import) must not fail this test.
+const manifest: Manifest = {
+  ...readJson<Manifest>("src/data/manifest.json"),
+  snapshotId: "skillselect-2026-10-31",
+  asAt: "2026-10",
+  checkedAt: "2026-11-17",
+};
 const facts = loadRecap("2026-10");
 const monthSet = readJson<SetManifest>("public/social/2026-10/month/set.json");
 const roundSet = readJson<SetManifest>(
