@@ -25,6 +25,7 @@ import {
   type Profile,
 } from "@/lib/migration";
 import { sampleReportProfile } from "@/lib/sample";
+import { parseProfile } from "@/lib/profile-guard";
 import { resetStateRelativeAnswers, restoreProfile } from "@/lib/state-answers";
 import type { ReportSource } from "@/lib/data/report-source";
 import { publishedOccupationCode } from "@/lib/data/occupation-url";
@@ -59,28 +60,6 @@ const STEPS = [
   "Your overview",
 ];
 
-function isProfile(value: unknown): value is Profile {
-  if (!value || typeof value !== "object") return false;
-  const v = value as Record<string, unknown>;
-  if (
-    !Object.entries(emptyProfile).every(
-      ([key, base]) => typeof v[key] === typeof base,
-    )
-  )
-    return false;
-  return (
-    ["unknown", "competent", "proficient", "superior"].includes(
-      String(v.english),
-    ) &&
-    ["unknown", "none", "trade", "bachelor", "doctorate"].includes(
-      String(v.qualification),
-    ) &&
-    ["unknown", "single", "citizen", "skilled", "english", "none"].includes(
-      String(v.partner),
-    )
-  );
-}
-
 export function CheckFlow({ source }: { source: ReportSource }) {
   const [profile, setProfile] = useState<Profile>({ ...emptyProfile });
   const [step, setStep] = useState(0);
@@ -107,9 +86,13 @@ export function CheckFlow({ source }: { source: ReportSource }) {
       migrateLegacyProfile(localStorage);
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
-        const parsed = JSON.parse(saved);
-        if (isProfile(parsed)) {
-          setProfile(restoreProfile(parsed));
+        const parsed: unknown = JSON.parse(saved);
+        const restored =
+          parsed && typeof parsed === "object"
+            ? parseProfile(restoreProfile(parsed as Record<string, unknown>))
+            : null;
+        if (restored) {
+          setProfile(restored);
           setSave(true);
         }
       }
