@@ -1,13 +1,13 @@
 import type { MetadataRoute } from "next";
-import { occupationIndex } from "@/components/data/occupation-index";
-import { GUIDE_CHECKED_AT } from "@/data/guide/sources";
-import { loadManifest, loadOccupationCore } from "@/lib/data/load-server";
-import { LEGAL_SLUGS, LEGAL_UPDATED } from "@/lib/legal/copy";
-import type { OccupationCore } from "@/lib/data/types";
-import { sitemapEntries } from "@/lib/occupation-page/meta";
-import { SITE_URL } from "@/lib/site";
-import { listRecapMonths, loadRecap } from "@/lib/updates/load-server";
-import { updatesSitemapEntries } from "@/lib/updates/sitemap";
+import { occupationIndex } from "../components/data/occupation-index";
+import { GUIDE_CHECKED_AT } from "../data/guide/sources";
+import { loadManifest, loadOccupationCore } from "../lib/data/load-server";
+import { LEGAL_SLUGS, LEGAL_UPDATED } from "../lib/legal/copy";
+import type { OccupationCore } from "../lib/data/types";
+import { sitemapEntries } from "../lib/occupation-page/meta";
+import { SITE_URL } from "../lib/site";
+import { listRecapMonths, loadRecap } from "../lib/updates/load-server";
+import { updatesSitemapEntries } from "../lib/updates/sitemap";
 
 export const dynamic = "force-static";
 
