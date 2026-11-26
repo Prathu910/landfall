@@ -210,7 +210,11 @@ export default async function OccupationPage({ params }: Props) {
                   Each round’s{" "}
                   <Link href="/guide/glossary/#cut-off">cut-off</Link>: the
                   lowest points invited for this occupation. “Not listed” is an
-                  absent occupation row, not a zero-point cut-off.
+                  absent occupation row, not a zero-point cut-off. See{" "}
+                  <Link href="/occupations/189-cut-offs/">
+                    every occupation’s cut-offs in one table
+                  </Link>
+                  .
                 </p>
                 <RoundCards
                   cards={roundCards(core.rounds189)}

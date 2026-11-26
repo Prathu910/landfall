@@ -33,6 +33,7 @@ export function SiteFooter() {
               <Link href="/guide/">PR guide: 189, 190, 491</Link>
               <Link href="/sample/">Sample report</Link>
               <Link href="/occupations/">Occupations</Link>
+              <Link href="/occupations/189-cut-offs/">189 cut-offs</Link>
               <Link href="/states/">States</Link>
               <Link href="/updates/">Monthly updates</Link>
             </div>
