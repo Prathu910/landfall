@@ -116,7 +116,8 @@ function canGetPr(
     visas.length > 0
       ? `${core.name} is on the Home Affairs skilled occupation list for the ${joinWords([...visas], "and")} (checked ${checked}). Being listed is one requirement; an invitation also depends on your points and on 189 rounds or state selection.`
       : `${core.name} isn't on the Home Affairs skilled occupation list for the 189, 190 or 491 (checked ${checked}), so it can't be used for these points-tested visas.`;
-  return { question: `Can I get PR as a ${core.name}?`, answer };
+  const article = /^[AEIOU]/i.test(core.name) ? "an" : "a";
+  return { question: `Can I get PR as ${article} ${core.name}?`, answer };
 }
 
 /** "How many points do I need for {name}?": the pass mark and the last three listed cut-offs. */

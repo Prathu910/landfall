@@ -190,6 +190,14 @@ describe("occupationFaq", () => {
     expect(
       occupationFaq(core, rows).some((f) => f.question.startsWith("Can I")),
     ).toBe(false);
+    const accountant = frozenCore("221111")!;
+    expect(
+      occupationFaq(
+        accountant,
+        stateRows("221111", accountant, stateRuleData),
+        { federal: stateRuleData.federal },
+      ).some((f) => f.question === "Can I get PR as an Accountant (General)?"),
+    ).toBe(true);
   });
   it("passes the copy rules", () => {
     for (const f of [...faq261313, ...faq254499]) {
