@@ -37,21 +37,7 @@ export function StateHero({
             <p className={hero.eyebrow}>{h.eyebrow}</p>
             <h1 className={`${hero.title} ${styles.title}`}>{h.h1}</h1>
             <p className={styles.subtitle}>{h.subtitle}</p>
-            <p className={hero.answer}>
-              <strong>{first}</strong> {rest.join(" ")}
-            </p>
-            <p className={styles.source}>
-              {h.source}{" "}
-              {h.sourceLinks.map((link, index) => (
-                <Fragment key={link.href}>
-                  {index > 0 && " · "}
-                  <a href={link.href} rel="noreferrer">
-                    {link.text}
-                  </a>
-                </Fragment>
-              ))}
-            </p>
-            <dl className={hero.dateline}>
+            <dl className={`${hero.dateline} ${styles.dateline}`}>
               {h.dateline.map((item) => (
                 <div key={item.label}>
                   <dt>{item.label}</dt>
@@ -61,6 +47,9 @@ export function StateHero({
                 </div>
               ))}
             </dl>
+            <p className={hero.answer}>
+              <strong className={styles.lead}>{first}</strong> {rest.join(" ")}
+            </p>
             <div className={hero.actions}>
               <Link href="/check/" className={hero.primary}>
                 Check my points <span aria-hidden="true">↗</span>
@@ -69,6 +58,19 @@ export function StateHero({
                 See the 12 months
               </a>
             </div>
+            <p className={styles.source}>
+              {h.source}
+              <span className={styles.sourceLinks}>
+                {h.sourceLinks.map((link, index) => (
+                  <Fragment key={link.href}>
+                    {index > 0 && " · "}
+                    <a href={link.href} rel="noreferrer">
+                      {link.text}
+                    </a>
+                  </Fragment>
+                ))}
+              </span>
+            </p>
           </div>
           <div className={styles.art} aria-hidden="true">
             <StateMap
