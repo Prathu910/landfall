@@ -1,6 +1,6 @@
 # Resume here
 
-**Merge gate: merging `roadmap/paid-report` to `main` is going live.** `main` deploys migratelens.com, whose build already has `NEXT_PUBLIC_SUPABASE_URL` and the Turnstile key (for feedback), so `/check/` replaces the free full report with the checkout at once. Merge only after the production backend (steps 1, 4, 5, 6 and 7 below, repeated on production) passes the rehearsal in step 9. A build without `NEXT_PUBLIC_SUPABASE_URL` or the Turnstile key shows the free result with a contact line and no ticket (ruling R12).
+**Merge gate: merging `roadmap/paid-report` to `main` is going live.** `main` deploys migratelens.com, whose build already has `NEXT_PUBLIC_SUPABASE_URL` and the Turnstile key (for feedback), so `/check/` replaces the free full report with the checkout at once. Merge only after the production backend (steps 1, 4, 5, 6 and 7 below, repeated on production) passes the rehearsal in step 9 **and runs on live Razorpay keys (step 11)**: with test keys on production, real cards fail and Razorpay's public test cards would get a real report (ruling R16). A build without `NEXT_PUBLIC_SUPABASE_URL` or the Turnstile key shows the free result with a contact line and no ticket (ruling R12).
 
 ## Founder: before the paid report goes live (26 November 2026)
 
@@ -26,6 +26,18 @@ The paid report is built on branch `roadmap/paid-report` (plans 1 to 3: engine, 
 - [ ] **10. International payments.** Once the legal pages are live on production, request International Payments in Razorpay (link PayPal if asked). When it is active, set `usd_enabled` true.
 - [ ] **11. The live switch.** Razorpay live mode: live keys, a live webhook with a new secret, the three `RAZORPAY_*` secrets on production, then one real ₹699 payment end to end and its refund. (Step 9.)
 - [ ] **12. After the lawyer review,** set `LEGAL_REVIEWED = true` in `src/lib/legal/copy.ts` (this removes the "Drafted for review" line from the legal pages), rebuild and deploy. Read the privacy page in that review: it was rewritten for the paid flow.
+
+## Paid report: what was built (26 November 2026)
+
+Branch `roadmap/paid-report`, 35 commits on `origin/main` f7587f1, pushed, no pull request (the founder opens it). Spec `docs/superpowers/specs/2026-11-25-paid-report-design.md`; plans `docs/superpowers/plans/2026-11-25-paid-report-{1-engine,2-backend,3-checkout}.md`; ledgers (every ruling, outcome and parked item) in `.superpowers/sdd/2026-11-25-paid-report-*/progress.md`.
+
+- **Plan 1, engine.** The report is built once into a `ReportPayload` (`src/lib/report-issue/`) and only rendered by `ReportView`; the server builds it from the committed Deno bundle (`npm run engine:bundle`); the postbuild bundle lock keeps the builder out of `/sample/`, `/check/` and `/report/` and scans every chunk.
+- **Plan 2, backend.** Migrations for orders, reports, founding claims, delivery, order data snapshots, stuck-order alerts and duplicate payments; Functions `report-quote`, `report-order`, `report-verify`, `report-confirm`, `report-get`, `report-revise`, `razorpay-webhook`, `report-deliver` (pg_cron). Paid reports are built from the data the reader was quoted, so a monthly deploy can't fail a paid order; a paid order that can't be built retries and alerts you once; a refund before issue blocks the report; refunding a duplicate payment keeps the paid report.
+- **Plan 3, frontend.** Terms, Refunds, Delivery, Contact and Privacy pages (with the "Drafted for review" line until `LEGAL_REVIEWED`); the free result as a passport spread with no email gate; the boarding-pass and ink-ticket buttons; the three-beat checkout with the founding code, Razorpay Checkout, waits that keep the code step, "buy another" for a founding-used email; `/report/` with the issued moment, corrections for 7 days (3 revisions), revoked/expired states and print.
+- **Reviews.** Each plan had one batch review and fix rounds (plan 1: 1, plan 2: 2, plan 3: 1); the final whole-branch review found 2 Critical and 4 Important issues (half-year experience refused, stale "free report" copy, duplicate-payment refunds, webhook-first confirm, the merge gate, analytics and the link token), all fixed and re-reviewed.
+- **Tests at the end.** `npm run check` 2188 tests; `npm run build` 503 pages with the bundle lock clean; `backend:check` clean; Deno 125 passed; SQL 30 PASS on PostgreSQL 14 (17 not installed here: checked by reading); Lighthouse 100 on every gated row (7 mobile rows slowed by the machine scored 100 on re-run).
+- **Not verifiable offline (in the step 9 rehearsal):** the Cloudflare PDF request shape, Resend `Idempotency-Key` reuse, Razorpay webhook payloads, pg_net's 150 s timeout, Web Analytics and the `#` token.
+- **Parked for your next pass** (ledger lines starting "Parked"): the `asOf` clamp, the experience field showing 7.3 while 7 is used, old saved profiles with e.g. 2.3 years, the pending copy "within a few minutes", a duplicate-payment alert with no database record, and a theoretical refund ordering.
 
 ## Founder: set up the scheduled jobs (25 November 2026)
 
