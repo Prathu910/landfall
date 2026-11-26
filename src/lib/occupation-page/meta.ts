@@ -5,6 +5,7 @@ import { monthEnd } from "../data/report-source";
 import { formatDate } from "../migration";
 import { formatMonth } from "../report/copy";
 import { wholeSentences } from "../seo/description";
+import { BRAND_SUFFIX, fitTitle } from "../seo/title";
 import { breadcrumbLd, datasetLd, faqPageLd } from "../seo/json-ld";
 import type { Faq } from "./faq";
 import { occupationPath } from "./slug";
@@ -46,9 +47,6 @@ export function isIndexable(core: OccupationCore): boolean {
   );
 }
 
-const TITLE_MAX = 60;
-const BRAND = ` · ${SITE_NAME}`;
-
 /**
  * The full `<title>` (routes set it as `title.absolute`), at most 60
  * characters: the longest topic that fits, then the bare name. The code and
@@ -72,17 +70,17 @@ export function pageTitle(core: OccupationCore): string {
   const rounds = has189Rounds(core);
   const candidates = [
     rounds
-      ? `${name}: 189, 190 and 491 EOIs and cut-offs${BRAND}`
-      : `${name}: 189, 190 and 491 EOI data${BRAND}`,
+      ? `${name}: 189, 190 and 491 EOIs and cut-offs${BRAND_SUFFIX}`
+      : `${name}: 189, 190 and 491 EOI data${BRAND_SUFFIX}`,
     rounds
-      ? `${name}: 189 cut-offs and EOI pools${BRAND}`
-      : `${name}: 189, 190 and 491 EOI pools${BRAND}`,
+      ? `${name}: 189 cut-offs and EOI pools${BRAND_SUFFIX}`
+      : `${name}: 189, 190 and 491 EOI pools${BRAND_SUFFIX}`,
     rounds
-      ? `${name}: 189 cut-offs and EOIs${BRAND}`
-      : `${name}: EOI pools${BRAND}`,
-    `${name}${BRAND}`,
+      ? `${name}: 189 cut-offs and EOIs${BRAND_SUFFIX}`
+      : `${name}: EOI pools${BRAND_SUFFIX}`,
+    `${name}${BRAND_SUFFIX}`,
   ];
-  return candidates.find((title) => title.length <= TITLE_MAX) ?? name;
+  return fitTitle([...candidates, name]);
 }
 
 /** The Dataset's name: the long form, with the code and the snapshot month. */

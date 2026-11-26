@@ -16,19 +16,25 @@ const OG = "/social/2026-10/og.png";
 type Ld = Record<string, unknown>;
 
 describe("recapTitle", () => {
+  it("fits 60 characters", () => {
+    for (const facts of [oct, dataOnly, roundOnly]) {
+      expect(recapTitle(facts).length).toBeLessThanOrEqual(60);
+    }
+  });
+
   it("names the round and the states, or the states alone", () => {
     expect(recapTitle(oct)).toBe(
-      "SkillSelect October 2026 update: 189 round, 190 and 491 by state · MigrateLens",
+      "SkillSelect October 2026 update: 189 round, 190 and 491",
     );
     expect(recapTitle(dataOnly)).toBe(
-      "SkillSelect December 2026 update: 190 and 491 invitations by state · MigrateLens",
+      "SkillSelect December 2026 update: 190 and 491 by state",
     );
   });
 
   it("names only the round until the month's data arrives", () => {
     expect(roundOnly.data).toBeNull();
     expect(recapTitle(roundOnly)).toBe(
-      "SkillSelect November 2026 update: 189 round results · MigrateLens",
+      "SkillSelect November 2026: 189 round results · MigrateLens",
     );
   });
 });

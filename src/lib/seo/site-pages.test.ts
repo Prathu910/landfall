@@ -45,6 +45,11 @@ describe("the site's page metadata", () => {
       expect(full).toContain("MigrateLens");
     }
   });
+  it("keeps the guide titles within 60 characters with the brand", () => {
+    for (const page of Object.values(GUIDE_PAGES)) {
+      expect((page.title + BRAND).length).toBeLessThanOrEqual(60);
+    }
+  });
   it("never calls the report free and states no price", () => {
     for (const text of descriptions) {
       expect(text).not.toMatch(/free,? (personal |full )?report/i);

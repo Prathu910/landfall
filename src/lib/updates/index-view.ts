@@ -10,7 +10,7 @@ import type { RecapFacts } from "./types";
 export const UPDATES_INDEX_PATH = "/updates/";
 export const UPDATES_INDEX_H1 = "SkillSelect monthly updates";
 /** Set as `title.absolute` (R20), so the layout template adds no brand. */
-export const UPDATES_INDEX_TITLE = `SkillSelect monthly updates: 189 rounds, 190 and 491 by state · ${SITE_NAME}`;
+export const UPDATES_INDEX_TITLE = `SkillSelect monthly updates: 189, 190 and 491 · ${SITE_NAME}`;
 export const UPDATES_INDEX_INTRO =
   "One page for each SkillSelect data month: the 189 invitation round, the 189 pool by points, and 190 and 491 invitations by state, from published Home Affairs data.";
 

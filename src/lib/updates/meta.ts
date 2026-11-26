@@ -1,5 +1,6 @@
 import type { MonthKey } from "../data/types";
 import { splitSentences, wholeSentences } from "../seo/description";
+import { BRAND_SUFFIX, fitTitle } from "../seo/title";
 import { articleLd, breadcrumbLd, datasetLd, faqPageLd } from "../seo/json-ld";
 import { SITE_NAME, SITE_URL } from "../site";
 import { formatLongMonth, longDayText, monthEnd } from "./format";
@@ -17,9 +18,14 @@ export function recapTitle(facts: RecapFacts): string {
     facts.data === null
       ? "189 round results"
       : hasRound
-        ? "189 round, 190 and 491 by state"
-        : "190 and 491 invitations by state";
-  return `SkillSelect ${month} update: ${topic} · ${SITE_NAME}`;
+        ? "189 round, 190 and 491"
+        : "190 and 491 by state";
+  // At most 60 characters: the brand goes first, then "update".
+  return fitTitle([
+    `SkillSelect ${month} update: ${topic}${BRAND_SUFFIX}`,
+    `SkillSelect ${month}: ${topic}${BRAND_SUFFIX}`,
+    `SkillSelect ${month} update: ${topic}`,
+  ]);
 }
 
 /** The direct answer in whole sentences (or clauses), at most 160 characters. */
