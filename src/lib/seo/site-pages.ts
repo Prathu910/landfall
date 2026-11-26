@@ -58,6 +58,15 @@ export const METHODOLOGY_PAGE: SitePage = {
   name: "Methodology",
 };
 
+export const ABOUT_PAGE: SitePage = {
+  path: "/about/",
+  title: "About MigrateLens: independence and data policy",
+  absolute: true,
+  description:
+    "Who runs MigrateLens, how it earns, where its data comes from, how updates are reviewed and how to report an error. General information, not migration advice.",
+  name: "About MigrateLens",
+};
+
 export const NOT_FOUND_PAGE = {
   title: "Page not found",
   description:

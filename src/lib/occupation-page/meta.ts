@@ -19,6 +19,7 @@ const STATIC_PAGES = [
   "/sample/",
   "/states/",
   "/methodology/",
+  "/about/",
   "/occupations/",
   "/feedback/",
 ];

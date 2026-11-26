@@ -16,7 +16,7 @@ const SKILLSELECT_LICENSE = "https://creativecommons.org/licenses/by/3.0/au/";
 /** The site entity's ids: the nodes live on the home page; every page refers to them. */
 export const ORGANIZATION_ID = `${SITE_URL}/#organization`;
 export const WEBSITE_ID = `${SITE_URL}/#website`;
-/** The About page (editorial and data policy) that WP2 of the SEO audit adds. */
+/** The About page: who runs the site, its data, editorial and corrections policy. */
 export const PUBLISHING_PRINCIPLES_URL = `${SITE_URL}/about/`;
 export const CONTACT_EMAIL = "hello@migratelens.com";
 /** The site's own share image, for articles without one of their own. */
@@ -111,6 +111,10 @@ export function webPageLd(page: {
     inLanguage: LANGUAGE,
     isPartOf: { "@id": WEBSITE_ID },
     publisher: { "@id": ORGANIZATION_ID },
+    // The About page is about the organisation itself.
+    ...(page.type === "AboutPage"
+      ? { mainEntity: { "@id": ORGANIZATION_ID } }
+      : {}),
     ...(page.dateModified ? { dateModified: page.dateModified } : {}),
   };
 }

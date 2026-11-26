@@ -41,6 +41,7 @@ export const AUDIT_PAGES: readonly AuditPage[] = [
     .slice(0, 1)
     .map((month) => ({ path: `/updates/${month}/`, gated: ALL })),
   { path: "/methodology/", gated: ALL },
+  { path: "/about/", gated: ALL },
   { path: "/sample/", gated: ALL },
   // The free result and checkout appear only after the form, so /check/
   // is audited as it loads. /report/ is not audited: it is noindex and

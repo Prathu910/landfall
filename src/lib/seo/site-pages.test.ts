@@ -3,6 +3,7 @@ import { GUIDE_PAGES } from "../guide/meta";
 import { LEGAL_PAGES, LEGAL_SLUGS } from "../legal/copy";
 import { BANNED_COPY } from "../report/copy";
 import {
+  ABOUT_PAGE,
   CHECK_PAGE,
   FEEDBACK_PAGE,
   HOME_PAGE,
@@ -16,6 +17,7 @@ import {
 const BRAND = " · MigrateLens";
 const pages = [
   HOME_PAGE,
+  ABOUT_PAGE,
   CHECK_PAGE,
   FEEDBACK_PAGE,
   METHODOLOGY_PAGE,

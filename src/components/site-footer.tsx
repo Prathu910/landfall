@@ -38,6 +38,7 @@ export function SiteFooter() {
             </div>
             <div>
               <h2>About the data</h2>
+              <Link href="/about/">About MigrateLens</Link>
               <Link href="/methodology/">Method and sources</Link>
               <Link href="/feedback/">Feedback</Link>
               <a

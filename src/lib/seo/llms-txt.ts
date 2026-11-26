@@ -67,12 +67,17 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
       "how each state and territory nominates for the 190 and 491",
     ),
     "",
-    "## Method",
+    "## About and method",
     "",
     link(
       "Methodology and limitations",
       "/methodology/",
       "sources, masked counts, how points and labels are worked out, and what the data cannot tell you",
+    ),
+    link(
+      "About and editorial policy",
+      "/about/",
+      "who runs MigrateLens, how it earns, its data policy and corrections",
     ),
     "",
     "## Optional",

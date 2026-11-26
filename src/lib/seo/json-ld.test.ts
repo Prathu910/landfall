@@ -54,6 +54,23 @@ describe("the site entity", () => {
       inLanguage: "en-AU",
     });
   });
+  it("makes the organisation the About page's main entity", () => {
+    const about = webPageLd({
+      type: "AboutPage",
+      name: "About",
+      description: "D",
+      url: `${SITE}/about/`,
+    });
+    expect(about).toMatchObject({ mainEntity: { "@id": ORGANIZATION_ID } });
+    expect(
+      webPageLd({ name: "Check", description: "D", url: `${SITE}/check/` }),
+    ).not.toHaveProperty("mainEntity");
+  });
+  it("points the organisation's publishing principles at the About page", () => {
+    expect(organizationLd()).toMatchObject({
+      publishingPrinciples: `${SITE}/about/`,
+    });
+  });
 });
 
 const dataset = {
