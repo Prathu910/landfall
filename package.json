@@ -17,6 +17,7 @@
     "sample:freeze": "tsx scripts/sample/freeze.ts",
     "engine:bundle": "tsx scripts/report-engine/bundle.ts",
     "og:image": "tsx scripts/og-image/render.ts",
+    "icons:render": "tsx scripts/icons/render.ts",
     "updates:summary": "tsx scripts/updates/summary.ts",
     "updates:retention": "tsx scripts/updates/retention.ts",
     "updates:frozen-check": "tsx scripts/automation/frozen-check.ts",

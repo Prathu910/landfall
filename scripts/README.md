@@ -57,6 +57,10 @@ npm run updates:retention [-- --month YYYY-MM]   # delete files of months older 
 
 `scripts/updates/retention.ts` is the only command that deletes social images (the monthly job runs it; `social:render` never prunes).
 
+## Icons
+
+`npm run icons:render` (`scripts/icons/render.ts`) draws every raster icon from the logo geometry (`iconSvg` in `src/components/brand/mark-geometry.ts`) with sharp: `src/app/favicon.ico` (16, 32 and 48 px), `src/app/icon.png` (512), `src/app/apple-icon.png` (180, opaque), and in `public/brand/` the manifest's `icon-192.png` and `icon-maskable-512.png` and the Organization logo `logo-512.png`. Commit the outputs; `icons.test.ts` checks their sizes and that the manifest (`src/app/manifest.ts`) lists only files that exist. `src/app/icon.svg` stays the vector favicon.
+
 ## Frozen sample
 
 `npm run sample:freeze` (`scripts/sample/freeze.ts`) writes the 2026-10 core and detail records of the `/sample/` occupations (`SAMPLE_CODES` in `src/lib/outlook/examples.ts`) and a `meta.json` to `src/data/sample/2026-10/`, regenerated in memory from `data/raw/` and the stored rounds up to 31 October 2026. `/sample/` reads only these, so a monthly import never moves its stamps. Run it only when the founder asks for the sample to be refreshed.

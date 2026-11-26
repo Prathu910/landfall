@@ -15,5 +15,11 @@
   Cache-Control: public, max-age=86400, stale-while-revalidate=604800
 /icon.svg
   Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+/icon.png
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+/apple-icon.png
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+/favicon.ico
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
 /og.png
   Cache-Control: public, max-age=86400, stale-while-revalidate=604800
