@@ -8,6 +8,8 @@ import { StateCard } from "@/components/states/state-card";
 import { StateMap } from "@/components/states/state-map";
 import { statePrograms } from "@/data/states";
 import { buildStateCards } from "@/lib/states-page/state-cards";
+import { STATE_PAGES, statePage, statePath } from "@/lib/state-page/slug";
+import { SITE_URL } from "@/lib/site";
 import { sitePageMetadata } from "@/lib/seo/page-meta";
 import { sitePageJsonLd, statesPage } from "@/lib/seo/site-pages";
 import { JsonLd } from "@/components/seo/json-ld";
@@ -67,12 +69,26 @@ export default function StatesPage() {
           </aside>
           <div className={styles.cards}>
             {cards.map((card) => (
-              <StateCard key={card.code} card={card} />
+              <StateCard
+                key={card.code}
+                card={card}
+                dataLink={{
+                  href: statePath(card.code),
+                  text: `${statePage(card.code).searchName} 190 and 491 invitation data, last 12 months`,
+                }}
+              />
             ))}
           </div>
         </div>
       </div>
-      <JsonLd data={sitePageJsonLd(PAGE)} />
+      <JsonLd
+        data={sitePageJsonLd(PAGE, {
+          items: STATE_PAGES.map((page) => ({
+            name: `${page.fullName} 190 and 491 invitation data`,
+            url: SITE_URL + statePath(page.code),
+          })),
+        })}
+      />
     </main>
   );
 }

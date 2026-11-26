@@ -25,6 +25,12 @@
   color: var(--slate);
   text-decoration: underline;
 }
+.official {
+  display: block;
+  margin-top: var(--brand-unit);
+  font-size: 0.8125rem;
+  font-weight: 400;
+}
 @media (max-width: 620px) {
   .table,
   .table tbody,

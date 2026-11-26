@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { statePath } from "@/lib/state-page/slug";
 import type { StateRow } from "@/lib/occupation-page/states";
 import styles from "./state-table.module.css";
 
@@ -31,12 +33,20 @@ export function StateTable({
           {rows.map((row) => (
             <tr key={row.state} role="row">
               <th scope="row" role="rowheader">
-                {row.href ? (
-                  <a href={row.href} target="_blank" rel="noreferrer">
-                    {row.name}
+                <Link href={statePath(row.state)}>{row.name}</Link>
+                {row.href && (
+                  <a
+                    href={row.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={styles.official}
+                  >
+                    Official page
+                    <span className="sr-only">
+                      {" "}
+                      for {row.name} (opens in a new tab)
+                    </span>
                   </a>
-                ) : (
-                  row.name
                 )}
               </th>
               <td role="cell" data-label="On its 2026–27 list">

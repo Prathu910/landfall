@@ -29,7 +29,8 @@
   letter-spacing: 0.04em;
   transform: rotate(-6deg);
 }
-.top h2 {
+.top h2,
+.top h3 {
   font-size: 1.5rem;
   font-weight: 650;
   letter-spacing: -0.035em;
@@ -142,11 +143,26 @@
   color: var(--muted);
   line-height: 1.7;
 }
-.moreBody h3 {
+.moreBody h3,
+.moreBody h4 {
   margin: calc(var(--brand-unit) * 4) 0 calc(var(--brand-unit) * 1.5);
   font-size: 1rem;
   font-weight: 600;
   letter-spacing: -0.01em;
+}
+.dataLink {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--brand-unit) * 1.5);
+  min-height: var(--brand-target);
+  margin-top: calc(var(--brand-unit) * 2);
+  color: var(--brand-green);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: var(--brand-unit);
+}
+.dataLink:hover {
+  color: var(--ink);
 }
 .foot {
   display: flex;

@@ -5,6 +5,7 @@ import { formatDate } from "../migration";
 import { formatLongMonth } from "../report/copy";
 import { SITE_NAME, SITE_URL } from "../site";
 import { CONTACT_EMAIL } from "./json-ld";
+import { STATE_PAGES, statePath } from "../state-page/slug";
 
 export type LlmsTxtInput = {
   /** The data month, e.g. "2026-10". */
@@ -80,6 +81,13 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
       "State and territory nomination",
       "/states/",
       "how each state and territory nominates for the 190 and 491",
+    ),
+    ...STATE_PAGES.map((page) =>
+      link(
+        `${page.fullName} (${page.code}) 190 and 491`,
+        statePath(page.code),
+        "EOIs holding a state invitation at each month end for 12 months, by points and occupation, with the 2026–27 rules",
+      ),
     ),
     "",
     "## About and method",

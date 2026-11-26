@@ -9,6 +9,7 @@
 import { SITE_NAME, SITE_URL } from "../site";
 import {
   breadcrumbLd,
+  collectionPageLd,
   organizationLd,
   webPageLd,
   websiteLd,
@@ -114,17 +115,26 @@ export function sitePageJsonLd(
     type?: WebPageType;
     breadcrumb?: boolean;
     dateModified?: string;
+    /** The pages an index lists: the page becomes a CollectionPage of them. */
+    items?: { name: string; url: string }[];
   } = {},
 ): object[] {
   const url = SITE_URL + page.path;
   const nodes: object[] = [
-    webPageLd({
-      type: options.type,
-      name: page.name,
-      description: page.description,
-      url,
-      dateModified: options.dateModified,
-    }),
+    options.items
+      ? collectionPageLd({
+          name: page.name,
+          description: page.description,
+          url,
+          items: options.items,
+        })
+      : webPageLd({
+          type: options.type,
+          name: page.name,
+          description: page.description,
+          url,
+          dateModified: options.dateModified,
+        }),
   ];
   if (page.path === "/") return [organizationLd(), websiteLd(), ...nodes];
   if (options.breadcrumb === false) return nodes;

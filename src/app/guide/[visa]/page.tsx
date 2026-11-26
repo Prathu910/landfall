@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { StateLinks } from "@/components/state-page/state-links";
 import Link from "next/link";
 import { BadgeCheck } from "lucide-react";
 import { stateRuleData } from "@/components/data/state-rule-data";
@@ -185,6 +186,15 @@ export default async function VisaGuidePage({ params }: Props) {
               "The 189 is the independent route; the 190 and 491 add nomination points."
             )}
           </p>
+          {nominated && (
+            <>
+              <p className={page.sectionIntro}>
+                Each state’s {visa} invitation data for the last 12 months, by
+                points and occupation:
+              </p>
+              <StateLinks />
+            </>
+          )}
           <VisaRules rules={[...guide.nomination, ...guide.after]} />
           <h3 className={page.subhead}>189 vs 190 vs 491 compared</h3>
           <VisaCompare rows={compareRows(FEES, counts)} current={visa} />

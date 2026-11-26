@@ -39,6 +39,10 @@ export const AUDIT_PAGES: readonly AuditPage[] = [
     gated: ALL,
   },
   { path: "/states/", gated: ALL },
+  // State pages: the fullest (NSW) and the sparsest (Tasmania, whose 491
+  // counts are all hidden).
+  { path: "/states/new-south-wales/", gated: ALL },
+  { path: "/states/tasmania/", gated: ALL },
   { path: "/updates/", gated: ALL },
   ...listRecapMonths()
     .slice(0, 1)
