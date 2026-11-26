@@ -12,7 +12,13 @@ import { occupationPath } from "./slug";
 import { has189Rounds } from "./summary";
 
 /** The PR guide's pages, dated by the day their official sources were read. */
-const GUIDE_PATHS = ["/guide/", "/guide/189/", "/guide/190/", "/guide/491/"];
+const GUIDE_PATHS = [
+  "/guide/",
+  "/guide/189/",
+  "/guide/190/",
+  "/guide/491/",
+  "/guide/points-table/",
+];
 const STATIC_PAGES = [
   "/",
   "/check/",

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Route } from "lucide-react";
 import { stateRuleData } from "@/components/data/state-rule-data";
 import { GuideAnswer } from "@/components/guide/guide-answer";
@@ -134,7 +135,8 @@ export default function GuideHubPage() {
           <p className={page.sectionIntro}>
             A quick estimate with the current Home Affairs points table, and the
             basic federal requirements: age, English, skills assessment,
-            occupation list and 65 points.
+            occupation list and 65 points. Every factor and its points are in{" "}
+            <Link href="/guide/points-table/">the points table</Link>.
           </p>
           <div className={page.panel}>
             <LazyHubQuickCheck buildDate={buildDate} />

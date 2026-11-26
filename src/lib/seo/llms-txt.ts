@@ -62,6 +62,11 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
       (page) => link(page.heading, page.path),
     ),
     link(
+      "Points table",
+      "/guide/points-table/",
+      "every factor in the points test and the points it gives",
+    ),
+    link(
       "State and territory nomination",
       "/states/",
       "how each state and territory nominates for the 190 and 491",

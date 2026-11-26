@@ -154,11 +154,18 @@ describe("sitemapEntries", () => {
     "2026-11-17",
     "2026-11-23",
   );
-  const guide = ["/guide/", "/guide/189/", "/guide/190/", "/guide/491/"];
+  const guide = [
+    "/guide/",
+    "/guide/189/",
+    "/guide/190/",
+    "/guide/491/",
+    "/guide/points-table/",
+  ];
   const urls = entries.map((e) => e.url);
   it("lists indexable pages only", () => {
     expect(urls).toContain(`${SITE_URL}/occupations/`);
     expect(urls).toContain(`${SITE_URL}/check/`);
+    expect(urls).toContain(`${SITE_URL}/about/`);
     expect(urls).toContain(SITE_URL + occupationPath(core));
     expect(urls).not.toContain(SITE_URL + occupationPath(maskedCore));
   });
@@ -176,13 +183,8 @@ describe("sitemapEntries", () => {
     ).find((e) => e.url === SITE_URL + occupationPath(core));
     expect(dropped?.lastModified).toBe("2026-10-20");
   });
-  it("lists the PR guide and its three visa pages", () => {
-    for (const path of [
-      "/guide/",
-      "/guide/189/",
-      "/guide/190/",
-      "/guide/491/",
-    ]) {
+  it("lists the PR guide, its three visa pages and its reference pages", () => {
+    for (const path of guide) {
       expect(urls).toContain(SITE_URL + path);
     }
   });
@@ -198,7 +200,7 @@ describe("sitemapEntries", () => {
       guide.some((path) => e.url === SITE_URL + path),
     );
     expect(dated.map((e) => e.lastModified)).toEqual(
-      Array(4).fill("2026-11-23"),
+      Array(guide.length).fill("2026-11-23"),
     );
   });
 });

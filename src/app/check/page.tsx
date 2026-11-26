@@ -2,8 +2,12 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { ChevronRight, Check, Globe2 } from "lucide-react";
 import { CheckFlow } from "@/components/check-flow";
+import { CheckExplainer } from "@/components/check/check-explainer";
+import { PASS_MARK, POINTS_TABLE } from "@/data/guide/points-table";
+import { pointsInBrief } from "@/lib/guide/points-table";
+import { formatDate } from "@/lib/migration";
 import { loadManifest } from "@/lib/data/load-server";
-import { reportSource } from "@/lib/data/report-source";
+import { monthEnd, reportSource } from "@/lib/data/report-source";
 import { sitePageMetadata } from "@/lib/seo/page-meta";
 import { CHECK_PAGE, sitePageJsonLd } from "@/lib/seo/site-pages";
 import { JsonLd } from "@/components/seo/json-ld";
@@ -52,6 +56,12 @@ export default function CheckPage() {
           </div>
         </header>
         <CheckFlow source={reportSource(manifest.asAt, manifest)} />
+        <CheckExplainer
+          passMark={PASS_MARK}
+          dataDate={formatDate(monthEnd(manifest.asAt))}
+          dataDateTime={monthEnd(manifest.asAt)}
+          factors={pointsInBrief(POINTS_TABLE)}
+        />
       </div>
       <JsonLd data={sitePageJsonLd(CHECK_PAGE)} />
     </main>

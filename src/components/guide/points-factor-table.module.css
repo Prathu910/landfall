@@ -1,0 +1,49 @@
+/* A points-table factor: white paper on the sage desk, as the visa
+   comparison (visa-compare.module.css). Two columns stay readable at 390px. */
+.wrap {
+  border: var(--brand-rule-width) solid var(--rule);
+  border-radius: calc(var(--brand-unit) * 3);
+  background: var(--card);
+  overflow: hidden;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+.table th,
+.table td {
+  padding: calc(var(--brand-unit) * 3) calc(var(--brand-unit) * 4);
+  border-bottom: var(--brand-rule-width) solid var(--rule);
+  text-align: left;
+  vertical-align: top;
+}
+.table tbody tr:last-child th,
+.table tbody tr:last-child td {
+  border-bottom: 0;
+}
+.table thead th {
+  color: var(--muted);
+  font-size: 0.875rem;
+  font-weight: 650;
+}
+.table tbody th {
+  font-weight: 450;
+}
+.table .points {
+  width: 6rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.table tbody .points {
+  font-weight: 700;
+}
+@media screen and (max-width: 700px) {
+  .table th,
+  .table td {
+    padding: calc(var(--brand-unit) * 2.5) calc(var(--brand-unit) * 3);
+  }
+  .table .points {
+    width: 4.5rem;
+  }
+}

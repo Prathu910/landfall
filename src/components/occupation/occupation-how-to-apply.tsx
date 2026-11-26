@@ -26,6 +26,11 @@ export function OccupationHowToApply({
             Every step to skilled PR <span aria-hidden="true">→</span>
           </Link>
         </li>
+        <li>
+          <Link href="/guide/points-table/">
+            The points table <span aria-hidden="true">→</span>
+          </Link>
+        </li>
       </ul>
     </nav>
   );
