@@ -178,6 +178,8 @@ export default function GuideHubPage() {
           <h2 id="sources-h">Sources</h2>
           <p className={page.sectionIntro}>
             Every rule and fee on this page comes from these official pages.
+            Terms such as EOI, invitation round and cut-off are defined in{" "}
+            <Link href="/guide/glossary/">the glossary</Link>.
           </p>
           <GuideSources sources={sources} />
         </section>

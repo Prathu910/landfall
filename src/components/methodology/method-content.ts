@@ -1,5 +1,5 @@
-// The methodology page's source list and definitions, kept apart so the
-// page file stays readable.
+// The methodology page's source list, kept apart so the page file stays
+// readable. Its definitions come from the glossary (src/lib/guide/glossary.ts).
 
 export type MethodSource = { name: string; description: string; url: string };
 
@@ -43,30 +43,3 @@ export function methodSources(dashboardUrl: string): MethodSource[] {
     },
   ];
 }
-
-export const METHOD_DEFINITIONS: [string, string][] = [
-  [
-    "EOI",
-    "An Expression of Interest records interest in a skilled visa through SkillSelect. It is not a visa application.",
-  ],
-  [
-    "Date of effect",
-    "The date and time associated with an EOI’s points score for ranking purposes. It may change when the score changes. It is not necessarily the original submission date.",
-  ],
-  [
-    "Pool snapshot",
-    "A dated picture of published EOI counts. It is not a live queue and may include multiple EOIs from the same person.",
-  ],
-  [
-    "Invitation cutoff",
-    "The lowest score published for an occupation in a particular invitation round. It does not establish a future cutoff or your invitation prospects.",
-  ],
-  [
-    "State nomination",
-    "A separate selection process conducted by a state or territory. Federal points alone do not establish nomination eligibility.",
-  ],
-  [
-    "491 and permanent residence",
-    "Subclass 491 is a provisional regional visa. A later permanent residence pathway, such as subclass 191, has separate requirements.",
-  ],
-];

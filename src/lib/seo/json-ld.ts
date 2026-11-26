@@ -272,6 +272,38 @@ export function howToLd(page: {
   };
 }
 
+/** A glossary: the set, and each term at its own anchor on the page. */
+export function definedTermSetLd(page: {
+  name: string;
+  description: string;
+  /** An absolute URL; each term lives at `${url}#${id}`. */
+  url: string;
+  dateModified: string;
+  terms: { id: string; name: string; description: string }[];
+}): object {
+  const setId = `${page.url}#terms`;
+  return {
+    "@context": CONTEXT,
+    "@type": "DefinedTermSet",
+    "@id": setId,
+    name: page.name,
+    description: page.description,
+    url: page.url,
+    inLanguage: LANGUAGE,
+    dateModified: page.dateModified,
+    isPartOf: { "@id": WEBSITE_ID },
+    publisher: { "@id": ORGANIZATION_ID },
+    hasDefinedTerm: page.terms.map((term) => ({
+      "@type": "DefinedTerm",
+      "@id": `${page.url}#${term.id}`,
+      name: term.name,
+      description: term.description,
+      url: `${page.url}#${term.id}`,
+      inDefinedTermSet: { "@id": setId },
+    })),
+  };
+}
+
 /** Safe inside a <script> tag: no "</script>" can close it early. */
 export function serializeJsonLd(value: object): string {
   return JSON.stringify(value).replace(/</g, "\\u003c");

@@ -4,10 +4,9 @@ import { OccupationFaq } from "@/components/occupation/occupation-faq";
 import shell from "@/components/info-page/info-page.module.css";
 import { PageHead } from "@/components/info-page/page-head";
 import { MethodContents } from "@/components/methodology/method-contents";
-import {
-  METHOD_DEFINITIONS,
-  methodSources,
-} from "@/components/methodology/method-content";
+import Link from "next/link";
+import { methodSources } from "@/components/methodology/method-content";
+import { METHOD_TERM_IDS, glossaryTerms } from "@/lib/guide/glossary";
 import { MethodPrivacy } from "@/components/methodology/method-privacy";
 import { occupationIndex } from "@/components/data/occupation-index";
 import { MethodSources } from "@/components/methodology/method-sources";
@@ -23,6 +22,9 @@ import { sitePageMetadata } from "@/lib/seo/page-meta";
 import { METHODOLOGY_PAGE, sitePageJsonLd } from "@/lib/seo/site-pages";
 import { JsonLd } from "@/components/seo/json-ld";
 const manifest = loadManifest();
+const TERMS = glossaryTerms(manifest.sources).filter((t) =>
+  METHOD_TERM_IDS.includes(t.id),
+);
 const FAQ = methodologyFaq(
   monthEnd(manifest.asAt),
   manifest.occupations.length,
@@ -173,15 +175,19 @@ export default function MethodologyPage() {
             <section id="definitions" className={styles.section}>
               <h2>Useful definitions</h2>
               <dl className={styles.definitions}>
-                {METHOD_DEFINITIONS.map(([term, meaning]) => (
-                  <div key={term}>
+                {TERMS.map((term) => (
+                  <div key={term.id}>
                     <dt>
-                      <strong>{term}</strong>
+                      <strong>{term.term}</strong>
                     </dt>
-                    <dd>{meaning}</dd>
+                    <dd>{term.definition}</dd>
                   </div>
                 ))}
               </dl>
+              <p>
+                Every term, with its source, is in the{" "}
+                <Link href="/guide/glossary/">glossary</Link>.
+              </p>
             </section>
             <MethodPrivacy />
             <section id="questions" className={styles.section}>

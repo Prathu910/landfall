@@ -190,8 +190,11 @@ export default async function OccupationPage({ params }: Props) {
             <section aria-labelledby="pool-heading" className={styles.block}>
               <h2 id="pool-heading">How many {name} EOIs are in the pool?</h2>
               <p className={styles.sectionIntro}>
-                Submitted EOIs by points score, as at {formatMonth(core.asAt)}.
-                Each visa has its own pool; EOIs can appear in more than one.
+                Submitted <Link href="/guide/glossary/#eoi">EOIs</Link> by
+                points score, as at {formatMonth(core.asAt)}. Each visa has its
+                own pool; EOIs can appear in more than one. A{" "}
+                <Link href="/guide/glossary/#masked-count">“&lt;20”</Link> count
+                is 0 to 19, which may be zero.
               </p>
               <PoolTabs pools={pools} totals={totals} />
             </section>
@@ -204,8 +207,10 @@ export default async function OccupationPage({ params }: Props) {
                   What were the recent 189 cut-offs for {name}?
                 </h2>
                 <p className={styles.sectionIntro}>
-                  Published minimum points for this occupation. “Not listed” is
-                  an absent occupation row, not a zero-point cut-off.
+                  Each round’s{" "}
+                  <Link href="/guide/glossary/#cut-off">cut-off</Link>: the
+                  lowest points invited for this occupation. “Not listed” is an
+                  absent occupation row, not a zero-point cut-off.
                 </p>
                 <RoundCards
                   cards={roundCards(core.rounds189)}

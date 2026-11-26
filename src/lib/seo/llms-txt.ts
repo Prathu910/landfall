@@ -72,6 +72,11 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
       "every factor in the points test and the points it gives",
     ),
     link(
+      "Glossary",
+      "/guide/glossary/",
+      "one-sentence definitions of EOI, invitation round, cut-off, tie-break date, <20 and other terms",
+    ),
+    link(
       "State and territory nomination",
       "/states/",
       "how each state and territory nominates for the 190 and 491",

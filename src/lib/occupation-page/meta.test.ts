@@ -160,6 +160,7 @@ describe("sitemapEntries", () => {
     "/guide/190/",
     "/guide/491/",
     "/guide/points-table/",
+    "/guide/glossary/",
   ];
   const urls = entries.map((e) => e.url);
   it("lists indexable pages only", () => {

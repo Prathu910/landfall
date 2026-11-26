@@ -18,6 +18,7 @@ const GUIDE_PATHS = [
   "/guide/190/",
   "/guide/491/",
   "/guide/points-table/",
+  "/guide/glossary/",
 ];
 const STATIC_PAGES = [
   "/",
