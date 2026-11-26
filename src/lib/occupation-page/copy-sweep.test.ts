@@ -6,6 +6,7 @@ import type { OccupationCore } from "../data/types";
 import { BANNED_COPY } from "../report/copy";
 import { cohortNote, cohortRows, roundsNote } from "./charts";
 import { occupationFaq } from "./faq";
+import { pageDescription, pageTitle } from "./meta";
 import { stateRows } from "./states";
 import { occupationSummary, statusChips } from "./summary";
 import { occupationVerdict } from "./verdict";
@@ -69,5 +70,41 @@ describe("every occupation page's copy", () => {
       return verdict.kind !== "unavailable";
     });
     expect(wrong).toEqual([]);
+  });
+});
+
+describe("every occupation page's title and description", () => {
+  const pages = occupationIndex
+    .filter((e) => e.hasData)
+    .map((e) => loadOccupationCore(e.code)!)
+    .map((c) => ({
+      core: c,
+      description: pageDescription(
+        c,
+        occupationSummary(
+          c,
+          loadOccupationDetail(c.code),
+          stateRuleData.federal,
+        ),
+      ),
+    }));
+  it("covers every occupation with data", () => {
+    expect(pages.length).toBeGreaterThan(400);
+  });
+  it("has a title of at most 60 characters, all unique", () => {
+    const long = pages.filter((p) => pageTitle(p.core).length > 60);
+    expect(long.map((p) => pageTitle(p.core))).toEqual([]);
+    const titles = new Set(pages.map((p) => pageTitle(p.core)));
+    expect(titles.size).toBe(pages.length);
+  });
+  it("has a 120–160 character description of whole sentences", () => {
+    const bad = pages.filter(
+      (p) =>
+        p.description.length < 120 ||
+        p.description.length > 160 ||
+        p.description.includes("…") ||
+        !p.description.endsWith("."),
+    );
+    expect(bad.map((p) => `${p.core.code}: ${p.description}`)).toEqual([]);
   });
 });

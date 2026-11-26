@@ -1,15 +1,20 @@
 import { cohortWindowStart } from "../data/months";
 import type { OccupationCore, OccupationIndexEntry } from "../data/types";
 import { SITE_NAME, SITE_URL } from "../site";
+import { monthEnd } from "../data/report-source";
+import { formatDate } from "../migration";
 import { formatMonth } from "../report/copy";
+import { wholeSentences } from "../seo/description";
 import { breadcrumbLd, datasetLd, faqPageLd } from "../seo/json-ld";
 import type { Faq } from "./faq";
 import { occupationPath } from "./slug";
+import { has189Rounds } from "./summary";
 
 /** The PR guide's pages, dated by the day their official sources were read. */
 const GUIDE_PATHS = ["/guide/", "/guide/189/", "/guide/190/", "/guide/491/"];
 const STATIC_PAGES = [
   "/",
+  "/check/",
   "/sample/",
   "/states/",
   "/methodology/",
@@ -41,21 +46,66 @@ export function isIndexable(core: OccupationCore): boolean {
   );
 }
 
+const TITLE_MAX = 60;
+const BRAND = ` · ${SITE_NAME}`;
+
+/**
+ * The full `<title>` (routes set it as `title.absolute`), at most 60
+ * characters: the longest topic that fits, then the bare name. The code and
+ * month live in the h1 and the description, so the title never goes stale.
+ */
+/**
+ * An all-"<20" page stays out of the index but its links are followed, so
+ * related occupations still get crawled (audit T-P2-4). With the site
+ * switch off, nothing is indexed or followed.
+ */
+export function occupationRobots(
+  siteIndexable: boolean,
+  pageIndexable: boolean,
+): { index: boolean; follow: boolean } | undefined {
+  if (!siteIndexable) return { index: false, follow: false };
+  return pageIndexable ? undefined : { index: false, follow: true };
+}
+
 export function pageTitle(core: OccupationCore): string {
+  const { name } = core;
+  const rounds = has189Rounds(core);
+  const candidates = [
+    rounds
+      ? `${name}: 189, 190 and 491 EOIs and cut-offs${BRAND}`
+      : `${name}: 189, 190 and 491 EOI data${BRAND}`,
+    rounds
+      ? `${name}: 189 cut-offs and EOI pools${BRAND}`
+      : `${name}: 189, 190 and 491 EOI pools${BRAND}`,
+    rounds
+      ? `${name}: 189 cut-offs and EOIs${BRAND}`
+      : `${name}: EOI pools${BRAND}`,
+    `${name}${BRAND}`,
+  ];
+  return candidates.find((title) => title.length <= TITLE_MAX) ?? name;
+}
+
+/** The Dataset's name: the long form, with the code and the snapshot month. */
+export function datasetName(core: OccupationCore): string {
   return `${core.name} (${core.code}): 189, 190 and 491 EOIs and cut-offs, ${formatMonth(core.asAt)}`;
 }
 
-/** The sentences joined, cut at a word boundary to `limit` characters with "…". */
-export function pageDescription(summary: string[], limit = 160): string {
-  const text = summary.join(" ");
-  if (text.length <= limit) return text;
-  const cut = text.slice(0, limit - 1);
-  const space = cut.lastIndexOf(" ");
-  const trimmed = (space > 0 ? cut.slice(0, space) : cut).replace(
-    /[\s,;:.]+$/,
-    "",
-  );
-  return `${trimmed}…`;
+/**
+ * The meta description: the summary's whole sentences (120–160 characters),
+ * topped up with fixed sentences that are true of every occupation page.
+ */
+export function pageDescription(
+  core: OccupationCore,
+  summary: string[],
+): string {
+  const asAt = formatDate(monthEnd(core.asAt));
+  return wholeSentences(summary, [
+    `ANZSCO ${core.code}, from SkillSelect data as at ${asAt}.`,
+    has189Rounds(core)
+      ? "See EOIs by points, recent 189 rounds and state evidence."
+      : "See EOIs by points and the state nomination evidence.",
+    "Check your own points free.",
+  ]);
 }
 
 export function occupationJsonLd(
@@ -67,8 +117,8 @@ export function occupationJsonLd(
   const url = SITE_URL + occupationPath(core);
   return [
     datasetLd({
-      name: pageTitle(core),
-      description: pageDescription(summary),
+      name: datasetName(core),
+      description: summary.join(" "),
       url,
       // From the oldest stored submission month to the snapshot (docs/DATA.md R8).
       temporalCoverage: `${cohortWindowStart(core.asAt)}/${core.asAt}`,

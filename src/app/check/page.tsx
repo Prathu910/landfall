@@ -4,14 +4,11 @@ import { ChevronRight, Check, Globe2 } from "lucide-react";
 import { CheckFlow } from "@/components/check-flow";
 import { loadManifest } from "@/lib/data/load-server";
 import { reportSource } from "@/lib/data/report-source";
+import { sitePageMetadata } from "@/lib/seo/page-meta";
+import { CHECK_PAGE } from "@/lib/seo/site-pages";
 import styles from "./check-page.module.css";
 
-export const metadata: Metadata = {
-  title: "Australian PR points calculator — your free check",
-  description:
-    "Calculate your Australian skilled migration points for the 189, 190 and provisional 491 pathways, and see where they put you for each visa, free.",
-  alternates: { canonical: "/check/" },
-};
+export const metadata: Metadata = sitePageMetadata(CHECK_PAGE);
 export default function CheckPage() {
   // Every occupation file shares the manifest's as-at month.
   const manifest = loadManifest();

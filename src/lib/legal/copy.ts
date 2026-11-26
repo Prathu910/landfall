@@ -119,7 +119,7 @@ const refunds: LegalPage = {
   title: "Refund policy",
   crumb: "Refunds",
   description:
-    "MigrateLens refunds the personal PR report in full within 7 days of issue, with no questions asked.",
+    "MigrateLens refunds the personal PR report in full within 7 days of issue, with no questions asked. Email us; the refund goes to your original payment method.",
   intro:
     "If the report isn't what you wanted, you can have your money back within 7 days, with no questions asked.",
   sections: [

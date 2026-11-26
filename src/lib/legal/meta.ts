@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+import { pageMetadata } from "../seo/page-meta";
 import {
   AI_READ_PARAGRAPH,
   LEGAL_PAGES,
@@ -5,14 +7,14 @@ import {
   type LegalSlug,
 } from "./copy";
 
-/** A legal page's metadata: its own title, snippet and canonical path. */
-export function legalMetadata(slug: LegalSlug) {
+/** A legal page's metadata: its own title, snippet, canonical and Open Graph. */
+export function legalMetadata(slug: LegalSlug): Metadata {
   const page = LEGAL_PAGES[slug];
-  return {
+  return pageMetadata({
+    path: `/${slug}/`,
     title: page.title,
     description: page.description,
-    alternates: { canonical: `/${slug}/` },
-  };
+  });
 }
 
 /** The privacy page names Anthropic only while the AI-written summary is on. */

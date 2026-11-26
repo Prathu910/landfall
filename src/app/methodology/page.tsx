@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { BookOpenCheck } from "lucide-react";
 import { Faq } from "@/components/faq";
 import shell from "@/components/info-page/info-page.module.css";
@@ -14,8 +15,10 @@ import styles from "@/components/methodology/methodology.module.css";
 import { coverageSentence, snapshotCoverage } from "@/lib/data/coverage";
 import { loadManifest } from "@/lib/data/load-server";
 import { METHOD_LIMITS, METHOD_LINES } from "@/lib/outlook/method";
+import { sitePageMetadata } from "@/lib/seo/page-meta";
+import { METHODOLOGY_PAGE } from "@/lib/seo/site-pages";
 const manifest = loadManifest();
-export const metadata = { title: "Our methodology and sources" };
+export const metadata: Metadata = sitePageMetadata(METHODOLOGY_PAGE);
 /** "Strong: your points…" with the label name in ink; the text is unchanged. */
 function LabelRule({ line }: { line: string }) {
   const split = line.indexOf(": ");

@@ -7,17 +7,22 @@ import { loadManifest } from "@/lib/data/load-server";
 import { formatDate } from "@/lib/migration";
 import { formatMonth } from "@/lib/report/copy";
 import styles from "@/components/occupation/occupation-shell.module.css";
+import { monthEnd } from "@/lib/data/report-source";
+import { sitePageMetadata } from "@/lib/seo/page-meta";
+import { occupationsPage } from "@/lib/seo/site-pages";
 import { SITE_INDEXABLE } from "@/lib/site";
-
-export const metadata: Metadata = {
-  title: "Occupations: 189, 190 and 491 data for every skilled occupation",
-  alternates: { canonical: "/occupations/" },
-  robots: SITE_INDEXABLE ? undefined : { index: false, follow: false },
-};
 
 const ITEMS = [...occupationIndex]
   .sort((a, b) => a.name.localeCompare(b.name))
   .map((e) => ({ ...e, path: occupationPath(e) }));
+
+export const metadata: Metadata = sitePageMetadata(
+  occupationsPage(
+    ITEMS.filter((item) => item.hasData).length,
+    formatDate(monthEnd(loadManifest().asAt)),
+  ),
+  SITE_INDEXABLE ? {} : { robots: { index: false, follow: false } },
+);
 
 export default function OccupationsPage() {
   const manifest = loadManifest();

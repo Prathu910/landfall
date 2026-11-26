@@ -1,12 +1,10 @@
 import type { MonthKey } from "../data/types";
-import { pageDescription } from "../occupation-page/meta";
+import { splitSentences, wholeSentences } from "../seo/description";
 import { articleLd, breadcrumbLd, datasetLd, faqPageLd } from "../seo/json-ld";
 import { SITE_NAME, SITE_URL } from "../site";
 import { formatLongMonth, longDayText, monthEnd } from "./format";
 import type { RecapView } from "./recap-view";
 import type { RecapFacts } from "./types";
-
-const DESCRIPTION_LIMIT = 155;
 
 /**
  * The full page title. Routes set it as `title.absolute` (R20): the layout's
@@ -21,12 +19,15 @@ export function recapTitle(facts: RecapFacts): string {
       : hasRound
         ? "189 round, 190 and 491 by state"
         : "190 and 491 invitations by state";
-  return `SkillSelect ${month} update: ${topic} | ${SITE_NAME}`;
+  return `SkillSelect ${month} update: ${topic} · ${SITE_NAME}`;
 }
 
-/** The direct answer cut to 155 characters at a word boundary. */
+/** The direct answer in whole sentences (or clauses), at most 160 characters. */
 export function recapDescription(view: RecapView): string {
-  return pageDescription([view.hero.answer], DESCRIPTION_LIMIT);
+  return wholeSentences(splitSentences(view.hero.answer), [
+    "Monthly SkillSelect data from Home Affairs, explained.",
+    "Source: Home Affairs SkillSelect.",
+  ]);
 }
 
 const absolute = (path: string): string =>

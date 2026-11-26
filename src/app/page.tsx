@@ -19,14 +19,11 @@ import { HomeConditions } from "@/components/home/home-conditions";
 import { HomeGuideLink } from "@/components/home/home-guide-link";
 import { HomeQuestions } from "@/components/home/home-questions";
 import { HomeFinal } from "@/components/home/home-final";
+import { sitePageMetadata } from "@/lib/seo/page-meta";
+import { HOME_PAGE } from "@/lib/seo/site-pages";
 import styles from "./home.module.css";
 
-export const metadata: Metadata = {
-  title: "Australian PR: will my points get me invited?",
-  description:
-    "Understand your points, occupation and Australian outlook. Explore official SkillSelect evidence for the 189, 190 and provisional 491 pathways, with a free points check and result, then a full personal report.",
-  alternates: { canonical: "/" },
-};
+export const metadata: Metadata = sitePageMetadata(HOME_PAGE);
 
 export default function Home() {
   const { snapshotId, asAt, checkedAt, sources } = loadManifest();

@@ -5,8 +5,10 @@ import { allMaskedCore } from "../report/__fixtures__/scorecard";
 import { SITE_URL } from "../site";
 import { occupationFaq } from "./faq";
 import {
+  datasetName,
   isIndexable,
   occupationJsonLd,
+  occupationRobots,
   pageDescription,
   pageTitle,
   relatedOccupations,
@@ -51,16 +53,40 @@ describe("isIndexable", () => {
 });
 
 describe("pageTitle and pageDescription", () => {
-  it("builds the title", () => {
+  it("leads with the name and keeps the brand when it fits", () => {
     expect(pageTitle(core)).toBe(
-      "Software Engineer (261313): 189, 190 and 491 EOIs and cut-offs, Oct 2026",
+      "Software Engineer: 189 cut-offs and EOI pools · MigrateLens",
+    );
+    expect(pageTitle({ ...core, name: "Chef" })).toBe(
+      "Chef: 189, 190 and 491 EOIs and cut-offs · MigrateLens",
     );
   });
-  it("trims at a word boundary only when needed", () => {
-    expect(pageDescription(["Short one.", "Two."])).toBe("Short one. Two.");
-    const long = pageDescription(["word ".repeat(60).trim()]);
-    expect(long.length).toBeLessThanOrEqual(160);
-    expect(long.endsWith("word…")).toBe(true);
+  it("falls back to the bare name when nothing else fits", () => {
+    const long = "Architectural, Building and Surveying Technicians nec";
+    expect(pageTitle({ ...core, name: long })).toBe(long);
+  });
+  it("keeps whole sentences and tops up short ones", () => {
+    const text = pageDescription(core, ["Short one."]);
+    expect(text.startsWith("Short one. ANZSCO 261313, from SkillSelect")).toBe(
+      true,
+    );
+    expect(text.length).toBeGreaterThanOrEqual(120);
+    expect(text.length).toBeLessThanOrEqual(160);
+    expect(text).not.toContain("…");
+  });
+});
+
+describe("occupationRobots", () => {
+  it("keeps links followed on a noindex page", () => {
+    expect(occupationRobots(true, true)).toBeUndefined();
+    expect(occupationRobots(true, false)).toEqual({
+      index: false,
+      follow: true,
+    });
+    expect(occupationRobots(false, true)).toEqual({
+      index: false,
+      follow: false,
+    });
   });
 });
 
@@ -103,6 +129,7 @@ describe("sitemapEntries", () => {
   const urls = entries.map((e) => e.url);
   it("lists indexable pages only", () => {
     expect(urls).toContain(`${SITE_URL}/occupations/`);
+    expect(urls).toContain(`${SITE_URL}/check/`);
     expect(urls).toContain(SITE_URL + occupationPath(core));
     expect(urls).not.toContain(SITE_URL + occupationPath(maskedCore));
   });
@@ -154,7 +181,7 @@ describe("a dropped occupation's own snapshot", () => {
     snapshotId: "skillselect-2026-09-30",
   };
   it("takes its title and coverage from its core, not the current month", () => {
-    expect(pageTitle(old)).toMatch(/Sep 2026$/);
+    expect(datasetName(old)).toMatch(/Sep 2026$/);
     const dataset = occupationJsonLd(old, faq, summary, "2026-10-20")[0] as {
       temporalCoverage: string;
       dateModified: string;

@@ -4,10 +4,11 @@ import { legalMetadata, privacyPage } from "./meta";
 
 describe("legalMetadata", () => {
   it("gives each page its own canonical path", () => {
-    expect(legalMetadata("refunds")).toEqual({
+    expect(legalMetadata("refunds")).toMatchObject({
       title: "Refund policy",
       description: LEGAL_PAGES.refunds.description,
       alternates: { canonical: "/refunds/" },
+      openGraph: { url: "/refunds/", type: "website" },
     });
   });
 });

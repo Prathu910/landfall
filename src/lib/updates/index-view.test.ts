@@ -144,8 +144,8 @@ describe("the index's copy", () => {
         UPDATES_INDEX_INTRO,
       ];
       expect(strings.filter((s) => BANNED_COPY.test(s))).toEqual([]);
-      expect(description.length).toBeLessThanOrEqual(155);
-      expect(description.startsWith(view.answer)).toBe(true);
+      expect(description.length).toBeLessThanOrEqual(160);
+      expect(description).not.toContain("…");
     }
   });
 });

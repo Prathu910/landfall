@@ -34,6 +34,7 @@ import {
 import { sourceList } from "@/lib/guide/sources-list";
 import { formatDate, localToday } from "@/lib/migration";
 import { serializeJsonLd } from "@/lib/seo/json-ld";
+import { pageMetadata } from "@/lib/seo/page-meta";
 
 export const dynamicParams = false;
 
@@ -51,11 +52,13 @@ function requireVisa(value: string): Visa {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const guide = GUIDE_PAGES[requireVisa((await params).visa)];
-  return {
+  return pageMetadata({
+    path: guide.path,
     title: guide.title,
     description: guide.description,
-    alternates: { canonical: guide.path },
-  };
+    type: "article",
+    modifiedTime: GUIDE_CHECKED_AT,
+  });
 }
 
 /** The official pages a visa guide cites. */

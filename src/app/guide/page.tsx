@@ -28,14 +28,17 @@ import { GUIDE_PAGES, directAnswer, guideJsonLd } from "@/lib/guide/meta";
 import { sourceList } from "@/lib/guide/sources-list";
 import { formatDate, localToday } from "@/lib/migration";
 import { serializeJsonLd } from "@/lib/seo/json-ld";
+import { pageMetadata } from "@/lib/seo/page-meta";
 
 const PAGE = GUIDE_PAGES.hub;
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
+  path: PAGE.path,
   title: PAGE.title,
   description: PAGE.description,
-  alternates: { canonical: PAGE.path },
-};
+  type: "article",
+  modifiedTime: GUIDE_CHECKED_AT,
+});
 
 const CONTENTS = [
   { id: "path", label: "Which path fits you" },

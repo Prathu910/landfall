@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ChevronRight, FileText } from "lucide-react";
 import { stateRuleData } from "@/components/data/state-rule-data";
@@ -14,8 +15,13 @@ import { EXAMPLES, SAMPLE_CODES } from "@/lib/outlook/examples";
 import { buildReportPayload } from "@/lib/report-issue/build";
 import { SAMPLE_AS_OF } from "@/lib/sample";
 import { dayText, monthEnd } from "@/lib/updates/format";
+import { formatMonth } from "@/lib/report/copy";
+import { sitePageMetadata } from "@/lib/seo/page-meta";
+import { samplePage } from "@/lib/seo/site-pages";
 import styles from "./sample-page.module.css";
-export const metadata = { title: "Explore the sample report" };
+export const metadata: Metadata = sitePageMetadata(
+  samplePage(formatMonth(loadSampleMeta().asAt)),
+);
 
 export default function SamplePage() {
   const meta = loadSampleMeta();

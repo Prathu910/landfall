@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Info, MapPinned } from "lucide-react";
 import { stateRuleData } from "@/components/data/state-rule-data";
@@ -7,13 +8,16 @@ import { StateCard } from "@/components/states/state-card";
 import { StateMap } from "@/components/states/state-map";
 import { statePrograms } from "@/data/states";
 import { buildStateCards } from "@/lib/states-page/state-cards";
+import { sitePageMetadata } from "@/lib/seo/page-meta";
+import { statesPage } from "@/lib/seo/site-pages";
 import styles from "./states-page.module.css";
 
-export const metadata = { title: "State and territory pathways" };
+const PROGRAM_YEAR = stateRuleData.rules.programYear.replace("-", "–");
+
+export const metadata: Metadata = sitePageMetadata(statesPage(PROGRAM_YEAR));
 
 export default function StatesPage() {
   const cards = buildStateCards(statePrograms, stateRuleData);
-  const year = stateRuleData.rules.programYear.replace("-", "–");
   return (
     <main id="main" className={shell.page}>
       <div className={shell.inner}>
@@ -25,7 +29,7 @@ export default function StatesPage() {
           intro="Federal points are one part. Each state and territory has its own criteria, priorities and selection process for nomination."
           meta={[
             `${cards.length} states and territories`,
-            `${year} program year`,
+            `${PROGRAM_YEAR} program year`,
           ]}
         />
         <div className={styles.layout}>

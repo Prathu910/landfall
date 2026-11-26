@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     template: "%s · MigrateLens",
   },
   description:
-    "Check your points-test basics and see where they sit in published SkillSelect data. A free points check, then a source-backed personal report for the Australian 189, 190 and 491 pathways.",
+    "Check your Australian PR points free and see where they sit in published SkillSelect data for the 189, 190 and 491 visas, with sources and dates.",
   metadataBase: new URL(SITE_URL),
   openGraph: {
     images: [
@@ -35,6 +35,7 @@ export const metadata: Metadata = {
       },
     ],
     siteName: "MigrateLens",
+    locale: "en_AU",
     type: "website",
   },
   twitter: {

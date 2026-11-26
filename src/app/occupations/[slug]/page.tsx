@@ -37,6 +37,7 @@ import { occupationFaq } from "@/lib/occupation-page/faq";
 import {
   isIndexable,
   occupationJsonLd,
+  occupationRobots,
   pageDescription,
   pageTitle,
   relatedOccupations,
@@ -57,6 +58,7 @@ import {
 import { occupationVerdict } from "@/lib/occupation-page/verdict";
 import { formatMonth } from "@/lib/report/copy";
 import { serializeJsonLd } from "@/lib/seo/json-ld";
+import { pageMetadata } from "@/lib/seo/page-meta";
 import { SITE_INDEXABLE } from "@/lib/site";
 import styles from "./page.module.css";
 
@@ -81,17 +83,18 @@ function requireCore(slug: string): OccupationCore {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const core = requireCore((await params).slug);
   const detail = loadOccupationDetail(core.code);
-  return {
-    title: pageTitle(core),
+  const entry = occupationIndex.find((e) => e.code === core.code);
+  return pageMetadata({
+    path: occupationPath(core),
+    title: { absolute: pageTitle(core) },
     description: pageDescription(
+      core,
       occupationSummary(core, detail, stateRuleData.federal),
     ),
-    alternates: { canonical: occupationPath(core) },
-    robots:
-      !SITE_INDEXABLE || !isIndexable(core)
-        ? { index: false, follow: false }
-        : undefined,
-  };
+    type: "article",
+    modifiedTime: entry?.lastCheckedAt ?? loadManifest().checkedAt,
+    robots: occupationRobots(SITE_INDEXABLE, isIndexable(core)),
+  });
 }
 
 export default async function OccupationPage({ params }: Props) {
