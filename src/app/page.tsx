@@ -24,7 +24,7 @@ import styles from "./home.module.css";
 export const metadata: Metadata = {
   title: "Australian PR: will my points get me invited?",
   description:
-    "Understand your points, occupation and Australian outlook. Explore official SkillSelect evidence for the 189, 190 and provisional 491 pathways, then see your free result and your full personal report.",
+    "Understand your points, occupation and Australian outlook. Explore official SkillSelect evidence for the 189, 190 and provisional 491 pathways, with a free points check and result, then a full personal report.",
   alternates: { canonical: "/" },
 };
 
@@ -75,8 +75,9 @@ export default function Home() {
               get me invited?
             </h1>
             <p className="lede">
-              Your points. Your occupation. Your Australian outlook. Understand
-              the 189, 190 and 491 pathways in one free, personal report.
+              Your points. Your occupation. Your Australian outlook. Check the
+              189, 190 and 491 pathways free, then get your full personal
+              report.
             </p>
             <div className="ctas">
               <HomeAction href="/check/">Check my points, free</HomeAction>
@@ -87,7 +88,7 @@ export default function Home() {
             <p className="fine">
               Official data to {longDate}. No documents needed.
               <br />
-              Email required for your personal report; no account needed.
+              Your points and visa stamps are free, with no email or account.
             </p>
           </div>
           <HomePassport national={national} vic={vic} nt={nt} date={date} />

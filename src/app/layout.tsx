@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     template: "%s · MigrateLens",
   },
   description:
-    "Check your points-test basics and see where they sit in published SkillSelect data. A free, source-backed report for Australian 189, 190 and 491 pathways.",
+    "Check your points-test basics and see where they sit in published SkillSelect data. A free points check, then a source-backed personal report for the Australian 189, 190 and 491 pathways.",
   metadataBase: new URL(SITE_URL),
   openGraph: {
     images: [
