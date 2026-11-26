@@ -1,5 +1,31 @@
 # Resume here
 
+## Founder: before the paid report goes live (26 November 2026)
+
+The paid report is built on branch `roadmap/paid-report` (plans 1 to 3: engine, backend, checkout and `/report/`). Nothing is live: no payment, code email or report email works until you finish this list, in order. The detail for steps 1 to 8 is in [`docs/OPERATIONS-BACKEND.md`, "Paid reports"](OPERATIONS-BACKEND.md#paid-reports); this list is the order to do them in. Do it all on the staging Supabase project and the preview deployment first, then repeat steps 1, 4, 5, 6, 7 and 10 on production.
+
+- [ ] **1. Razorpay test keys and webhook.** Dashboard in test mode: generate an API key (key ID and secret). Add a webhook with the URL `https://<project-ref>.supabase.co/functions/v1/razorpay-webhook`, a strong secret of your own, and only the events `payment.captured`, `order.paid` and `refund.processed`. Keep auto-capture on. (Runbook step 1.)
+- [ ] **2. Resend domain DNS.** Add `migratelens.com` in Resend, put its SPF, DKIM and return-path MX records in Cloudflare DNS, wait for "Verified", and create a sending-only API key. (Step 2.)
+- [ ] **3. Cloudflare Browser Rendering token.** A custom API token with only Account → Browser Rendering → Edit, plus the account ID. (Step 3.)
+- [ ] **4. Supabase secrets.** Set every variable the functions read, from a private env file, never in git or chat: `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `RAZORPAY_WEBHOOK_SECRET`, `RESEND_API_KEY`, `REPORT_EMAIL_FROM`, `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_BR_TOKEN`, `REPORT_SITE_URL`, `REPORT_DELIVER_SECRET`, `REPORT_TOKEN_KEY`, and the existing `ALLOWED_ORIGINS` and `TURNSTILE_SECRET_KEY` (the Turnstile widget must allow the action `report`). `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are provided by Supabase. The AI read's `ANTHROPIC_API_KEY`, `READ_*` variables stay as they are. (Step 4.)
+- [ ] **5. Migrations and functions.** `npx supabase db push --remote`, then deploy the eight report functions. (Step 5.)
+- [ ] **6. pg_cron.** Enable pg_cron and pg_net, create the two Vault secrets, apply `supabase/cron/20261125000300_report_delivery.sql`, and confirm a run returns 200. (Step 6.)
+- [ ] **7. `report_settings`.** One row: `founding_enabled` true, `founding_limit` 100, `price_inr` 69900, `price_usd` 1400, `usd_enabled` false. (Step 7.)
+- [ ] **8. Frontend settings.** On the Cloudflare Pages preview (then production) build: `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_TURNSTILE_SITE_KEY` for the matching project and hostname, then rebuild. No Razorpay value goes in the frontend: the key ID arrives with each order. (`docs/OPERATIONS.md`, "Public frontend settings".)
+- [ ] **9. Test-mode rehearsal** on the preview, with Razorpay test cards or test UPI and your own email (runbook step 8):
+  - a founding claim (code email, a wrong code shows tries left, the right code opens the report, the report email arrives with the PDF);
+  - a paid INR order (set `founding_limit` to the issued count first);
+  - a dismissed Checkout, then payment on the second try: one report, one charge;
+  - a closed tab after payment: the webhook issues it and the email arrives;
+  - a refund in the Dashboard: the link then says the report was refunded;
+  - the checks the offline tests couldn't make (ruling R8): the Cloudflare PDF is the print layout on A4; Resend shows one link email and at most one PDF email per report, also when a retry reuses an `Idempotency-Key` with a different body; and the Razorpay webhook deliveries all got 200 with the payload fields the fixtures assume;
+  - also: a delivery alert reaches hello@migratelens.com after 5 failures, and `/report/` opened on a second device after the 7-day window shows the report with "This report is final" and no Edit button.
+- [ ] **10. International payments.** Once the legal pages are live on production, request International Payments in Razorpay (link PayPal if asked). When it is active, set `usd_enabled` true.
+- [ ] **11. The live switch.** Razorpay live mode: live keys, a live webhook with a new secret, the three `RAZORPAY_*` secrets on production, then one real ₹699 payment end to end and its refund. (Step 9.)
+- [ ] **12. After the lawyer review,** set `LEGAL_REVIEWED = true` in `src/lib/legal/copy.ts` (this removes the "Drafted for review" line from the legal pages), rebuild and deploy. Read the privacy page in that review: it was rewritten for the paid flow.
+
+Known gap to decide: while the founding offer is open, an email that already has a founding report gets "buy another for {price}", but `report-order` keeps answering `founding-used` for that email (it has no "pay instead" request), so that reader can only buy with another address until the offer closes.
+
 ## Founder: set up the scheduled jobs (25 November 2026)
 
 The three workflows (`monthly-data`, `round-189`, `page-watch`) are on branch `roadmap/monthly-updates` and run only after the merge to `main`. Details are in `docs/OPERATIONS.md`, "Monthly data pipeline".

@@ -24,7 +24,7 @@ import styles from "./home.module.css";
 export const metadata: Metadata = {
   title: "Australian PR: will my points get me invited?",
   description:
-    "Understand your points, occupation and Australian outlook. Explore official SkillSelect evidence for the 189, 190 and provisional 491 pathways, then get your free personal report.",
+    "Understand your points, occupation and Australian outlook. Explore official SkillSelect evidence for the 189, 190 and provisional 491 pathways, then see your free result and your full personal report.",
   alternates: { canonical: "/" },
 };
 

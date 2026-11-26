@@ -1,6 +1,6 @@
 # MigrateLens forms: deployment and operations
 
-The frontend remains a Cloudflare Pages static export. Calculations and feedback are posted directly to Supabase Edge Functions. Keep the occupation-page release on `roadmap/occupation-pages` until it is reviewed and integrated into the production branch. The backend must be ready before enabling the required-email frontend in production.
+The frontend remains a Cloudflare Pages static export. Calculations and feedback are posted directly to Supabase Edge Functions. Keep the occupation-page release on `roadmap/occupation-pages` until it is reviewed and integrated into the production branch. The backend must be ready before the checkout is offered in production.
 
 ## Public frontend settings
 
@@ -12,7 +12,11 @@ Set these independently for Cloudflare Production and Preview builds. Changing t
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Public managed Turnstile widget key for the corresponding frontend hostname            |
 | `NEXT_PUBLIC_PRIVACY_EMAIL`      | Working monitored mailbox for privacy questions and deletion requests                  |
 
-Missing or invalid public settings leave both submission forms unavailable; no save is simulated. The personal report still requires email and a successful write. The public sample and occupation pages keep working. The email field is held in memory and excluded from local profile saving and printed reports.
+Missing or invalid public settings leave the feedback form unavailable; no save is simulated. The public sample and occupation pages keep working.
+
+### The paid report checkout
+
+`NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_TURNSTILE_SITE_KEY` now also power the checkout on `/check/` and the `/report/` page: the quote, the founding code, the Razorpay order, the report link and corrections all go to the report Functions at `${NEXT_PUBLIC_SUPABASE_URL}/functions/v1/`, and the checkout's Turnstile uses the action `report`. Without them the free result still works and the checkout says something went wrong. The frontend needs **no Razorpay value**: the public key ID arrives with each `report-order` reply, and Razorpay's `checkout.js` loads only when the reader presses Pay. The free check sends nothing; the profile and email reach the server only after the reader asks for the report and ticks the consent box. The email is held in memory and never saved on the device. The checkout and report pages are rehearsed against a local stub before any deploy, never against live keys (see the founder checklist at the top of `docs/HANDOFF.md`).
 
 No Supabase secret/service-role key, database password or Turnstile secret belongs in a `NEXT_PUBLIC_` value or frontend environment file.
 
@@ -20,7 +24,7 @@ No Supabase secret/service-role key, database password or Turnstile secret belon
 
 Follow [the backend runbook](OPERATIONS-BACKEND.md) for the exact migrations, Edge Function secrets, allowed origins, tests, deployment commands, SQL views and deletion procedures. Use separate Supabase staging and production projects. An unauthenticated visitor can submit only through the validated functions; browser REST/table/RPC access must remain denied.
 
-In Cloudflare Turnstile, create managed widgets with explicit frontend hostnames. Use production `migratelens.com`, and only specifically needed staging hosts. Avoid authorizing all `pages.dev` hosts. Set the private verification key in Supabase secrets. The expected actions are `calculation` and `feedback`; custom submission handlers validate them directly, independently of Supabase Auth settings.
+In Cloudflare Turnstile, create managed widgets with explicit frontend hostnames. Use production `migratelens.com`, and only specifically needed staging hosts. Avoid authorizing all `pages.dev` hosts. Set the private verification key in Supabase secrets. The expected actions are `report` (the checkout), `feedback`, and `calculation` (the retired email gate, kept for its stored rows); custom submission handlers validate them directly, independently of Supabase Auth settings.
 
 For local UI development, run `npm run dev`. For an integrated local backend use the Supabase CLI stack separately (see the backend runbook), set public local URL and test widget values in an ignored `.env.local`, and rebuild/restart the frontend. Never send real user data in local smoke tests.
 

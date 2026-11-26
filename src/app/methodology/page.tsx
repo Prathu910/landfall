@@ -169,7 +169,7 @@ export default function MethodologyPage() {
                 items={[
                   [
                     "Is the points check free?",
-                    "Yes. This first release has no checkout or subscription. You can calculate your score, view your overview and use the browser print function without paying.",
+                    "Yes. Your points and your three visa stamps are free, with no email or account. The full personal report is a one-off purchase, free for the first 100 readers, with a 7-day no-questions refund.",
                   ],
                   [
                     "Is this migration advice?",
@@ -185,7 +185,7 @@ export default function MethodologyPage() {
                   ],
                   [
                     "Can I download the report?",
-                    "Use Print / save PDF on your overview, then choose your browser’s PDF destination. Automated PDF generation and email delivery are not included in this release.",
+                    "The full report opens on screen as soon as it is issued, and its PDF and private link reach your email. You can also use Download PDF on the report page at any time.",
                   ],
                   [
                     "What if my occupation is not listed?",
