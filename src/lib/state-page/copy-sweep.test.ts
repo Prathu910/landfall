@@ -10,6 +10,8 @@ const REPEATED_RANGE = /\b(\d[\d,]*)(?: to |–)\1\b/;
 const ZERO_FIGURE = /\b(at least|about) 0\b/;
 const ISSUED = /invitations? (issued|sent) (in|that)/i;
 const PRICE = /₹|US\$|\$\d/;
+/** Counts are EOIs, not people: "who held an invitation" reads as people. */
+const PEOPLE = /\bwho (held|holds|hold|will get|gets?)\b/i;
 
 function strings(value: unknown): string[] {
   if (typeof value === "string") return [value];
@@ -62,6 +64,7 @@ describe("every state page's copy", () => {
         ZERO_FIGURE.test(s) ||
         ISSUED.test(s) ||
         PRICE.test(s) ||
+        PEOPLE.test(s) ||
         withoutQuotedRules(s, view).includes("%"),
     );
     expect(problems).toEqual([]);

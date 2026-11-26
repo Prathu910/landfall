@@ -229,7 +229,7 @@ function sectionTitles(name: string, withA: string): StatePageView["titles"] {
     },
     occupations: {
       title: `Which occupations hold ${name} invitations?`,
-      lead: `Occupations with a published count (20 or more at some score) of EOIs holding ${withA} invitation in the last 12 months, highest first. A count shows who held an invitation, not who will get one.`,
+      lead: `Occupations with a published count (20 or more at some score) of EOIs holding ${withA} invitation in the last 12 months, highest first. A count shows which EOIs held an invitation, not which will get one.`,
       listLink: `Is your occupation on ${name}'s list? Open its occupation page`,
     },
     program: `${name}'s 2026–27 program`,

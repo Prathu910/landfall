@@ -98,7 +98,7 @@ function occupationsFaq(facts: StateFacts, visa: StateVisa): FaqEntry | null {
     : "";
   return {
     question: `Which occupations hold ${searchName} ${visa} invitations?`,
-    answer: `SkillSelect EOI data for ${longDayText(monthEnd(facts.asAt))} shows the highest published counts of EOIs holding ${withArticle(code, searchName)} ${visa} invitation for ${joinWords(named.slice(0, TOP_IN_ANSWER), "and")}. ${count} ${count === 1 ? "occupation" : "occupations"} had a count of 20 or more in at least one of the last 12 months. A count shows who held an invitation, not who will get one.${listLine}`,
+    answer: `SkillSelect EOI data for ${longDayText(monthEnd(facts.asAt))} shows the highest published counts of EOIs holding ${withArticle(code, searchName)} ${visa} invitation for ${joinWords(named.slice(0, TOP_IN_ANSWER), "and")}. ${count} ${count === 1 ? "occupation" : "occupations"} had a count of 20 or more in at least one of the last 12 months. A count shows which EOIs held an invitation, not which will get one.${listLine}`,
   };
 }
 
