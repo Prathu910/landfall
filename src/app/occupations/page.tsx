@@ -9,18 +9,21 @@ import { formatMonth } from "@/lib/report/copy";
 import styles from "@/components/occupation/occupation-shell.module.css";
 import { monthEnd } from "@/lib/data/report-source";
 import { sitePageMetadata } from "@/lib/seo/page-meta";
-import { occupationsPage } from "@/lib/seo/site-pages";
+import { occupationsPage, sitePageJsonLd } from "@/lib/seo/site-pages";
+import { JsonLd } from "@/components/seo/json-ld";
 import { SITE_INDEXABLE } from "@/lib/site";
 
 const ITEMS = [...occupationIndex]
   .sort((a, b) => a.name.localeCompare(b.name))
   .map((e) => ({ ...e, path: occupationPath(e) }));
 
+const PAGE = occupationsPage(
+  ITEMS.filter((item) => item.hasData).length,
+  formatDate(monthEnd(loadManifest().asAt)),
+);
+
 export const metadata: Metadata = sitePageMetadata(
-  occupationsPage(
-    ITEMS.filter((item) => item.hasData).length,
-    formatDate(monthEnd(loadManifest().asAt)),
-  ),
+  PAGE,
   SITE_INDEXABLE ? {} : { robots: { index: false, follow: false } },
 );
 
@@ -43,8 +46,16 @@ export default function OccupationsPage() {
           </p>
           <div className={styles.directoryMeta}>
             <span>{published} occupations with published data</span>
-            <span>Snapshot · {formatMonth(manifest.asAt)}</span>
-            <span>Checked · {formatDate(manifest.checkedAt)}</span>
+            <span>
+              Snapshot ·{" "}
+              <time dateTime={manifest.asAt}>{formatMonth(manifest.asAt)}</time>
+            </span>
+            <span>
+              Checked ·{" "}
+              <time dateTime={manifest.checkedAt}>
+                {formatDate(manifest.checkedAt)}
+              </time>
+            </span>
           </div>
         </header>
         <OccupationSearch items={ITEMS} />
@@ -60,6 +71,13 @@ export default function OccupationsPage() {
           </a>
         </aside>
       </div>
+      <JsonLd
+        data={sitePageJsonLd(PAGE, {
+          type: "CollectionPage",
+          breadcrumb: false,
+          dateModified: manifest.checkedAt,
+        })}
+      />
     </main>
   );
 }

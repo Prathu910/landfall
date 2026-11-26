@@ -20,7 +20,8 @@ export function PageHead({
   icon: LucideIcon;
   title: string;
   intro: ReactNode;
-  meta?: string[];
+  /** Short facts under the intro; dates inside are <time> elements. */
+  meta?: ReactNode[];
 }) {
   return (
     <>
@@ -43,8 +44,8 @@ export function PageHead({
         <p className={styles.intro}>{intro}</p>
         {meta.length > 0 && (
           <ul className={styles.meta}>
-            {meta.map((item) => (
-              <li key={item}>{item}</li>
+            {meta.map((item, index) => (
+              <li key={index}>{item}</li>
             ))}
           </ul>
         )}

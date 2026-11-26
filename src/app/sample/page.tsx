@@ -17,11 +17,12 @@ import { SAMPLE_AS_OF } from "@/lib/sample";
 import { dayText, monthEnd } from "@/lib/updates/format";
 import { formatMonth } from "@/lib/report/copy";
 import { sitePageMetadata } from "@/lib/seo/page-meta";
-import { samplePage } from "@/lib/seo/site-pages";
+import { samplePage, sitePageJsonLd } from "@/lib/seo/site-pages";
+import { JsonLd } from "@/components/seo/json-ld";
 import styles from "./sample-page.module.css";
-export const metadata: Metadata = sitePageMetadata(
-  samplePage(formatMonth(loadSampleMeta().asAt)),
-);
+const PAGE = samplePage(formatMonth(loadSampleMeta().asAt));
+
+export const metadata: Metadata = sitePageMetadata(PAGE);
 
 export default function SamplePage() {
   const meta = loadSampleMeta();
@@ -74,7 +75,7 @@ export default function SamplePage() {
             Four fictional people, one for each kind of result. The points
             calculations and official occupation snapshot are real. Your own
             report uses your answers. Example reports use SkillSelect data as at{" "}
-            {dataAsAt}.
+            <time dateTime={monthEnd(meta.asAt)}>{dataAsAt}</time>.
             <span className={styles.guideLink}>
               {" "}
               New to skilled PR?{" "}
@@ -89,6 +90,7 @@ export default function SamplePage() {
           )}
         />
       </div>
+      <JsonLd data={sitePageJsonLd(PAGE)} />
     </main>
   );
 }

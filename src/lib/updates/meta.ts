@@ -30,6 +30,13 @@ export function recapDescription(view: RecapView): string {
   ]);
 }
 
+/** What a month's Dataset measures. */
+const RECAP_VARIABLES = [
+  "189 invitations and cut-offs by occupation",
+  "189 EOI pool by points score",
+  "190 and 491 EOIs submitted and in invited status, by state",
+];
+
 const absolute = (path: string): string =>
   path.startsWith("/") ? SITE_URL + path : path;
 
@@ -59,10 +66,19 @@ export function recapJsonLd(
     ? [
         datasetLd({
           name: `SkillSelect EOI data, ${month}`,
-          description: `189, 190 and 491 EOI pools and invitations by state and points, as at ${longDayText(monthEnd(facts.month))}.`,
+          description: `189, 190 and 491 EOI pools by points, 189 invitation rounds and EOIs in invited status by state, as at ${longDayText(monthEnd(facts.month))}, from published Home Affairs SkillSelect data.`,
           url,
+          identifier: facts.data.sources.snapshotId,
+          version: facts.data.sources.snapshotId,
           temporalCoverage: facts.month,
-          dateModified: facts.data.sources.checkedAt,
+          // The page's date: the same day as the Article's dateModified.
+          dateModified: facts.updatedAt,
+          isBasedOn: view.method.sources.map((s) => s.href),
+          variableMeasured: RECAP_VARIABLES,
+          catalog: {
+            name: `${SITE_NAME} monthly SkillSelect updates`,
+            url: `${SITE_URL}/updates/`,
+          },
         }),
       ]
     : [];

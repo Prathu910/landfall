@@ -76,8 +76,16 @@ export default function GuideHubPage() {
           title={PAGE.heading}
           intro="Three visas, one points test. The route from choosing your occupation to a visa decision, with the official rule, who runs each step and what it costs."
           meta={[
-            `Checked ${formatDate(GUIDE_CHECKED_AT)}`,
-            `Fees as at ${formatDate(FEES.feesAsAt)}`,
+            <>
+              Checked{" "}
+              <time dateTime={GUIDE_CHECKED_AT}>
+                {formatDate(GUIDE_CHECKED_AT)}
+              </time>
+            </>,
+            <>
+              Fees as at{" "}
+              <time dateTime={FEES.feesAsAt}>{formatDate(FEES.feesAsAt)}</time>
+            </>,
             "Sources: Home Affairs and official bodies",
           ]}
         />

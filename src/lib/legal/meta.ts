@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
+import { breadcrumbLd, webPageLd } from "../seo/json-ld";
 import { pageMetadata } from "../seo/page-meta";
+import { SITE_NAME, SITE_URL } from "../site";
 import {
   AI_READ_PARAGRAPH,
   LEGAL_PAGES,
+  LEGAL_UPDATED,
   type LegalPage,
   type LegalSlug,
 } from "./copy";
@@ -15,6 +18,23 @@ export function legalMetadata(slug: LegalSlug): Metadata {
     title: page.title,
     description: page.description,
   });
+}
+
+/** A legal page's JSON-LD: the page (dated by the last revision) and its breadcrumb. */
+export function legalJsonLd(page: LegalPage): object[] {
+  return [
+    webPageLd({
+      type: page.slug === "contact" ? "ContactPage" : "WebPage",
+      name: page.title,
+      description: page.description,
+      url: `${SITE_URL}/${page.slug}/`,
+      dateModified: LEGAL_UPDATED,
+    }),
+    breadcrumbLd([
+      { name: SITE_NAME, item: `${SITE_URL}/` },
+      { name: page.crumb, item: `${SITE_URL}/${page.slug}/` },
+    ]),
+  ];
 }
 
 /** The privacy page names Anthropic only while the AI-written summary is on. */

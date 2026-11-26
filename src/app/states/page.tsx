@@ -9,12 +9,15 @@ import { StateMap } from "@/components/states/state-map";
 import { statePrograms } from "@/data/states";
 import { buildStateCards } from "@/lib/states-page/state-cards";
 import { sitePageMetadata } from "@/lib/seo/page-meta";
-import { statesPage } from "@/lib/seo/site-pages";
+import { sitePageJsonLd, statesPage } from "@/lib/seo/site-pages";
+import { JsonLd } from "@/components/seo/json-ld";
 import styles from "./states-page.module.css";
 
 const PROGRAM_YEAR = stateRuleData.rules.programYear.replace("-", "–");
 
-export const metadata: Metadata = sitePageMetadata(statesPage(PROGRAM_YEAR));
+const PAGE = statesPage(PROGRAM_YEAR);
+
+export const metadata: Metadata = sitePageMetadata(PAGE);
 
 export default function StatesPage() {
   const cards = buildStateCards(statePrograms, stateRuleData);
@@ -69,6 +72,7 @@ export default function StatesPage() {
           </div>
         </div>
       </div>
+      <JsonLd data={sitePageJsonLd(PAGE)} />
     </main>
   );
 }

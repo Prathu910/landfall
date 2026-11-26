@@ -26,7 +26,8 @@ export type HeroView = {
   h1: string;
   /** The dated 2–3 sentence direct answer. */
   answer: string;
-  dateline: { label: string; value: string }[];
+  /** `dateTime` (YYYY-MM-DD) marks a value that is a single date. */
+  dateline: { label: string; value: string; dateTime?: string }[];
   /** Shown once under the hero while the month's data isn't published. */
   pendingDataNote: string | null;
   actions: { label: string; href: string }[];
@@ -105,19 +106,34 @@ function dateline(facts: RecapFacts, rounds: Round[]): HeroView["dateline"] {
     ...(facts.data ? [facts.data.sources.checkedAt] : []),
   ].sort();
   return [
-    { label: "Updated", value: dayText(facts.updatedAt) },
+    {
+      label: "Updated",
+      value: dayText(facts.updatedAt),
+      dateTime: facts.updatedAt,
+    },
     ...(rounds.length > 0
       ? [
           {
             label: rounds.length === 1 ? "189 round" : "189 rounds",
             value: rounds.map((r) => dayText(r.date)).join(" and "),
+            ...(rounds.length === 1 ? { dateTime: rounds[0].date } : {}),
           },
         ]
       : []),
     ...(facts.data
-      ? [{ label: "Data as at", value: dayText(monthEnd(facts.month)) }]
+      ? [
+          {
+            label: "Data as at",
+            value: dayText(monthEnd(facts.month)),
+            dateTime: monthEnd(facts.month),
+          },
+        ]
       : []),
-    { label: "Sources checked", value: dayText(checked[checked.length - 1]) },
+    {
+      label: "Sources checked",
+      value: dayText(checked[checked.length - 1]),
+      dateTime: checked[checked.length - 1],
+    },
   ];
 }
 

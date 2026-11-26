@@ -20,11 +20,15 @@ export function GuideAnswer({
       <dl className={styles.dates}>
         <div>
           <dt>Last checked</dt>
-          <dd>{formatDate(checkedAt)}</dd>
+          <dd>
+            <time dateTime={checkedAt}>{formatDate(checkedAt)}</time>
+          </dd>
         </div>
         <div>
           <dt>Fees as at</dt>
-          <dd>{formatDate(feesAsAt)}</dd>
+          <dd>
+            <time dateTime={feesAsAt}>{formatDate(feesAsAt)}</time>
+          </dd>
         </div>
       </dl>
       <p className={styles.caveat}>

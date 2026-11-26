@@ -77,8 +77,18 @@ describe("recapJsonLd", () => {
     expect(ld[1]).toMatchObject({
       temporalCoverage: "2026-10",
       license: "https://creativecommons.org/licenses/by/3.0/au/",
-      creator: { "@type": "Organization", name: "Department of Home Affairs" },
+      creator: {
+        "@type": "GovernmentOrganization",
+        name: "Department of Home Affairs",
+      },
+      version: oct.data?.sources.snapshotId,
+      publisher: { "@id": `${SITE_URL}/#organization` },
+      includedInDataCatalog: { url: `${SITE_URL}/updates/` },
     });
+  });
+
+  it("dates the Dataset and the Article by the same day", () => {
+    expect(ld[1].dateModified).toBe(ld[0].dateModified);
   });
 
   it("breadcrumbs Home › Updates › the month with absolute URLs", () => {

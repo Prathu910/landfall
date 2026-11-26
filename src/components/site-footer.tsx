@@ -7,7 +7,7 @@ import { Brand } from "./brand/brand";
 import styles from "./site-footer.module.css";
 
 export function SiteFooter() {
-  const asAt = formatMonth(loadManifest().asAt);
+  const { asAt } = loadManifest();
   return (
     <footer className={`site-footer ${styles.footer}`}>
       <div className={styles.inner}>
@@ -21,7 +21,9 @@ export function SiteFooter() {
             </p>
             <div className={styles.snapshot}>
               <span>Published SkillSelect snapshot</span>
-              <strong>{asAt}</strong>
+              <strong>
+                <time dateTime={asAt}>{formatMonth(asAt)}</time>
+              </strong>
             </div>
           </div>
           <nav className={styles.links} aria-label="Footer navigation">

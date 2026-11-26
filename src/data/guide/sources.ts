@@ -1,6 +1,8 @@
 // The official pages the PR guide cites, read on GUIDE_CHECKED_AT (research:
 // docs/research/pr-guide-2026-11.md). One constant per page, used everywhere.
 export const GUIDE_CHECKED_AT = "2026-11-23";
+/** The day the four guide pages were first published (Article datePublished). */
+export const GUIDE_PUBLISHED_AT = "2026-11-23";
 
 const HA = "https://immi.homeaffairs.gov.au";
 const LISTING = `${HA}/visas/getting-a-visa/visa-listing`;

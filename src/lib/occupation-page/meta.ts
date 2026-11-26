@@ -108,11 +108,21 @@ export function pageDescription(
   ]);
 }
 
+/** What an occupation's Dataset measures (docs/DATA.md). */
+export const OCCUPATION_VARIABLES = [
+  "EOIs by points score (189, 190 and 491 pools)",
+  "189 invitation round cut-offs (lowest points invited)",
+  "EOIs in invited status at month-end, by state (190 and 491)",
+  "189 EOI statuses by submission month",
+];
+
+/** `sources` are the published pages the snapshot was read from. */
 export function occupationJsonLd(
   core: OccupationCore,
   faq: Faq[],
   summary: string[],
   checkedAt: string,
+  sources: string[],
 ): object[] {
   const url = SITE_URL + occupationPath(core);
   return [
@@ -120,9 +130,21 @@ export function occupationJsonLd(
       name: datasetName(core),
       description: summary.join(" "),
       url,
+      identifier: `ANZSCO ${core.code}`,
+      version: core.snapshotId,
       // From the oldest stored submission month to the snapshot (docs/DATA.md R8).
       temporalCoverage: `${cohortWindowStart(core.asAt)}/${core.asAt}`,
       dateModified: checkedAt,
+      isBasedOn: sources,
+      variableMeasured: OCCUPATION_VARIABLES,
+      catalog: {
+        name: `${SITE_NAME} SkillSelect occupation data`,
+        url: `${SITE_URL}/occupations/`,
+      },
+      distribution: {
+        contentUrl: `${SITE_URL}/data/occupations/${core.code}.json`,
+        description: `${SITE_NAME}'s import of the published SkillSelect counts for this occupation; masked counts are kept as "<20".`,
+      },
     }),
     faqPageLd(faq),
     breadcrumbLd([

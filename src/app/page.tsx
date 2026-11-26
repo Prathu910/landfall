@@ -20,7 +20,8 @@ import { HomeGuideLink } from "@/components/home/home-guide-link";
 import { HomeQuestions } from "@/components/home/home-questions";
 import { HomeFinal } from "@/components/home/home-final";
 import { sitePageMetadata } from "@/lib/seo/page-meta";
-import { HOME_PAGE } from "@/lib/seo/site-pages";
+import { HOME_PAGE, sitePageJsonLd } from "@/lib/seo/site-pages";
+import { JsonLd } from "@/components/seo/json-ld";
 import styles from "./home.module.css";
 
 export const metadata: Metadata = sitePageMetadata(HOME_PAGE);
@@ -83,7 +84,8 @@ export default function Home() {
               </HomeAction>
             </div>
             <p className="fine">
-              Official data to {longDate}. No documents needed.
+              Official data to <time dateTime={asAt}>{longDate}</time>. No
+              documents needed.
               <br />
               Your points and visa stamps are free, with no email or account.
             </p>
@@ -121,6 +123,7 @@ export default function Home() {
       <HomeConditions date={longDate} />
       <HomeQuestions />
       <HomeFinal />
+      <JsonLd data={sitePageJsonLd(HOME_PAGE)} />
     </main>
   );
 }

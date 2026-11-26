@@ -49,7 +49,13 @@ export function RecapHero({
               {hero.dateline.map((item) => (
                 <div key={item.label}>
                   <dt>{item.label}</dt>
-                  <dd>{item.value}</dd>
+                  <dd>
+                    {item.dateTime ? (
+                      <time dateTime={item.dateTime}>{item.value}</time>
+                    ) : (
+                      item.value
+                    )}
+                  </dd>
                 </div>
               ))}
             </dl>

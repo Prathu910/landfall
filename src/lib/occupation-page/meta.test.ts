@@ -91,10 +91,14 @@ describe("occupationRobots", () => {
 });
 
 describe("occupationJsonLd", () => {
-  const ld = occupationJsonLd(core, faq, summary, "2026-11-17") as Record<
-    string,
-    unknown
-  >[];
+  const sources = ["https://example.gov.au/dashboard"];
+  const ld = occupationJsonLd(
+    core,
+    faq,
+    summary,
+    "2026-11-17",
+    sources,
+  ) as Record<string, unknown>[];
   it("returns Dataset, FAQPage and BreadcrumbList", () => {
     expect(ld.map((o) => o["@type"])).toEqual([
       "Dataset",
@@ -112,9 +116,34 @@ describe("occupationJsonLd", () => {
     expect(ld[0].temporalCoverage).toBe("2023-11/2026-10");
     expect(ld[0].isAccessibleForFree).toBe(true);
   });
-  it("uses absolute site URLs", () => {
-    const urls = JSON.stringify(ld).match(/"(?:url|item)":"([^"]+)"/g)!;
-    for (const u of urls) expect(u).toContain(`"${SITE_URL}`);
+  it("uses absolute site URLs for the page and its breadcrumbs", () => {
+    expect(ld[0].url).toBe(SITE_URL + occupationPath(core));
+    const items = JSON.stringify(ld[2]).match(/"item":"([^"]+)"/g)!;
+    for (const u of items) expect(u).toContain(`"${SITE_URL}`);
+  });
+  it("describes the dataset for Dataset Search", () => {
+    expect(ld[0]).toMatchObject({
+      identifier: "ANZSCO 261313",
+      version: core.snapshotId,
+      description: summary.join(" "),
+      isBasedOn: sources,
+      spatialCoverage: { "@type": "Place", name: "Australia" },
+      creator: {
+        "@type": "GovernmentOrganization",
+        name: "Department of Home Affairs",
+      },
+      publisher: { "@id": `${SITE_URL}/#organization` },
+      includedInDataCatalog: { url: `${SITE_URL}/occupations/` },
+      distribution: [
+        {
+          "@type": "DataDownload",
+          encodingFormat: "application/json",
+          contentUrl: `${SITE_URL}/data/occupations/261313.json`,
+        },
+      ],
+    });
+    expect((ld[0].variableMeasured as string[]).length).toBeGreaterThan(0);
+    expect(String(ld[0].description)).not.toContain("…");
   });
 });
 
@@ -182,7 +211,13 @@ describe("a dropped occupation's own snapshot", () => {
   };
   it("takes its title and coverage from its core, not the current month", () => {
     expect(datasetName(old)).toMatch(/Sep 2026$/);
-    const dataset = occupationJsonLd(old, faq, summary, "2026-10-20")[0] as {
+    const dataset = occupationJsonLd(
+      old,
+      faq,
+      summary,
+      "2026-10-20",
+      [],
+    )[0] as {
       temporalCoverage: string;
       dateModified: string;
     };

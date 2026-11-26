@@ -119,8 +119,16 @@ export default async function VisaGuidePage({ params }: Props) {
           title={meta.heading}
           intro={guide.what}
           meta={[
-            `Checked ${formatDate(GUIDE_CHECKED_AT)}`,
-            `Fees as at ${formatDate(FEES.feesAsAt)}`,
+            <>
+              Checked{" "}
+              <time dateTime={GUIDE_CHECKED_AT}>
+                {formatDate(GUIDE_CHECKED_AT)}
+              </time>
+            </>,
+            <>
+              Fees as at{" "}
+              <time dateTime={FEES.feesAsAt}>{formatDate(FEES.feesAsAt)}</time>
+            </>,
             ...(counts ? [`${counts[visa]} occupations listed`] : []),
           ]}
         />

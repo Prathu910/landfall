@@ -6,6 +6,15 @@
  * report free, and none states a price.
  */
 
+import { SITE_NAME, SITE_URL } from "../site";
+import {
+  breadcrumbLd,
+  organizationLd,
+  webPageLd,
+  websiteLd,
+  type WebPageType,
+} from "./json-ld";
+
 export type SitePage = {
   path: string;
   /** The `<title>` before the layout's "· MigrateLens", unless `absolute`. */
@@ -30,7 +39,7 @@ export const CHECK_PAGE: SitePage = {
   title: "Australian PR points calculator (free check)",
   description:
     "Calculate your Australian skilled migration points for the 189, 190 and provisional 491 pathways, and see where they put you for each visa, free.",
-  name: "Points check",
+  name: "Your points check",
 };
 
 export const FEEDBACK_PAGE: SitePage = {
@@ -83,4 +92,38 @@ export function occupationsPage(count: number, asAt: string): SitePage {
     description: `189, 190 and 491 data for ${count} skilled occupations: recent 189 cut-offs, the EOI pool by points and state evidence, from SkillSelect as at ${asAt}.`,
     name: "Occupations",
   };
+}
+
+/**
+ * A site page's JSON-LD: the page in the site and, where the page shows
+ * one, its breadcrumb (Home, then the page). The home page also carries the
+ * site entity: the one Organization and the one WebSite.
+ */
+export function sitePageJsonLd(
+  page: SitePage,
+  options: {
+    type?: WebPageType;
+    breadcrumb?: boolean;
+    dateModified?: string;
+  } = {},
+): object[] {
+  const url = SITE_URL + page.path;
+  const nodes: object[] = [
+    webPageLd({
+      type: options.type,
+      name: page.name,
+      description: page.description,
+      url,
+      dateModified: options.dateModified,
+    }),
+  ];
+  if (page.path === "/") return [organizationLd(), websiteLd(), ...nodes];
+  if (options.breadcrumb === false) return nodes;
+  return [
+    ...nodes,
+    breadcrumbLd([
+      { name: SITE_NAME, item: `${SITE_URL}/` },
+      { name: page.name, item: url },
+    ]),
+  ];
 }

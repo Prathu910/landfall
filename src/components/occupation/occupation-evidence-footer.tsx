@@ -34,7 +34,8 @@ export function OccupationEvidenceFooter({
       <footer className={styles.sources}>
         <h2>Sources & limitations</h2>
         <p>
-          {sourceText}. Last updated {formatDate(checkedAt)}.
+          {sourceText}. Last updated{" "}
+          <time dateTime={checkedAt}>{formatDate(checkedAt)}</time>.
         </p>
         <p>
           <a href={sources.dashboard} target="_blank" rel="noreferrer">
@@ -48,7 +49,14 @@ export function OccupationEvidenceFooter({
         <p>
           Masked counts stay under 20 (0–19); an unpublished count is not zero.
           {federalCheckedAt && (
-            <> Federal-list source checked {formatDate(federalCheckedAt)}.</>
+            <>
+              {" "}
+              Federal-list source checked{" "}
+              <time dateTime={federalCheckedAt}>
+                {formatDate(federalCheckedAt)}
+              </time>
+              .
+            </>
           )}{" "}
           State-list links in the table lead to official program sources; their
           rules can change.

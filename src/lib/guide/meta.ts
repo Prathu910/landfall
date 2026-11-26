@@ -1,3 +1,4 @@
+import { GUIDE_PUBLISHED_AT } from "../../data/guide/sources";
 import type { Visa } from "../data/types";
 import { formatDate } from "../migration";
 import {
@@ -111,6 +112,7 @@ export function guideJsonLd(
       headline: page.heading,
       description: page.description,
       url,
+      datePublished: GUIDE_PUBLISHED_AT,
       dateModified: checkedAt,
       citations,
     }),

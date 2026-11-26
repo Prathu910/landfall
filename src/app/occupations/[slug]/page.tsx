@@ -137,11 +137,15 @@ export default async function OccupationPage({ params }: Props) {
           <dl className={styles.recordDate}>
             <div>
               <dt>Data snapshot</dt>
-              <dd>{formatMonth(core.asAt)}</dd>
+              <dd>
+                <time dateTime={core.asAt}>{formatMonth(core.asAt)}</time>
+              </dd>
             </div>
             <div>
               <dt>Last updated</dt>
-              <dd>{formatDate(checkedAt)}</dd>
+              <dd>
+                <time dateTime={checkedAt}>{formatDate(checkedAt)}</time>
+              </dd>
             </div>
           </dl>
         </header>
@@ -250,7 +254,13 @@ export default async function OccupationPage({ params }: Props) {
           snapshotId={core.snapshotId}
           federalCheckedAt={stateRuleData.federal?.checkedAt}
         />
-        {occupationJsonLd(core, faq, sentences, checkedAt).map((obj, i) => (
+        {occupationJsonLd(
+          core,
+          faq,
+          sentences,
+          checkedAt,
+          Object.values(manifest.sources),
+        ).map((obj, i) => (
           <script
             key={i}
             type="application/ld+json"

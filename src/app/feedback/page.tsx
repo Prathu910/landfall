@@ -5,7 +5,8 @@ import { FormTheme } from "@/components/forms/form-theme-provider";
 import shell from "@/components/info-page/info-page.module.css";
 import { PageHead } from "@/components/info-page/page-head";
 import { sitePageMetadata } from "@/lib/seo/page-meta";
-import { FEEDBACK_PAGE } from "@/lib/seo/site-pages";
+import { FEEDBACK_PAGE, sitePageJsonLd } from "@/lib/seo/site-pages";
+import { JsonLd } from "@/components/seo/json-ld";
 export const metadata: Metadata = sitePageMetadata(FEEDBACK_PAGE);
 export default function FeedbackPage() {
   return (
@@ -22,6 +23,7 @@ export default function FeedbackPage() {
           <FeedbackForm />
         </FormTheme>
       </div>
+      <JsonLd data={sitePageJsonLd(FEEDBACK_PAGE)} />
     </main>
   );
 }

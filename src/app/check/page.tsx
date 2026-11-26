@@ -5,7 +5,8 @@ import { CheckFlow } from "@/components/check-flow";
 import { loadManifest } from "@/lib/data/load-server";
 import { reportSource } from "@/lib/data/report-source";
 import { sitePageMetadata } from "@/lib/seo/page-meta";
-import { CHECK_PAGE } from "@/lib/seo/site-pages";
+import { CHECK_PAGE, sitePageJsonLd } from "@/lib/seo/site-pages";
+import { JsonLd } from "@/components/seo/json-ld";
 import styles from "./check-page.module.css";
 
 export const metadata: Metadata = sitePageMetadata(CHECK_PAGE);
@@ -52,6 +53,7 @@ export default function CheckPage() {
         </header>
         <CheckFlow source={reportSource(manifest.asAt, manifest)} />
       </div>
+      <JsonLd data={sitePageJsonLd(CHECK_PAGE)} />
     </main>
   );
 }
