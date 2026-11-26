@@ -6,91 +6,21 @@ import type {
   VerifyResponse,
 } from "../orders/contract";
 import { validEmail } from "../submissions/contract";
+import type {
+  CheckoutError,
+  CheckoutEvent,
+  CheckoutState,
+  PaidOrder,
+} from "./state";
 
-/** A Razorpay order from report-order; kept so a retry never makes another. */
-export type PaidOrder = {
-  orderId: string;
-  keyId: string;
-  amount: number;
-  currency: Currency;
-};
-export type Payment = { paymentId: string; signature: string };
-
-export type CheckoutError =
-  | {
-      code:
-        | "consent"
-        | "email"
-        | "human"
-        | "code-format"
-        | "founding-full"
-        | "founding-used"
-        | "price-changed"
-        | "usd-off"
-        | "busy"
-        | "invalid"
-        | "verification"
-        | "expired"
-        | "locked"
-        | "signature"
-        | "confirm-busy"
-        | "no-data";
-    }
-  | { code: "wrong-code"; triesLeft: number }
-  | { code: "message"; message: string };
-
-export type CheckoutStatus =
-  | "ready"
-  | "submitting"
-  | "code"
-  | "verifying"
-  | "paying"
-  | "confirming"
-  | "issued"
-  | "issued-by-email"
-  | "error";
-
-/**
- * The checkout, one status at a time. `code`/`verifying` carry `claimId` and
- * `emailHint`, `paying` an `order`, `confirming` an order and `payment`, and
- * `issued` the `token`.
- */
-export type CheckoutState = {
-  status: CheckoutStatus;
-  /** Null until report-quote answers: prices come only from it. */
-  quote: Quote | null;
-  /** The reader's choice; `activeCurrency` is what is charged. */
-  currency: Currency;
-  email: string;
-  consent: boolean;
-  /** The Turnstile token: single use, so every order request spends it. */
-  turnstile: string;
-  code: string;
-  claimId?: string;
-  emailHint?: string;
-  order?: PaidOrder;
-  payment?: Payment;
-  token?: string;
-  error?: CheckoutError;
-};
-
-export type CheckoutEvent =
-  | { type: "quote"; quote: Quote }
-  | { type: "currency"; currency: Currency }
-  | { type: "email"; email: string }
-  | { type: "consent"; consent: boolean }
-  | { type: "turnstile"; token: string }
-  | { type: "code"; code: string }
-  | { type: "submit" }
-  | { type: "resend" }
-  | { type: "change-email" }
-  | { type: "order"; response: OrderResponse }
-  | { type: "verify"; response: VerifyResponse }
-  | { type: "razorpay-success"; paymentId: string; signature: string }
-  | { type: "razorpay-dismissed" }
-  | { type: "confirm"; response: ConfirmResponse }
-  | { type: "retry" }
-  | { type: "failed"; message: string };
+export type {
+  CheckoutError,
+  CheckoutEvent,
+  CheckoutState,
+  CheckoutStatus,
+  PaidOrder,
+  Payment,
+} from "./state";
 
 const CODE = /^\d{6}$/;
 
