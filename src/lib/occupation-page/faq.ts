@@ -103,7 +103,7 @@ function poolFaq(core: OccupationCore, visa: StateVisa): Faq | null {
   };
 }
 
-/** "Can I get PR as a {name}?" from the Home Affairs list: a listing fact, never an outlook. */
+/** "Can I get PR with {name} as my occupation?" from the Home Affairs list: a listing fact, never an outlook. */
 function canGetPr(
   core: OccupationCore,
   federal: FederalList | null,
@@ -116,8 +116,11 @@ function canGetPr(
     visas.length > 0
       ? `${core.name} is on the Home Affairs skilled occupation list for the ${joinWords([...visas], "and")} (checked ${checked}). Being listed is one requirement; an invitation also depends on your points and on 189 rounds or state selection.`
       : `${core.name} isn't on the Home Affairs skilled occupation list for the 189, 190 or 491 (checked ${checked}), so it can't be used for these points-tested visas.`;
-  const article = /^[AEIOU]/i.test(core.name) ? "an" : "a";
-  return { question: `Can I get PR as ${article} ${core.name}?`, answer };
+  // No article: ANZSCO names are often plural ("Registered Nurses nec") (R10).
+  return {
+    question: `Can I get PR with ${core.name} as my occupation?`,
+    answer,
+  };
 }
 
 /** "How many points do I need for {name}?": the pass mark and the last three listed cut-offs. */

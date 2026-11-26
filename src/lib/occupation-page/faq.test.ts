@@ -177,7 +177,11 @@ describe("occupationFaq", () => {
     const rows = stateRows("254499", core, stateRuleData);
     const pr = occupationFaq(core, rows, {
       federal: stateRuleData.federal,
-    }).find((f) => f.question === "Can I get PR as a Registered Nurses nec?");
+    }).find(
+      (f) =>
+        f.question ===
+        "Can I get PR with Registered Nurses nec as my occupation?",
+    );
     expect(pr?.answer).toMatch(
       /^Registered Nurses nec is on the Home Affairs skilled occupation list for the 189, 190 and 491 \(checked \d+ \w+ \d{4}\)\. Being listed is one requirement/,
     );
@@ -196,7 +200,11 @@ describe("occupationFaq", () => {
         accountant,
         stateRows("221111", accountant, stateRuleData),
         { federal: stateRuleData.federal },
-      ).some((f) => f.question === "Can I get PR as an Accountant (General)?"),
+      ).some(
+        (f) =>
+          f.question ===
+          "Can I get PR with Accountant (General) as my occupation?",
+      ),
     ).toBe(true);
   });
   it("passes the copy rules", () => {
