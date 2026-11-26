@@ -78,6 +78,8 @@ export type Order = {
   razorpay_payment_id: string | null;
   status: string;
   failure_reason: string | null;
+  paid_at: number | null;
+  alerted_at: number | null;
 };
 export type Report = {
   id: string;
@@ -332,6 +334,8 @@ export class FakeDb {
       razorpay_payment_id: null,
       status: "issued",
       failure_reason: null,
+      paid_at: null,
+      alerted_at: null,
     });
     c.status = "issued";
     c.profile = null;
@@ -375,6 +379,8 @@ export class FakeDb {
       razorpay_payment_id: null,
       status: "created",
       failure_reason: null,
+      paid_at: null,
+      alerted_at: null,
     };
     this.orders.push(order);
     return {
@@ -395,7 +401,39 @@ export class FakeDb {
     const o = this.paidOrder(p_razorpay_order_id);
     if (!o) return null;
     const { email, currency, amount, profile, engine_data, as_of, status } = o;
-    return { email, currency, amount, profile, engine_data, as_of, status };
+    const alerted = o.alerted_at !== null;
+    return {
+      email,
+      currency,
+      amount,
+      profile,
+      engine_data,
+      as_of,
+      status,
+      alerted,
+    };
+  }
+
+  /** Ruling R12: the captured payment id, recorded before the build. */
+  rpc_paid_order_payment({ p_razorpay_order_id, p_payment_id }: Json) {
+    const o = this.paidOrder(p_razorpay_order_id);
+    if (
+      !o ||
+      o.status !== "created" ||
+      o.razorpay_payment_id ||
+      !/^pay_[A-Za-z0-9]{1,40}$/.test(String(p_payment_id)) ||
+      this.orders.some((x) => x.razorpay_payment_id === p_payment_id)
+    )
+      return null;
+    o.razorpay_payment_id = p_payment_id as string;
+    o.paid_at ??= this.now;
+    return null;
+  }
+
+  rpc_paid_order_alerted({ p_razorpay_order_id }: Json) {
+    const o = this.paidOrder(p_razorpay_order_id);
+    if (o && o.alerted_at === null) o.alerted_at = this.now;
+    return null;
   }
 
   rpc_paid_issue({ p }: Json) {
@@ -429,6 +467,7 @@ export class FakeDb {
     Object.assign(o, {
       status: "paid",
       razorpay_payment_id: a.razorpay_payment_id,
+      paid_at: this.now,
       report_id: r.id,
       engine_data: null,
     });

@@ -25,6 +25,7 @@ PAID_FUNCTIONS = (
     "report_insert('paid', 'a@example.com', '{}'::jsonb, '{}'::jsonb)",
     "founding_claim_source('c5fa65d5-f388-4a7b-940c-1b5b78c75100')", "founding_unsent('c5fa65d5-f388-4a7b-940c-1b5b78c75100')",
     "report_refund('pay_X', null)", "paid_order_fail('order_X', 'no-data')",
+    "paid_order_payment('order_X', 'pay_X')", "paid_order_alerted('order_X')",
 )
 FEEDBACK = {"id": "23937e80-90fd-44f6-9ebe-c189dd536043", "category": "bug", "message": "A small test feedback message.", "email": None, "summary": None, "privacy_version": "2026-11-20"}
 
@@ -194,7 +195,7 @@ def paid_report_checks(sql, connection):
     assert call("paid_order_create", {**order, "razorpay_order_id": "order_PRICE1", "amount": 50000})["status"] == "price-changed"
     assert scalar("select count(*) from public.report_orders where razorpay_order_id in ('order_USD1', 'order_PRICE1')") == "0"
     got = json.loads(scalar("select public.paid_order_get('order_RACE1')"))
-    assert got == {"email": "Buyer@example.com", "currency": "INR", "amount": 69900, "profile": PROFILE, "engine_data": None, "as_of": "2026-11-25", "status": "created"}, got
+    assert got == {"email": "Buyer@example.com", "currency": "INR", "amount": 69900, "profile": PROFILE, "engine_data": None, "as_of": "2026-11-25", "status": "created", "alerted": False}, got
     assert scalar("select public.paid_order_get('order_NONE')") == ""
 
     def issue(name):
@@ -236,6 +237,40 @@ def paid_report_checks(sql, connection):
     assert call("paid_issue", snap_issue)["status"] == "issued"
     assert json.loads(scalar("select public.paid_order_get('order_SNAP1')"))["engine_data"] is None
     print("PASS: a paid order stores its data snapshot until its report is issued (R10)")
+
+    def stuck(column):
+        return scalar(f"select {column} from public.report_orders where razorpay_order_id = 'order_STUCK1'")
+
+    founder_query = """select string_agg(razorpay_order_id, ',' order by razorpay_order_id) from public.report_orders
+      where kind = 'paid' and (status = 'failed' or (status = 'paid' and report_id is null)
+        or (status = 'created' and razorpay_payment_id is not null and paid_at <= now() - interval '15 minutes'))
+        and razorpay_order_id in ('order_STUCK1', 'order_STUCK2')"""
+    call("paid_order_create", {**order, "razorpay_order_id": "order_STUCK1"})
+    call("paid_order_create", {**order, "razorpay_order_id": "order_STUCK2"})
+    scalar("select public.paid_order_payment('order_STUCK1', 'pay_STUCK1')")
+    assert stuck("status || ' ' || razorpay_payment_id || ' ' || (paid_at is not null)::text || ' ' || (alerted_at is null)::text") == "created pay_STUCK1 true true"
+    scalar("select public.paid_order_payment('order_STUCK1', 'pay_OTHER1')")
+    assert stuck("razorpay_payment_id") == "pay_STUCK1"
+    scalar("select public.paid_order_payment('order_STUCK2', 'pay_STUCK1')")
+    scalar("select public.paid_order_payment('order_STUCK2', 'not-a-payment')")
+    scalar("select public.paid_order_payment('order_RACE1', 'pay_LATE1')")
+    scalar("select public.paid_order_payment('order_NONE', 'pay_NONE1')")
+    assert scalar("select count(*) from public.report_orders where razorpay_payment_id in ('pay_OTHER1', 'pay_LATE1', 'pay_NONE1') or (razorpay_order_id = 'order_STUCK2' and razorpay_payment_id is not null)") == "0"
+    assert scalar("select razorpay_payment_id from public.report_orders where razorpay_order_id = 'order_RACE1'") == "pay_RACE1"
+    assert json.loads(scalar("select public.paid_order_get('order_STUCK1')"))["alerted"] is False
+    assert scalar(founder_query) == ""
+    sql("update public.report_orders set paid_at = now() - interval '16 minutes' where razorpay_order_id = 'order_STUCK1'")
+    assert scalar(founder_query) == "order_STUCK1"
+    scalar("select public.paid_order_alerted('order_STUCK1')")
+    first_alert = stuck("alerted_at")
+    scalar("select public.paid_order_alerted('order_STUCK1')")
+    assert stuck("alerted_at") == first_alert and first_alert != ""
+    assert json.loads(scalar("select public.paid_order_get('order_STUCK1')"))["alerted"] is True
+    stuck_issue = {"razorpay_order_id": "order_STUCK1", "razorpay_payment_id": "pay_STUCK1", "amount": 69900, "currency": "INR", "report": report_input("stuck")}
+    assert call("paid_issue", stuck_issue)["status"] == "issued"
+    assert stuck("status || ' ' || razorpay_payment_id || ' ' || (report_id is not null)::text") == "paid pay_STUCK1 true"
+    assert scalar(founder_query) == ""
+    print("PASS: a captured payment is recorded on its pending order before the build, listed after 15 min, alerted once, and still issues (R12)")
 
     found = json.loads(scalar(f"select public.report_by_token('{paid_hash}')"))
     assert found["status"] == "issued" and found["version"] == 1 and found["payload"]["meta"]["version"] == 1, found

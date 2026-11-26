@@ -344,7 +344,9 @@ Deno.test(
     equal(busy.body, { kind: "error", code: "busy" });
     equal(w.db.orders[0].status, "created");
     equal(w.db.reports.length, 0);
-    equal(w.emails.length, 0);
+    // The founder hears once (R12); the buyer gets nothing yet.
+    equal(w.emails.length, 1);
+    equal(w.emails[0].to, "hello@migratelens.com");
     w.site.set("/data/manifest.json", input.data.manifest);
     w.site.set("/data/occupations/261313.json", input.data.core);
     equal((await webhook(w, event(captured, orderId))).status, 200);
@@ -376,5 +378,78 @@ Deno.test(
     equal(w.db.reports.length, 0);
     equal(w.db.orders[0].status, "failed");
     equal(w.db.orders[0].failure_reason, "amount-mismatch");
+  },
+);
+
+/** The founder alerts sent so far (hello@, never the buyer). */
+function alerts(w: World) {
+  return w.emails.filter((e) => e.to === "hello@migratelens.com");
+}
+
+Deno.test(
+  "a paid order that can't be built: payment id recorded, the founder alerted once across retries, then a retry issues (R12)",
+  async () => {
+    const w = world();
+    const orderId = await paidOrder(w);
+    w.state.siteDown = true;
+    equal((await webhook(w, event(captured, orderId))).status, 500);
+    const order = w.db.orders[0];
+    equal(order.status, "created");
+    equal(order.razorpay_payment_id, PAYMENT);
+    equal(order.paid_at, w.clock.now);
+    equal(order.alerted_at, w.clock.now);
+    w.clock.now += 60_000;
+    equal((await confirm(w, orderId)).body, { kind: "error", code: "busy" });
+    equal((await webhook(w, event(orderPaid, orderId))).status, 500);
+    equal((await webhook(w, event(captured, orderId))).status, 500);
+    const sent = alerts(w);
+    equal(sent.length, 1);
+    equal(w.emails.length, 1);
+    equal(sent[0].key, `unbuilt-${orderId}`);
+    equal(sent[0].subject.includes(orderId), true);
+    equal(sent[0].text.includes(PAYMENT), true);
+    equal(JSON.stringify(sent[0]).includes("buyer@example.com"), false);
+    equal(order.alerted_at, w.clock.now - 60_000);
+    // The site comes back: the next retry issues as usual.
+    w.state.siteDown = false;
+    equal((await webhook(w, event(captured, orderId))).status, 200);
+    equal(w.db.reports.length, 1);
+    equal(order.status, "paid");
+    equal(order.razorpay_payment_id, PAYMENT);
+    equal((await confirm(w, orderId)).body, { kind: "error", code: "pending" });
+    equal(alerts(w).length, 1);
+  },
+);
+
+Deno.test(
+  "an alert that fails to send is tried again on the next retry, then never again",
+  async () => {
+    const w = world();
+    const orderId = await paidOrder(w);
+    w.state.siteDown = true;
+    w.state.emailReplies.push(500);
+    equal((await webhook(w, event(captured, orderId))).status, 500);
+    equal(alerts(w).length, 0);
+    equal(w.db.orders[0].alerted_at, null);
+    equal((await confirm(w, orderId)).status, 503);
+    equal(alerts(w).length, 1);
+    equal((await webhook(w, event(captured, orderId))).status, 500);
+    equal(alerts(w).length, 1);
+    equal(w.db.orders[0].alerted_at === null, false);
+  },
+);
+
+Deno.test(
+  "storage down before the build: no alert, nothing recorded, retried",
+  async () => {
+    const w = world();
+    const orderId = await paidOrder(w);
+    w.state.rpcDown = true;
+    equal((await webhook(w, event(captured, orderId))).status, 500);
+    w.state.rpcDown = false;
+    equal(alerts(w).length, 0);
+    equal(w.db.orders[0].razorpay_payment_id, null);
+    equal((await webhook(w, event(captured, orderId))).status, 200);
+    equal(w.db.reports.length, 1);
   },
 );
