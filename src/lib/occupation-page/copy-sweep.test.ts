@@ -24,10 +24,11 @@ function pageStrings(code: string): string[] {
   const core = loadOccupationCore(code)!;
   const detail = loadOccupationDetail(code);
   const cohorts = cohortRows(detail, core.asAt);
+  const rows = stateRows(code, core, stateRuleData);
   return [
-    ...occupationSummary(core, detail),
+    ...occupationSummary(core, detail, stateRuleData.federal, rows),
     ...statusChips(core, stateRuleData.federal).map((c) => c.label),
-    ...occupationFaq(core, stateRows(code, core, stateRuleData)).flatMap(
+    ...occupationFaq(core, rows, { federal: stateRuleData.federal }).flatMap(
       (f) => [f.question, f.answer],
     ),
     roundsNote(core.rounds189),
@@ -85,6 +86,7 @@ describe("every occupation page's title and description", () => {
           c,
           loadOccupationDetail(c.code),
           stateRuleData.federal,
+          stateRows(c.code, c, stateRuleData),
         ),
       ),
     }));

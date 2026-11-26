@@ -115,7 +115,7 @@ describe("has189Rounds", () => {
 describe("occupationSummary", () => {
   it("keeps the 189 rounds when there is no pool but recent cut-offs", () => {
     expect(occupationSummary(core253914, null)).toEqual([
-      "No 189 EOIs are waiting in the published pool for Ophthalmologist; the 190 pool holds under 20 EOIs (so may be zero).",
+      "As at 31 Oct 2026, no 189 EOIs are waiting in the published pool for Ophthalmologist (ANZSCO 253914); the 190 pool holds under 20 EOIs (so may be zero).",
       "189 listed Ophthalmologist in each of its last four rounds, at 80 points.",
     ]);
   });
@@ -129,12 +129,12 @@ describe("occupationSummary", () => {
     const farmer = frozenCore("121111")!;
     const lines = occupationSummary(farmer, null, federal);
     expect(lines[0]).toMatch(
-      /^Aquaculture Farmer isn't on the Home Affairs list for 189; the 491 pool holds /,
+      /^As at 31 Oct 2026, Aquaculture Farmer \(ANZSCO 121111\) isn't on the Home Affairs list for 189; the 491 pool holds /,
     );
-    expect(lines.join(" ")).not.toMatch(/No 189 EOIs are waiting/);
+    expect(lines.join(" ")).not.toMatch(/no 189 EOIs are waiting/i);
     // Without a readable list, the published data alone is described.
     expect(occupationSummary(farmer, null, null)[0]).toMatch(
-      /^No 189 EOIs are waiting in the published pool for Aquaculture Farmer/,
+      /^As at 31 Oct 2026, no 189 EOIs are waiting in the published pool for Aquaculture Farmer \(ANZSCO 121111\)/,
     );
   });
   it("keeps every sentence for an occupation on the 189 list", () => {

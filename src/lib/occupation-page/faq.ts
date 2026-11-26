@@ -1,10 +1,17 @@
 import { parseCountText, sumIntervals } from "../data/published-count";
 import { poolPosition } from "../data/pool-position";
-import type { Interval, OccupationCore, StateCode } from "../data/types";
+import type {
+  Interval,
+  OccupationCore,
+  StateCode,
+  StateVisa,
+} from "../data/types";
 import { formatDate } from "../migration";
-import { formatCount, formatMonth } from "../report/copy";
+import { formatCount, formatMonth, isMasked } from "../report/copy";
 import { summarise189Rounds } from "../report/round-status";
 import { STATE_NAMES, joinWords } from "../state-outlook/context";
+import type { FederalList } from "../state-outlook/rules-types";
+import { stateListClause } from "./answer";
 import { pointsRange } from "./charts";
 import type { StateRow } from "./states";
 import { mostCommonScore } from "./summary";
@@ -14,14 +21,16 @@ export type Faq = { question: string; answer: string };
 const CHECKING = "Rules being checked";
 const HISTORY_NOTE = "Past cut-offs are history, not a promise.";
 
-function whenLastInvited(core: OccupationCore): Faq {
+function latestCutoff(core: OccupationCore, tieBreak: string | null): Faq {
   const { name } = core;
-  const summary = summarise189Rounds(core.rounds189);
-  const last = summary.latestCutoff;
+  const last = summarise189Rounds(core.rounds189).latestCutoff;
+  const tie = tieBreak
+    ? ` That round's published tie-break date for ${name} was ${formatDate(tieBreak)}: at the cut-off score, the date of effect decides the order.`
+    : "";
   const answer = last
-    ? `The last 189 round that listed ${name} was on ${formatDate(last.date)}, with a cut-off of ${last.cutoff} points.`
-    : `No 189 round we can read has listed ${name}.`;
-  return { question: `When did 189 last invite ${name}?`, answer };
+    ? `The latest 189 round to list ${name} was on ${formatDate(last.date)}, with a cut-off of ${last.cutoff} points.${tie} ${HISTORY_NOTE}`
+    : `No 189 round we can read has listed ${name}, so there is no cut-off to give.`;
+  return { question: `What is the latest 189 cut-off for ${name}?`, answer };
 }
 
 function stateInvited190(
@@ -55,31 +64,11 @@ function mostInvitedSentence(
   return `${STATE_NAMES[top.state]} had the most EOIs in invited status for 190, as at ${formatMonth(core.asAt)} (${formatCount(top.count)}).`;
 }
 
-/** "NSW and QLD list it for 190", "WA lists it for 190 and 491". */
-function listing(rows: StateRow[], visas: string): string | null {
-  const codes = rows.filter((r) => r.onList === visas).map((r) => r.state);
-  if (codes.length === 0) return null;
-  return `${joinWords(codes, "and")} ${codes.length === 1 ? "lists" : "list"} it for ${visas}`;
-}
-
 function whichStates(core: OccupationCore, rows: StateRow[]): Faq {
   const { name } = core;
-  const parts = ["190 and 491", "190", "491"].flatMap(
-    (visas) => listing(rows, visas) ?? [],
-  );
-  const checked = rows.filter((r) => r.onList !== CHECKING);
   const pending = rows.filter((r) => r.onList === CHECKING);
-  const sentences: string[] = [];
-  if (parts.length > 0) {
-    sentences.push(`For 2026–27, ${parts.join("; ")}.`);
-  } else {
-    sentences.push(
-      `None of ${joinWords(
-        checked.map((r) => r.state),
-        "and",
-      )} lists it for 2026–27.`,
-    );
-  }
+  const list = stateListClause(rows);
+  const sentences: string[] = list ? [`${list}.`] : [];
   if (pending.length > 0) {
     sentences.push(
       `${joinWords(
@@ -93,6 +82,58 @@ function whichStates(core: OccupationCore, rows: StateRow[]): Faq {
   return {
     question: `Which states nominate ${name}?`,
     answer: sentences.join(" "),
+  };
+}
+
+/** "How many {name} EOIs are in the 190 pool?", only where the pool is published. */
+function poolFaq(core: OccupationCore, visa: StateVisa): Faq | null {
+  const pool = core.pool[visa];
+  if (!pool) return null;
+  const total = parseCountText(pool.total);
+  const holds = isMasked(total)
+    ? "under 20 EOIs (so it may be zero)"
+    : `${formatCount(total)} EOIs`;
+  const common = mostCommonScore(pool.byScore);
+  const score = common
+    ? `; the most common score is ${common.score} points (${formatCount({ min: common.count, max: common.count })} EOIs)`
+    : "";
+  return {
+    question: `How many ${core.name} EOIs are in the ${visa} pool?`,
+    answer: `The ${visa} pool holds ${holds} as at ${formatMonth(core.asAt)}${score}. Counts are EOIs, not individuals: one person can hold several, in more than one pool.`,
+  };
+}
+
+/** "Can I get PR as a {name}?" from the Home Affairs list: a listing fact, never an outlook. */
+function canGetPr(
+  core: OccupationCore,
+  federal: FederalList | null,
+): Faq | null {
+  if (!federal) return null;
+  const entry = federal.entries[core.code];
+  const visas = (["189", "190", "491"] as const).filter((v) => entry?.[v]);
+  const checked = formatDate(federal.checkedAt);
+  const answer =
+    visas.length > 0
+      ? `${core.name} is on the Home Affairs skilled occupation list for the ${joinWords([...visas], "and")} (checked ${checked}). Being listed is one requirement; an invitation also depends on your points and on 189 rounds or state selection.`
+      : `${core.name} isn't on the Home Affairs skilled occupation list for the 189, 190 or 491 (checked ${checked}), so it can't be used for these points-tested visas.`;
+  return { question: `Can I get PR as a ${core.name}?`, answer };
+}
+
+/** "How many points do I need for {name}?": the pass mark and the last three listed cut-offs. */
+function pointsNeeded(core: OccupationCore): Faq {
+  const listed = core.rounds189
+    .flatMap((r) => (r.cutoff === null ? [] : [r]))
+    .slice(0, 3);
+  const history =
+    listed.length > 0
+      ? `The latest 189 cut-offs for ${core.name} were ${joinWords(
+          listed.map((r) => `${r.cutoff} points (${formatDate(r.date)})`),
+          "and",
+        )}.`
+      : `189 hasn't listed ${core.name} in any round we can read.`;
+  return {
+    question: `How many points do I need for ${core.name}?`,
+    answer: `At least 65 points to be invited, the pass mark for the 189, 190 and 491. ${history} ${HISTORY_NOTE}`,
   };
 }
 
@@ -121,11 +162,25 @@ function pointsEnough(core: OccupationCore): Faq | null {
   };
 }
 
-export function occupationFaq(core: OccupationCore, rows: StateRow[]): Faq[] {
-  const points = pointsEnough(core);
+export function occupationFaq(
+  core: OccupationCore,
+  rows: StateRow[],
+  options: {
+    federal?: FederalList | null;
+    /** The latest listed round's tie-break date for this occupation, if published. */
+    tieBreak?: string | null;
+  } = {},
+): Faq[] {
+  const optional = [
+    pointsEnough(core),
+    pointsNeeded(core),
+    poolFaq(core, "190"),
+    poolFaq(core, "491"),
+    canGetPr(core, options.federal ?? null),
+  ];
   return [
-    whenLastInvited(core),
+    latestCutoff(core, options.tieBreak ?? null),
     whichStates(core, rows),
-    ...(points ? [points] : []),
+    ...optional.filter((f): f is Faq => f !== null),
   ];
 }

@@ -20,7 +20,10 @@ import {
   loadManifest,
   loadOccupationCore,
   loadOccupationDetail,
+  loadRounds,
 } from "@/lib/data/load-server";
+import { tieBreakFor } from "@/lib/occupation-page/cutoffs";
+import { summarise189Rounds } from "@/lib/report/round-status";
 import type { OccupationCore, Visa } from "@/lib/data/types";
 import { applyLinks } from "@/lib/guide/apply-links";
 import { formatDate } from "@/lib/migration";
@@ -84,12 +87,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const core = requireCore((await params).slug);
   const detail = loadOccupationDetail(core.code);
   const entry = occupationIndex.find((e) => e.code === core.code);
+  const rows = stateRows(core.code, core, stateRuleData);
   return pageMetadata({
     path: occupationPath(core),
     title: { absolute: pageTitle(core) },
     description: pageDescription(
       core,
-      occupationSummary(core, detail, stateRuleData.federal),
+      occupationSummary(core, detail, stateRuleData.federal, rows),
     ),
     type: "article",
     modifiedTime: entry?.lastCheckedAt ?? loadManifest().checkedAt,
@@ -108,8 +112,17 @@ export default async function OccupationPage({ params }: Props) {
   const checkedAt = entry?.lastCheckedAt ?? manifest.checkedAt;
   const figuresFrom = note ? formatMonth(core.asAt) : undefined;
   const rows = stateRows(code, core, stateRuleData);
-  const sentences = occupationSummary(core, detail, stateRuleData.federal);
-  const faq = occupationFaq(core, rows);
+  const sentences = occupationSummary(
+    core,
+    detail,
+    stateRuleData.federal,
+    rows,
+  );
+  const latest = summarise189Rounds(core.rounds189).latestCutoff;
+  const faq = occupationFaq(core, rows, {
+    federal: stateRuleData.federal,
+    tieBreak: latest ? tieBreakFor(loadRounds(), code, latest.date) : null,
+  });
   const cohorts = cohortRows(detail, core.asAt);
   const pools = Object.fromEntries(
     VISAS.map((v) => [v, core.pool[v] ? poolBars(core.pool[v]) : null]),
@@ -156,6 +169,7 @@ export default async function OccupationPage({ params }: Props) {
           sourceLine={sourceLine(core)}
         />
         <OccupationVerdict
+          name={name}
           verdict={occupationVerdict(core, stateRuleData.federal)}
           figuresFrom={figuresFrom}
         />
@@ -174,7 +188,7 @@ export default async function OccupationPage({ params }: Props) {
           </aside>
           <div className={styles.main}>
             <section aria-labelledby="pool-heading" className={styles.block}>
-              <h2 id="pool-heading">Where the points sit.</h2>
+              <h2 id="pool-heading">How many {name} EOIs are in the pool?</h2>
               <p className={styles.sectionIntro}>
                 Submitted EOIs by points score, as at {formatMonth(core.asAt)}.
                 Each visa has its own pool; EOIs can appear in more than one.
@@ -186,7 +200,9 @@ export default async function OccupationPage({ params }: Props) {
                 aria-labelledby="rounds-heading"
                 className={styles.block}
               >
-                <h2 id="rounds-heading">Recent 189 rounds.</h2>
+                <h2 id="rounds-heading">
+                  What were the recent 189 cut-offs for {name}?
+                </h2>
                 <p className={styles.sectionIntro}>
                   Published minimum points for this occupation. “Not listed” is
                   an absent occupation row, not a zero-point cut-off.
@@ -202,7 +218,9 @@ export default async function OccupationPage({ params }: Props) {
                 aria-labelledby="cohort-heading"
                 className={styles.block}
               >
-                <h2 id="cohort-heading">Where recent 189 EOIs stand.</h2>
+                <h2 id="cohort-heading">
+                  What happened to recent {name} 189 EOIs?
+                </h2>
                 <p className={styles.sectionIntro}>
                   {cohortNote(name, cohorts)}
                 </p>
@@ -219,7 +237,9 @@ export default async function OccupationPage({ params }: Props) {
             )}
             <section aria-labelledby="states-heading" className={styles.block}>
               <p className={styles.sectionLabel}>190 and provisional 491</p>
-              <h2 id="states-heading">Look at the state evidence.</h2>
+              <h2 id="states-heading">
+                Which states nominate {name} for 190 and 491?
+              </h2>
               <p className={styles.sectionIntro}>
                 A list entry is one part of the rules, not a finding that you
                 are eligible. State nomination has separate residence, work and
@@ -237,7 +257,7 @@ export default async function OccupationPage({ params }: Props) {
               </details>
             </section>
             <section aria-labelledby="faq-heading" className={styles.block}>
-              <h2 id="faq-heading">Common questions.</h2>
+              <h2 id="faq-heading">{name}: common questions</h2>
               <OccupationFaq items={faq} />
             </section>
             <RelatedOccupations
