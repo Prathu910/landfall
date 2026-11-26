@@ -255,7 +255,7 @@ const privacy: LegalPage = {
     {
       heading: "How long we keep it",
       paragraphs: [
-        "Reports, the answers they were built from and your email are kept for 12 months from issue, then deleted. We keep a hashed copy of the link's key and the report's status, so an old link can say the report has expired. Order records (amount, currency, IDs, dates and email) are kept for as long as accounting law requires.",
+        "Reports, the answers they were built from and your email are kept for 12 months from issue, then deleted. We keep a hashed copy of the link's key and the report's status, so an old link can say the report has expired. An order that is never paid or claimed keeps your answers for 30 days, then they are deleted; an unconfirmed founding code is deleted a day after it expires. Order records (amount, currency, IDs, dates and email) are kept for as long as accounting law requires.",
         "Deletion from backup copies follows the hosting provider's backup retention.",
       ],
     },
