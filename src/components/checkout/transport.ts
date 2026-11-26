@@ -11,6 +11,7 @@ import type {
   VerifyResponse,
 } from "../../lib/orders/contract";
 import { BUSY } from "../../lib/checkout/messages";
+import type { OrderOutcome } from "../../lib/checkout/state";
 import { checkoutConfig } from "../submissions/config";
 
 const TIMEOUT_MS = 20000;
@@ -46,10 +47,18 @@ function hasKind(value: unknown): value is { kind: string } {
   return record(value) && typeof value.kind === "string";
 }
 
+/** Retry-After in whole seconds (the only form the Functions send), or null. */
+function retryAfterSeconds(header: string | null): number | null {
+  if (header === null || !/^\d{1,6}$/.test(header.trim())) return null;
+  return Math.max(1, Number(header.trim()));
+}
+
+type Reply = { body: unknown; retryAfter: number | null };
+
 async function call(
   name: string,
   init: { method: "GET" } | { method: "POST"; body: unknown },
-): Promise<unknown> {
+): Promise<Reply> {
   const config = checkoutConfig();
   if (!config) throw new Error(BUSY);
   const controller = new AbortController();
@@ -72,8 +81,9 @@ async function call(
     } catch {
       body = null;
     }
-    if (name === "report-quote" && response.ok) return body;
-    if (hasKind(body)) return body;
+    const retryAfter = retryAfterSeconds(response.headers.get("Retry-After"));
+    if (name === "report-quote" && response.ok) return { body, retryAfter };
+    if (hasKind(body)) return { body, retryAfter };
     throw new Error(BUSY);
   } catch (error) {
     if (error instanceof Error && error.name === "AbortError")
@@ -86,45 +96,49 @@ async function call(
 }
 
 export async function getQuote(): Promise<Quote> {
-  const body = await call("report-quote", { method: "GET" });
+  const { body } = await call("report-quote", { method: "GET" });
   if (!isQuote(body)) throw new Error(BUSY);
   return body;
 }
 
-export async function postOrder(req: OrderRequest): Promise<OrderResponse> {
-  return (await call("report-order", {
+/**
+ * A busy with Retry-After is a founding code that must wait (a resend inside
+ * a minute, or a claim locked after 5 wrong codes), not a server fault.
+ */
+export async function postOrder(req: OrderRequest): Promise<OrderOutcome> {
+  const { body, retryAfter } = await call("report-order", {
     method: "POST",
     body: req,
-  })) as OrderResponse;
+  });
+  const response = body as OrderResponse;
+  if (
+    retryAfter !== null &&
+    response.kind === "error" &&
+    response.code === "busy"
+  )
+    return { kind: "wait", seconds: retryAfter };
+  return response;
 }
 
 export async function postVerify(req: VerifyRequest): Promise<VerifyResponse> {
-  return (await call("report-verify", {
-    method: "POST",
-    body: req,
-  })) as VerifyResponse;
+  return (await call("report-verify", { method: "POST", body: req }))
+    .body as VerifyResponse;
 }
 
 export async function postConfirm(
   req: ConfirmRequest,
 ): Promise<ConfirmResponse> {
-  return (await call("report-confirm", {
-    method: "POST",
-    body: req,
-  })) as ConfirmResponse;
+  return (await call("report-confirm", { method: "POST", body: req }))
+    .body as ConfirmResponse;
 }
 
 /** The token travels only in the body, never in a URL. */
 export async function postGet(token: string): Promise<ReportGetResponse> {
-  return (await call("report-get", {
-    method: "POST",
-    body: { token },
-  })) as ReportGetResponse;
+  return (await call("report-get", { method: "POST", body: { token } }))
+    .body as ReportGetResponse;
 }
 
 export async function postRevise(req: ReviseRequest): Promise<ReviseResponse> {
-  return (await call("report-revise", {
-    method: "POST",
-    body: req,
-  })) as ReviseResponse;
+  return (await call("report-revise", { method: "POST", body: req }))
+    .body as ReviseResponse;
 }

@@ -37,7 +37,16 @@ export type CheckoutError =
         | "no-data";
     }
   | { code: "wrong-code"; triesLeft: number }
+  /** report-order's busy with Retry-After: a founding code must wait. */
+  | { code: "wait"; seconds: number }
   | { code: "message"; message: string };
+
+/**
+ * What report-order's reply means to the checkout. The transport turns a
+ * 503 busy with a `Retry-After` header (a resend inside a minute, or a
+ * claim locked after 5 wrong codes) into `wait`, which is no server fault.
+ */
+export type OrderOutcome = OrderResponse | { kind: "wait"; seconds: number };
 
 export type CheckoutStatus =
   | "ready"
@@ -52,8 +61,9 @@ export type CheckoutStatus =
 
 /**
  * The checkout, one status at a time. `code`/`verifying` carry `claimId` and
- * `emailHint`, `paying` an `order`, `confirming` an order and `payment`, and
- * `issued` the `token`.
+ * `emailHint` (kept in `ready` after "Use a different email" until the email
+ * changes, so a return to the same address finds its code), `paying` an
+ * `order`, `confirming` an order and `payment`, and `issued` the `token`.
  */
 export type CheckoutState = {
   status: CheckoutStatus;
@@ -91,7 +101,7 @@ export type CheckoutEvent =
   | { type: "resend" }
   | { type: "change-email" }
   | { type: "buy-another" }
-  | { type: "order"; response: OrderResponse }
+  | { type: "order"; response: OrderOutcome }
   | { type: "verify"; response: VerifyResponse }
   | { type: "razorpay-success"; paymentId: string; signature: string }
   | { type: "razorpay-dismissed" }

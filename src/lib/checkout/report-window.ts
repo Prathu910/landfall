@@ -34,6 +34,21 @@ export function correctionState(
   };
 }
 
+/**
+ * Ruling R9: an issued report shows one data month. The live occupation file,
+ * fetched for the screen-only extras (the occupation comparison and the
+ * 12-month trend), joins it only when its month is the report's. A file still
+ * loading, or one that failed, passes through as it is.
+ */
+export function liveCoreFits(
+  live: { status: string; core?: { asAt: string } },
+  snapshotDate: string,
+): boolean {
+  return (
+    live.status !== "ready" || live.core?.asAt === snapshotDate.slice(0, 7)
+  );
+}
+
 const HASH = /^#([A-Za-z0-9_-]{43})$/;
 
 /** The link token: exactly 43 base64url characters after "#", or null. */

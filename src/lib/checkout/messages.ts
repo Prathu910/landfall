@@ -12,6 +12,13 @@ function price(s: CheckoutState): string {
   return amount === null ? "" : formatPrice(amount, activeCurrency(s));
 }
 
+/** "45 seconds", "1 minute", "9 minutes": a wait rounded up, never down. */
+export function waitText(seconds: number): string {
+  if (seconds < 60) return seconds === 1 ? "1 second" : `${seconds} seconds`;
+  const minutes = Math.ceil(seconds / 60);
+  return minutes === 1 ? "1 minute" : `${minutes} minutes`;
+}
+
 /** The founding-used action: the same email buys a report at the quoted price. */
 export function buyAnotherLabel(s: CheckoutState): string {
   return `Buy another for ${price(s)}`;
@@ -42,6 +49,12 @@ export function checkoutMessage(s: CheckoutState): string | null {
       return `Payment in USD isn't available right now. Your report is ${price(s)}.`;
     case "busy":
       return BUSY;
+    case "wait":
+      // In the code step the claim's code is still valid; in `ready` the
+      // reason (a recent code, or too many wrong ones) isn't known.
+      return s.status === "code"
+        ? `The code we sent still works. You can ask for a new one in ${waitText(error.seconds)}.`
+        : `You can ask for a new code in ${waitText(error.seconds)}.`;
     case "invalid":
       return "We couldn't read your answers. Go back to your free result and try again.";
     case "verification":

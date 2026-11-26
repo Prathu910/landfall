@@ -1,16 +1,17 @@
 import type {
   ConfirmResponse,
   Currency,
-  OrderRequest,
   OrderResponse,
   Quote,
   VerifyResponse,
 } from "../orders/contract";
 import { validEmail } from "../submissions/contract";
+import { activeCurrency, foundingOpen, quotedAmount } from "./selectors";
 import type {
   CheckoutError,
   CheckoutEvent,
   CheckoutState,
+  OrderOutcome,
   PaidOrder,
 } from "./state";
 
@@ -19,9 +20,17 @@ export type {
   CheckoutEvent,
   CheckoutState,
   CheckoutStatus,
+  OrderOutcome,
   PaidOrder,
   Payment,
 } from "./state";
+
+export {
+  activeCurrency,
+  foundingOpen,
+  orderRequest,
+  quotedAmount,
+} from "./selectors";
 
 const CODE = /^\d{6}$/;
 
@@ -38,40 +47,6 @@ export function initialCheckout(
     turnstile: "",
     code: "",
   };
-}
-
-/** INR whenever the quote has no USD price (the switch is hidden then). */
-export function activeCurrency(s: CheckoutState): Currency {
-  return s.quote?.prices.USD == null ? "INR" : s.currency;
-}
-
-/** Founding shows while the quote has places, unless the reader chose to pay. */
-export function foundingOpen(s: CheckoutState): boolean {
-  const founding = s.quote?.founding;
-  return !s.paid && !!founding && founding.enabled && founding.remaining > 0;
-}
-
-/** The report-order body for a submitting state. */
-export function orderRequest(
-  s: CheckoutState,
-  profile: unknown,
-  asOf: string,
-): OrderRequest {
-  return {
-    profile,
-    email: s.email,
-    currency: activeCurrency(s),
-    consent: true,
-    asOf,
-    turnstile_token: s.turnstile,
-    ...(s.paid ? { paid: true as const } : {}),
-  };
-}
-
-/** The price of the active currency, in the smallest unit. */
-export function quotedAmount(s: CheckoutState): number | null {
-  if (!s.quote) return null;
-  return activeCurrency(s) === "USD" ? s.quote.prices.USD : s.quote.prices.INR;
 }
 
 function withoutFounding(quote: Quote | null): Quote | null {
@@ -136,10 +111,18 @@ function paidOrder(
   return { ...next, status: "paying" };
 }
 
-function onOrder(s: CheckoutState, response: OrderResponse): CheckoutState {
+function onOrder(s: CheckoutState, response: OrderOutcome): CheckoutState {
   if (s.status !== "submitting") return s;
   const spent = { ...s, turnstile: "" };
   switch (response.kind) {
+    case "wait": {
+      const error = { code: "wait", seconds: response.seconds } as const;
+      // A resend too soon: the code already sent still works, so keep its
+      // step. Without a claim in hand there is no code field to go back to.
+      return s.claimId
+        ? { ...spent, status: "code", error }
+        : back(spent, error);
+    }
     case "code-sent":
       return {
         ...spent,
@@ -247,12 +230,15 @@ export function checkoutReducer(
         error: undefined,
       };
     case "email":
-      // An order (and a choice to buy another) belongs to its email.
+      // An order, a held claim and a choice to buy another belong to their email.
       return {
         ...s,
         email: e.email,
         order: undefined,
         paid: undefined,
+        ...(e.email === s.email
+          ? {}
+          : { claimId: undefined, emailHint: undefined }),
         error: undefined,
       };
     case "consent":
@@ -268,7 +254,11 @@ export function checkoutReducer(
       if (!s.turnstile) return { ...s, error: { code: "human" } };
       return { ...s, status: "submitting", error: undefined };
     case "change-email":
-      return s.status === "code" ? back(s) : s;
+      // The claim stays held until the email changes: pressing again with
+      // the same address inside a minute returns to its code step.
+      return s.status === "code"
+        ? { ...s, status: "ready", code: "", error: undefined }
+        : s;
     case "buy-another":
       // A founding-used email buys at the full price: the paid receipt, then Pay.
       if (s.status !== "ready" || s.error?.code !== "founding-used") return s;

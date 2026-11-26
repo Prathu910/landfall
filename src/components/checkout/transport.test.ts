@@ -32,18 +32,42 @@ it("reads the quote with a GET and checks every field", async () => {
   await expect(getQuote()).rejects.toThrow("Something went wrong");
 });
 
+const ORDER = {
+  profile: {},
+  email: "a@b.co",
+  currency: "INR",
+  consent: true,
+  asOf: "2026-11-26",
+  turnstile_token: "t",
+} as const;
+
 it("returns a business outcome at any status", async () => {
   vi.stubGlobal("fetch", reply({ kind: "error", code: "busy" }, 503));
-  await expect(
-    postOrder({
-      profile: {},
-      email: "a@b.co",
-      currency: "INR",
-      consent: true,
-      asOf: "2026-11-26",
-      turnstile_token: "t",
-    }),
-  ).resolves.toEqual({ kind: "error", code: "busy" });
+  await expect(postOrder(ORDER)).resolves.toEqual({
+    kind: "error",
+    code: "busy",
+  });
+});
+
+it("turns an order's busy with Retry-After into a wait", async () => {
+  const busy = (retryAfter: string) =>
+    vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ kind: "error", code: "busy" }), {
+        status: 503,
+        headers: { "Retry-After": retryAfter },
+      }),
+    );
+  vi.stubGlobal("fetch", busy("42"));
+  await expect(postOrder(ORDER)).resolves.toEqual({
+    kind: "wait",
+    seconds: 42,
+  });
+  // Only whole seconds count; anything else stays a server fault.
+  vi.stubGlobal("fetch", busy("Wed, 26 Nov 2026 07:00:00 GMT"));
+  await expect(postOrder(ORDER)).resolves.toEqual({
+    kind: "error",
+    code: "busy",
+  });
 });
 
 it("sends the token only in the body", async () => {

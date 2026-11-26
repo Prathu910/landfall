@@ -5,12 +5,16 @@ import { occupationIndex } from "@/components/data/occupation-index";
 import { issuedFlagKey } from "@/lib/checkout/issued-flag";
 import {
   correctionState,
+  liveCoreFits,
   reviseMessage,
   tokenFromHash,
 } from "@/lib/checkout/report-window";
 import type { Profile } from "@/lib/migration";
 import { NOT_ADVICE } from "@/lib/orders/seller";
-import { toReportOccupation } from "../data/report-occupation";
+import {
+  toReportOccupation,
+  type ReportOccupation,
+} from "../data/report-occupation";
 import {
   useOccupationCore,
   useOccupationDetail,
@@ -23,6 +27,8 @@ import { useIssuedReport } from "./use-issued-report";
 import styles from "./issued-report.module.css";
 
 const REPORT_ID = "report-start";
+/** The live file is from another month: the report shows only its own. */
+const OMITTED: ReportOccupation = { status: "unavailable" };
 
 /** The issued mark from the checkout: read once, then removed. */
 function useIssuedMark(token: string | null, ready: boolean) {
@@ -65,7 +71,7 @@ export function IssuedReport() {
         : report.status;
   const payload = status === "report" ? report.payload : undefined;
   const code = payload?.profile.occupation || null;
-  const occupation = toReportOccupation(
+  const live = toReportOccupation(
     useOccupationCore(code, occupationIndex),
     useOccupationDetail(code, occupationIndex),
   );
@@ -87,6 +93,7 @@ export function IssuedReport() {
     );
   const meta = payload.meta;
   const stored = report.profile;
+  const fits = liveCoreFits(live, payload.source.snapshotDate);
   const window7 = correctionState(meta, new Date().toISOString());
   const save = async (profile: Profile) => {
     setBusy(true);
@@ -125,7 +132,8 @@ export function IssuedReport() {
       <div id={REPORT_ID} tabIndex={-1} className={styles.report}>
         <ReportView
           payload={shown}
-          occupation={occupation}
+          occupation={fits ? live : OMITTED}
+          liveExtras={fits}
           mode="issued"
           comparisonIndex={occupationIndex}
           toolbarNote={note}

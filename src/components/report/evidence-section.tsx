@@ -30,6 +30,8 @@ type Props = {
   comparisonIndex: OccupationIndexEntry[];
   initialComparison?: OccupationEvidence;
   fixedComparisons?: OccupationEvidence[];
+  /** False omits the comparison and the trend (live data of another month). */
+  liveExtras: boolean;
   source: ReportSource;
 };
 
@@ -66,7 +68,11 @@ function Pool189({ evidence }: { evidence: Evidence }) {
 /** "See the evidence", folded on screen: everything behind the labels above. */
 export function EvidenceSection(props: Props) {
   const { evidence, stateOutlook, occupation, profile, points } = props;
-  const trend = occupation.status === "ready" ? occupation.evidence.trend : [];
+  const { liveExtras } = props;
+  const trend =
+    liveExtras && occupation.status === "ready"
+      ? occupation.evidence.trend
+      : [];
   const detailLoading =
     occupation.status === "ready" && occupation.detail.status === "loading";
   const band = useRef<HTMLElement>(null);
@@ -107,16 +113,18 @@ export function EvidenceSection(props: Props) {
               onAnswer={props.onAnswer}
             />
           )}
-          <CompareSection
-            occupation={occupation}
-            occupationCode={profile.occupation}
-            index={props.comparisonIndex}
-            initialComparison={props.initialComparison}
-            fixedComparisons={props.fixedComparisons}
-            score={points.base}
-            snapshotDate={props.source.snapshotDate}
-            label="OCCUPATION CONTEXT"
-          />
+          {liveExtras && (
+            <CompareSection
+              occupation={occupation}
+              occupationCode={profile.occupation}
+              index={props.comparisonIndex}
+              initialComparison={props.initialComparison}
+              fixedComparisons={props.fixedComparisons}
+              score={points.base}
+              snapshotDate={props.source.snapshotDate}
+              label="OCCUPATION CONTEXT"
+            />
+          )}
           {trend.length > 0 && (
             <div className={styles.trend}>
               <h3 className={section.h3}>

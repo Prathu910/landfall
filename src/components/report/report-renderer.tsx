@@ -48,6 +48,12 @@ export type ReportViewProps = {
   onEdit?: () => void;
   /** Merges a "Sharpen my state outlook" answer into the profile; absent on the sample. */
   onAnswer?: (patch: Partial<Profile>) => void;
+  /**
+   * False omits the extras read from the live occupation files (the
+   * comparison and the trend): /report/ sets it when they are from another
+   * month than the report (ruling R9). Default true.
+   */
+  liveExtras?: boolean;
   /** Replaces the mode's toolbar line. */
   toolbarNote?: string;
   /** From the calculation receipt; memory only. Absent on the sample. */
@@ -103,6 +109,7 @@ function ReportBody(props: ReportViewProps & { read: OurReadResult }) {
         comparisonIndex={props.comparisonIndex}
         initialComparison={props.initialComparison}
         fixedComparisons={props.fixedComparisons}
+        liveExtras={props.liveExtras ?? true}
         source={source}
       />
       <PointsPage page={view.pointsPage} warnings={view.points.warnings} />

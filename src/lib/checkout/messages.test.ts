@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { Quote } from "../orders/contract";
 import { BANNED_COPY } from "../report/copy";
-import { buyAnotherLabel, checkoutMessage } from "./messages";
+import { buyAnotherLabel, checkoutMessage, waitText } from "./messages";
 import { initialCheckout, type CheckoutError } from "./reducer";
 
 const QUOTE: Quote = {
@@ -44,6 +44,17 @@ describe("checkoutMessage", () => {
     );
   });
 
+  it("words a founding wait honestly, rounded up to whole minutes", () => {
+    expect(waitText(1)).toBe("1 second");
+    expect(waitText(59)).toBe("59 seconds");
+    expect(waitText(60)).toBe("1 minute");
+    expect(waitText(61)).toBe("2 minutes");
+    expect(waitText(600)).toBe("10 minutes");
+    const text = say({ code: "wait", seconds: 120 });
+    expect(text).toBe("You can ask for a new code in 2 minutes.");
+    expect(text).not.toMatch(/our side|went wrong|charged/);
+  });
+
   it("never says nothing was charged once a payment was made", () => {
     expect(say({ code: "confirm-busy" })).not.toMatch(/charged/);
     expect(say({ code: "signature" })).toContain("hello@migratelens.com");
@@ -75,6 +86,7 @@ describe("checkoutMessage", () => {
       { code: "confirm-busy" },
       { code: "no-data" },
       { code: "wrong-code", triesLeft: 2 },
+      { code: "wait", seconds: 45 },
     ];
     for (const error of codes) {
       const text = say(error);

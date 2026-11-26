@@ -103,6 +103,11 @@ Deno.test(
     equal(again.status, 503);
     equal(again.body, { kind: "error", code: "busy" });
     equal(again.res.headers.get("Retry-After"), "60");
+    // Cross-origin, the checkout reads it only when it is exposed.
+    equal(
+      again.res.headers.get("Access-Control-Expose-Headers"),
+      "Retry-After",
+    );
     equal(w.emails.length, 1);
   },
 );

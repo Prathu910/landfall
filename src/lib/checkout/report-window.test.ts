@@ -5,6 +5,7 @@ import { BANNED_COPY } from "../report/copy";
 import {
   correctionState,
   issuedDay,
+  liveCoreFits,
   reviseMessage,
   tokenFromHash,
 } from "./report-window";
@@ -90,5 +91,21 @@ describe("reviseMessage", () => {
     expect(reviseMessage(replies[0])).toContain("version 2");
     for (const reply of replies)
       expect(reviseMessage(reply)).not.toMatch(BANNED_COPY);
+  });
+});
+
+describe("liveCoreFits (ruling R9)", () => {
+  const OCTOBER = "2026-10-31";
+  it("lets the live core join only a report of its own month", () => {
+    const ready = (asAt: string) => ({ status: "ready", core: { asAt } });
+    expect(liveCoreFits(ready("2026-10"), OCTOBER)).toBe(true);
+    // After a monthly import the live file is newer than the report.
+    expect(liveCoreFits(ready("2026-11"), OCTOBER)).toBe(false);
+    expect(liveCoreFits(ready("2026-09"), OCTOBER)).toBe(false);
+  });
+
+  it("passes a file still loading, or one that failed, through as it is", () => {
+    expect(liveCoreFits({ status: "loading" }, OCTOBER)).toBe(true);
+    expect(liveCoreFits({ status: "unavailable" }, OCTOBER)).toBe(true);
   });
 });

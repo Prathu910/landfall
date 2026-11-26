@@ -61,8 +61,15 @@ function send(
   method: "GET" | "POST",
 ) {
   const res = response(reply.status, reply.body, origin, method);
-  for (const [name, value] of Object.entries(reply.headers ?? {}))
-    res.headers.set(name, value);
+  const extra = Object.entries(reply.headers ?? {});
+  for (const [name, value] of extra) res.headers.set(name, value);
+  // The site is another origin: the page can read only exposed headers
+  // (Retry-After tells the checkout how long a founding code must wait).
+  if (origin && extra.length)
+    res.headers.set(
+      "Access-Control-Expose-Headers",
+      extra.map(([name]) => name).join(", "),
+    );
   return res;
 }
 
