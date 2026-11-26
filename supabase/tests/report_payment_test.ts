@@ -1,9 +1,14 @@
 import {
   confirmHandler,
+  getHandler,
   orderHandler,
   webhookHandler,
 } from "../functions/_shared/report/handlers.ts";
-import { sha256Hex } from "../functions/_shared/report/crypto.ts";
+import {
+  encryptToken,
+  newToken,
+  sha256Hex,
+} from "../functions/_shared/report/crypto.ts";
 import { hmacHex } from "../functions/_shared/report/razorpay.ts";
 import captured from "./fixtures/razorpay-payment-captured.json" with { type: "json" };
 import orderPaid from "./fixtures/razorpay-order-paid.json" with { type: "json" };
@@ -16,6 +21,7 @@ import {
   equal,
   PROFILE,
   SUPABASE,
+  TOKEN_KEY,
   world,
   type World,
 } from "./report_fake.ts";
@@ -59,16 +65,22 @@ type Fixture = typeof captured | typeof orderPaid | typeof refunded;
 function event(
   fixture: Fixture,
   orderId: string,
-  change: { amount?: number; currency?: string; name?: string } = {},
+  change: {
+    amount?: number;
+    currency?: string;
+    name?: string;
+    payment?: string;
+  } = {},
 ) {
   const copy = JSON.parse(JSON.stringify(fixture));
   if (change.name) copy.event = change.name;
   const payment = copy.payload.payment.entity;
-  payment.id = PAYMENT;
+  const paymentId = change.payment ?? PAYMENT;
+  payment.id = paymentId;
   payment.order_id = orderId;
   if (change.amount !== undefined) payment.amount = change.amount;
   if (change.currency) payment.currency = change.currency;
-  if (copy.payload.refund) copy.payload.refund.entity.payment_id = PAYMENT;
+  if (copy.payload.refund) copy.payload.refund.entity.payment_id = paymentId;
   if (copy.payload.order) copy.payload.order.entity.id = orderId;
   return JSON.stringify(copy);
 }
@@ -122,8 +134,13 @@ Deno.test("webhook after confirm changes nothing", async () => {
   equal(w.rpcCalls.filter((c) => c.name === "paid_issue").length, 1);
 });
 
+async function getReport(w: World, token: string) {
+  const res = await getHandler(w.deps)(browser("report-get", { token }));
+  return (await res.json()) as { kind: string };
+}
+
 Deno.test(
-  "confirm after webhook returns pending, and the email is queued once",
+  "confirm after webhook returns the webhook's token, which report-get opens (R14)",
   async () => {
     const w = world();
     const orderId = await paidOrder(w);
@@ -132,18 +149,43 @@ Deno.test(
     equal(w.db.reports[0].email_status, "pending");
     const { status, body } = await confirm(w, orderId);
     equal(status, 200);
-    equal(body, { kind: "error", code: "pending" });
+    equal(body.kind, "issued");
+    equal(await sha256Hex(body.token), w.db.reports[0].token_hash);
+    equal((await getReport(w, body.token)).kind, "report");
     equal(w.db.reports.length, 1);
     equal(w.emails.length, 0);
+    equal(w.rpcCalls.filter((c) => c.name === "paid_issue").length, 1);
   },
 );
 
 Deno.test(
-  "confirm racing the webhook: one report, the loser gets pending",
+  "confirm after webhook: pending once delivery cleared the token, or after a refund",
   async () => {
     const w = world();
     const orderId = await paidOrder(w);
-    // The webhook issues between confirm's order read and its issue call.
+    await webhook(w, event(captured, orderId));
+    w.db.reports[0].token_enc = null;
+    equal((await confirm(w, orderId)).body, { kind: "error", code: "pending" });
+    const r = world();
+    const refundedOrder = await paidOrder(r);
+    await webhook(r, event(captured, refundedOrder));
+    await webhook(r, event(refunded, refundedOrder));
+    equal((await confirm(r, refundedOrder)).body, {
+      kind: "error",
+      code: "signature",
+    });
+  },
+);
+
+Deno.test(
+  "confirm racing the webhook: one report, the loser gets the winner's token",
+  async () => {
+    const w = world();
+    const orderId = await paidOrder(w);
+    // The webhook issues, with its own token, between confirm's order read
+    // and its issue call.
+    const winner = await newToken((n) => new Uint8Array(n).fill(7));
+    const sealed = await encryptToken(winner.token, TOKEN_KEY);
     const issue = w.db.rpc_paid_issue.bind(w.db);
     let raced = false;
     w.db.rpc_paid_issue = (args) => {
@@ -153,14 +195,22 @@ Deno.test(
         issue({
           p: {
             ...p,
-            report: { ...(p.report as object), token_hash: "f".repeat(64) },
+            report: {
+              ...(p.report as object),
+              token_hash: winner.hash,
+              token_enc: sealed,
+            },
           },
         });
       }
       return issue(args);
     };
-    equal((await confirm(w, orderId)).body, { kind: "error", code: "pending" });
+    equal((await confirm(w, orderId)).body, {
+      kind: "issued",
+      token: winner.token,
+    });
     equal(w.db.reports.length, 1);
+    equal(w.db.reports[0].token_hash, winner.hash);
   },
 );
 
@@ -416,7 +466,7 @@ Deno.test(
     equal(w.db.reports.length, 1);
     equal(order.status, "paid");
     equal(order.razorpay_payment_id, PAYMENT);
-    equal((await confirm(w, orderId)).body, { kind: "error", code: "pending" });
+    equal((await confirm(w, orderId)).body.kind, "issued");
     equal(alerts(w).length, 1);
   },
 );
@@ -451,5 +501,54 @@ Deno.test(
     equal(w.db.orders[0].razorpay_payment_id, null);
     equal((await webhook(w, event(captured, orderId))).status, 200);
     equal(w.db.reports.length, 1);
+  },
+);
+
+Deno.test(
+  "a second captured payment alerts the founder once and gets no token (R13)",
+  async () => {
+    const w = world();
+    const orderId = await paidOrder(w);
+    const first = await confirm(w, orderId);
+    equal(first.body.kind, "issued");
+    // The same payment's order.paid event is no duplicate.
+    equal((await webhook(w, event(orderPaid, orderId))).status, 200);
+    equal(alerts(w).length, 0);
+    const late = { payment: "pay_LATEUPI2" };
+    equal((await webhook(w, event(captured, orderId, late))).status, 200);
+    equal((await webhook(w, event(orderPaid, orderId, late))).status, 200);
+    equal((await confirm(w, orderId, "pay_LATEUPI2")).body, {
+      kind: "error",
+      code: "pending",
+    });
+    const sent = alerts(w);
+    equal(sent.length > 0, true);
+    equal([...new Set(sent.map((e) => e.key))], ["duplicate-pay_LATEUPI2"]);
+    equal(sent[0].subject.includes("pay_LATEUPI2"), true);
+    equal(sent[0].text.includes(PAYMENT), true);
+    equal(JSON.stringify(sent).includes("buyer@example.com"), false);
+    equal(JSON.stringify(sent).includes(first.body.token), false);
+    equal(w.db.reports.length, 1);
+    equal(w.db.orders[0].razorpay_payment_id, PAYMENT);
+  },
+);
+
+Deno.test(
+  "refunding the duplicate keeps the report; refunding the issuing payment revokes it (R13)",
+  async () => {
+    const w = world();
+    const orderId = await paidOrder(w);
+    const { body } = await confirm(w, orderId);
+    const late = { payment: "pay_LATEUPI2" };
+    await webhook(w, event(captured, orderId, late));
+    equal((await webhook(w, event(refunded, orderId, late))).status, 200);
+    equal(w.db.reports[0].status, "issued");
+    equal(w.db.orders[0].status, "paid");
+    equal(w.db.orders[0].other_refunds, ["pay_LATEUPI2"]);
+    equal((await getReport(w, body.token)).kind, "report");
+    equal((await webhook(w, event(refunded, orderId))).status, 200);
+    equal(w.db.reports[0].status, "revoked");
+    equal(w.db.orders[0].status, "refunded");
+    equal((await getReport(w, body.token)).kind, "revoked");
   },
 );

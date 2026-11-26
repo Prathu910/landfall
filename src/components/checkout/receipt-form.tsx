@@ -36,9 +36,12 @@ function Outcome({ state, send }: Pick<Props, "state" | "send">) {
       <div className={styles.outcome} role="status">
         <MailCheck size={22} aria-hidden />
         <p>
-          <b>Your report is issued: check your email</b>
+          <b>Your report is issued</b>
         </p>
-        <p>We&apos;ve sent its private link to {emailHint(state.email)}.</p>
+        <p>
+          Its private link will reach {emailHint(state.email)} within a few
+          minutes.
+        </p>
       </div>
     );
   return (

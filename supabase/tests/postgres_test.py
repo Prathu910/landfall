@@ -26,6 +26,7 @@ PAID_FUNCTIONS = (
     "founding_claim_source('c5fa65d5-f388-4a7b-940c-1b5b78c75100')", "founding_unsent('c5fa65d5-f388-4a7b-940c-1b5b78c75100')",
     "report_refund('pay_X', null)", "paid_order_fail('order_X', 'no-data')",
     "paid_order_payment('order_X', 'pay_X')", "paid_order_alerted('order_X')",
+    "paid_order_token('order_X', 'pay_X')",
 )
 FEEDBACK = {"id": "23937e80-90fd-44f6-9ebe-c189dd536043", "category": "bug", "message": "A small test feedback message.", "email": None, "summary": None, "privacy_version": "2026-11-20"}
 
@@ -195,7 +196,7 @@ def paid_report_checks(sql, connection):
     assert call("paid_order_create", {**order, "razorpay_order_id": "order_PRICE1", "amount": 50000})["status"] == "price-changed"
     assert scalar("select count(*) from public.report_orders where razorpay_order_id in ('order_USD1', 'order_PRICE1')") == "0"
     got = json.loads(scalar("select public.paid_order_get('order_RACE1')"))
-    assert got == {"email": "Buyer@example.com", "currency": "INR", "amount": 69900, "profile": PROFILE, "engine_data": None, "as_of": "2026-11-25", "status": "created", "alerted": False}, got
+    assert got == {"email": "Buyer@example.com", "currency": "INR", "amount": 69900, "profile": PROFILE, "engine_data": None, "as_of": "2026-11-25", "status": "created", "alerted": False, "payment_id": None}, got
     assert scalar("select public.paid_order_get('order_NONE')") == ""
 
     def issue(name):
@@ -369,6 +370,33 @@ def paid_report_checks(sql, connection):
     scalar("select public.paid_order_fail('order_RACE1', 'no-data')")
     assert scalar("select status from public.report_orders where razorpay_order_id = 'order_RACE1'") == "refunded"
     print("PASS: a refund before issue blocks any later issue, also when the two race; a pending order can be failed")
+
+    def token(order_id, payment):
+        return scalar(f"select coalesce(public.paid_order_token('{order_id}', '{payment}'), 'none')")
+
+    call("paid_order_create", {**order, "razorpay_order_id": "order_DUP1"})
+    dup = {**early, "razorpay_order_id": "order_DUP1", "razorpay_payment_id": "pay_DUP1", "report": report_input("dup")}
+    dup_report = call("paid_issue", dup)["report_id"]
+    assert json.loads(scalar("select public.paid_order_get('order_DUP1')"))["payment_id"] == "pay_DUP1"
+    assert token("order_DUP1", "pay_DUP1") == "iv.enc-dup"
+    assert token("order_DUP1", "pay_DUP2") == "none" and token("order_NONE", "pay_DUP1") == "none"
+    for _ in range(2):
+        assert refund("pay_DUP2", "order_DUP1") == {"status": "other-payment", "report_id": dup_report}
+    assert scalar("select status || ' ' || razorpay_payment_id || ' ' || other_refunds::text || ' ' || (refunded_at is null)::text from public.report_orders where razorpay_order_id = 'order_DUP1'") == "paid pay_DUP1 {pay_DUP2} true"
+    assert scalar(f"select status || ' ' || token_enc from public.reports where id = '{dup_report}'") == "issued iv.enc-dup"
+    assert refund("pay_DUP2", None) == {"status": "unknown-payment"}
+    # The payment recorded before the build (R12) lost to another that issued: refunding it keeps the report.
+    call("paid_order_create", {**order, "razorpay_order_id": "order_DUP3"})
+    scalar("select public.paid_order_payment('order_DUP3', 'pay_DUP3a')")
+    dup3 = call("paid_issue", {**dup, "razorpay_order_id": "order_DUP3", "razorpay_payment_id": "pay_DUP3b", "report": report_input("dup3")})
+    assert refund("pay_DUP3a", "order_DUP3") == {"status": "other-payment", "report_id": dup3["report_id"]}
+    assert scalar(f"select status from public.reports where id = '{dup3['report_id']}'") == "issued"
+    assert token("order_DUP3", "pay_DUP3b") == "iv.enc-dup3" and token("order_DUP3", "pay_DUP3a") == "none"
+    # Refunding the issuing payment still revokes, and the token is gone.
+    assert refund("pay_DUP1", "order_DUP1") == {"status": "revoked", "report_id": dup_report}
+    assert scalar(f"select status || ' ' || (token_enc is null)::text from public.reports where id = '{dup_report}'") == "revoked true"
+    assert token("order_DUP1", "pay_DUP1") == "none"
+    print("PASS: a refund of another payment on the order keeps the report; the issuing payment's refund revokes it; the token is read only for the issuing payment")
 
     sql("""begin;
       update public.reports set expires_at = now() where token_hash = '""" + founding_hash + """';

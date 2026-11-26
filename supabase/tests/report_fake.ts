@@ -80,6 +80,8 @@ export type Order = {
   failure_reason: string | null;
   paid_at: number | null;
   alerted_at: number | null;
+  /** Refunded payments that aren't the order's own (ruling R13). */
+  other_refunds: string[];
 };
 export type Report = {
   id: string;
@@ -336,6 +338,7 @@ export class FakeDb {
       failure_reason: null,
       paid_at: null,
       alerted_at: null,
+      other_refunds: [],
     });
     c.status = "issued";
     c.profile = null;
@@ -381,6 +384,7 @@ export class FakeDb {
       failure_reason: null,
       paid_at: null,
       alerted_at: null,
+      other_refunds: [],
     };
     this.orders.push(order);
     return {
@@ -402,6 +406,7 @@ export class FakeDb {
     if (!o) return null;
     const { email, currency, amount, profile, engine_data, as_of, status } = o;
     const alerted = o.alerted_at !== null;
+    const payment_id = o.razorpay_payment_id;
     return {
       email,
       currency,
@@ -411,7 +416,17 @@ export class FakeDb {
       as_of,
       status,
       alerted,
+      payment_id,
     };
+  }
+
+  /** Ruling R14: the sealed token, for the payment that issued the report. */
+  rpc_paid_order_token({ p_razorpay_order_id, p_payment_id }: Json) {
+    const o = this.paidOrder(p_razorpay_order_id);
+    if (!o || o.status !== "paid" || o.razorpay_payment_id !== p_payment_id)
+      return null;
+    const r = this.reports.find((x) => x.id === o.report_id);
+    return r?.status === "issued" ? r.token_enc : null;
   }
 
   /** Ruling R12: the captured payment id, recorded before the build. */
@@ -479,11 +494,18 @@ export class FakeDb {
     };
   }
 
+  /** Ruling R13: a refund of another payment on the order changes nothing. */
   rpc_report_refund({ p_payment_id, p_razorpay_order_id }: Json) {
+    const own = this.orders.find((x) => x.razorpay_payment_id === p_payment_id);
     const o =
-      this.orders.find((x) => x.razorpay_payment_id === p_payment_id) ??
+      own ??
       (p_razorpay_order_id ? this.paidOrder(p_razorpay_order_id) : undefined);
     if (!o) return { status: "unknown-payment" };
+    if (!own && o.razorpay_payment_id) {
+      const id = p_payment_id as string;
+      if (!o.other_refunds.includes(id)) o.other_refunds.push(id);
+      return { status: "other-payment", report_id: o.report_id };
+    }
     o.status = "refunded";
     if (
       !o.razorpay_payment_id &&

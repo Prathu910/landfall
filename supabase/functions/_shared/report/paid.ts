@@ -8,10 +8,14 @@
 // caller answers busy or 500 so it is retried. So that a paid order that
 // never builds is still found and refunded (ruling R12), the payment id is
 // recorded on the order before the build, and the first failed build
-// alerts the founder, once per order.
+// alerts the founder, once per order. An order that already has its report
+// (ruling R13, R14): a capture of another payment alerts the founder to
+// refund it, and report-confirm for the issuing payment gets the report's
+// token back, so a buyer whose webhook won the race still sees the report.
 
 import { parseProfile } from "../report-engine.js";
 import { sendAlert } from "./alert.ts";
+import { decryptToken } from "./crypto.ts";
 import { loadEngineData, rebuildEngineData } from "./data.ts";
 import type { Rpc } from "./db.ts";
 import { type Deps, setting } from "./endpoint.ts";
@@ -28,6 +32,8 @@ type PaidOrder = {
   status: "created" | "paid" | "refunded" | "failed";
   /** The founder was already alerted that this order couldn't be built. */
   alerted: boolean;
+  /** The payment that issued the report, or the one recorded before the build. */
+  payment_id: string | null;
 };
 
 type PaidIssue =
@@ -44,6 +50,8 @@ type Paid = {
   orderId: string;
   paymentId: string;
   paid?: { amount: number; currency: string };
+  /** report-confirm shows the report, so it wants the token even when the webhook issued first. */
+  wantsToken?: boolean;
 };
 
 /** The report for a pending order, from its snapshot; throws when it can't be built yet. */
@@ -83,6 +91,42 @@ async function alertUnbuilt(deps: Deps, rpc: Rpc, paid: Paid): Promise<void> {
   }
 }
 
+/** A second payment captured on an order whose report another payment issued. */
+async function alertDuplicate(deps: Deps, paid: Paid, issuing: string) {
+  await sendAlert(
+    deps,
+    `Duplicate payment, refund it: ${paid.paymentId}`,
+    `Payment ${paid.paymentId} was captured on order ${paid.orderId}, whose report was already issued for payment ${issuing}. ` +
+      `Refund ${paid.paymentId} in Razorpay; that refund leaves the report in place.`,
+    `duplicate-${paid.paymentId}`,
+  );
+}
+
+/**
+ * An order that already has its report. The issuing payment gets its token
+ * back when the caller wants it (null once delivery cleared it); any other
+ * payment is a duplicate.
+ */
+async function settled(
+  deps: Deps,
+  rpc: Rpc,
+  paid: Paid,
+  issuing: string | null,
+): Promise<PaidOutcome> {
+  if (issuing !== paid.paymentId) {
+    if (issuing) await alertDuplicate(deps, paid, issuing);
+    return { kind: "existing" };
+  }
+  if (!paid.wantsToken) return { kind: "existing" };
+  const sealed = await rpc<string | null>("paid_order_token", {
+    p_razorpay_order_id: paid.orderId,
+    p_payment_id: paid.paymentId,
+  });
+  if (!sealed) return { kind: "existing" };
+  const key = setting(deps, "REPORT_TOKEN_KEY");
+  return { kind: "issued", token: await decryptToken(sealed, key) };
+}
+
 /**
  * `paid` is what was paid: the webhook passes the event's amount and
  * currency (a mismatch fails the order); report-confirm passes none, so the
@@ -98,7 +142,8 @@ export async function issuePaid(
     p_razorpay_order_id: paid.orderId,
   });
   if (!order) return { kind: "unknown" };
-  if (order.status === "paid") return { kind: "existing" };
+  if (order.status === "paid")
+    return settled(deps, rpc, paid, order.payment_id);
   if (order.status !== "created") return { kind: "refused" };
   // Before the build, so a paid order that can't be built yet shows in the
   // founder query; the order stays 'created' and still issues on a retry.
@@ -125,6 +170,12 @@ export async function issuePaid(
     },
   });
   if (result.status === "issued") return { kind: "issued", token };
-  if (result.status === "existing") return { kind: "existing" };
+  if (result.status === "existing") {
+    // Another call issued it meanwhile: read whose payment it was.
+    const now = await rpc<PaidOrder | null>("paid_order_get", {
+      p_razorpay_order_id: paid.orderId,
+    });
+    return settled(deps, rpc, paid, now?.payment_id ?? null);
+  }
   return { kind: "refused" };
 }

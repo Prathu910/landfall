@@ -240,8 +240,9 @@ export function verifyHandler(deps: Deps) {
 
 /**
  * POST report-confirm: Checkout's payment signature, then the issue. When
- * the webhook issued first, the buyer gets `pending` (the link comes by
- * email; paid_issue keeps the first token).
+ * the webhook issued first for this payment, the buyer gets the same token
+ * back (ruling R14); `pending` (the link comes by email) only once delivery
+ * has cleared the stored token, or for a second payment on the order.
  */
 export function confirmHandler(deps: Deps) {
   return browserEndpoint("POST", deps, async (request) => {
@@ -257,6 +258,7 @@ export function confirmHandler(deps: Deps) {
     const outcome = await issuePaid(deps, database(deps), {
       orderId: confirm.orderId,
       paymentId: confirm.paymentId,
+      wantsToken: true,
     });
     if (outcome.kind === "issued")
       return ok({ kind: "issued", token: outcome.token });
