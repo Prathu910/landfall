@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useId, useRef } from "react";
 import { MailCheck } from "lucide-react";
-import { checkoutMessage } from "@/lib/checkout/messages";
+import { buyAnotherLabel, checkoutMessage } from "@/lib/checkout/messages";
 import type { ReceiptView } from "@/lib/checkout/receipt-view";
 import type { CheckoutEvent, CheckoutState } from "@/lib/checkout/reducer";
 import { emailHint } from "@/lib/orders/contract";
@@ -163,6 +163,21 @@ export function ReceiptForm(props: Props) {
         <p className={styles.message} role="alert">
           {message}
         </p>
+      )}
+      {state.error?.code === "founding-used" && (
+        <button
+          type="button"
+          className={styles.retry}
+          onClick={() => {
+            send({ type: "buy-another" });
+            // The button goes with the message: keep focus on the ticket.
+            form.current
+              ?.querySelector<HTMLElement>("button[type=submit]")
+              ?.focus();
+          }}
+        >
+          {buyAnotherLabel(state)}
+        </button>
       )}
       {quoteMissing && state.error && (
         <button

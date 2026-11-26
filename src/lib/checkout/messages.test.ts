@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { Quote } from "../orders/contract";
 import { BANNED_COPY } from "../report/copy";
-import { checkoutMessage } from "./messages";
+import { buyAnotherLabel, checkoutMessage } from "./messages";
 import { initialCheckout, type CheckoutError } from "./reducer";
 
 const QUOTE: Quote = {
@@ -23,6 +23,15 @@ describe("checkoutMessage", () => {
     );
     expect(say({ code: "busy" })).toBe(
       "Something went wrong on our side. Try again in a minute; you haven't been charged.",
+    );
+  });
+
+  it("labels the founding-used action with the quoted price", () => {
+    expect(buyAnotherLabel(initialCheckout(QUOTE, "INR"))).toBe(
+      "Buy another for ₹699",
+    );
+    expect(buyAnotherLabel(initialCheckout(QUOTE, "USD"))).toBe(
+      "Buy another for $14",
     );
   });
 

@@ -1,6 +1,7 @@
 import type {
   ConfirmResponse,
   Currency,
+  OrderRequest,
   OrderResponse,
   Quote,
   VerifyResponse,
@@ -44,10 +45,27 @@ export function activeCurrency(s: CheckoutState): Currency {
   return s.quote?.prices.USD == null ? "INR" : s.currency;
 }
 
-/** The founding offer is shown only while the quote has places left. */
+/** Founding shows while the quote has places, unless the reader chose to pay. */
 export function foundingOpen(s: CheckoutState): boolean {
   const founding = s.quote?.founding;
-  return !!founding && founding.enabled && founding.remaining > 0;
+  return !s.paid && !!founding && founding.enabled && founding.remaining > 0;
+}
+
+/** The report-order body for a submitting state. */
+export function orderRequest(
+  s: CheckoutState,
+  profile: unknown,
+  asOf: string,
+): OrderRequest {
+  return {
+    profile,
+    email: s.email,
+    currency: activeCurrency(s),
+    consent: true,
+    asOf,
+    turnstile_token: s.turnstile,
+    ...(s.paid ? { paid: true as const } : {}),
+  };
 }
 
 /** The price of the active currency, in the smallest unit. */
@@ -229,8 +247,14 @@ export function checkoutReducer(
         error: undefined,
       };
     case "email":
-      // An order belongs to the email it was made for.
-      return { ...s, email: e.email, order: undefined, error: undefined };
+      // An order (and a choice to buy another) belongs to its email.
+      return {
+        ...s,
+        email: e.email,
+        order: undefined,
+        paid: undefined,
+        error: undefined,
+      };
     case "consent":
       return { ...s, consent: e.consent, error: undefined };
     case "turnstile":
@@ -245,6 +269,10 @@ export function checkoutReducer(
       return { ...s, status: "submitting", error: undefined };
     case "change-email":
       return s.status === "code" ? back(s) : s;
+    case "buy-another":
+      // A founding-used email buys at the full price: the paid receipt, then Pay.
+      if (s.status !== "ready" || s.error?.code !== "founding-used") return s;
+      return submit({ ...s, paid: true, error: undefined });
     case "order":
       return onOrder(s, e.response);
     case "verify":

@@ -31,6 +31,16 @@ describe("validateOrderRequest", () => {
     expect(valid).not.toHaveProperty("amount");
     expect(valid).not.toHaveProperty("price");
   });
+  it("keeps an optional paid flag only when it is exactly true", () => {
+    expect(validateOrderRequest({ ...order, paid: true })).toEqual({
+      ...order,
+      email: "Aarav@gmail.com",
+      paid: true,
+    });
+    expect(validateOrderRequest(order)).not.toHaveProperty("paid");
+    expect(validateOrderRequest({ ...order, paid: false })).toBeNull();
+    expect(validateOrderRequest({ ...order, paid: "true" })).toBeNull();
+  });
   it("needs consent to be exactly true", () => {
     const withoutConsent: Record<string, unknown> = { ...order };
     delete withoutConsent.consent;

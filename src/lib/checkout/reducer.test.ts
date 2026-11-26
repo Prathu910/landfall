@@ -1,10 +1,12 @@
 import { describe, expect, it } from "vitest";
 import type { Quote } from "../orders/contract";
+import { receiptView } from "./receipt-view";
 import {
   activeCurrency,
   checkoutReducer,
   foundingOpen,
   initialCheckout,
+  orderRequest,
   type CheckoutEvent,
   type CheckoutState,
 } from "./reducer";
@@ -84,6 +86,87 @@ describe("checkoutReducer", () => {
     });
     s = run(s, { type: "confirm", response: { kind: "issued", token: TOKEN } });
     expect(s).toMatchObject({ status: "issued", token: TOKEN });
+  });
+
+  it("founding-used: buy another re-submits with paid, shows the paid receipt and goes to Pay", () => {
+    const reader = {
+      occupationName: "Software Engineer",
+      points: 85,
+      onshore: false,
+    };
+    let s = run(
+      filled(FOUNDING),
+      { type: "submit" },
+      { type: "order", response: { kind: "error", code: "founding-used" } },
+    );
+    expect(s).toMatchObject({
+      status: "ready",
+      error: { code: "founding-used" },
+    });
+    expect(foundingOpen(s)).toBe(true);
+    expect(orderRequest(filled(FOUNDING), {}, "2026-11-25")).not.toHaveProperty(
+      "paid",
+    );
+    // The spam-check token was spent on the founding request.
+    s = run(
+      s,
+      { type: "turnstile", token: "turnstile-2" },
+      { type: "buy-another" },
+    );
+    expect(s).toMatchObject({ status: "submitting", paid: true });
+    expect(s.error).toBeUndefined();
+    expect(foundingOpen(s)).toBe(false);
+    const view = receiptView(s, reader);
+    expect(view).toMatchObject({
+      kind: "quoted",
+      discount: null,
+      total: "₹699",
+      seats: null,
+      ticket: { stub: "ADMIT ONE", title: "Pay ₹699 securely →" },
+    });
+    expect(orderRequest(s, { occupation: "261313" }, "2026-11-25")).toEqual({
+      profile: { occupation: "261313" },
+      email: "aarav@gmail.com",
+      currency: "INR",
+      consent: true,
+      asOf: "2026-11-25",
+      turnstile_token: "turnstile-2",
+      paid: true,
+    });
+    // The Razorpay order opens Checkout at once: no founding-full detour.
+    s = run(s, { type: "order", response: ORDER });
+    expect(s).toMatchObject({
+      status: "paying",
+      paid: true,
+      order: { orderId: "order_Abc123", amount: 69900 },
+    });
+    expect(s.error).toBeUndefined();
+  });
+
+  it("buy another waits for a fresh spam check, and only follows founding-used", () => {
+    const used = run(
+      filled(FOUNDING),
+      { type: "submit" },
+      { type: "order", response: { kind: "error", code: "founding-used" } },
+    );
+    let s = run(used, { type: "buy-another" });
+    expect(s).toMatchObject({
+      status: "ready",
+      paid: true,
+      error: { code: "human" },
+    });
+    s = run(s, { type: "turnstile", token: "turnstile-2" }, { type: "submit" });
+    expect(s).toMatchObject({ status: "submitting", paid: true });
+    // Another email may still have its founding place.
+    s = run(
+      used,
+      { type: "buy-another" },
+      { type: "email", email: "other@gmail.com" },
+    );
+    expect(s.paid).toBeUndefined();
+    expect(foundingOpen(s)).toBe(true);
+    const ready = filled(FOUNDING);
+    expect(run(ready, { type: "buy-another" })).toBe(ready);
   });
 
   it("dismissed returns to ready and keeps the order for a retry", () => {

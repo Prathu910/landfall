@@ -12,6 +12,11 @@ function price(s: CheckoutState): string {
   return amount === null ? "" : formatPrice(amount, activeCurrency(s));
 }
 
+/** The founding-used action: the same email buys a report at the quoted price. */
+export function buyAnotherLabel(s: CheckoutState): string {
+  return `Buy another for ${price(s)}`;
+}
+
 /** The line shown under the ticket for the state's error; null for none. */
 export function checkoutMessage(s: CheckoutState): string | null {
   const error = s.error;

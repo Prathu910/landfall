@@ -5,9 +5,9 @@ import { defaultCurrency } from "@/lib/checkout/currency";
 import { issuedFlagKey } from "@/lib/checkout/issued-flag";
 import { BUSY, SCRIPT_FAILED } from "@/lib/checkout/messages";
 import {
-  activeCurrency,
   checkoutReducer,
   initialCheckout,
+  orderRequest,
   type CheckoutEvent,
   type CheckoutState,
 } from "@/lib/checkout/reducer";
@@ -51,14 +51,7 @@ function start(next: CheckoutState, send: Send, context: Options) {
   const { profile, asOf, onNoData } = context;
   switch (next.status) {
     case "submitting":
-      postOrder({
-        profile,
-        email: next.email,
-        currency: activeCurrency(next),
-        consent: true,
-        asOf,
-        turnstile_token: next.turnstile,
-      })
+      postOrder(orderRequest(next, profile, asOf))
         .then((response) => send({ type: "order", response }))
         .catch(failure(send));
       return;

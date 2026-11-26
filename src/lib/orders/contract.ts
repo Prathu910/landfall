@@ -25,6 +25,11 @@ export type OrderRequest = {
   consent: true;
   asOf: string;
   turnstile_token: string;
+  /**
+   * The reader chose to pay although the founding offer is open (their
+   * email already has a founding report): skip the founding path.
+   */
+  paid?: true;
 };
 export type OrderErrorCode =
   | "invalid"
@@ -129,7 +134,8 @@ export function validateOrderRequest(value: unknown): OrderRequest | null {
     !CURRENCIES.some((currency) => currency === value.currency) ||
     value.consent !== true ||
     !calendarDate(value.asOf) ||
-    !spamToken(value.turnstile_token)
+    !spamToken(value.turnstile_token) ||
+    (value.paid !== undefined && value.paid !== true)
   )
     return null;
   return {
@@ -139,6 +145,7 @@ export function validateOrderRequest(value: unknown): OrderRequest | null {
     consent: true,
     asOf: value.asOf,
     turnstile_token: value.turnstile_token,
+    ...(value.paid === true ? { paid: true as const } : {}),
   };
 }
 

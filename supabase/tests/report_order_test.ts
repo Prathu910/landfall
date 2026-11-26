@@ -153,6 +153,29 @@ Deno.test("founding used: one founding report per email", async () => {
 });
 
 Deno.test(
+  "founding used, buying another: paid: true gets a Razorpay order while founding is open (plan 3 R7)",
+  async () => {
+    const w = world();
+    const sent = await order(w);
+    await verify(w, sent.body.claimId, lastCode(w));
+    w.clock.now += 120_000;
+    equal((await order(w)).body, { kind: "error", code: "founding-used" });
+    const bought = await order(w, { ...ORDER, paid: true });
+    equal(bought.status, 200);
+    equal(bought.body.kind, "razorpay");
+    equal(bought.body.amount, 69900);
+    equal(w.razorpayOrders.length, 1);
+    const paid = w.db.orders.filter((o) => o.kind === "paid");
+    equal(paid.length, 1);
+    equal(paid[0].email, "Buyer@example.com");
+    // The founding offer is untouched: still open, one place taken.
+    equal(w.db.rpc_report_quote().founding.remaining, 99);
+    // Any other value of `paid` is a malformed request.
+    equal((await order(w, { ...ORDER, paid: false })).status, 400);
+  },
+);
+
+Deno.test(
   "founding used: the email's letter case doesn't make a new place (R11)",
   async () => {
     const w = world();

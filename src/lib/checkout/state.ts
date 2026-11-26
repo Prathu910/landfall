@@ -71,6 +71,12 @@ export type CheckoutState = {
   order?: PaidOrder;
   payment?: Payment;
   token?: string;
+  /**
+   * The reader chose to buy although the founding offer is open (their
+   * email already has a founding report): the paid receipt shows, and the
+   * order is sent with `paid: true`.
+   */
+  paid?: true;
   error?: CheckoutError;
 };
 
@@ -84,6 +90,7 @@ export type CheckoutEvent =
   | { type: "submit" }
   | { type: "resend" }
   | { type: "change-email" }
+  | { type: "buy-another" }
   | { type: "order"; response: OrderResponse }
   | { type: "verify"; response: VerifyResponse }
   | { type: "razorpay-success"; paymentId: string; signature: string }

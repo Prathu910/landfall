@@ -175,7 +175,10 @@ export function orderHandler(deps: Deps) {
     }
     if (free.kind !== "stamps") return fail("no-data");
     const quote = await rpc<Quote>("report_quote");
-    return quote.founding.enabled && quote.founding.remaining > 0
+    // `paid`: the reader buys although founding is open (a founding-used email).
+    const founding =
+      !order.paid && quote.founding.enabled && quote.founding.remaining > 0;
+    return founding
       ? await startFounding(deps, rpc, order, profile)
       : await startPaid(deps, rpc, order, profile, loaded);
   });
