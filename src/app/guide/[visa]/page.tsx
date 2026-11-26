@@ -35,6 +35,7 @@ import { sourceList } from "@/lib/guide/sources-list";
 import { formatDate, localToday } from "@/lib/migration";
 import { serializeJsonLd } from "@/lib/seo/json-ld";
 import { pageMetadata } from "@/lib/seo/page-meta";
+import { loadLatestRound } from "@/lib/updates/load-server";
 
 export const dynamicParams = false;
 
@@ -87,7 +88,8 @@ export default async function VisaGuidePage({ params }: Props) {
   const meta = GUIDE_PAGES[visa];
   const guide = VISA_GUIDES[visa];
   const counts = federalCounts(stateRuleData.federal);
-  const faq = visaFaq(visa, FEES, counts);
+  const round = loadLatestRound();
+  const faq = visaFaq(visa, FEES, counts, round);
   const steps = GUIDE_STEPS.filter((s) => s.appliesTo.includes(visa));
   const sources = sourceList(visaSources(visa), null, GUIDE_CHECKED_AT);
   const buildDate = localToday();
@@ -133,7 +135,7 @@ export default async function VisaGuidePage({ params }: Props) {
           ]}
         />
         <GuideAnswer
-          answer={directAnswer(visa, GUIDE_CHECKED_AT, counts)}
+          answer={directAnswer(visa, GUIDE_CHECKED_AT, counts, round)}
           checkedAt={GUIDE_CHECKED_AT}
           feesAsAt={FEES.feesAsAt}
         />

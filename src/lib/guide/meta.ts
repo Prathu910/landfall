@@ -9,6 +9,8 @@ import {
   type FaqEntry,
 } from "../seo/json-ld";
 import { SITE_NAME, SITE_URL } from "../site";
+import { dayText } from "../updates/format";
+import { cutoffSpanText, type LatestRound } from "../updates/latest-round";
 import { PATHWAY_191 } from "./faq";
 import type { GuideStep } from "./types";
 
@@ -72,6 +74,7 @@ export function directAnswer(
   id: GuidePageId,
   checkedAt: string,
   counts: Record<Visa, number> | null,
+  round: LatestRound | null = null,
 ): string {
   const date = formatDate(checkedAt);
   const listed = (visa: Visa) =>
@@ -83,7 +86,7 @@ export function directAnswer(
     case "hub":
       return `As at ${date}, Australia’s points-tested routes to skilled PR are the 189 (independent and permanent), the 190 (state-nominated and permanent) and the 491 (regional, provisional for 5 years, then the permanent 191). Each needs an occupation on the Home Affairs list, ${basics}, and you apply only after an invitation through a SkillSelect EOI. ${source}`;
     case "189":
-      return `As at ${date}, the 189 is a permanent visa you can apply for only after Home Affairs invites your SkillSelect EOI; no state, employer or family sponsor is involved. You need an occupation on the 189 list${listed("189")}, ${basics}. ${source}`;
+      return `As at ${date}, the 189 is a permanent visa you can apply for only after Home Affairs invites your SkillSelect EOI; no state, employer or family sponsor is involved. You need an occupation on the 189 list${listed("189")}, ${basics}${round ? `; the latest round, on ${dayText(round.date)}, invited at ${cutoffSpanText(round)} depending on the occupation (SkillSelect invitation rounds)` : ""}. ${source}`;
     case "190":
       return `As at ${date}, the 190 is a permanent visa for people nominated by a state or territory, and the nomination adds 5 points. You need an occupation on the 190 list${listed("190")}, the nominating state’s own criteria, ${basics}. ${source}`;
     case "491":

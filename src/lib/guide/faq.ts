@@ -2,6 +2,7 @@ import type { Visa } from "../data/types";
 import { formatDate } from "../migration";
 import type { FaqEntry } from "../seo/json-ld";
 import type { FederalList } from "../state-outlook/rules-types";
+import { latestRoundSentence, type LatestRound } from "../updates/latest-round";
 import { formatFeeAmount } from "./costs";
 import type { Fee, FeeCatalogue, GuideStep } from "./types";
 
@@ -30,11 +31,29 @@ function chargesLine(fees: FeeCatalogue, visa: Visa): string {
   return `${fee(c.main)} for the main applicant, ${fee(c.adult)} for each extra applicant aged 18 or over and ${fee(c.child)} for each one under 18`;
 }
 
+const PASS_MARK =
+  "65 points is the pass mark to be invited, not a promise of an invitation.";
+
+/**
+ * "Is 65 points enough?", with the newest 189 round's own figures when the
+ * recap facts have one (audit A-P1-6), so the answer is dated and sourced.
+ */
+export function enoughFaq(round: LatestRound | null): FaqEntry {
+  const figures = round
+    ? ` ${latestRoundSentence(round)} Source: SkillSelect invitation rounds.`
+    : " Home Affairs invites when you score enough points and places are available for your occupation, so the points that are invited differ by occupation and round.";
+  return {
+    question: "Is 65 points enough for Australian PR?",
+    answer: `${PASS_MARK}${figures}`,
+  };
+}
+
 /** The guide hub's questions; every figure comes from the sourced data. */
 export function hubFaq(
   fees: FeeCatalogue,
   steps: GuideStep[],
   checkedAt: string,
+  round: LatestRound | null = null,
 ): FaqEntry[] {
   const asAt = formatDate(fees.feesAsAt);
   return [
@@ -43,11 +62,7 @@ export function hubFaq(
         "What are the steps to Australian PR through skilled migration?",
       answer: `${steps.map((s, i) => `${i + 1}. ${s.title}`).join("; ")}. State nomination applies to the 190 and 491 only.`,
     },
-    {
-      question: "Is 65 points enough for Australian PR?",
-      answer:
-        "65 points is the pass mark to be invited, not a promise of an invitation. Home Affairs invites when you score enough points and places are available for your occupation, so the points that are invited differ by occupation and round.",
-    },
+    enoughFaq(round),
     {
       question: "How long do I have to apply after an invitation?",
       answer:
@@ -83,6 +98,7 @@ export function visaFaq(
   visa: Visa,
   fees: FeeCatalogue,
   counts: Record<Visa, number> | null,
+  round: LatestRound | null = null,
 ): FaqEntry[] {
   const asAt = formatDate(fees.feesAsAt);
   const cost: FaqEntry = {
@@ -107,6 +123,7 @@ export function visaFaq(
         answer:
           "Yes. It lets you stay in Australia indefinitely, with travel in and out for 5 years from the grant.",
       },
+      enoughFaq(round),
     ],
     "190": [
       {

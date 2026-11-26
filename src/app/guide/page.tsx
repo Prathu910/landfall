@@ -29,6 +29,7 @@ import { sourceList } from "@/lib/guide/sources-list";
 import { formatDate, localToday } from "@/lib/migration";
 import { serializeJsonLd } from "@/lib/seo/json-ld";
 import { pageMetadata } from "@/lib/seo/page-meta";
+import { loadLatestRound } from "@/lib/updates/load-server";
 
 const PAGE = GUIDE_PAGES.hub;
 
@@ -53,7 +54,7 @@ const CONTENTS = [
 
 export default function GuideHubPage() {
   const counts = federalCounts(stateRuleData.federal);
-  const faq = hubFaq(FEES, GUIDE_STEPS, GUIDE_CHECKED_AT);
+  const faq = hubFaq(FEES, GUIDE_STEPS, GUIDE_CHECKED_AT, loadLatestRound());
   const pages = (Object.keys(SOURCES) as (keyof typeof SOURCES)[]).map(
     (key) => ({ label: SOURCE_LABELS[key], href: SOURCES[key] }),
   );

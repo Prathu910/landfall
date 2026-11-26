@@ -11,6 +11,8 @@ import { buildHomeExample } from "@/lib/home/example";
 import { buildHomeAtlas } from "@/lib/home/atlas";
 import { listed189, listed189Codes } from "@/lib/occupation-page/summary";
 import { formatMonth } from "@/lib/report/copy";
+import { latestRoundLine } from "@/lib/updates/latest-round";
+import { loadLatestRound } from "@/lib/updates/load-server";
 import { HomeAction } from "@/components/home/controls/home-action";
 import { HomePassport } from "@/components/home/home-passport";
 import { HomeAtlas } from "@/components/home/home-atlas";
@@ -53,6 +55,7 @@ export default function Home() {
     rules: stateRuleData,
   });
   const date = formatMonth(asAt);
+  const round = loadLatestRound();
   const longDate = new Intl.DateTimeFormat("en-AU", {
     month: "long",
     year: "numeric",
@@ -86,6 +89,12 @@ export default function Home() {
             <p className="fine">
               Official data to <time dateTime={asAt}>{longDate}</time>. No
               documents needed.
+              {round && (
+                <>
+                  <br />
+                  {latestRoundLine(round)}
+                </>
+              )}
               <br />
               Your points and visa stamps are free, with no email or account.
             </p>
