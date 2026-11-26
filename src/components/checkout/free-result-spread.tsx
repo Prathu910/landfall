@@ -7,6 +7,8 @@ import { defaultCurrency } from "@/lib/checkout/currency";
 import { passTicket, type PassMeta } from "@/lib/checkout/pass-ticket";
 import {
   canBuy,
+  CONTACT_LINE,
+  offerAction,
   resultLine,
   teaserLines,
   TEASER_TITLE,
@@ -31,6 +33,8 @@ type Props = {
   whereLine: string;
   /** The sample answers end with a link to the sample report, not a checkout. */
   sample?: boolean;
+  /** The checkout's backend is configured; without it there is no ticket (R12). */
+  configured: boolean;
 };
 
 function PassMetaRow({ meta }: { meta: PassMeta }) {
@@ -84,7 +88,8 @@ function Ghost() {
 function Offer(
   props: Props & { result: Extract<FreeResult, { kind: "stamps" }> },
 ) {
-  const { result, quote, onOpenCheckout, sample } = props;
+  const { result, quote, onOpenCheckout } = props;
+  const action = offerAction(props.sample ?? false, props.configured);
   const { heading, ticks } = teaserLines(result);
   const currency = defaultCurrency(
     Intl.DateTimeFormat().resolvedOptions().timeZone,
@@ -104,11 +109,18 @@ function Offer(
         ))}
       </ul>
       <div className={styles.action}>
-        {sample ? (
+        {action === "sample" && (
           <Link href="/sample/" className={styles.sampleLink}>
             See the full sample report <ArrowRight size={16} aria-hidden />
           </Link>
-        ) : (
+        )}
+        {action === "contact" && (
+          <p className={styles.note}>
+            {CONTACT_LINE.before}
+            <a href={`mailto:${CONTACT_LINE.email}`}>{CONTACT_LINE.email}</a>
+          </p>
+        )}
+        {action === "ticket" && (
           <Ticket
             variant="pass"
             stub={ticket.stub}

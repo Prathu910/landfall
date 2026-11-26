@@ -7,6 +7,8 @@ import { BANNED_COPY } from "../report/copy";
 import { REPORT_SECTIONS } from "../report/sections";
 import {
   canBuy,
+  CONTACT_LINE,
+  offerAction,
   resultLine,
   teaserLines,
   TEASER_TITLE,
@@ -143,5 +145,20 @@ describe("whereLine", () => {
     expect(whereLine("Cook", true, "2026-10-31")).toBe(
       "Cook · in Australia · data as at 31 Oct 2026",
     );
+  });
+});
+
+describe("offerAction", () => {
+  it("shows the ticket only when the checkout is configured (R12)", () => {
+    expect(offerAction(false, true)).toBe("ticket");
+    expect(offerAction(false, false)).toBe("contact");
+    expect(offerAction(true, true)).toBe("sample");
+    expect(offerAction(true, false)).toBe("sample");
+  });
+
+  it("names the contact address and keeps to the copy rules", () => {
+    expect(CONTACT_LINE.email).toBe("hello@migratelens.com");
+    expect(CONTACT_LINE.before).not.toMatch(BANNED_COPY);
+    expect(CONTACT_LINE.before).not.toMatch(/[₹$]\s?\d/);
   });
 });

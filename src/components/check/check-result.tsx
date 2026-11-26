@@ -12,6 +12,7 @@ import type { FreeResult } from "@/lib/outlook/free-result";
 import { CheckoutStep } from "../checkout/checkout-step";
 import { FreeResultSpread } from "../checkout/free-result-spread";
 import { getQuote } from "../checkout/transport";
+import { checkoutConfig } from "../submissions/config";
 import styles from "./check-result.module.css";
 
 type Props = {
@@ -44,7 +45,8 @@ export function CheckResult(props: Props) {
         note: null,
       }
     : props.free;
-  const offered = canBuy(free) && !sample;
+  const configured = checkoutConfig() !== null;
+  const offered = canBuy(free) && !sample && configured;
   // Move focus to the result, as the steps move it to each step's heading.
   useEffect(() => {
     if (!checkout)
@@ -109,6 +111,7 @@ export function CheckResult(props: Props) {
         occupationName={occupationName}
         whereLine={props.whereLine}
         sample={sample}
+        configured={configured}
       />
     </div>
   );

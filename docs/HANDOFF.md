@@ -1,11 +1,13 @@
 # Resume here
 
+**Merge gate: merging `roadmap/paid-report` to `main` is going live.** `main` deploys migratelens.com, whose build already has `NEXT_PUBLIC_SUPABASE_URL` and the Turnstile key (for feedback), so `/check/` replaces the free full report with the checkout at once. Merge only after the production backend (steps 1, 4, 5, 6 and 7 below, repeated on production) passes the rehearsal in step 9. A build without `NEXT_PUBLIC_SUPABASE_URL` or the Turnstile key shows the free result with a contact line and no ticket (ruling R12).
+
 ## Founder: before the paid report goes live (26 November 2026)
 
 The paid report is built on branch `roadmap/paid-report` (plans 1 to 3: engine, backend, checkout and `/report/`). Nothing is live: no payment, code email or report email works until you finish this list, in order. The detail for steps 1 to 8 is in [`docs/OPERATIONS-BACKEND.md`, "Paid reports"](OPERATIONS-BACKEND.md#paid-reports); this list is the order to do them in. Do it all on the staging Supabase project and the preview deployment first, then repeat steps 1, 4, 5, 6, 7 and 10 on production.
 
 - [ ] **1. Razorpay test keys and webhook.** Dashboard in test mode: generate an API key (key ID and secret). Add a webhook with the URL `https://<project-ref>.supabase.co/functions/v1/razorpay-webhook`, a strong secret of your own, and only the events `payment.captured`, `order.paid` and `refund.processed`. Keep auto-capture on. (Runbook step 1.)
-- [ ] **2. Resend domain DNS.** Add `migratelens.com` in Resend, put its SPF, DKIM and return-path MX records in Cloudflare DNS, wait for "Verified", and create a sending-only API key. (Step 2.)
+- [ ] **2. Resend domain DNS.** Add `migratelens.com` in Resend, put its SPF, DKIM and return-path MX records in Cloudflare DNS, wait for "Verified", and create a sending-only API key. Keep click and open tracking off for the domain: click tracking would send the report link's `#` token through Resend's redirect. (Step 2.)
 - [ ] **3. Cloudflare Browser Rendering token.** A custom API token with only Account → Browser Rendering → Edit, plus the account ID. (Step 3.)
 - [ ] **4. Supabase secrets.** Set every variable the functions read, from a private env file, never in git or chat: `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `RAZORPAY_WEBHOOK_SECRET`, `RESEND_API_KEY`, `REPORT_EMAIL_FROM`, `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_BR_TOKEN`, `REPORT_SITE_URL`, `REPORT_DELIVER_SECRET`, `REPORT_TOKEN_KEY`, and the existing `ALLOWED_ORIGINS` and `TURNSTILE_SECRET_KEY` (the Turnstile widget must allow the action `report`). `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are provided by Supabase. The AI read's `ANTHROPIC_API_KEY`, `READ_*` variables stay as they are. (Step 4.)
 - [ ] **5. Migrations and functions.** `npx supabase db push --remote`, then deploy the eight report functions. (Step 5.)
@@ -19,12 +21,11 @@ The paid report is built on branch `roadmap/paid-report` (plans 1 to 3: engine, 
   - a closed tab after payment: the webhook issues it and the email arrives;
   - a refund in the Dashboard: the link then says the report was refunded;
   - the checks the offline tests couldn't make (ruling R8): the Cloudflare PDF is the print layout on A4; Resend shows one link email and at most one PDF email per report, also when a retry reuses an `Idempotency-Key` with a different body; and the Razorpay webhook deliveries all got 200 with the payload fields the fixtures assume;
-  - also: a delivery alert reaches hello@migratelens.com after 5 failures, and `/report/` opened on a second device after the 7-day window shows the report with "This report is final" and no Edit button.
+  - also: a delivery alert reaches hello@migratelens.com after 5 failures, and `/report/` opened on a second device after the 7-day window shows the report with "This report is final" and no Edit button;
+  - Cloudflare Web Analytics and the link token (ruling R15): before turning Web Analytics on (or back on), exclude `/report/*` in its rules, or open a `/report/#…` link with DevTools and confirm the beacon's `cdn-cgi/rum` POST carries no `#` fragment. The token after `#` must never reach analytics (`docs/OPERATIONS.md`, "Cloudflare Web Analytics").
 - [ ] **10. International payments.** Once the legal pages are live on production, request International Payments in Razorpay (link PayPal if asked). When it is active, set `usd_enabled` true.
 - [ ] **11. The live switch.** Razorpay live mode: live keys, a live webhook with a new secret, the three `RAZORPAY_*` secrets on production, then one real ₹699 payment end to end and its refund. (Step 9.)
 - [ ] **12. After the lawyer review,** set `LEGAL_REVIEWED = true` in `src/lib/legal/copy.ts` (this removes the "Drafted for review" line from the legal pages), rebuild and deploy. Read the privacy page in that review: it was rewritten for the paid flow.
-
-Known gap to decide: while the founding offer is open, an email that already has a founding report gets "buy another for {price}", but `report-order` keeps answering `founding-used` for that email (it has no "pay instead" request), so that reader can only buy with another address until the offer closes.
 
 ## Founder: set up the scheduled jobs (25 November 2026)
 

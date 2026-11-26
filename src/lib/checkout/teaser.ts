@@ -1,4 +1,5 @@
 import { formatDate } from "../migration";
+import { SELLER } from "../orders/seller";
 import type { FreeResult } from "../outlook/free-result";
 import { REPORT_SECTIONS } from "../report/sections";
 
@@ -30,6 +31,25 @@ export function teaserLines(result: StampsResult): {
 export function canBuy(result: FreeResult): boolean {
   return result.kind === "stamps";
 }
+
+/** How the offer page ends: the sample's link, the ticket, or only a contact line. */
+export type OfferAction = "sample" | "ticket" | "contact";
+
+/**
+ * A build without the checkout's backend configured (no Supabase URL or
+ * Turnstile key) never shows a ticket that can only fail: the free result
+ * stays, with the contact line (ruling R12).
+ */
+export function offerAction(sample: boolean, configured: boolean): OfferAction {
+  if (sample) return "sample";
+  return configured ? "ticket" : "contact";
+}
+
+/** The contact line, split around the address so it can be a mailto link. */
+export const CONTACT_LINE = {
+  before: "The full report isn't available to buy here yet. Questions? ",
+  email: SELLER.email,
+};
 
 /**
  * The right page's line when there is nothing to buy. A failed fetch or a
