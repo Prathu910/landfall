@@ -20,8 +20,13 @@ describe("state page metadata (frozen 2026-10)", () => {
       expect(title.length).toBeLessThanOrEqual(TITLE_MAX);
     expect(new Set(titles).size).toBe(8);
     expect(stateTitle(frozenView("NSW"))).toBe(
-      "NSW 190 & 491 invitations and points, Oct 2026 · MigrateLens",
+      "NSW 190 & 491 invitation data, Oct 2026 · MigrateLens",
     );
+    // R11: "invitations" alone can read as invitations issued.
+    for (const title of titles) {
+      expect(title).toMatch(/ 190 & 491 invitation data, /);
+      expect(title).not.toMatch(/invitations/);
+    }
   });
 
   it("writes unique whole-sentence descriptions of 120 to 160 characters", () => {

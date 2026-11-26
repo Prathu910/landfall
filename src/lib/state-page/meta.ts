@@ -12,12 +12,15 @@ import type { StatePageView } from "./view";
  */
 export const STATE_PAGES_PUBLISHED_AT = "2026-11-26";
 
-/** The full `<title>` within 60 characters; routes set it as `title.absolute`. */
+/**
+ * The full `<title>` within 60 characters; routes set it as
+ * `title.absolute`. Every state says "invitation data", never
+ * "invitations", which can read as invitations issued (R11).
+ */
 export function stateTitle(view: StatePageView): string {
   const { searchName } = view.page;
   const month = formatMonth(view.facts.asAt);
   return fitTitle([
-    `${searchName} 190 & 491 invitations and points, ${month}${BRAND_SUFFIX}`,
     `${searchName} 190 & 491 invitation data, ${month}${BRAND_SUFFIX}`,
     `${searchName} 190 & 491 invitation data, ${month}`,
   ]);
