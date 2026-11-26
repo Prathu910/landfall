@@ -114,12 +114,13 @@ describe("the guide's dated round figures", () => {
     atLowest: 44,
     month: "2026-10" as const,
   };
-  it("adds the latest round's cut-off span to the 189 answer, still three sentences", () => {
+  it("adds the latest round's cut-off span to the 189 answer as its own dated sentence", () => {
     const answer = directAnswer("189", GUIDE_CHECKED_AT, counts, round);
     expect(answer).toContain(
-      "the latest round, on 15 Oct 2026, invited at 65 to 100 points depending on the occupation",
+      "at least 65 points. The latest 189 round, on 15 Oct 2026, invited at 65 to 100 points depending on the occupation",
     );
-    expect(answer.split(/(?<=\.)\s+(?=[A-Z])/).length).toBe(3);
+    // Its own sentence, so the page's "As at" date never heads a newer round.
+    expect(answer.split(/(?<=\.)\s+(?=[A-Z])/).length).toBe(4);
     expect(directAnswer("190", GUIDE_CHECKED_AT, counts, round)).not.toContain(
       "latest round",
     );
