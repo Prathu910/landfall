@@ -19,18 +19,25 @@ describe("wholeSentences", () => {
         },
       ),
     ).toBe("The pool holds 4,280 EOIs.");
+  });
+  it("never cuts at a comma: a sentence that doesn't fit is dropped", () => {
     expect(
       wholeSentences(
         [
           "Invited 20,000 EOIs on 15 Oct, across 159 occupations, at 65 to 100.",
+          "Two.",
         ],
-        [],
-        {
-          min: 0,
-          max: 60,
-        },
+        ["An extra."],
+        { min: 10, max: 60 },
       ),
-    ).toBe("Invited 20,000 EOIs on 15 Oct, across 159 occupations.");
+    ).toBe("Two. An extra.");
+    expect(
+      wholeSentences(
+        ["For 2026–27, QLD, WA and SA list it for 190 and 491.", "Two."],
+        [],
+        { min: 0, max: 30 },
+      ),
+    ).toBe("Two.");
   });
   it("tops up with extras only while under the minimum", () => {
     expect(

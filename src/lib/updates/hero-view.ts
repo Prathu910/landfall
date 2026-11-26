@@ -53,14 +53,15 @@ type Round = { date: string; section: RoundSection };
 function spreadClause(section: RoundSection): string {
   const { lowest, highest } = cutoffBounds(section);
   return lowest.score === highest
-    ? `with ${highest} points as the lowest score invited for each`
-    : `with the lowest score invited ranging from ${lowest.score} to ${highest} points by occupation`;
+    ? `${highest} points was the lowest score invited for each`
+    : `the lowest score invited ranged from ${lowest.score} to ${highest} points by occupation`;
 }
 
 function roundSentence(round: Round, asAt: boolean): string {
   const { date, section } = round;
   const total = formatNumber(round189Total(section));
-  const across = `across ${occupationsText(section.occupations.length)}, ${spreadClause(section)}.`;
+  // "; " joins whole clauses, so a meta description can stop at it.
+  const across = `across ${occupationsText(section.occupations.length)}; ${spreadClause(section)}.`;
   return asAt
     ? `Home Affairs invited ${total} EOIs for the 189 visa on ${longDayText(date)}, ${across}`
     : `On ${longDayText(date)}, Home Affairs invited ${total} EOIs for the 189 visa, ${across}`;

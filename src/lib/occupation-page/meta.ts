@@ -97,22 +97,27 @@ export function datasetName(core: OccupationCore): string {
   return `${core.name} (${core.code}): 189, 190 and 491 EOIs and cut-offs, ${formatMonth(core.asAt)}`;
 }
 
-/**
- * The meta description: the summary's whole sentences (120–160 characters),
- * topped up with fixed sentences that are true of every occupation page.
- */
-export function pageDescription(
-  core: OccupationCore,
-  summary: string[],
-): string {
+/** Fixed sentences that are true of every occupation page, in fill order. */
+export function descriptionExtras(core: OccupationCore): string[] {
   const asAt = formatDate(monthEnd(core.asAt));
-  return wholeSentences(summary, [
+  return [
     `ANZSCO ${core.code}, from SkillSelect data as at ${asAt}.`,
     has189Rounds(core)
       ? "See EOIs by points, recent 189 rounds and state evidence."
       : "See EOIs by points and the state nomination evidence.",
     "Check your own points free.",
-  ]);
+  ];
+}
+
+/**
+ * The meta description: the summary's whole sentences (120–160 characters),
+ * topped up with `descriptionExtras`.
+ */
+export function pageDescription(
+  core: OccupationCore,
+  summary: string[],
+): string {
+  return wholeSentences(summary, descriptionExtras(core));
 }
 
 /** What an occupation's Dataset measures (docs/DATA.md). */
