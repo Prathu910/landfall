@@ -252,6 +252,19 @@ Deno.test("no-data occupation is refused", async () => {
   equal(w.emails.length + stale.emails.length + broken.emails.length, 0);
 });
 
+Deno.test("half-year experience from the check is accepted", async () => {
+  const w = world();
+  const profile = { ...PROFILE, overseasYears: 2.5, australianYears: 1.5 };
+  const { status, body } = await order(w, { ...ORDER, profile });
+  equal(status, 200);
+  equal(body.kind, "code-sent");
+  const odd = await order(world(), {
+    ...ORDER,
+    profile: { ...PROFILE, overseasYears: 2.3 },
+  });
+  equal(odd.body, { kind: "error", code: "invalid" });
+});
+
 Deno.test("an invalid request or profile is invalid", async () => {
   const w = world();
   equal((await order(w, { ...ORDER, consent: false })).status, 400);

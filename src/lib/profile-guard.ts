@@ -40,6 +40,19 @@ function isYears(v: unknown, max: number): boolean {
   );
 }
 
+/** A multiple of 0.5 from 0 to max: what the check's experience fields produce. */
+const isHalfYears = (v: unknown, max: number): boolean =>
+  typeof v === "number" && v >= 0 && v <= max && Number.isInteger(v * 2);
+
+/**
+ * The check's experience answer: 0 to 10 completed years, rounded down to a
+ * half year so a typed 2.8 never counts as 3 and the server accepts it.
+ */
+export function toExperienceYears(value: unknown): number {
+  const n = Math.min(10, Math.max(0, Number(value) || 0));
+  return Math.floor(n * 2) / 2;
+}
+
 const stateOrNone = (v: unknown): boolean =>
   v === "none" || (typeof v === "string" && STATES.includes(v));
 
@@ -64,7 +77,7 @@ function requiredOk(key: string, base: unknown, value: unknown): boolean {
   if (key === "name") return (value as string).length <= 60;
   if (key === "state") return value === "" || STATES.includes(value as string);
   if (key === "overseasYears" || key === "australianYears")
-    return isInt(value, 50);
+    return isHalfYears(value, 50);
   return true;
 }
 

@@ -5114,6 +5114,7 @@ var isInt = (v, max) => typeof v === "number" && Number.isInteger(v) && v >= 0 &
 function isYears(v, max) {
   return typeof v === "number" && v >= 0 && v <= max && Math.abs(v * 10 - Math.round(v * 10)) < 1e-9;
 }
+var isHalfYears = (v, max) => typeof v === "number" && v >= 0 && v <= max && Number.isInteger(v * 2);
 var stateOrNone = (v) => v === "none" || typeof v === "string" && STATES2.includes(v);
 var OPTIONAL = {
   monthsLivingInState: (v) => isInt(v, 600),
@@ -5135,7 +5136,7 @@ function requiredOk(key, base, value) {
   if (key === "name") return value.length <= 60;
   if (key === "state") return value === "" || STATES2.includes(value);
   if (key === "overseasYears" || key === "australianYears")
-    return isInt(value, 50);
+    return isHalfYears(value, 50);
   return true;
 }
 function parseProfile(value) {
