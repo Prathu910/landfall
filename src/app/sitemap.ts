@@ -6,6 +6,8 @@ import { LEGAL_SLUGS, LEGAL_UPDATED } from "../lib/legal/copy";
 import type { OccupationCore } from "../lib/data/types";
 import { sitemapEntries } from "../lib/occupation-page/meta";
 import { SITE_URL } from "../lib/site";
+import { loadStatePageViews } from "../lib/state-page/load-server";
+import { stateSitemapEntries } from "../lib/state-page/meta";
 import { listRecapMonths, loadRecap } from "../lib/updates/load-server";
 import { updatesSitemapEntries } from "../lib/updates/sitemap";
 
@@ -22,6 +24,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       loadManifest().checkedAt,
       GUIDE_CHECKED_AT,
     ),
+    ...stateSitemapEntries(loadStatePageViews()),
     ...updatesSitemapEntries(listRecapMonths().map((m) => loadRecap(m))),
     // The legal pages are dated by their last revision, not the data.
     ...LEGAL_SLUGS.map((slug) => ({

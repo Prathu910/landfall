@@ -1,0 +1,23 @@
+/* Shared layouts of the state page's bands. */
+.stack {
+  display: grid;
+  gap: calc(var(--brand-unit) * 6);
+  margin-top: calc(var(--brand-unit) * 7);
+}
+.pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: calc(var(--brand-unit) * 6);
+  align-items: start;
+  margin-top: calc(var(--brand-unit) * 7);
+}
+.note {
+  max-width: 47.5rem;
+  margin-top: calc(var(--brand-unit) * 4);
+  font-size: 0.9375rem;
+}
+@media screen and (max-width: 900px) {
+  .pair {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

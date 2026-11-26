@@ -113,6 +113,17 @@ describe("datasetLd", () => {
       distribution: [{ "@type": "DataDownload", contentUrl: `${SITE}/d.json` }],
     });
   });
+  it("covers a state as an area within Australia when given one", () => {
+    expect(
+      datasetLd({ ...dataset, spatialCoverage: "Tasmania" }),
+    ).toMatchObject({
+      spatialCoverage: {
+        "@type": "AdministrativeArea",
+        name: "Tasmania",
+        containedInPlace: { "@type": "Country", name: "Australia" },
+      },
+    });
+  });
 });
 
 describe("articleLd", () => {

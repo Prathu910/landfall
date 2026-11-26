@@ -100,6 +100,28 @@ describe("buildStateSection", () => {
   });
 });
 
+describe("buildStateSection on a state page", () => {
+  it("links each tile to its state page and marks the current state", () => {
+    const view = buildStateSection("190", oct.data!, oct.month, link, {
+      stateHref: (state) => `/states/${state.toLowerCase()}/`,
+      current: "TAS",
+      heading: "EOIs holding a 190 invitation, by state, 31 Oct 2026",
+    });
+    expect(view.heading).toBe(
+      "EOIs holding a 190 invitation, by state, 31 Oct 2026",
+    );
+    expect(view.tiles.map((t) => t.href)).toContain("/states/tas/");
+    expect(view.tiles.filter((t) => t.current).map((t) => t.state)).toEqual([
+      "TAS",
+    ]);
+  });
+
+  it("links nothing for a caller that gives no state pages", () => {
+    const view = buildStateSection("190", oct.data!, oct.month, link);
+    expect(view.tiles.every((t) => t.href === null && !t.current)).toBe(true);
+  });
+});
+
 describe("stateLeader", () => {
   it("claims the most only above every other state's range", () => {
     expect(stateLeader(oct.data!.states["190"])).toEqual({

@@ -19,6 +19,8 @@ const LIVE_INVARIANT_TESTS = new Set([
   "src/lib/outlook/sweep-80.test.ts",
   "src/lib/outlook/sweep-90.test.ts",
   "src/lib/report-evidence.test.ts",
+  "src/lib/state-page/copy-sweep.test.ts",
+  "src/lib/state-page/live.test.ts",
 ]);
 
 const LIVE_LOADER_NAMES =
@@ -29,6 +31,7 @@ const LIVE_IMPORTS = [
   /from\s+["'][^"']*data\/manifest\.json["']/,
   /["']src\/data\/manifest\.json["']/,
   /\bloadAllCores\b/,
+  /\bloadStatePageViews\b/,
 ];
 
 const ROOT = process.cwd();

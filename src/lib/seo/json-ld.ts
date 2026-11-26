@@ -189,7 +189,20 @@ export type DatasetInput = {
   identifier?: string;
   /** Our processed JSON for this dataset, described honestly. */
   distribution?: { contentUrl: string; description: string };
+  /** A state or territory, when the dataset covers one; Australia otherwise. */
+  spatialCoverage?: string;
 };
+
+const AUSTRALIA = { "@type": "Country", name: "Australia" };
+
+function spatialCoverage(area: string | undefined): object {
+  if (!area) return { "@type": "Place", name: "Australia" };
+  return {
+    "@type": "AdministrativeArea",
+    name: area,
+    containedInPlace: AUSTRALIA,
+  };
+}
 
 /** Published SkillSelect figures: created by Home Affairs, reused under CC BY 3.0 AU. */
 export function datasetLd(page: DatasetInput): object {
@@ -202,7 +215,7 @@ export function datasetLd(page: DatasetInput): object {
     ...(page.identifier ? { identifier: page.identifier } : {}),
     version: page.version,
     temporalCoverage: page.temporalCoverage,
-    spatialCoverage: { "@type": "Place", name: "Australia" },
+    spatialCoverage: spatialCoverage(page.spatialCoverage),
     variableMeasured: page.variableMeasured,
     isAccessibleForFree: true,
     license: SKILLSELECT_LICENSE,

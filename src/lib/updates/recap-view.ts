@@ -1,4 +1,5 @@
 import type { MonthKey, StateVisa } from "../data/types";
+import { statePath } from "../state-page/slug";
 import type { FaqEntry } from "../seo/json-ld";
 import { buildCompareView, type CompareView } from "./compare-view";
 import {
@@ -114,8 +115,12 @@ export function buildRecapView(
     notListed: buildNotListedView(facts, link),
     states: data
       ? {
-          "190": buildStateSection("190", data, facts.month, link),
-          "491": buildStateSection("491", data, facts.month, link),
+          "190": buildStateSection("190", data, facts.month, link, {
+            stateHref: statePath,
+          }),
+          "491": buildStateSection("491", data, facts.month, link, {
+            stateHref: statePath,
+          }),
         }
       : null,
     movers: data

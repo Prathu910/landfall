@@ -1,4 +1,5 @@
 import { calendarMonths } from "../data/months";
+import { NOMINATION_POINTS } from "../migration";
 import { poolPosition } from "../data/pool-position";
 import { stateEvidence } from "../data/state-evidence";
 import type {
@@ -95,7 +96,7 @@ export function buildHomeAtlas(
   /** The federal list's 189 flag; null when the list can't be read. */
   listed189: boolean | null = null,
 ): HomeAtlasView {
-  const nominationPoints = visa === "190" ? 5 : visa === "491" ? 15 : 0;
+  const nominationPoints = visa === "189" ? 0 : NOMINATION_POINTS[visa];
   const totalPoints = basePoints + nominationPoints;
   const common = {
     basePoints,
