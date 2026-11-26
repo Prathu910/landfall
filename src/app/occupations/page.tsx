@@ -7,6 +7,7 @@ import { LargestPools } from "@/components/occupation/largest-pools";
 import { occupationPath } from "@/lib/occupation-page/slug";
 import { loadManifest, loadOccupationCore } from "@/lib/data/load-server";
 import {
+  currentEntries,
   directoryAnswer,
   largest189Pools,
 } from "@/lib/occupation-page/directory";
@@ -24,8 +25,12 @@ const ITEMS = [...occupationIndex]
   .sort((a, b) => a.name.localeCompare(b.name))
   .map((e) => ({ ...e, path: occupationPath(e) }));
 
+// Counts and rankings read only the occupations still in the snapshot.
+const CURRENT = currentEntries(ITEMS);
+const PUBLISHED = CURRENT.filter((item) => item.hasData);
+
 const PAGE = occupationsPage(
-  ITEMS.filter((item) => item.hasData).length,
+  PUBLISHED.length,
   formatDate(monthEnd(loadManifest().asAt)),
 );
 
@@ -36,19 +41,20 @@ export const metadata: Metadata = sitePageMetadata(
 
 export default function OccupationsPage() {
   const manifest = loadManifest();
-  const published = ITEMS.filter((item) => item.hasData).length;
+  const published = PUBLISHED.length;
   const round = loadLatestRound();
   const answer = directoryAnswer({
-    total: ITEMS.length,
+    total: CURRENT.length,
     withData: published,
     asAt: monthEnd(manifest.asAt),
     round,
   });
   const pools = largest189Pools(
-    ITEMS.filter((item) => item.hasData).flatMap((item) => {
+    PUBLISHED.flatMap((item) => {
       const core = loadOccupationCore(item.code);
       return core ? [{ core, path: item.path }] : [];
     }),
+    manifest.asAt,
   );
   return (
     <main id="main" className={styles.page}>

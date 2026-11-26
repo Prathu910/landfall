@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { frozenCore } from "../data/__fixtures__/frozen-2026-10";
-import { directoryAnswer, largest189Pools } from "./directory";
+import { currentEntries, directoryAnswer, largest189Pools } from "./directory";
 
 const nurse = frozenCore("254499")!;
 const software = frozenCore("261313")!;
@@ -20,14 +20,36 @@ describe("largest189Pools", () => {
     },
   ];
   it("ranks exact 189 pools, largest first, and never ranks a masked total", () => {
-    const pools = largest189Pools(entries);
+    const pools = largest189Pools(entries, nurse.asAt);
     expect(pools.map((p) => p.code)).toEqual(["261313", "254499"]);
     expect(pools[0].pool).toBe(9464);
   });
   it("gives the latest cut-off in the last four rounds, or null when not listed in them", () => {
-    const [software189, nurse189] = largest189Pools(entries);
+    const [software189, nurse189] = largest189Pools(entries, nurse.asAt);
     expect(software189.latest).toBeNull();
     expect(nurse189.latest).toEqual({ date: "2026-10-15", cutoff: 70 });
+  });
+});
+
+describe("dropped occupations (docs/DATA.md)", () => {
+  it("never ranks a core from another month", () => {
+    const stale = { ...software, asAt: "2026-09" as const };
+    const pools = largest189Pools(
+      [
+        { core: stale, path: "/s/" },
+        { core: nurse, path: "/n/" },
+      ],
+      nurse.asAt,
+    );
+    expect(pools.map((p) => p.code)).toEqual(["254499"]);
+  });
+  it("keeps only index entries without lastAsAt", () => {
+    const index = [
+      { code: "1", lastAsAt: undefined },
+      { code: "2", lastAsAt: "2026-09" as const },
+      { code: "3" },
+    ];
+    expect(currentEntries(index).map((e) => e.code)).toEqual(["1", "3"]);
   });
 });
 

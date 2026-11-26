@@ -1,4 +1,8 @@
-import type { OccupationCore } from "../data/types";
+import type {
+  MonthKey,
+  OccupationCore,
+  OccupationIndexEntry,
+} from "../data/types";
 import { formatDate } from "../migration";
 import { summarise189Rounds } from "../report/round-status";
 import { formatNumber } from "../updates/format";
@@ -18,13 +22,29 @@ export type LargePool = {
   latest: { date: string; cutoff: number } | null;
 };
 
-/** The `count` largest exact 189 pools, largest first (ties A to Z). */
+/**
+ * Index entries still in the snapshot: an entry with `lastAsAt` was
+ * dropped and is carried forward, so sums, rankings and counts skip it
+ * (docs/DATA.md, "Dropped occupations").
+ */
+export function currentEntries<
+  T extends Pick<OccupationIndexEntry, "lastAsAt">,
+>(index: readonly T[]): T[] {
+  return index.filter((entry) => entry.lastAsAt === undefined);
+}
+
+/**
+ * The `count` largest exact 189 pools in the `asAt` snapshot, largest
+ * first (ties A to Z). A core from another month never ranks.
+ */
 export function largest189Pools(
   cores: { core: OccupationCore; path: string }[],
+  asAt: MonthKey,
   count = 20,
 ): LargePool[] {
   return cores
     .flatMap(({ core, path }) => {
+      if (core.asAt !== asAt) return [];
       const total = core.pool["189"]?.total;
       if (!total || total === "<20") return [];
       const listed = summarise189Rounds(core.rounds189).latestCutoffInLastFour;
