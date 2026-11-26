@@ -166,6 +166,7 @@ describe("sitemapEntries", () => {
     expect(urls).toContain(`${SITE_URL}/occupations/`);
     expect(urls).toContain(`${SITE_URL}/check/`);
     expect(urls).toContain(`${SITE_URL}/about/`);
+    expect(urls).toContain(`${SITE_URL}/occupations/189-cut-offs/`);
     expect(urls).toContain(SITE_URL + occupationPath(core));
     expect(urls).not.toContain(SITE_URL + occupationPath(maskedCore));
   });

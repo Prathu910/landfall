@@ -41,6 +41,11 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
     "## Data",
     "",
     link(
+      "189 cut-offs by occupation",
+      "/occupations/189-cut-offs/",
+      "every occupation listed in the last four 189 rounds, with its cut-off and tie-break date",
+    ),
+    link(
       "Occupations",
       "/occupations/",
       `${input.occupationCount} skilled occupations with 189, 190 and 491 EOI pools by points, recent 189 cut-offs and state evidence`,

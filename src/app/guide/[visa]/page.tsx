@@ -209,9 +209,18 @@ export default async function VisaGuidePage({ params }: Props) {
           <p className={page.sectionIntro}>
             Pick your occupation to see its published {visa} evidence on its
             occupation page, or browse{" "}
-            <Link href="/occupations/">every occupation</Link>. The{" "}
-            <Link href="/guide/points-table/">points table</Link> lists every
-            factor and its points.
+            <Link href="/occupations/">every occupation</Link>
+            {visa === "189" && (
+              <>
+                {" "}
+                or{" "}
+                <Link href="/occupations/189-cut-offs/">
+                  the 189 cut-offs for every occupation
+                </Link>
+              </>
+            )}
+            . The <Link href="/guide/points-table/">points table</Link> lists
+            every factor and its points.
           </p>
           <div className={page.panel}>
             <LazyQuickCheck

@@ -27,6 +27,7 @@ const STATIC_PAGES = [
   "/methodology/",
   "/about/",
   "/occupations/",
+  "/occupations/189-cut-offs/",
   "/feedback/",
 ];
 

@@ -24,3 +24,13 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+.hubLink {
+  margin-top: calc(var(--brand-unit) * 4);
+  color: var(--brand-muted);
+  font-size: 0.9375rem;
+}
+@media print {
+  .hubLink {
+    display: none;
+  }
+}

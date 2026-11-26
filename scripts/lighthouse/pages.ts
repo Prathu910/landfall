@@ -29,6 +29,7 @@ export const AUDIT_PAGES: readonly AuditPage[] = [
   { path: "/guide/491/", gated: ALL },
   { path: "/guide/points-table/", gated: ALL },
   { path: "/occupations/", gated: ALL },
+  { path: "/occupations/189-cut-offs/", gated: ALL },
   { path: "/occupations/registered-nurses-nec-254499/", gated: ALL },
   { path: "/occupations/software-engineer-261313/", gated: ALL },
   { path: "/occupations/cook-351411/", gated: ALL },
