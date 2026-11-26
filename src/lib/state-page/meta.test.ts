@@ -3,6 +3,7 @@ import { TITLE_MAX } from "../seo/title";
 import { frozenStateViews, frozenView } from "./__fixtures__/frozen-views";
 import {
   isStateIndexable,
+  STATE_PAGES_PUBLISHED_AT,
   stateDescription,
   stateJsonLd,
   stateSitemapEntries,
@@ -48,6 +49,8 @@ describe("state page metadata (frozen 2026-10)", () => {
       containedInPlace: { "@type": "Country", name: "Australia" },
     });
     expect(ld[2].temporalCoverage).toBe("2025-11/2026-10");
+    expect(ld[3].datePublished).toBe(STATE_PAGES_PUBLISHED_AT);
+    expect(String(ld[3].dateModified) >= STATE_PAGES_PUBLISHED_AT).toBe(true);
   });
 
   it("indexes every state with a published count, and none without", () => {

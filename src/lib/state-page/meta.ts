@@ -6,6 +6,12 @@ import { SITE_URL } from "../site";
 import { STATE_VISAS } from "./program";
 import type { StatePageView } from "./view";
 
+/**
+ * The day the state pages were first published (Article `datePublished`),
+ * the same day as the points table and the glossary.
+ */
+export const STATE_PAGES_PUBLISHED_AT = "2026-11-26";
+
 /** The full `<title>` within 60 characters; routes set it as `title.absolute`. */
 export function stateTitle(view: StatePageView): string {
   const { searchName } = view.page;
@@ -39,10 +45,14 @@ export function isStateIndexable(view: StatePageView): boolean {
   });
 }
 
-/** The sitemap and Article date: the newest of the data, round page and rules checks. */
+/**
+ * The sitemap and Article date: the newest of the data, round page and
+ * rules checks, never before the pages were first published.
+ */
 export function stateModified(view: StatePageView): string {
   const { manifest, rulesCheckedAt } = view.facts;
   return [
+    STATE_PAGES_PUBLISHED_AT,
     manifest.checkedAt,
     manifest.roundsCheckedAt ?? manifest.checkedAt,
     rulesCheckedAt,
@@ -88,6 +98,7 @@ export function stateJsonLd(view: StatePageView): object[] {
       headline: view.hero.h1,
       description,
       url,
+      datePublished: STATE_PAGES_PUBLISHED_AT,
       dateModified: stateModified(view),
       citations: [
         facts.manifest.sources.dashboard,
