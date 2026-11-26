@@ -20,7 +20,7 @@ export function stateTitle(view: StatePageView): string {
 /** The direct answer's whole sentences, topped up with true fixed ones. */
 export function stateDescription(view: StatePageView): string {
   return wholeSentences(view.hero.answer, [
-    `Month-end SkillSelect data by points and occupation, with ${view.page.searchName}'s 2026–27 rules.`,
+    `Month-end SkillSelect data by points and occupation, with ${view.page.searchName}'s ${view.facts.programYear} rules.`,
     "Check your own points free.",
   ]);
 }

@@ -1,3 +1,4 @@
+import { PASS_MARK } from "../../data/guide/points-table";
 import { parseCountText, sumIntervals } from "../data/published-count";
 import { poolPosition } from "../data/pool-position";
 import type {
@@ -137,7 +138,7 @@ function pointsNeeded(core: OccupationCore): Faq {
       : `189 hasn't listed ${core.name} in any round we can read.`;
   return {
     question: `How many points do I need for ${core.name}?`,
-    answer: `At least 65 points to be invited, the pass mark for the 189, 190 and 491. ${history} ${HISTORY_NOTE}`,
+    answer: `At least ${PASS_MARK} points to be invited, the pass mark for the 189, 190 and 491. ${history} ${HISTORY_NOTE}`,
   };
 }
 

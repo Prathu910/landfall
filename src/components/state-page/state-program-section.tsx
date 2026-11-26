@@ -7,7 +7,7 @@ import styles from "./state-program-section.module.css";
 
 const HEADING_ID = "program-heading";
 
-/** The 2026–27 program: the states page's card, each stream, how it selects. */
+/** The program year's rules: the states page's card, each stream, how it selects. */
 export function StateProgramSection({
   tone,
   title,
@@ -21,7 +21,7 @@ export function StateProgramSection({
     <RecapBand id="program" tone={tone} labelledBy={HEADING_ID}>
       <SectionHead
         headingId={HEADING_ID}
-        kicker="2026–27 rules"
+        kicker={program.kicker}
         title={title}
         lead="State rules are separate from federal points. Each line below is read by hand from the state's official pages and dated."
       />

@@ -1,3 +1,4 @@
+import { PASS_MARK } from "../../data/guide/points-table";
 import type { StateCode, StateVisa } from "../data/types";
 import { formatDate, NOMINATION_POINTS } from "../migration";
 import type { FaqEntry } from "../seo/json-ld";
@@ -8,7 +9,6 @@ import type { StateFacts } from "./facts";
 import { nominationText } from "./nominations";
 import type { SelectionLine } from "./program";
 
-const PASS_MARK = 65;
 const TOP_IN_ANSWER = 3;
 
 /** States whose own ranking system gets its own question (spec 10). */
@@ -51,7 +51,7 @@ function pointsFaq(facts: StateFacts, visa: StateVisa): FaqEntry {
 
 function openFaq(facts: StateFacts): FaqEntry {
   const { searchName } = facts.page;
-  const year = "2026–27";
+  const year = facts.programYear;
   const parts = facts.card.visas.map(({ visa, lines }) => {
     if (lines[0]?.status === "checking") {
       return `${visa}: rules being checked; we haven't confirmed ${searchName}'s ${year} ${visa} status on the official page yet`;
@@ -94,7 +94,7 @@ function occupationsFaq(facts: StateFacts, visa: StateVisa): FaqEntry | null {
   if (named.length === 0) return null;
   const count = top.withPublished;
   const listLine = list
-    ? ` ${searchName}'s 2026–27 list has ${list.count} occupations for ${visa} (imported ${formatDate(list.checkedAt)}).`
+    ? ` ${searchName}'s ${facts.programYear} list has ${list.count} occupations for ${visa} (imported ${formatDate(list.checkedAt)}).`
     : "";
   return {
     question: `Which occupations hold ${searchName} ${visa} invitations?`,

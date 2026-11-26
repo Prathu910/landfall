@@ -1,3 +1,4 @@
+import { PASS_MARK } from "../../data/guide/points-table";
 import { addIntervals, parseCountText } from "../data/published-count";
 import type {
   Interval,
@@ -10,8 +11,6 @@ import type { PoolView } from "../updates/data-view";
 import { dayText, intervalText, monthEnd } from "../updates/format";
 
 export type ScoreSum = { score: number; count: Interval };
-
-const PASS_MARK = 65;
 
 /** The state's INVITED counts at each score in one month, summed over occupations; ascending. */
 export function stateScoreSums(

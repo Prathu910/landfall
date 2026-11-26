@@ -26,6 +26,7 @@ import { stateScoreView } from "./scores";
 import type { PoolView } from "../updates/data-view";
 import { statePath, type StatePage } from "./slug";
 import { SERIES_MONTHS } from "./series";
+import { method, sectionTitles } from "./view-text";
 
 export type StateViewInput = StatePageInput & {
   /** Codes with an occupation page; others stay unlinked. */
@@ -87,6 +88,8 @@ export type StatePageView = {
   scores: PoolView[];
   occupations: OccupationTableView[];
   program: {
+    /** "2026–27 rules". */
+    kicker: string;
     card: StateCard;
     streams: StreamTableView[];
     selection: SelectionView[];
@@ -188,55 +191,6 @@ function selectionViews(facts: StateFacts): SelectionView[] {
   }));
 }
 
-function method(
-  facts: StateFacts,
-  recapMonths: readonly MonthKey[],
-): StatePageView["method"] {
-  const recap = recapMonths.includes(facts.asAt)
-    ? {
-        text: `${formatMonth(facts.asAt)} monthly update`,
-        href: `/updates/${facts.asAt}/`,
-      }
-    : { text: "Monthly updates", href: "/updates/" };
-  return {
-    notes: [
-      "Month-end stock, not new invitations: an EOI stays in the count from the day it is invited until it lodges a visa application or the invitation lapses, so the months overlap and are never added together.",
-      'SkillSelect hides every count under 20 for an occupation and score. Hidden counts are drawn hatched and may be zero; each figure here is a lower bound ("at least"), plus the hidden range.',
-      "Counts are EOIs, not individuals. One EOI can name several states, so states are never added to each other, and EOIs whose state is not recorded are never added to a state.",
-      "Home Affairs' nominations table is a different measure, for the program year to date; it is shown beside the SkillSelect data and never reconciled with it.",
-      'State rules are read by hand from official pages and dated. "Rules being checked" means our check has not yet confirmed a rule on the official page.',
-    ],
-    links: [
-      { text: "How to read the pool", href: "/methodology/#pool" },
-      { text: "Sources and limits", href: "/methodology/#sources" },
-      recap,
-      { text: "190 guide", href: "/guide/190/" },
-      { text: "491 guide", href: "/guide/491/" },
-      { text: "Glossary: EOI", href: "/guide/glossary/#eoi" },
-      { text: "Glossary: “<20”", href: "/guide/glossary/#masked-count" },
-      { text: "Glossary: invited", href: "/guide/glossary/#invited" },
-    ],
-  };
-}
-
-function sectionTitles(name: string, withA: string): StatePageView["titles"] {
-  return {
-    glance: `${name} 190 and 491 in numbers`,
-    months: `EOIs holding ${name} invitations, month by month`,
-    points: {
-      title: `Points of EOIs holding ${name} invitations`,
-      lead: `The scores of EOIs holding ${withA} 190 or 491 invitation on the last day of the data month. The federal pass mark is 65; scores include the nomination points.`,
-    },
-    occupations: {
-      title: `Which occupations hold ${name} invitations?`,
-      lead: `Occupations with a published count (20 or more at some score) of EOIs holding ${withA} invitation in the last 12 months, highest first. A count shows which EOIs held an invitation, not which will get one.`,
-      listLink: `Is your occupation on ${name}'s list? Open its occupation page`,
-    },
-    program: `${name}'s 2026–27 program`,
-    faq: `${name} 190 and 491 questions`,
-  };
-}
-
 export function buildStatePageView(input: StateViewInput): StatePageView {
   const facts = buildStateFacts(input);
   const { page, asAt, manifest } = facts;
@@ -297,17 +251,18 @@ export function buildStatePageView(input: StateViewInput): StatePageView {
     ),
     occupations: STATE_VISAS.map((visa) => occupationTable(facts, visa, link)),
     program: {
+      kicker: `${facts.programYear} rules`,
       card: facts.card,
       streams: STATE_VISAS.map((visa) => ({
         visa,
-        caption: `${page.searchName} ${visa} streams, ${input.ruleData.rules.programYear.replace("-", "–")}`,
+        caption: `${page.searchName} ${visa} streams, ${facts.programYear}`,
         rows: facts.streams.filter((row) => row.visa === visa),
       })).filter((table) => table.rows.length > 0),
       selection: selectionViews(facts),
     },
     report: {
       heading: `Where would ${page.searchName} put your points?`,
-      text: `The free check gives your points and three visa stamps, 189, 190 and 491, with no email or account. The full personal report then checks your answers against ${page.searchName}'s 2026–27 rules and this invitation data, beside the other seven states and territories. It is a one-off purchase, free for founding readers while places last, with a 7-day no-questions refund.`,
+      text: `The free check gives your points and three visa stamps, 189, 190 and 491, with no email or account. The full personal report then checks your answers against ${page.searchName}'s ${facts.programYear} rules and this invitation data, beside the other seven states and territories. It is a one-off purchase, free for founding readers while places last, with a 7-day no-questions refund.`,
     },
     compare: STATE_VISAS.map((visa) =>
       buildStateSection(
@@ -322,7 +277,7 @@ export function buildStatePageView(input: StateViewInput): StatePageView {
         },
       ),
     ),
-    titles: sectionTitles(page.searchName, a),
+    titles: sectionTitles(page.searchName, a, facts.programYear),
     faq: stateFaq(facts),
     method: method(facts, input.recapMonths),
   };

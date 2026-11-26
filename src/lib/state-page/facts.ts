@@ -66,6 +66,8 @@ export type StateFacts = {
   streams: StreamRow[];
   selection: SelectionLine[];
   rulesCheckedAt: string;
+  /** The rule data's program year as printed: "2026–27". */
+  programYear: string;
 };
 
 function visaFacts(input: StatePageInput, visa: StateVisa): StateVisaFacts {
@@ -105,5 +107,6 @@ export function buildStateFacts(input: StatePageInput): StateFacts {
     streams: streamRows(ruleData, state),
     selection: selectionLines(ruleData, state),
     rulesCheckedAt: rulesCheckedAt(ruleData, state),
+    programYear: ruleData.rules.programYear.replace("-", "–"),
   };
 }
