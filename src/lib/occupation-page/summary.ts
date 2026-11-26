@@ -160,9 +160,9 @@ export function listed189Codes(federal: FederalList | null): string[] | null {
 }
 
 /**
- * The opening answer: a dated 189 sentence with the code, the pool, the
- * 190 and 491 states (when `rows` are given) and, with detail, what
- * happened to EOIs like these.
+ * The opening answer: a 189 sentence dated by its rounds, with the code;
+ * the pool as at the snapshot; the 190 and 491 states (when `rows` are
+ * given) and, with detail, what happened to EOIs like these.
  */
 export function occupationSummary(
   core: OccupationCore,
@@ -177,7 +177,7 @@ export function occupationSummary(
   const sentences: (string | null)[] = core.pool["189"]
     ? [
         dated189Sentence(core),
-        poolSentence(name, core),
+        datedLead(core, poolSentence(name, core)),
         states,
         likeTheseSentence(name, core, detail),
       ]

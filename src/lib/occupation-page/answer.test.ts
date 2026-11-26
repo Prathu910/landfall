@@ -14,14 +14,14 @@ const software = frozenCore("261313")!;
 const rows = stateRows("254499", nurse, stateRuleData);
 
 describe("dated189Sentence", () => {
-  it("leads with the as-at date and code, then the latest listed round", () => {
+  it("dates the latest listed round by its own date, with the code", () => {
     expect(dated189Sentence(nurse)).toBe(
-      "As at 31 Oct 2026, the latest 189 round to list Registered Nurses nec (ANZSCO 254499) was on 15 Oct 2026, with a cut-off of 70 points; each of its last four rounds listed it, at 70–80 points.",
+      "The latest 189 round to list Registered Nurses nec (ANZSCO 254499), on 15 Oct 2026, had a cut-off of 70 points; each of its last four rounds listed it, at 70–80 points.",
     );
   });
   it("says when it was last listed, if not in the last four rounds", () => {
     expect(dated189Sentence(software)).toBe(
-      "As at 31 Oct 2026, 189 hasn't listed Software Engineer (ANZSCO 261313) in its last four rounds; it was last listed on 7 Nov 2024, at 95 points.",
+      "189 hasn't listed Software Engineer (ANZSCO 261313) in its last four rounds, up to 15 Oct 2026; it was last listed on 7 Nov 2024, at 95 points.",
     );
   });
   it("counts the listed rounds when the occupation is only occasionally listed", () => {
@@ -29,8 +29,26 @@ describe("dated189Sentence", () => {
       /; 189 listed it in 2 of its last four rounds, at /,
     );
     expect(dated189Sentence(neverListedCore)).toMatch(
-      /hasn't listed .+ in any round we can read\.$/,
+      /hasn't listed .+ in any round we can read, up to \d{1,2} \w{3} \d{4}\.$/,
     );
+  });
+  it("never puts the snapshot's as-at date in front of a newer round (R9)", () => {
+    // The round job adds a round before that month's pool data arrives.
+    const withNewRound = {
+      ...nurse,
+      rounds189: [{ date: "2026-11-12", cutoff: 75 }, ...nurse.rounds189],
+    };
+    const text = dated189Sentence(withNewRound);
+    expect(text).toMatch(
+      /^The latest 189 round to list Registered Nurses nec \(ANZSCO 254499\), on 12 Nov 2026, had a cut-off of 75 points; /,
+    );
+    expect(text).not.toMatch(/As at/);
+    const skipped = {
+      ...software,
+      rounds189: [{ date: "2026-11-12", cutoff: null }, ...software.rounds189],
+    };
+    expect(dated189Sentence(skipped)).toMatch(/, up to 12 Nov 2026; /);
+    expect(dated189Sentence(skipped)).not.toMatch(/As at/);
   });
 });
 

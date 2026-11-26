@@ -34,17 +34,23 @@ function cutoffSpan(cutoffs: number[]): string {
   return lo === hi ? `${lo}` : `${lo}–${hi}`;
 }
 
-/** The dated 189 sentence that opens the page when the occupation has a 189 pool. */
+/**
+ * The 189 sentence that opens the page when the occupation has a 189 pool,
+ * dated by its rounds (R9). The round job adds a round before that month's
+ * pool data, so the sentence never puts the snapshot's "As at" in front of
+ * a newer round's date.
+ */
 export function dated189Sentence(core: OccupationCore): string {
   const summary = summarise189Rounds(core.rounds189);
-  const lead = `As at ${asAtDay(core)}`;
+  const newest = core.rounds189[0]?.date;
   const span =
     summary.roundsConsidered === 4 ? "four" : `${summary.roundsConsidered}`;
   const last = summary.latestCutoff;
   if (summary.status === "none" || !last) {
+    const upTo = newest ? `, up to ${formatDate(newest)}` : "";
     return last
-      ? `${lead}, 189 hasn't listed ${withCode(core)} in its last ${span} rounds; it was last listed on ${formatDate(last.date)}, at ${last.cutoff} points.`
-      : `${lead}, 189 hasn't listed ${withCode(core)} in any round we can read.`;
+      ? `189 hasn't listed ${withCode(core)} in its last ${span} rounds${upTo}; it was last listed on ${formatDate(last.date)}, at ${last.cutoff} points.`
+      : `189 hasn't listed ${withCode(core)} in any round we can read${upTo}.`;
   }
   const listed = core.rounds189
     .slice(0, 4)
@@ -53,14 +59,17 @@ export function dated189Sentence(core: OccupationCore): string {
     summary.status === "regular"
       ? `each of its last ${span} rounds listed it, at ${cutoffSpan(listed)} points`
       : `189 listed it in ${summary.listedInLastFour} of its last ${span} rounds, at ${cutoffSpan(listed)} points`;
-  return `${lead}, the latest 189 round to list ${withCode(core)} was on ${formatDate(last.date)}, with a cut-off of ${last.cutoff} points; ${history}.`;
+  return `The latest 189 round to list ${withCode(core)}, on ${formatDate(last.date)}, had a cut-off of ${last.cutoff} points; ${history}.`;
 }
 
-/** Puts the as-at date and code in front of the pool sentence that leads a page with no 189 pool. */
+/**
+ * Puts the snapshot's as-at date in front of a pool sentence, and the code
+ * after the name when the sentence names the occupation.
+ */
 export function datedLead(core: OccupationCore, poolLead: string): string {
   const named = poolLead.replace(core.name, withCode(core));
-  const opening = named.startsWith("No ")
-    ? `no ${named.slice("No ".length)}`
+  const opening = /^(No|The) /.test(named)
+    ? named[0].toLowerCase() + named.slice(1)
     : named;
   return `As at ${asAtDay(core)}, ${opening}`;
 }
