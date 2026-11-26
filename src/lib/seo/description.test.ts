@@ -20,6 +20,17 @@ describe("wholeSentences", () => {
       ),
     ).toBe("The pool holds 4,280 EOIs.");
   });
+  it("keeps an uncut sentence whole or drops it, never one of its clauses", () => {
+    const list =
+      "For 2026–27, NSW lists it for 190; QLD, WA and SA list it for 491.";
+    expect(
+      wholeSentences(["One.", list], ["An extra."], {
+        min: 0,
+        max: 50,
+        uncut: (s) => s === list,
+      }),
+    ).toBe("One.");
+  });
   it("never cuts at a comma: a sentence that doesn't fit is dropped", () => {
     expect(
       wholeSentences(

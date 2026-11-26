@@ -45,12 +45,18 @@ function wordCut(text: string, max: number): string {
  * Whole `sentences` in order while they fit `max`; then `extras` (fixed,
  * true sentences) while the text is shorter than `min`. A sentence that
  * does not fit is shortened at a "; " when a whole clause fits, and
- * otherwise dropped, so the extras fill the space.
+ * otherwise dropped, so the extras fill the space. A sentence for which
+ * `uncut` is true (a list whose clauses read as complete on their own,
+ * such as the states that list an occupation) is kept whole or dropped.
  */
 export function wholeSentences(
   sentences: string[],
   extras: string[] = [],
-  { min = DESCRIPTION_MIN, max = DESCRIPTION_MAX } = {},
+  {
+    min = DESCRIPTION_MIN,
+    max = DESCRIPTION_MAX,
+    uncut = () => false,
+  }: { min?: number; max?: number; uncut?: (sentence: string) => boolean } = {},
 ): string {
   const parts: string[] = [];
   const length = () => parts.join(" ").length;
@@ -61,6 +67,7 @@ export function wholeSentences(
       parts.push(sentence);
       continue;
     }
+    if (uncut(sentence)) continue;
     const room = max - length() - (parts.length > 0 ? 1 : 0);
     const clause = clausePrefix(sentence, room);
     if (clause) parts.push(clause);

@@ -7,6 +7,7 @@ import { formatMonth } from "../report/copy";
 import { wholeSentences } from "../seo/description";
 import { BRAND_SUFFIX, fitTitle } from "../seo/title";
 import { breadcrumbLd, datasetLd, faqPageLd } from "../seo/json-ld";
+import { isStateListSentence } from "./answer";
 import type { Faq } from "./faq";
 import { occupationPath } from "./slug";
 import { has189Rounds } from "./summary";
@@ -117,7 +118,9 @@ export function pageDescription(
   core: OccupationCore,
   summary: string[],
 ): string {
-  return wholeSentences(summary, descriptionExtras(core));
+  return wholeSentences(summary, descriptionExtras(core), {
+    uncut: isStateListSentence,
+  });
 }
 
 /** What an occupation's Dataset measures (docs/DATA.md). */

@@ -5,6 +5,7 @@ import { loadOccupationCore, loadOccupationDetail } from "../data/load-server";
 import type { OccupationCore } from "../data/types";
 import { BANNED_COPY } from "../report/copy";
 import { cohortNote, cohortRows, roundsNote } from "./charts";
+import { isStateListSentence } from "./answer";
 import { occupationFaq } from "./faq";
 import { descriptionExtras, pageDescription, pageTitle } from "./meta";
 import { stateRows } from "./states";
@@ -78,11 +79,15 @@ describe("every occupation page's copy", () => {
 const FRAGMENT =
   /(?:^|\. )(?:For \d{4}–\d{2}(?:, [A-Z]{2,3})*|None of [A-Z]{2,3}(?:, [A-Z]{2,3})*)\./;
 
-/** A summary sentence, or its prefix up to a "; " (a whole clause), closed with ".". */
+/**
+ * A summary sentence, or its prefix up to a "; " (a whole clause), closed
+ * with "."; the state list only whole, so no description names some states.
+ */
 function wholePieces(summary: string[], extras: string[]): Set<string> {
   const pieces = new Set(extras);
   for (const sentence of summary) {
     pieces.add(sentence);
+    if (isStateListSentence(sentence)) continue;
     let at = sentence.indexOf("; ");
     while (at > 0) {
       pieces.add(`${sentence.slice(0, at)}.`);
@@ -166,7 +171,7 @@ describe("every occupation page's title and description", () => {
     );
     expect(
       isMadeOf("For 2026–27, QLD, WA and SA list it for 190 and 491.", pieces),
-    ).toBe(true);
+    ).toBe(false);
     expect(isMadeOf("For 2026–27, QLD.", pieces)).toBe(false);
   });
 });

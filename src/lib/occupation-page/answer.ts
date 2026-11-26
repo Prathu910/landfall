@@ -82,6 +82,14 @@ function listing(rows: StateRow[], visas: string): string | null {
 }
 
 /**
+ * True for the sentence `stateListClause` starts: its "; " clauses are one
+ * list, so a description keeps it whole or drops it, never names some states.
+ */
+export function isStateListSentence(sentence: string): boolean {
+  return /^For \d{4}–\d{2}, /.test(sentence);
+}
+
+/**
  * "For 2026–27, QLD and WA list it for 190 and 491; NSW lists it for 190",
  * "None of NSW and QLD lists it for 2026–27", or null when every state's
  * rules are still being checked.
