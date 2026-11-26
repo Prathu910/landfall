@@ -45,7 +45,10 @@ export function PageHead({
         {meta.length > 0 && (
           <ul className={styles.meta}>
             {meta.map((item, index) => (
-              <li key={index}>{item}</li>
+              // One flex item, so text and a <time> keep a normal space.
+              <li key={index}>
+                <span>{item}</span>
+              </li>
             ))}
           </ul>
         )}
