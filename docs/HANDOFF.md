@@ -2,6 +2,100 @@
 
 **Merge gate: merging `roadmap/paid-report` to `main` is going live.** `main` deploys migratelens.com, whose build already has `NEXT_PUBLIC_SUPABASE_URL` and the Turnstile key (for feedback), so `/check/` replaces the free full report with the checkout at once. Merge only after the production backend (steps 1, 4, 5, 6 and 7 below, repeated on production) passes the rehearsal in step 9 **and runs on live Razorpay keys (step 11)**: with test keys on production, real cards fail and Razorpay's public test cards would get a real report (ruling R16). A build without `NEXT_PUBLIC_SUPABASE_URL` or the Turnstile key shows the free result with a contact line and no ticket (ruling R12).
 
+## SEO, GEO and AEO audit: what was built overnight (27 November 2026)
+
+Branch `seo/site-audit`, cut from `origin/staging` (cb71a10: the paid report plus the report retheme). It is pushed with no pull request; you open the PR yourself. Its upstream was unset on purpose, so a bare `git push` can't reach `staging`. Merging it into `staging` and then `main` follows the paid-report merge gate above, because it contains that branch. The ledger, with every ruling (R1–R11), audit, brief, report and review, is in `.superpowers/sdd/2026-11-26-seo-audit/`.
+
+- **Audit.** Three read-only passes on the built site: a technical audit, an AEO/GEO audit with research, and a spec for the state pages.
+  - Main gaps found:
+    - occupation titles were 73–122 characters long, and descriptions were cut mid-sentence;
+    - several pages had no canonical, and `/check/` was missing from the sitemap;
+    - there was no Organization or WebSite structured data, no favicon.ico or app icons, and no About page;
+    - the methodology FAQ answers were hidden in JavaScript;
+    - answers carried no dated figures;
+    - there was no points table, glossary or cut-offs hub.
+- **Technical and entity work (WP1).** Every page has:
+  - a title of 60 characters or fewer;
+  - a description of 120–160 characters, in whole sentences, unique across the site;
+  - a canonical URL;
+  - full Open Graph (`en_AU`).
+
+  Also in this work:
+  - favicon.ico, PNG and Apple icons and a web app manifest (`npm run icons:render`);
+  - one Organization (`#organization`) and one WebSite (`#website`), referred to by `@id` from every Article and Dataset;
+  - BreadcrumbList, FAQPage, Dataset and Article markup where each fits;
+  - the methodology FAQ rendered on the server, and `<time>` dates;
+  - a `robots.txt` that names the AI search and training crawlers (allowed, each still with `Disallow: /report/`);
+  - `/llms.txt`, built from the data.
+
+- **Answer pages (WP2).**
+  - New pages:
+    - `/about/`: independence, how the site earns, data and editorial policy, corrections. No names or user counts.
+    - `/guide/points-table/`: checked against `calculatePoints` by a test.
+    - `/guide/glossary/`: DefinedTermSet markup.
+    - `/occupations/189-cut-offs/`: every occupation in the last four 189 rounds, with "Not listed" and never 0.
+  - Changes to existing pages:
+    - `/check/` has a points explainer.
+    - Occupation pages open with an answer dated by the latest round, then 189, 190 and 491 facts. They use question-shaped headings and have more FAQs: the latest cut-off, the points needed, the 190 and 491 pools, and "Can I get PR with {name} as my occupation?".
+    - The guide answers and the homepage quote the newest 189 round from data, never from a hand-typed figure.
+    - `/occupations/` opens with a dated answer and the 20 largest 189 pools.
+- **State pages (WP3).** `/states/new-south-wales/` and seven more pages, one per state and territory. Each shows, for the 190 and 491:
+  - the month-end count of EOIs holding the state's invitation over the last 12 months. This is a stock: it is never called "invitations issued" and never summed across months, and "<20" stays a range;
+  - points and occupations in the data month;
+  - the pool naming the state;
+  - the Home Affairs nominations table, labelled as a different measure;
+  - the 2026–27 rules;
+  - a call to action linking to `/check/`, with no price and no checkout.
+
+  The pages are linked from `/states/`, occupation pages, recaps, `/guide/190/`, `/guide/491/`, the sitemap and `llms.txt`.
+
+- **Review.** One whole-branch review found one serious issue and six smaller ones:
+  - The serious issue: 138 occupation descriptions ended in fragments such as "For 2026–27." This came from a cut at a comma.
+  - The smaller issues:
+    - the dated answer could contradict a newer round;
+    - the PR question had the wrong article on plural ANZSCO names;
+    - "who held an invitation" was used where it should say which EOIs held one;
+    - a hand-typed pass mark and program year;
+    - `/occupations/` counting dropped occupations;
+    - the cut-offs hub having only 3 inbound links.
+
+  All were fixed in one wave and confirmed by a scoped re-review. That re-review found one more issue: 23 descriptions kept only part of the state list, so they read as naming every state. The fix keeps the state list whole or drops it. The guide's 189 answer now dates the latest round in its own sentence. The data checks in the review were clean throughout:
+  - the state sums were re-computed from the cores;
+  - the cut-offs match `rounds.json`;
+  - the points table matches Home Affairs;
+  - 0 broken links across 513 pages;
+  - every JSON-LD `@id` resolves;
+  - 2,990 FAQ questions and answers match the visible text.
+
+- **Tests at the end.** `npm run check` passes with 2,383 tests (2,188 before). `npm run build` produces 513 pages and the bundle lock is clean. The sitemap has 379 URLs. Lighthouse scores 100 in all four categories on every row, mobile and desktop, including the new pages and two state rows. After the fixes, an occupation page, `/occupations/` and NSW were re-run. The last two fixes were text only, so Lighthouse was not re-run for them. All 379 indexable descriptions were checked in `out/`: each is 120–160 characters, unique, matches its `og:description`, and contains no partial state list. The report engine bundle is unchanged.
+
+### Founder: after this branch (not code)
+
+- [ ] **www.migratelens.com returns 522.** In Cloudflare DNS, add a proxied `www` record, for example a CNAME to the apex. Then add a Redirect Rule from `www.migratelens.com/*` to `https://migratelens.com/${1}` with a 301.
+- [ ] **AI crawlers.** In Cloudflare (Security → Bots, and the AI Crawl Control / "Block AI bots" setting), check that AI-bot blocking and the Managed robots.txt are **off**. Otherwise Cloudflare overrides our `robots.txt`, and AI search can't read or quote the site (ruling R4).
+- [ ] **Search Console.** After the deploy, resubmit `sitemap.xml`, then use URL Inspection → "Request indexing" on these pages:
+  - `/`, `/check/` and `/about/`;
+  - `/guide/points-table/` and `/guide/glossary/`;
+  - `/occupations/189-cut-offs/`;
+  - the 8 `/states/<state>/` pages;
+  - your 5 most important occupation pages.
+- [ ] **Bing Webmaster Tools.** Import the site from Search Console and submit the sitemap. Bing feeds ChatGPT search and Copilot.
+- [ ] **Points table source.** It was checked against the Home Affairs points table on 23 Nov 2026. The page returned 403 when re-read and was not retried. When you next open the Home Affairs points page, confirm the rows match `src/data/guide/points-table.ts`.
+- [ ] **Publish dates.** The state pages, points table and glossary carry `datePublished` 26 Nov 2026. If the branch goes live much later, set them to the deploy day (`STATE_PAGES_PUBLISHED_AT` and the guide's checked date).
+- [ ] **Analytics snippet** (skipped tonight): if you later want staging excluded from Web Analytics, use a production-only manual snippet with the site token instead of automatic injection.
+
+### Deferred or parked
+
+- **Deferred:**
+  - per-page Open Graph images (needs an image pipeline);
+  - a points-test reform tracker (speculative content);
+  - the `/404.html` double robots tag (Next's own, harmless).
+- **Parked:**
+  - Many occupation descriptions carry the round's date rather than the snapshot's: the pool sentence with "As at" doesn't fit. The page itself shows both dates.
+  - Older pass-mark and "2026–27" literals predating this branch remain, three of them in the report engine. They were left so the bundle stays unchanged.
+  - State pages are about 94 KB gzipped HTML, mostly three copies of the map. Performance is still 100.
+- **Optional:** the "Buy another" button on a founding-used email is easy to miss (found during the staging test). A clearer placement is a small checkout change for a later pass.
+
 ## Founder: before the paid report goes live (26 November 2026)
 
 The paid report is built on branch `roadmap/paid-report` (plans 1 to 3: engine, backend, checkout and `/report/`). Nothing is live: no payment, code email or report email works until you finish this list, in order. The detail for steps 1 to 8 is in [`docs/OPERATIONS-BACKEND.md`, "Paid reports"](OPERATIONS-BACKEND.md#paid-reports); this list is the order to do them in. Do it all on the staging Supabase project and the preview deployment first, then repeat steps 1, 4, 5, 6, 7 and 10 on production.
