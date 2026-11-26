@@ -72,3 +72,11 @@ export function compareRows(
     },
   ];
 }
+
+/**
+ * The one-sentence answer above the comparison table, for "189 vs 190 vs
+ * 491" queries (audit A-P2-8); the nomination points come from the table.
+ */
+export function differenceAnswer(points190: number, points491: number): string {
+  return `The 189 and 190 are permanent; the 491 is a 5-year provisional regional visa with a path to the permanent 191. The 190 adds ${points190} points for state nomination and the 491 adds ${points491} for state nomination or family sponsorship; the 189 has no nomination.`;
+}

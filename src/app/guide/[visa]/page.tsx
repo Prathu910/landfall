@@ -186,7 +186,7 @@ export default async function VisaGuidePage({ params }: Props) {
             )}
           </p>
           <VisaRules rules={[...guide.nomination, ...guide.after]} />
-          <h3 className={page.subhead}>The three visas compared</h3>
+          <h3 className={page.subhead}>189 vs 190 vs 491 compared</h3>
           <VisaCompare rows={compareRows(FEES, counts)} current={visa} />
         </section>
         <section id="steps" className={page.section} aria-labelledby="steps-h">

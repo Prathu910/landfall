@@ -23,7 +23,9 @@ import { POINTS_CHANGES } from "@/data/guide/points-changes";
 import { GUIDE_CHECKED_AT, SOURCE_LABELS, SOURCES } from "@/data/guide/sources";
 import { GUIDE_STEPS } from "@/data/guide/steps";
 import { VISA_GUIDES } from "@/data/guide/visas";
-import { compareRows } from "@/lib/guide/compare";
+import { compareRows, differenceAnswer } from "@/lib/guide/compare";
+import { POINTS_TABLE } from "@/data/guide/points-table";
+import { rowPoints } from "@/lib/guide/points-table";
 import { federalCounts, hubFaq } from "@/lib/guide/faq";
 import { GUIDE_PAGES, directAnswer, guideJsonLd } from "@/lib/guide/meta";
 import { sourceList } from "@/lib/guide/sources-list";
@@ -44,7 +46,7 @@ export const metadata: Metadata = pageMetadata({
 
 const CONTENTS = [
   { id: "path", label: "Which path fits you" },
-  { id: "visas", label: "The three visas" },
+  { id: "visas", label: "189 vs 190 vs 491" },
   { id: "steps", label: "Step by step" },
   { id: "points", label: "Points and basics" },
   { id: "costs", label: "Costs" },
@@ -108,11 +110,15 @@ export default function GuideHubPage() {
           </div>
         </section>
         <section id="visas" className={page.section} aria-labelledby="visas-h">
-          <h2 id="visas-h">The three visas</h2>
+          <h2 id="visas-h">189 vs 190 vs 491: what’s the difference?</h2>
           <p className={page.sectionIntro}>
-            All three use the same points test and the same SkillSelect EOI.
-            They differ in who nominates you, where you live and when you become
-            permanent.
+            {differenceAnswer(
+              rowPoints(POINTS_TABLE, "nomination-190"),
+              rowPoints(POINTS_TABLE, "nomination-491"),
+            )}{" "}
+            All three use the same{" "}
+            <Link href="/guide/points-table/">points test</Link> and the same
+            SkillSelect EOI.
           </p>
           <VisaCompare rows={compareRows(FEES, counts)} />
           <h3 className={page.subhead}>Read a visa guide</h3>

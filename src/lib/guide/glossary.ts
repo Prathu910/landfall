@@ -3,6 +3,7 @@ import { GUIDE_CHECKED_AT, SOURCES } from "../../data/guide/sources";
 import { breadcrumbLd, definedTermSetLd } from "../seo/json-ld";
 import { SITE_NAME, SITE_URL } from "../site";
 import { GUIDE_PAGES } from "./meta";
+import { rowPoints } from "./points-table";
 
 /**
  * The glossary (/guide/glossary/, audit A-P2-3): one typed list of terms,
@@ -32,11 +33,8 @@ export const GLOSSARY_PAGE = {
   publishedAt: "2026-11-26",
 } as const;
 
-const nominationPoints = (rowId: string): number => {
-  const row = POINTS_TABLE.flatMap((f) => f.rows).find((r) => r.id === rowId);
-  if (!row) throw new Error(`The points table has no ${rowId} row`);
-  return row.points;
-};
+const nominationPoints = (rowId: string): number =>
+  rowPoints(POINTS_TABLE, rowId);
 
 const HOME_AFFAIRS = (label: string, href: string) => ({
   label: `Home Affairs: ${label}`,

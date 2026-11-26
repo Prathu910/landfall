@@ -143,3 +143,8 @@ export function pointsInBrief(table: PointsFactor[]): PointsInBrief[] {
     },
   ];
 }
+
+/** One row's points, by its id (e.g. "nomination-190"); throws on an unknown row. */
+export function rowPoints(table: PointsFactor[], rowId: string): number {
+  return points(table, rowId);
+}
