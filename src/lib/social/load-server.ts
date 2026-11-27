@@ -19,6 +19,7 @@ import { stateRows } from "../occupation-page/states";
 import { summarise189Rounds } from "../report/round-status";
 import { loadStatePageView } from "../state-page/load-server";
 import { loadLatestRound, loadRecap } from "../updates/load-server";
+import type { EnoughInput } from "./enough-post";
 import type { LaunchInput } from "./launch-pack";
 import type { OccupationInput } from "./occupation-post";
 
@@ -58,4 +59,13 @@ export function loadLaunchInput(options: {
     state: loadStatePageView(options.state),
     occupation: loadOccupation(options.occupation),
   };
+}
+
+/** The newest 189 round and its recap section, for the "Is 65 points enough?" reel. */
+export function loadEnoughInput(): EnoughInput {
+  const round = loadLatestRound();
+  if (!round) throw new Error("No 189 round in the recap facts");
+  const section = loadRecap(round.month).rounds[round.date];
+  if (!section) throw new Error(`${round.month} has no round on ${round.date}`);
+  return { round, section, passMark: PASS_MARK };
 }

@@ -5,10 +5,12 @@ import { BANNED_COPY } from "../report/copy";
 import { charsOutside, parseUnicodeRange } from "../updates/glyphs";
 import { calendarMarkdown, replyExample } from "./calendar";
 import { captionText, captionsMarkdown } from "./captions";
+import { enoughReel } from "./enough-reel";
 import { buildLaunchPack } from "./launch-pack";
 import type { LaunchCard } from "./launch-types";
-import { loadLaunchInput } from "./load-server";
+import { loadEnoughInput, loadLaunchInput } from "./load-server";
 import { PROFILE_OPTIONS, profileMarkdown } from "./profile";
+import { reelCaptionMarkdown, sceneText } from "./reel-text";
 
 /**
  * The launch pack built from the live data, as the renderer builds it: copy
@@ -17,6 +19,20 @@ import { PROFILE_OPTIONS, profileMarkdown } from "./profile";
  */
 const input = loadLaunchInput({ state: "NSW", occupation: "254499" });
 const pack = buildLaunchPack(input);
+/** Reel 1 from the newest round, as `npm run social:reel` builds it. */
+const reel = enoughReel(loadEnoughInput());
+
+/** What the reel shows on screen: every scene's words and its stamps. */
+const reelText = [
+  reel.tag,
+  reel.source,
+  ...reel.scenes.map(sceneText),
+  ...reel.scenes.flatMap((s) =>
+    s.kind === "hook" || s.kind === "end"
+      ? [s.stamp.stamp.top, s.stamp.stamp.word, s.stamp.stamp.bottom]
+      : [],
+  ),
+];
 
 const ZERO_RANGE = /(?<![\d,.])0–/;
 const REPEATED_RANGE = /\b(\d[\d,]*)(?: to |–)\1\b/;
@@ -56,6 +72,9 @@ const allText = [
   captionsMarkdown(pack),
   calendarMarkdown(pack, "2026-11-28", replyExample(input.occupation)),
   profileMarkdown(),
+  ...reelText,
+  captionText(reel.caption),
+  reelCaptionMarkdown(reel),
 ];
 
 function latin(...parts: string[]) {
@@ -109,7 +128,7 @@ describe("the launch pack's copy", () => {
       "900.css",
       "big-shoulders-stencil-display-latin-900-normal",
     );
-    const text = cards.flatMap(strings).join("");
+    const text = [...cards.flatMap(strings), ...reelText].join("");
     expect(charsOutside(text, archivo)).toEqual([]);
     expect(charsOutside(text, stencil)).toEqual([]);
   });
@@ -131,6 +150,18 @@ describe("the launch pack's copy", () => {
       for (const slide of post.slides)
         expect(slide.alt.length).toBeGreaterThan(20);
     }
+  });
+
+  it("gives the reel's caption a hook, 2 to 3 sentences, a call to action and 5 to 8 hashtags", () => {
+    const { caption } = reel;
+    expect(caption.hook).toMatch(/\?$/);
+    const sentences = caption.body.join(" ").split(/(?<=[.!?]) (?=[A-Z0-9“])/);
+    expect(sentences.length).toBeGreaterThanOrEqual(2);
+    expect(sentences.length).toBeLessThanOrEqual(3);
+    expect(caption.cta.length).toBeGreaterThan(10);
+    expect(caption.hashtags.length).toBeGreaterThanOrEqual(5);
+    expect(caption.hashtags.length).toBeLessThanOrEqual(8);
+    for (const tag of caption.hashtags) expect(tag).toMatch(/^#[A-Za-z0-9]+$/);
   });
 
   it("keeps the profile's names and bios inside Instagram's limits", () => {
