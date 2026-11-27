@@ -96,6 +96,7 @@ export function VisaStamp({
   const ref = useRef<SVGSVGElement>(null);
   useFitStampText(ref);
   const filterId = `${useId()}ink`;
+  const tilt = `rotate(${rotate} 110 80)`;
 
   const stampWord = word.toUpperCase();
   const widths = VISA_STAMP.widths[shape];
@@ -122,14 +123,18 @@ export function VisaStamp({
       viewBox={viewBoxAttr(VISA_STAMP.viewBox)}
       role="img"
       aria-label={`${top}: ${spokenWord(word, label)}, ${points} points`}
-      className={`${styles.stamp} ${styles[label]}`}
+      className={`${styles.stamp} ${styles.small} ${styles[label]}`}
       style={{ minWidth: VISA_STAMP.minWidth }}
     >
       <defs>
         <InkFilter id={filterId} />
       </defs>
-      <g filter={`url(#${filterId})`} transform={`rotate(${rotate} 110 80)`}>
+      {/* The rough ink is on the frame only: at this size it would eat
+          holes in the stencil letters, worst on 1x screens and at night. */}
+      <g filter={`url(#${filterId})`} transform={tilt}>
         <Frame shape={shape} />
+      </g>
+      <g transform={tilt}>
         <text
           {...edgeText}
           y={TOP_BASELINE}
