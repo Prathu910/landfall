@@ -165,3 +165,81 @@ export function fitTitle(
   }
   return { size: box.sizes[box.sizes.length - 1], fits: false };
 }
+
+/**
+ * A launch cover's title: the content's full 816px width, up to 380px
+ * tall, as large as the monthly covers when it fits.
+ */
+export const COVER_TITLE: TitleBox = {
+  sizes: [136, 120, 108, 96, 86, 76, 66, 58],
+  width: 816,
+  height: 350,
+};
+
+/**
+ * `fitTitle` for a title written as forced lines: each line starts a new
+ * line and may still wrap, so the lines' wrapped counts are added.
+ */
+export function fitLines(
+  lines: readonly string[],
+  box: TitleBox,
+): { size: number; fits: boolean } {
+  for (const size of box.sizes) {
+    const total = lines.reduce(
+      (sum, line) => sum + estimatedLines(line, size, box.width),
+      0,
+    );
+    if (total <= linesThatFit(size, box.height)) return { size, fits: true };
+  }
+  return { size: box.sizes[box.sizes.length - 1], fits: false };
+}
+
+/** A title that may wrap to at most `maxLines` lines, at the first size that allows it. */
+export type LinesBox = {
+  sizes: readonly number[];
+  width: number;
+  maxLines: number;
+};
+
+/** Launch cards' titles: lists, charts and the comparison. */
+export const CARD_TITLE: LinesBox = {
+  sizes: [66, 60, 54, 48],
+  width: 816,
+  maxLines: 2,
+};
+/** A text card's title, larger when the term is short ("EOI", "<20"). */
+export const TEXT_TITLE: LinesBox = {
+  sizes: [120, 104, 88, 76, 66, 58, 52],
+  width: 816,
+  maxLines: 2,
+};
+export const LINK_TITLE: LinesBox = {
+  sizes: [104, 92, 80, 70],
+  width: 816,
+  maxLines: 3,
+};
+export const STORY_TITLE: LinesBox = {
+  sizes: [116, 104, 92, 80],
+  width: 816,
+  maxLines: 3,
+};
+
+/**
+ * The size for `text` in `box`, and the `.fit` max height that holds its
+ * lines; when no size fits it returns the smallest, and the render fails.
+ */
+export function fitTitleLines(
+  text: string,
+  box: LinesBox,
+): { fontSize: number; maxHeight: number } {
+  const size =
+    box.sizes.find((s) => estimatedLines(text, s, box.width) <= box.maxLines) ??
+    box.sizes[box.sizes.length - 1];
+  const lines = Math.min(estimatedLines(text, size, box.width), box.maxLines);
+  return {
+    fontSize: size,
+    maxHeight: Math.ceil(
+      size * (LINE_HEIGHT * Math.max(lines, 1) + FIT_PADDING) + 2,
+    ),
+  };
+}

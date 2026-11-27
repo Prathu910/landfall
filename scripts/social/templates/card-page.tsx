@@ -3,23 +3,32 @@ import {
   MARK_VIEWBOX,
   markSvgBody,
 } from "../../../src/components/brand/mark-geometry";
-import type { CardView } from "../../../src/lib/updates/cards";
 
-export type CardFormat = "feed" | "story" | "og";
+export type CardFormat = "feed" | "story" | "og" | "square";
+
+/** What the page frame reads from a card: the monthly sets' and the launch pack's. */
+export type PageMeta = {
+  tag: string;
+  position: { index: number; of: number } | null;
+  source: string;
+};
 
 /**
  * "Oct 2026 · 3/6". Card 2 has no position (spec decision 1), and the OG
  * image isn't in a carousel.
  */
-function tagText(card: CardView, format: CardFormat): string {
+function tagText(card: PageMeta, format: CardFormat): string {
   const { position } = card;
   if (!position || format === "og") return card.tag;
   return `${card.tag} · ${position.index}/${position.of}`;
 }
 
-/** The source line, with its "as at" date in bold as the mockup. */
+/** The source line, with its "as at" (or "checked") date in bold as the mockup. */
 function SourceLine({ text }: { text: string }) {
-  const at = text.lastIndexOf(" · as at ");
+  const at = Math.max(
+    text.lastIndexOf(" · as at "),
+    text.lastIndexOf(" · checked "),
+  );
   if (at < 0) return <div className="source">{text}</div>;
   return (
     <div className="source">
@@ -55,7 +64,7 @@ export function CardPage({
   foot,
   children,
 }: {
-  card: CardView;
+  card: PageMeta;
   format: CardFormat;
   /** The card's layout class in card.css. */
   kind: string;

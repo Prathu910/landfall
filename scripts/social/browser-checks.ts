@@ -10,8 +10,9 @@ import {
   FEED_GRID_WIDTH,
   STORY,
 } from "../../src/lib/updates/social-spec";
-import type { RenderJob } from "./jobs";
+import type { HtmlJob } from "./html";
 import { cardColour } from "./tokens";
+import { CARD_SIZES } from "./html";
 
 /** Every face and weight the cards set, by the family names html.ts declares. */
 export const CARD_FONTS = [
@@ -38,18 +39,30 @@ type Expected = {
   paper: string;
   safe: { top: number; bottom: number } | null;
   essential: { left: number; right: number } | null;
+  /** The circle Instagram crops a profile picture or highlight cover to. */
+  circle: { x: number; y: number; r: number } | null;
 };
 
-const isFeedCover = (job: RenderJob) =>
-  job.format === "feed" &&
-  (job.card.id === "cover" || job.card.id === "round-cover");
+const COVERS = new Set(["cover", "round-cover", "launch-cover"]);
+const isFeedCover = (job: HtmlJob) =>
+  job.format === "feed" && COVERS.has(job.card.id);
 
-function expected(job: RenderJob): Expected {
+/** The profile picture and highlight covers show only their centre circle. */
+function cropCircle(job: HtmlJob): Expected["circle"] {
+  if (job.card.id !== "profile-avatar" && job.card.id !== "highlight") {
+    return null;
+  }
+  const { width, height } = CARD_SIZES[job.format];
+  return { x: width / 2, y: height / 2, r: width / 2 };
+}
+
+function expected(job: HtmlJob): Expected {
   return {
     fonts: CARD_FONTS,
     paper: cardColour("paper", job.theme),
     safe: job.format === "story" ? STORY_SAFE : null,
     essential: isFeedCover(job) ? FEED_GRID : null,
+    circle: cropCircle(job),
   };
 }
 
@@ -104,6 +117,23 @@ function pageChecks(expect: Expected): string {
       }
     }
   }
+  if (expect.circle) {
+    const boxes = [...document.querySelectorAll("[data-circle]")];
+    if (boxes.length === 0) problems.push("no [data-circle] box");
+    for (const box of boxes) {
+      const r = box.getBoundingClientRect();
+      const far = Math.max(
+        ...[[r.left, r.top], [r.right, r.top], [r.left, r.bottom], [r.right, r.bottom]]
+          .map(([x, y]) => Math.hypot(x - expect.circle.x, y - expect.circle.y)),
+      );
+      if (far > expect.circle.r) {
+        problems.push(
+          "content reaches " + px(far) + "px from the centre, outside the " +
+          expect.circle.r + "px crop circle"
+        );
+      }
+    }
+  }
   const paper = getComputedStyle(document.documentElement)
     .getPropertyValue("--paper").trim();
   if (paper.toLowerCase() !== expect.paper.toLowerCase()) {
@@ -114,7 +144,7 @@ function pageChecks(expect: Expected): string {
 }
 
 /** Runs the checks on the loaded card; throws naming `job.out` on any failure. */
-export async function checkCard(page: Page, job: RenderJob): Promise<void> {
+export async function checkCard(page: Page, job: HtmlJob): Promise<void> {
   const problems = (await page.evaluate(pageChecks(expected(job)))) as string[];
   if (problems.length > 0) {
     throw new Error(`${job.out}: ${problems.join("; ")}`);

@@ -2,7 +2,17 @@ import { describe, expect, it } from "vitest";
 import index from "../../src/data/occupation-index.json";
 import { popularOccupations } from "../../src/lib/updates/spotlight";
 import { frozenCores } from "../../src/lib/data/__fixtures__/frozen-2026-10";
-import { SPOTLIGHT_TITLE, estimatedLines, fitTitle, textEm } from "./title-fit";
+import {
+  CARD_TITLE,
+  COVER_TITLE,
+  SPOTLIGHT_TITLE,
+  TEXT_TITLE,
+  estimatedLines,
+  fitLines,
+  fitTitle,
+  fitTitleLines,
+  textEm,
+} from "./title-fit";
 
 /** A fixture no size fits: one word wider than the title column. */
 const UNBREAKABLE = "Supercalifragilisticexpialidocious Specialist";
@@ -63,5 +73,26 @@ describe("estimatedLines", () => {
     // Measured in Chrome at 100px: "Programmer" 6.71em, "Registered" 5.87em.
     expect(textEm("Programmer")).toBeGreaterThan(6.71);
     expect(textEm("Registered")).toBeGreaterThan(5.87);
+  });
+});
+
+describe("fitLines and fitTitleLines", () => {
+  it("adds the wrapped lines of forced lines", () => {
+    const one = fitLines(["Is 65 points", "enough?"], COVER_TITLE);
+    expect(one.fits).toBe(true);
+    expect(one.size).toBeGreaterThanOrEqual(96);
+  });
+
+  it("shrinks a long title to two lines on a card", () => {
+    const short = fitTitleLines("EOI", TEXT_TITLE);
+    const long = fitTitleLines(
+      "How many points do qualifications and study give?",
+      CARD_TITLE,
+    );
+    expect(short.fontSize).toBe(120);
+    expect(long.fontSize).toBeLessThan(66);
+    expect(long.maxHeight).toBeLessThanOrEqual(
+      Math.ceil(long.fontSize * 2.02) + 2,
+    );
   });
 });

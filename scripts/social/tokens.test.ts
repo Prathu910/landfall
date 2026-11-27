@@ -16,14 +16,23 @@ const varNames = (text: string) =>
   new Set([...text.matchAll(/var\((--[\w-]+)/g)].map((m) => m[1]));
 const declared = (css: string) =>
   [...css.matchAll(/(--[\w-]+):/g)].map((m) => m[1]);
+/** A launch chart bar's own sizes, set inline on each bar (launch-chart.tsx). */
+const BAR_VARS = ["--solid", "--hatched"];
 
 describe("cardTokenCss", () => {
-  it("defines every var() card.css uses, in both themes", () => {
-    const used = varNames(readFileSync("scripts/social/card.css", "utf8"));
-    expect(used.size).toBeGreaterThan(10);
-    for (const theme of THEMES)
-      for (const name of used)
-        expect(cardTokenCss(theme), `${theme} ${name}`).toContain(`${name}:`);
+  it("defines every var() card.css and launch.css use, in both themes", () => {
+    for (const file of ["card.css", "launch.css"]) {
+      const css = readFileSync(`scripts/social/${file}`, "utf8");
+      // A chart's bar sizes are the stylesheet's own (set inline per bar).
+      const local = new Set([...declared(css), ...BAR_VARS]);
+      const used = [...varNames(css)].filter((name) => !local.has(name));
+      expect(used.length).toBeGreaterThan(5);
+      for (const theme of THEMES)
+        for (const name of used)
+          expect(cardTokenCss(theme), `${file} ${theme} ${name}`).toContain(
+            `${name}:`,
+          );
+    }
   });
 
   // R14: the stamps and the map paint through inline SVG attributes.
@@ -31,11 +40,18 @@ describe("cardTokenCss", () => {
     for (const card of cards)
       for (const format of FORMATS)
         for (const theme of THEMES) {
-          const tokens = cardTokenCss(theme);
-          for (const name of varNames(cardHtml(card, format, theme)))
-            expect(tokens, `${card.id} ${format} ${theme} ${name}`).toContain(
-              `${name}:`,
-            );
+          const html = cardHtml(card, format, theme);
+          // Tokens, or the cards' own layout variables (launch.css charts).
+          const defined = new Set([
+            ...declared(cardTokenCss(theme)),
+            ...declared(html),
+            ...BAR_VARS,
+          ]);
+          for (const name of varNames(html))
+            expect(
+              defined.has(name),
+              `${card.id} ${format} ${theme} ${name}`,
+            ).toBe(true);
         }
   });
 

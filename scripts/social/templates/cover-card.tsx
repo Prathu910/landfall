@@ -13,6 +13,7 @@ const TITLE = {
   feed: { max: 136, width: 816 },
   story: { max: 136, width: 816 },
   og: { max: 96, width: 560 },
+  square: { max: 136, width: 816 },
 } as const;
 
 /**

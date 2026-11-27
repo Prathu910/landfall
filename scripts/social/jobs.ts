@@ -15,7 +15,9 @@ import type { SetManifest } from "./compress";
 import type { HtmlJob, Theme } from "./html";
 
 /** One PNG: a card in one format and theme. `--html-only` takes the same jobs. */
-export type RenderJob = HtmlJob;
+export type RenderJob = HtmlJob<CardView> & {
+  format: Exclude<HtmlJob["format"], "square">;
+};
 
 export type RenderArgs = {
   month: MonthKey;

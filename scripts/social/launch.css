@@ -1,0 +1,552 @@
+/* The Instagram launch pack's cards (brief 2026-11-27): Look A, on the
+   monthly cards' page, tokens and type (card.css). Body text is 24px or
+   more on a 1080px card; nothing is under 20px. */
+
+.lead,
+.para {
+  margin-top: 18px;
+  font-size: 29px;
+  line-height: 1.36;
+  color: var(--lede);
+}
+.para + .para {
+  margin-top: 14px;
+}
+
+/* ---------- Cover ---------- */
+.launch-cover .title {
+  white-space: normal;
+}
+.launch-cover .title .line {
+  display: block;
+}
+.stamps.single-round .s1 {
+  width: 430px;
+  left: 50%;
+  margin-left: -215px;
+  top: 20px;
+}
+.stamps.single-rect .s1 {
+  width: 400px;
+  left: 50%;
+  margin-left: -200px;
+  top: 40px;
+}
+
+/* ---------- Lists ---------- */
+.launch-list .block {
+  margin-top: 22px;
+}
+.launch-list .block h3 {
+  margin-bottom: 4px;
+}
+.list {
+  display: grid;
+}
+.item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 24px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1.5px solid var(--rule);
+}
+.item:last-child {
+  border-bottom: 0;
+}
+.item-label {
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.28;
+}
+.item-label small {
+  display: block;
+  margin-top: 2px;
+  font-size: 24px;
+  font-weight: 400;
+  color: var(--muted);
+}
+.item-value {
+  font-size: 28px;
+  font-weight: 700;
+  text-align: right;
+}
+.values-points .item-label {
+  font-weight: 500;
+}
+.roomy .item {
+  padding: 22px 0;
+}
+.roomy .item-label {
+  font-size: 34px;
+}
+.roomy.values-points .item-value {
+  font-size: 84px;
+}
+.roomy .lead {
+  font-size: 32px;
+}
+.compact .item {
+  padding: 6px 0;
+}
+.compact .item-label {
+  font-size: 24px;
+  line-height: 1.24;
+}
+.compact.values-points .item-value {
+  font-size: 48px;
+}
+.compact .block {
+  margin-top: 16px;
+}
+.values-points .item-value {
+  min-width: 110px;
+  font-family: var(--font-stamp);
+  font-size: 58px;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--green);
+}
+.values-text .item-value {
+  max-width: 400px;
+  color: var(--green);
+}
+.values-stacked .item {
+  grid-template-columns: 1fr;
+  gap: 6px;
+  padding: 16px 0;
+}
+.values-stacked .item-label {
+  font-size: 25px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--green);
+}
+.values-stacked .item-value {
+  font-size: 34px;
+  font-weight: 500;
+  line-height: 1.36;
+  text-align: left;
+}
+
+/* ---------- Text ---------- */
+/* The stamps and the bold line sit at the foot, above the source. */
+.launch-text .grow {
+  display: none;
+}
+.text-foot {
+  margin-top: auto;
+  padding-top: 24px;
+}
+.foot-stamp {
+  width: 340px;
+  margin: 0 0 0 auto;
+}
+.launch-text .para {
+  font-size: 32px;
+}
+.launch-text .facts {
+  grid-auto-flow: row;
+  grid-template-columns: repeat(2, 1fr);
+}
+.fact .val {
+  margin-top: 6px;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+.launch-text .fact .lab {
+  margin-top: 0;
+  font-size: 24px;
+  color: var(--muted);
+}
+.stamp-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 36px;
+  align-items: center;
+  padding: 0 10px;
+}
+.emphasis {
+  margin-top: 26px;
+  padding-left: 22px;
+  border-left: 5px solid var(--saffron);
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.32;
+}
+
+/* ---------- Charts ---------- */
+.chart {
+  --bar-max: 280px;
+}
+.charts-2 .chart {
+  --bar-max: 80px;
+}
+.charts-2 .ccol b.fig {
+  font-size: 26px;
+}
+.charts-2 .ccols {
+  gap: 6px;
+}
+.launch-chart .block {
+  margin-top: 24px;
+}
+.track {
+  position: relative;
+  display: block;
+}
+.track > span {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+}
+.solid {
+  background: var(--green);
+}
+.hatched {
+  border: 2px solid var(--green);
+  background: repeating-linear-gradient(
+    135deg,
+    var(--green) 0 3px,
+    transparent 3px 10px
+  );
+  opacity: 0.55;
+}
+.strong .solid {
+  background: var(--ink);
+}
+.strong .hatched {
+  border-color: var(--ink);
+  background: repeating-linear-gradient(
+    135deg,
+    var(--ink) 0 3px,
+    transparent 3px 10px
+  );
+}
+.empty .solid,
+.empty .hatched {
+  border: 2px dashed var(--muted);
+  background: transparent;
+  opacity: 1;
+}
+.ccols {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+}
+.ccol {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.ccol b.fig {
+  font-family: var(--font-stamp);
+  font-size: 34px;
+  font-weight: 900;
+  line-height: 1;
+}
+.ccol b.word {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.1;
+  text-align: center;
+}
+.columns .track {
+  width: 100%;
+  height: var(--bar-max);
+}
+.columns .track > span {
+  width: 100%;
+  border-bottom: 0;
+}
+.columns .solid {
+  height: max(calc(var(--solid) * var(--bar-max)), 0px);
+  border-radius: 4px 4px 0 0;
+}
+.columns .hatched {
+  height: max(calc(var(--hatched) * var(--bar-max)), 6px);
+  border-radius: 4px 4px 0 0;
+}
+.clabel {
+  width: 100%;
+  padding-top: 6px;
+  border-top: 2px solid var(--ink);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.15;
+  text-align: center;
+}
+.clabel small {
+  display: block;
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--muted);
+}
+.charts-1 .columns .ccol b.fig {
+  font-size: 40px;
+}
+.charts-1 .columns .clabel {
+  font-family: var(--font-stamp);
+  font-size: 36px;
+  font-weight: 900;
+}
+.charts-1 .columns .clabel small {
+  font-family: var(--font);
+  font-size: 22px;
+}
+.crows {
+  display: grid;
+  gap: 4px;
+}
+.crow {
+  display: grid;
+  grid-template-columns: 70px 1fr 190px;
+  gap: 16px;
+  align-items: center;
+  height: 30px;
+}
+.crows.few .crow {
+  height: 40px;
+}
+.crows.few .rlabel {
+  font-size: 36px;
+}
+.crows.few .rvalue {
+  font-size: 28px;
+}
+.rlabel {
+  font-family: var(--font-stamp);
+  font-size: 30px;
+  font-weight: 900;
+  line-height: 1;
+  text-align: right;
+}
+.rows .track {
+  height: 26px;
+}
+.rows .track > span {
+  height: 100%;
+  border-radius: 0 4px 4px 0;
+}
+.rows .solid {
+  width: calc(var(--solid) * 100%);
+}
+.rows .hatched {
+  width: max(calc(var(--hatched) * 100%), 6px);
+}
+.rvalue {
+  font-size: 24px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.ckey {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 26px;
+  margin-top: 14px;
+  font-size: 22px;
+  color: var(--muted);
+}
+.ckey i {
+  display: inline-block;
+  width: 30px;
+  height: 18px;
+  margin-right: 8px;
+  vertical-align: -2px;
+}
+.key-solid {
+  background: var(--green);
+}
+.key-hatched {
+  border: 2px solid var(--green);
+  background: repeating-linear-gradient(
+    135deg,
+    var(--green) 0 3px,
+    transparent 3px 10px
+  );
+  opacity: 0.55;
+}
+
+/* ---------- Compare ---------- */
+.cmp {
+  margin-top: 26px;
+}
+.cmp-head,
+.cmp-cells {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+.cmp-head span {
+  padding-bottom: 6px;
+  border-bottom: 3px solid var(--ink);
+  font-family: var(--font-stamp);
+  font-size: 66px;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--green);
+}
+.cmp-row {
+  padding: 13px 0;
+  border-bottom: 1.5px solid var(--rule);
+}
+.cmp-row h3 {
+  margin-bottom: 6px;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.cmp-cells span {
+  font-size: 27px;
+  font-weight: 600;
+  line-height: 1.28;
+}
+
+/* ---------- Link ---------- */
+/* The call to action sits in the middle of the page. */
+.launch-link .grow {
+  display: none;
+}
+.link-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-bottom: 40px;
+}
+.launch-link .sub {
+  font-size: 34px;
+}
+.visa-label {
+  margin-top: 40px;
+  padding: 26px 32px 30px;
+  border: 2px solid var(--line);
+  border-radius: 20px;
+  background: var(--paper-soft);
+}
+.visa-label-head {
+  display: block;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--green);
+}
+.link-url {
+  margin-top: 10px;
+  font-size: 52px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+.link-url.long {
+  font-size: 42px;
+}
+.link-url > span {
+  border-bottom: 5px solid var(--saffron);
+}
+.link-points {
+  margin: 30px 0 0;
+  padding: 0 0 0 34px;
+  font-size: 30px;
+  line-height: 1.4;
+  color: var(--lede);
+}
+.link-stamp {
+  width: 320px;
+  margin: 30px auto 0;
+}
+
+/* ---------- Story ---------- */
+.launch-story .sub {
+  font-size: 40px;
+}
+.sticker {
+  position: relative;
+  margin-top: 40px;
+  border-radius: 28px;
+}
+.sticker-poll {
+  height: 330px;
+}
+.sticker-quiz {
+  height: 420px;
+}
+.sticker-link {
+  height: 160px;
+}
+.sticker-post {
+  height: 600px;
+}
+.sticker span {
+  display: none;
+}
+.guides .sticker {
+  border: 4px dashed var(--muted);
+}
+.guides .sticker span {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--muted);
+}
+.story-foot {
+  margin-top: 34px;
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1.32;
+}
+
+/* ---------- Profile picture and highlight covers ---------- */
+.avatar,
+.highlight {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper);
+}
+.avatar-mark {
+  position: relative;
+  width: 600px;
+  height: 600px;
+}
+.seal {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 640px;
+  height: 640px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow:
+    0 0 0 14px var(--paper),
+    0 0 0 18px var(--green);
+}
+.seal svg {
+  width: 380px;
+  height: 380px;
+}
+.seal-states svg {
+  width: 470px;
+}
+.icon-text {
+  fill: var(--paper);
+  font-family: var(--font-stamp);
+  font-size: 30px;
+  font-weight: 900;
+  text-anchor: middle;
+}
