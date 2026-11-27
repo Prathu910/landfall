@@ -17,3 +17,6 @@ supabase/.temp/
 supabase/.branches/
 supabase/functions/.env*
 submission-exports/
+
+# The Instagram launch pack renders here (local only, never committed).
+/.superpowers/social/
