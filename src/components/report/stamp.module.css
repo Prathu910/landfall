@@ -9,6 +9,12 @@
   mix-blend-mode: var(--stamp-blend);
 }
 
+/* The small visa stamps keep no night halo: at their size it blurs the
+   letters into the ink. */
+.small {
+  filter: none;
+}
+
 .text {
   font-family: var(--font-stamp);
 }
