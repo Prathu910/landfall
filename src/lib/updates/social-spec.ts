@@ -12,6 +12,9 @@ export const STORY = {
 
 export const OG = { width: 1200, height: 630 } as const;
 
+/** The profile picture's canvas; Instagram shows it as the inscribed circle. */
+export const SQUARE = { width: 1080, height: 1080 } as const;
+
 /** The profile grid crops feed cards to about 3:4; keep cover text this wide. */
 export const FEED_GRID_WIDTH = 1012;
 

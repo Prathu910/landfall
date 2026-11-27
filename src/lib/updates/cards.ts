@@ -106,9 +106,9 @@ export type CardView =
 
 export type { SpotlightCard, StateCard };
 
-const SKILLSELECT_SOURCE = (asAt: string) =>
+export const SKILLSELECT_SOURCE = (asAt: string) =>
   `Source: SkillSelect EOI data (Australian Government), CC BY 3.0 AU · as at ${asAt}`;
-const ROUND_SOURCE = (date: string) =>
+export const ROUND_SOURCE = (date: string) =>
   `Source: Home Affairs invitation round, ${dayText(date)}`;
 
 const COUNT_WORDS = ["zero", "one", "two", "three", "four", "five", "six"];
@@ -268,9 +268,18 @@ function closingCard(
   position: CardBase["position"],
   source: string,
 ): ClosingCard {
+  return closingCardFor(formatMonth(facts.month), position, source);
+}
+
+/** The closing card with any tag: the monthly sets and the launch pack share it. */
+export function closingCardFor(
+  tag: string,
+  position: CardBase["position"],
+  source: string,
+): ClosingCard {
   return {
     id: "closing",
-    tag: formatMonth(facts.month),
+    tag,
     position,
     source,
     visas: [],
