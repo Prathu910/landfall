@@ -168,7 +168,7 @@ describe("the state spotlight", () => {
   it("keeps a hidden month as a range, never zero", () => {
     const [months] = charts;
     const jan = months.charts[0].bars.find((b) => b.label === "Jan");
-    expect(jan?.value).toBe("<20");
+    expect(jan?.value).toBe("<20 each");
     expect(jan?.solid).toBe(0);
     expect(jan?.hatched).toBeGreaterThan(0);
     const oct = months.charts[0].bars.at(-1);

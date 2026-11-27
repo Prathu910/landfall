@@ -182,10 +182,14 @@
   --bar-max: 280px;
 }
 .charts-2 .chart {
-  --bar-max: 80px;
+  --bar-max: 64px;
 }
 .charts-2 .ccol b.fig {
   font-size: 26px;
+}
+/* "<20 each" wraps to two short lines over its column. */
+.charts-2 .ccol b.word {
+  font-size: 19px;
 }
 .charts-2 .ccols {
   gap: 6px;

@@ -27,8 +27,12 @@ import type {
 /** Occupations shown per visa on the top-occupations slide. */
 export const TOP_SHOWN = 5;
 
-/** The month chart's short labels: a hidden month is "<20", explained by the key. */
-const SHORT_VALUE = { hidden: "<20", none: "0", "not-published": "n/p" };
+/**
+ * The month chart's short labels, as on the state page: a month with only
+ * hidden counts is "<20 each" (each occupation and score under 20), never
+ * "<20", which would read as fewer than 20 EOIs in the month.
+ */
+const SHORT_VALUE = { hidden: "<20 each", none: "0", "not-published": "n/p" };
 
 function monthsChart(card: MonthsCardView): Chart {
   return {
