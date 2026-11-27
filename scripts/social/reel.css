@@ -1,0 +1,194 @@
+/* The reels (brief 2026-11-27): Look A's passport page on a 1080x1920
+   canvas, on top of card.css and launch.css (tokens only). Content keeps
+   to x 132-940 and y 250-1540, clear of Instagram's top bar, caption and
+   buttons. Body text is 36px or more, the hook and headings 80px or more. */
+
+.reel .inner {
+  padding: 206px 96px 336px 88px;
+}
+
+/* The logo and tag row and the source foot frame every scene. */
+.reel .top {
+  height: 64px;
+}
+.reel .top .logo {
+  font-size: 44px;
+}
+.reel .top .tag {
+  font-size: 28px;
+}
+.foot .source {
+  font-size: 30px;
+}
+.foot .mrz {
+  font-size: 26px;
+}
+
+/* Every scene fills the stage; only its own seconds show it. */
+.stage {
+  position: relative;
+  flex: 1;
+}
+.scene {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+}
+/* Centred while it fits; when it doesn't, it runs off the bottom, where
+   the renderer's overflow check sees it. */
+.scene-body {
+  margin: auto 0;
+}
+.reel .eyebrow {
+  margin-top: 0;
+  font-size: 36px;
+}
+.reel .title {
+  margin-top: 18px;
+  text-wrap: balance;
+}
+.reel-sub {
+  margin-top: 30px;
+  font-size: 44px;
+  line-height: 1.3;
+  color: var(--lede);
+  text-wrap: pretty;
+}
+
+/* ---------- Hook ---------- */
+.hook-title .line {
+  display: block;
+}
+.hook-title.nowrap .line {
+  white-space: nowrap;
+}
+.reel-stamp {
+  width: 400px;
+  margin: 56px auto 0;
+}
+
+/* ---------- Chart ---------- */
+.reel-heading {
+  margin-top: 40px;
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.rchart {
+  display: flex;
+  gap: 14px;
+  align-items: flex-end;
+  margin-top: 26px;
+}
+.rcol {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.rvalue {
+  font-family: var(--font-stamp);
+  font-size: 60px;
+  font-weight: 900;
+  line-height: 1;
+}
+.rtrack {
+  display: flex;
+  align-items: flex-end;
+  width: 100%;
+  height: 420px;
+}
+.rbar {
+  width: 100%;
+  border-radius: 6px 6px 0 0;
+  background: var(--green);
+  transform-origin: 50% 100%;
+}
+.strong .rbar {
+  background: var(--ink);
+}
+.rlabel {
+  width: 100%;
+  padding-top: 10px;
+  border-top: 3px solid var(--ink);
+  font-family: var(--font-stamp);
+  font-size: 54px;
+  font-weight: 900;
+  line-height: 1;
+  text-align: center;
+}
+.reel-axis {
+  margin-top: 22px;
+  font-size: 36px;
+  color: var(--muted);
+}
+
+/* ---------- Reading ---------- */
+.reel-emphasis {
+  margin-top: 44px;
+  padding-left: 28px;
+  border-left: 6px solid var(--saffron);
+  font-size: 44px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--ink);
+  text-wrap: pretty;
+}
+
+/* ---------- Link ---------- */
+.reel-label {
+  margin-top: 48px;
+}
+.reel-label .visa-label-head {
+  font-size: 36px;
+}
+.reel-url {
+  margin-top: 14px;
+  font-size: 56px;
+}
+
+/* ---------- End card ---------- */
+.end-body {
+  text-align: center;
+}
+.end-logo .logo {
+  font-size: 72px;
+}
+.end-stamp {
+  width: 380px;
+  margin-top: 48px;
+}
+.end-title {
+  font-size: 104px;
+  text-align: center;
+}
+.reel .end-title {
+  margin-top: 40px;
+}
+.end-url {
+  margin-top: 30px;
+  font-size: 60px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+.end-url span {
+  border-bottom: 5px solid var(--saffron);
+}
+.end-handle {
+  margin-top: 22px;
+  font-size: 44px;
+  font-weight: 600;
+  color: var(--green);
+}
+.end-disclaim {
+  margin-top: 40px;
+  font-size: 36px;
+  font-weight: 600;
+  color: var(--ink);
+}

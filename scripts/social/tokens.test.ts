@@ -20,8 +20,8 @@ const declared = (css: string) =>
 const BAR_VARS = ["--solid", "--hatched"];
 
 describe("cardTokenCss", () => {
-  it("defines every var() card.css and launch.css use, in both themes", () => {
-    for (const file of ["card.css", "launch.css"]) {
+  it("defines every var() card.css, launch.css and reel.css use, in both themes", () => {
+    for (const file of ["card.css", "launch.css", "reel.css"]) {
       const css = readFileSync(`scripts/social/${file}`, "utf8");
       // A chart's bar sizes are the stylesheet's own (set inline per bar).
       const local = new Set([...declared(css), ...BAR_VARS]);

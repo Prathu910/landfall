@@ -22,6 +22,7 @@
     "updates:retention": "tsx scripts/updates/retention.ts",
     "updates:frozen-check": "tsx scripts/automation/frozen-check.ts",
     "social:render": "tsx scripts/social/render.ts",
+    "social:reel": "tsx scripts/social/reel.ts",
     "data:state-lists": "tsx scripts/state-lists/cli.ts",
     "page-watch": "tsx scripts/page-watch/cli.ts",
     "predev": "tsx scripts/copy-public-data.ts",
