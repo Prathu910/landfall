@@ -51,6 +51,21 @@ Each card opens in headless Chrome through puppeteer-core (`CHROME_PATH`, defaul
 
 `compress.ts` quantises every PNG with sharp to a 256-colour palette (the size must not change). A render writes nothing and exits 1 if any image is over 300 KB or the set is over 2.5 MB. Each set also gets a `set.json` beside its images (`SetManifest`: kind, month, round, each image's card, format, theme, file and alt text, the `reused` files and the caption). Measured for 2026-10: largest image 134 KB, round set 0.8 MB, month set 1.2 MB. `public/social/` is in `.prettierignore`.
 
+### The launch pack
+
+```sh
+npm run social:render -- --set launch --out .superpowers/social/launch-2026-11                 # the pack, light (default)
+npm run social:render -- --set launch --out <dir> --theme dark                                 # the same pack in dark, in its own folder
+npm run social:render -- --set launch --out <dir> --state VIC --occupation 261313              # other spotlights (default NSW, 254499)
+npm run social:render -- --set launch --out <dir> --start 2026-12-01                           # calendar.md from that day (default tomorrow)
+npm run social:render -- --set launch --out <dir> --guides                                     # only the stories, sticker spaces outlined, in <dir>/stories-guides/
+npm run social:render -- --set launch --out <dir> --html-only <html-dir>                       # each card's HTML, no Chrome
+```
+
+`--set launch` (`scripts/social/launch.ts`) renders the Instagram launch pack (brief `.superpowers/sdd/2026-11-27-instagram-launch/brief.md`) from the pure view-models in `src/lib/social/` (`buildLaunchPack`, loaded by `loadLaunchInput`): nine feed posts, four story frames and the profile kit, every figure read from the site's data and modules (the points table, the visa guides, the glossary, the newest round's recap facts, the state page view and the occupation page modules). It refuses an `--out` inside `public/`: the pack is local only (`.superpowers/social/` is gitignored). Each post is a folder (`01-welcome/` … `09-occupation-<code>/`) with its slides as `01.png`, `02.png` … and a `caption.json` (hook, body, call to action, link, hashtags, alt text per slide); posts 2 and 3 copy the newest round set and month set from `public/social/<month>/` and never re-render them, so render those sets first. `stories/` holds the poll, quiz, link and new-post frames (1080×1920, sticker spaces left empty), `profile/` the profile picture (1080×1080) and four highlight covers. Beside them it writes `captions.md`, `calendar.md` (10 days from `--start`, with the reply guide), `profile.md` (three name and bio options), `preview.html` (the profile, the grid with posts 1, 4 and 7 pinned, every carousel and caption with a copy button; relative paths) and `contact.png` (every image as thumbnails).
+
+The launch templates are `templates/launch-*.tsx`, `profile-avatar.tsx` and `highlight-cover.tsx`, styled by `launch.css` on top of `card.css`; `renderer.ts` is the Chrome renderer both kinds share. They pass the same page checks, plus the profile-grid crop on every launch cover and the 540px crop circle on the profile picture and highlight covers (`[data-circle]`). Limits are per folder: 300 KB an image, 2.5 MB a folder. Measured on 27 Nov 2026: largest image 103 KB, largest folder (the points table) 0.8 MB. `src/lib/social/copy-sweep.test.ts` sweeps every card, caption, alt text and Markdown file with `BANNED_COPY`, the number rules, a no-price rule and the font subsets.
+
 ```sh
 npm run updates:retention [-- --month YYYY-MM]   # delete files of months older than the latest 3 (default: newest folder); keeps every og.png
 ```
