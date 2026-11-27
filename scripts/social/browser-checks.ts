@@ -2,7 +2,8 @@
  * What a card page must pass in Chrome before it is screenshotted: both faces
  * loaded, no text overflowing, story content inside Instagram's safe zone,
  * feed cover text inside the profile-grid crop, and the theme's own paper.
- * Any failure throws with the job's output path.
+ * Any failure throws with the job's output path. The reels (reel.ts) run the
+ * same checks at each scene's hold time, with their own safe area.
  */
 import type { Page } from "puppeteer-core";
 import {
@@ -34,10 +35,21 @@ export const FEED_GRID = {
   right: (FEED.width + FEED_GRID_WIDTH) / 2,
 } as const;
 
-type Expected = {
+/**
+ * What one page must pass. `safe` bounds every `[data-safe]` box: a story's
+ * band, or a reel's band and columns.
+ */
+export type Expected = {
   fonts: string[];
   paper: string;
-  safe: { top: number; bottom: number } | null;
+  safe: {
+    top: number;
+    bottom: number;
+    left?: number;
+    right?: number;
+    /** "story" or "reel", for the messages. */
+    name?: string;
+  } | null;
   essential: { left: number; right: number } | null;
   /** The circle Instagram crops a profile picture or highlight cover to. */
   circle: { x: number; y: number; r: number } | null;
@@ -92,14 +104,22 @@ function pageChecks(expect: Expected): string {
     }
   }
   if (expect.safe) {
+    const safe = expect.safe;
+    const name = safe.name || "story";
     const boxes = [...document.querySelectorAll("[data-safe]")];
-    if (boxes.length === 0) problems.push("story has no [data-safe] box");
+    if (boxes.length === 0) problems.push(name + " has no [data-safe] box");
     for (const box of boxes) {
       const r = box.getBoundingClientRect();
-      if (px(r.top) < expect.safe.top || px(r.bottom) > expect.safe.bottom) {
+      if (px(r.top) < safe.top || px(r.bottom) > safe.bottom) {
         problems.push(
-          "story content spans y " + px(r.top) + "-" + px(r.bottom) +
-          ", outside the safe zone " + expect.safe.top + "-" + expect.safe.bottom
+          name + " content spans y " + px(r.top) + "-" + px(r.bottom) +
+          ", outside the safe zone " + safe.top + "-" + safe.bottom
+        );
+      }
+      if (safe.left !== undefined && (px(r.left) < safe.left || px(r.right) > safe.right)) {
+        problems.push(
+          name + " content spans x " + px(r.left) + "-" + px(r.right) +
+          ", outside the safe zone " + safe.left + "-" + safe.right
         );
       }
     }
@@ -143,10 +163,19 @@ function pageChecks(expect: Expected): string {
 })(${JSON.stringify(expect)})`;
 }
 
+/** Runs `expect` on the loaded page; throws naming `label` on any failure. */
+export async function checkPage(
+  page: Page,
+  expect: Expected,
+  label: string,
+): Promise<void> {
+  const problems = (await page.evaluate(pageChecks(expect))) as string[];
+  if (problems.length > 0) {
+    throw new Error(`${label}: ${problems.join("; ")}`);
+  }
+}
+
 /** Runs the checks on the loaded card; throws naming `job.out` on any failure. */
 export async function checkCard(page: Page, job: HtmlJob): Promise<void> {
-  const problems = (await page.evaluate(pageChecks(expected(job)))) as string[];
-  if (problems.length > 0) {
-    throw new Error(`${job.out}: ${problems.join("; ")}`);
-  }
+  await checkPage(page, expected(job), job.out);
 }

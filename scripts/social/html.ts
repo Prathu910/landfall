@@ -58,12 +58,12 @@ function fontUrl(path: string): string {
 }
 
 /** The two faces the cards use, named as the renderer's font checks name them. */
-const FONT_FACES = [
+export const FONT_FACES = [
   `@font-face{font-family:"Archivo";src:url("${fontUrl("@fontsource-variable/archivo/files/archivo-latin-wdth-normal.woff2")}") format("woff2");font-weight:100 900;font-stretch:62% 125%;font-style:normal;}`,
   `@font-face{font-family:"Big Shoulders Stencil Display";src:url("${fontUrl("@fontsource/big-shoulders-stencil-display/files/big-shoulders-stencil-display-latin-900-normal.woff2")}") format("woff2");font-weight:900;font-style:normal;}`,
 ].join("\n");
 
-const CARD_CSS = [
+export const CARD_CSS = [
   readFileSync(join(__dirname, "card.css"), "utf8"),
   readFileSync(join(__dirname, "launch.css"), "utf8"),
 ].join("\n");

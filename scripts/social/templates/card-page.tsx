@@ -37,7 +37,7 @@ function SourceLine({ text }: { text: string }) {
   );
 }
 
-function Logo() {
+export function Logo() {
   return (
     <span className="logo">
       <svg

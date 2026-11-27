@@ -8,12 +8,16 @@ import {
 } from "../updates/latest-round";
 import type { RoundSection } from "../updates/types";
 import { SWIPE, closing, launchMrz, numbered, siteUrl } from "./launch-common";
-import type { CaptionParts, LaunchCard } from "./launch-types";
+import type { CaptionParts, LaunchCard, LaunchStamp } from "./launch-types";
 
 const tagFor = (passMark: number) => `Is ${passMark} enough?`;
-const CUTOFFS_URL = siteUrl("/occupations/189-cut-offs/");
-const HISTORY =
+export const CUTOFFS_URL = siteUrl("/occupations/189-cut-offs/");
+export const HISTORY =
   "Cut-offs differ by occupation and by round: a past cut-off is history, not a promise.";
+
+/** What the cut-offs page lists, as the link card and the reel say it. */
+export const CUTOFFS_PAGE =
+  "Every occupation listed in the last four 189 rounds, with its lowest score invited.";
 
 export type EnoughInput = {
   round: LatestRound;
@@ -29,12 +33,29 @@ export function enoughSentences(round: LatestRound): string[] {
     .filter((s) => !s.startsWith("Source:"));
 }
 
-function atPassMarkTitle(section: RoundSection, passMark: number): string {
+/** "44 occupations were invited at 65", from the round's distribution. */
+export function atPassMarkTitle(
+  section: RoundSection,
+  passMark: number,
+): string {
   const count =
     section.distribution.find((d) => d.score === passMark)?.occupations ?? 0;
   if (count === 0) return `No occupation was invited at ${passMark}`;
   const noun = count === 1 ? "occupation was" : "occupations were";
   return `${formatNumber(count)} ${noun} invited at ${passMark}`;
+}
+
+/** The cover's stamp: the round's date and the pass mark. */
+export function passMarkStamp(
+  round: LatestRound,
+  passMark: number,
+): LaunchStamp {
+  return {
+    shape: "round",
+    top: "SUBCLASS 189 ROUND",
+    word: `PASS MARK ${passMark}`,
+    bottom: dayText(round.date).toUpperCase(),
+  };
 }
 
 /** Post 7: cover, the round's cut-offs, the plain reading, the cut-offs page, closing. */
@@ -58,14 +79,7 @@ export function enoughCards({
       eyebrow: `189 round · ${day}`,
       titleLines: [`Is ${passMark} points`, "enough?"],
       sub: `What the ${day} round shows, card by card.`,
-      stamps: [
-        {
-          shape: "round",
-          top: "SUBCLASS 189 ROUND",
-          word: `PASS MARK ${passMark}`,
-          bottom: day.toUpperCase(),
-        },
-      ],
+      stamps: [passMarkStamp(round, passMark)],
       swipe: SWIPE,
       mrz: launchMrz(["IS", String(passMark), "ENOUGH"]),
     },
@@ -115,7 +129,7 @@ export function enoughCards({
       id: "launch-link",
       eyebrow: "Your occupation",
       title: "Check your occupation's cut-offs",
-      sub: "Every occupation listed in the last four 189 rounds, with its lowest score invited. A round that skipped it says “Not listed”, never zero.",
+      sub: `${CUTOFFS_PAGE} A round that skipped it says “Not listed”, never zero.`,
       url: CUTOFFS_URL,
       points: [],
       stamp: null,

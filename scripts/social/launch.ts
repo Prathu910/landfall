@@ -37,7 +37,7 @@ import { openRenderer } from "./renderer";
 const ROOT = resolve(__dirname, "..", "..");
 
 /** The launch images are local only: never under `public/` (brief). */
-function requireOutsidePublic(out: string): void {
+export function requireOutsidePublic(out: string): void {
   const rel = relative(join(ROOT, "public"), out);
   if (!rel.startsWith("..") && !rel.startsWith("/")) {
     throw new Error(
