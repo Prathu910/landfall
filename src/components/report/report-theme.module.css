@@ -1,0 +1,16 @@
+/* The report on the passport palette (founder, 26 Nov 2026): the report's
+   components still name the older newsprint tokens, so the screen sheet and
+   the print tree map them onto the --check-* tokens the rest of the site
+   uses. Both themes follow, since every --check-* token is a light-dark pair;
+   the label and status colours keep their own meanings and stay as they are. */
+.theme {
+  --ink: var(--check-ink);
+  --muted: var(--check-muted);
+  --muted-soft: var(--check-muted);
+  --rule: var(--check-line);
+  --card: var(--check-paper);
+  --surface: var(--check-sage);
+  --newsprint: var(--check-paper);
+  --chart-quiet: color-mix(in srgb, var(--check-muted) 45%, var(--check-paper));
+  --serif: var(--font-report);
+}

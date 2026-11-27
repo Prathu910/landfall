@@ -1,21 +1,35 @@
+import type { Metadata } from "next";
 import { BookOpenCheck } from "lucide-react";
-import { Faq } from "@/components/faq";
+import { OccupationFaq } from "@/components/occupation/occupation-faq";
 import shell from "@/components/info-page/info-page.module.css";
 import { PageHead } from "@/components/info-page/page-head";
 import { MethodContents } from "@/components/methodology/method-contents";
-import {
-  METHOD_DEFINITIONS,
-  methodSources,
-} from "@/components/methodology/method-content";
+import Link from "next/link";
+import { methodSources } from "@/components/methodology/method-content";
+import { METHOD_TERM_IDS, glossaryTerms } from "@/lib/guide/glossary";
 import { MethodPrivacy } from "@/components/methodology/method-privacy";
 import { occupationIndex } from "@/components/data/occupation-index";
 import { MethodSources } from "@/components/methodology/method-sources";
 import styles from "@/components/methodology/methodology.module.css";
 import { coverageSentence, snapshotCoverage } from "@/lib/data/coverage";
 import { loadManifest } from "@/lib/data/load-server";
+import { monthEnd } from "@/lib/data/report-source";
+import { methodologyFaq } from "@/lib/methodology/faq";
 import { METHOD_LIMITS, METHOD_LINES } from "@/lib/outlook/method";
+import { faqPageLd } from "@/lib/seo/json-ld";
+import { longDayText } from "@/lib/updates/format";
+import { sitePageMetadata } from "@/lib/seo/page-meta";
+import { METHODOLOGY_PAGE, sitePageJsonLd } from "@/lib/seo/site-pages";
+import { JsonLd } from "@/components/seo/json-ld";
 const manifest = loadManifest();
-export const metadata = { title: "Our methodology and sources" };
+const TERMS = glossaryTerms(manifest.sources).filter((t) =>
+  METHOD_TERM_IDS.includes(t.id),
+);
+const FAQ = methodologyFaq(
+  monthEnd(manifest.asAt),
+  manifest.occupations.length,
+);
+export const metadata: Metadata = sitePageMetadata(METHODOLOGY_PAGE);
 /** "Strong: your points…" with the label name in ink; the text is unchanged. */
 function LabelRule({ line }: { line: string }) {
   const split = line.indexOf(": ");
@@ -36,7 +50,16 @@ export default function MethodologyPage() {
           eyebrow="How MigrateLens works"
           icon={BookOpenCheck}
           title="Methodology and limitations"
-          intro="What we use, what we calculate, and where the data stops. Sources checked on 17 November 2026."
+          intro={
+            <>
+              What we use, what we calculate, and where the data stops. Sources
+              checked on{" "}
+              <time dateTime={manifest.checkedAt}>
+                {longDayText(manifest.checkedAt)}
+              </time>
+              .
+            </>
+          }
         />
         <div className={styles.layout}>
           <MethodContents />
@@ -152,51 +175,29 @@ export default function MethodologyPage() {
             <section id="definitions" className={styles.section}>
               <h2>Useful definitions</h2>
               <dl className={styles.definitions}>
-                {METHOD_DEFINITIONS.map(([term, meaning]) => (
-                  <div key={term}>
+                {TERMS.map((term) => (
+                  <div key={term.id}>
                     <dt>
-                      <strong>{term}</strong>
+                      <strong>{term.term}</strong>
                     </dt>
-                    <dd>{meaning}</dd>
+                    <dd>{term.definition}</dd>
                   </div>
                 ))}
               </dl>
+              <p>
+                Every term, with its source, is in the{" "}
+                <Link href="/guide/glossary/">glossary</Link>.
+              </p>
             </section>
             <MethodPrivacy />
             <section id="questions" className={styles.section}>
               <h2>Common questions</h2>
-              <Faq
-                items={[
-                  [
-                    "Is the points check free?",
-                    "Yes. This first release has no checkout or subscription. You can calculate your score, view your overview and use the browser print function without paying.",
-                  ],
-                  [
-                    "Is this migration advice?",
-                    "It is general information and a self-reported calculation. MigrateLens is not a registered migration agent. A registered agent or Australian legal practitioner can assess your individual circumstances.",
-                  ],
-                  [
-                    "Why do some numbers show a range?",
-                    "The official dashboard masks counts below 20. We preserve that uncertainty when adding point bands, rather than filling in invented numbers.",
-                  ],
-                  [
-                    "Does the data update after every round?",
-                    "The imported pool is dated 31 October 2026. Invitation results and EOI pool snapshots have separate release schedules. Automatic imports and report refreshes are part of a later release.",
-                  ],
-                  [
-                    "Can I download the report?",
-                    "Use Print / save PDF on your overview, then choose your browser’s PDF destination. Automated PDF generation and email delivery are not included in this release.",
-                  ],
-                  [
-                    "What if my occupation is not listed?",
-                    `Choose Other occupation for the points check. The report will clearly show that no pool comparison is available. The current imported snapshot covers ${manifest.occupations.length} occupations.`,
-                  ],
-                ]}
-              />
+              <OccupationFaq items={FAQ} />
             </section>
           </div>
         </div>
       </div>
+      <JsonLd data={[...sitePageJsonLd(METHODOLOGY_PAGE), faqPageLd(FAQ)]} />
     </main>
   );
 }

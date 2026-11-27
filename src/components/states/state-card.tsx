@@ -1,4 +1,5 @@
-import { ArrowUpRight, ChevronDown } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, ArrowUpRight, ChevronDown } from "lucide-react";
 import type { StateCard as Card } from "@/lib/states-page/state-cards";
 import styles from "./state-card.module.css";
 
@@ -7,9 +8,23 @@ const VISA_NAMES = {
   "491": "Skilled Work Regional (491)",
 } as const;
 
-/** One state or territory: the key facts at a glance, the summary on tap. */
-export function StateCard({ card }: { card: Card }) {
+/**
+ * One state or territory: the key facts at a glance, the summary on tap.
+ * `dataLink` adds the link to the state's own page; a state page nests the
+ * card under its own h2, so it asks for an h3.
+ */
+export function StateCard({
+  card,
+  dataLink,
+  headingLevel = 2,
+}: {
+  card: Card;
+  dataLink?: { href: string; text: string };
+  headingLevel?: 2 | 3;
+}) {
   const nameId = `${card.anchor}-name`;
+  const Heading = headingLevel === 2 ? "h2" : "h3";
+  const Subheading = headingLevel === 2 ? "h3" : "h4";
   return (
     <article id={card.anchor} className={styles.card} aria-labelledby={nameId}>
       <header className={styles.top}>
@@ -17,7 +32,7 @@ export function StateCard({ card }: { card: Card }) {
           {card.code}
         </span>
         <div>
-          <h2 id={nameId}>{card.name}</h2>
+          <Heading id={nameId}>{card.name}</Heading>
           <p className={styles.system}>{card.system}</p>
         </div>
       </header>
@@ -58,10 +73,15 @@ export function StateCard({ card }: { card: Card }) {
         </summary>
         <div className={styles.moreBody}>
           <p>{card.summary}</p>
-          <h3>What changes the picture</h3>
+          <Subheading>What changes the picture</Subheading>
           <p>{card.considerations}</p>
         </div>
       </details>
+      {dataLink && (
+        <Link href={dataLink.href} className={styles.dataLink}>
+          {dataLink.text} <ArrowRight size={14} aria-hidden />
+        </Link>
+      )}
       <footer className={styles.foot}>
         <a href={card.url} target="_blank" rel="noreferrer">
           Read the official criteria <ArrowUpRight size={14} aria-hidden />

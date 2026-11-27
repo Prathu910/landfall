@@ -2,16 +2,18 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { ChevronRight, Check, Globe2 } from "lucide-react";
 import { CheckFlow } from "@/components/check-flow";
+import { CheckExplainer } from "@/components/check/check-explainer";
+import { PASS_MARK, POINTS_TABLE } from "@/data/guide/points-table";
+import { pointsInBrief } from "@/lib/guide/points-table";
+import { formatDate } from "@/lib/migration";
 import { loadManifest } from "@/lib/data/load-server";
-import { reportSource } from "@/lib/data/report-source";
+import { monthEnd, reportSource } from "@/lib/data/report-source";
+import { sitePageMetadata } from "@/lib/seo/page-meta";
+import { CHECK_PAGE, sitePageJsonLd } from "@/lib/seo/site-pages";
+import { JsonLd } from "@/components/seo/json-ld";
 import styles from "./check-page.module.css";
 
-export const metadata: Metadata = {
-  title: "Australian PR points calculator — your free check",
-  description:
-    "Calculate your Australian skilled migration points for the 189, 190 and provisional 491 pathways. Get a free personal report with published occupation evidence.",
-  alternates: { canonical: "/check/" },
-};
+export const metadata: Metadata = sitePageMetadata(CHECK_PAGE);
 export default function CheckPage() {
   // Every occupation file shares the manifest's as-at month.
   const manifest = loadManifest();
@@ -32,14 +34,14 @@ export default function CheckPage() {
           </div>
           <div>
             <p className={styles.description}>
-              Start with your points. See what they mean for the 189, 190 and
-              provisional 491 pathways in your free personal report.
+              Start with your points. See where they put you for the 189, 190
+              and 491, free; your full personal report is one step further.
             </p>
             <ul className={styles.facts}>
               {[
                 "No account",
                 "No documents to upload",
-                "Email to view report",
+                "Free result, no email",
               ].map((fact) => (
                 <li key={fact}>
                   <Check size={14} aria-hidden />
@@ -54,7 +56,14 @@ export default function CheckPage() {
           </div>
         </header>
         <CheckFlow source={reportSource(manifest.asAt, manifest)} />
+        <CheckExplainer
+          passMark={PASS_MARK}
+          dataDate={formatDate(monthEnd(manifest.asAt))}
+          dataDateTime={monthEnd(manifest.asAt)}
+          factors={pointsInBrief(POINTS_TABLE)}
+        />
       </div>
+      <JsonLd data={sitePageJsonLd(CHECK_PAGE)} />
     </main>
   );
 }

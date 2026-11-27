@@ -16,9 +16,11 @@ function inkOf(label: OutlookLabel): CSSProperties {
 
 /** The 189 label at common scores, as stamps, near the top of the page. */
 export function OccupationVerdict({
+  name,
   verdict,
   figuresFrom,
 }: {
+  name: string;
   verdict: Verdict;
   /** The data month, for an occupation that has dropped out of the data. */
   figuresFrom?: string;
@@ -26,7 +28,7 @@ export function OccupationVerdict({
   return (
     <section className={styles.strip} aria-labelledby="verdict-heading">
       <h2 id="verdict-heading" className={styles.heading}>
-        189 outlook by points
+        Is my score enough for {name} 189?
       </h2>
       {verdict.kind === "scores" ? (
         <>

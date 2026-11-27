@@ -1,5 +1,7 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ChevronRight, FileText } from "lucide-react";
+import { stateRuleData } from "@/components/data/state-rule-data";
 import { SampleTabs } from "@/components/report/sample-tabs";
 import type { SampleExample } from "@/components/report/sample-tabs";
 import { toOccupationEvidence } from "@/lib/data/legacy";
@@ -10,32 +12,48 @@ import {
 } from "@/lib/data/load-server";
 import { reportSource } from "@/lib/data/report-source";
 import { EXAMPLES, SAMPLE_CODES } from "@/lib/outlook/examples";
+import { buildReportPayload } from "@/lib/report-issue/build";
 import { SAMPLE_AS_OF } from "@/lib/sample";
 import { dayText, monthEnd } from "@/lib/updates/format";
+import { formatMonth } from "@/lib/report/copy";
+import { sitePageMetadata } from "@/lib/seo/page-meta";
+import { samplePage, sitePageJsonLd } from "@/lib/seo/site-pages";
+import { JsonLd } from "@/components/seo/json-ld";
 import styles from "./sample-page.module.css";
-export const metadata = { title: "Explore the sample report" };
+const PAGE = samplePage(formatMonth(loadSampleMeta().asAt));
+
+export const metadata: Metadata = sitePageMetadata(PAGE);
 
 export default function SamplePage() {
+  const meta = loadSampleMeta();
+  const source = reportSource(
+    loadSampleCore(EXAMPLES[0].profile.occupation).asAt,
+    meta,
+  );
+  // The reports are built here, at build time; the page's client code only shows them.
   const examples: SampleExample[] = EXAMPLES.map(({ id, tab, profile }) => {
     const core = loadSampleCore(profile.occupation);
+    const detail = loadSampleDetail(profile.occupation);
     return {
       id,
       tab,
-      profile,
       occupation: {
         status: "ready",
         evidence: toOccupationEvidence(core),
         core,
-        detail: {
-          status: "ready",
-          detail: loadSampleDetail(profile.occupation),
-        },
+        detail: { status: "ready", detail },
       },
+      payload: buildReportPayload({
+        profile,
+        asOf: SAMPLE_AS_OF,
+        core,
+        detail,
+        rules: stateRuleData,
+        source,
+        meta: null,
+      }),
     };
   });
-  const first = examples[0].occupation;
-  if (first.status !== "ready") throw new Error("Sample needs a core");
-  const meta = loadSampleMeta();
   const dataAsAt = dayText(monthEnd(meta.asAt));
   return (
     <main id="main" className={styles.page}>
@@ -57,7 +75,7 @@ export default function SamplePage() {
             Four fictional people, one for each kind of result. The points
             calculations and official occupation snapshot are real. Your own
             report uses your answers. Example reports use SkillSelect data as at{" "}
-            {dataAsAt}.
+            <time dateTime={monthEnd(meta.asAt)}>{dataAsAt}</time>.
             <span className={styles.guideLink}>
               {" "}
               New to skilled PR?{" "}
@@ -67,13 +85,12 @@ export default function SamplePage() {
         </header>
         <SampleTabs
           examples={examples}
-          asOf={SAMPLE_AS_OF}
           fixedComparisons={SAMPLE_CODES.map((code) =>
             toOccupationEvidence(loadSampleCore(code)),
           )}
-          source={reportSource(first.core.asAt, meta)}
         />
       </div>
+      <JsonLd data={sitePageJsonLd(PAGE)} />
     </main>
   );
 }

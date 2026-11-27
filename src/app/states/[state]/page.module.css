@@ -1,0 +1,13 @@
+/* A state page: the recap's passport identity (sage, paper and ink) in
+   both themes, on the recap kit's bands. */
+.page {
+  --focus-ring: var(--brand-focus);
+  background: var(--brand-sage);
+  color: var(--brand-ink);
+  font: 400 1rem/1.6 var(--brand-font);
+}
+.page h1,
+.page h2,
+.page h3 {
+  font-family: var(--brand-font);
+}

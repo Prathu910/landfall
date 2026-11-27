@@ -1,0 +1,54 @@
+/* The legal pages' sections: white paper cards on the sage desk, as on
+   /methodology/ (methodology.module.css), in one readable column. */
+.body {
+  display: grid;
+  gap: calc(var(--brand-unit) * 5);
+  max-width: 52rem;
+}
+.section {
+  padding: calc(var(--brand-unit) * 8);
+  border: var(--brand-rule-width) solid var(--rule);
+  border-radius: calc(var(--brand-unit) * 3);
+  background: var(--card);
+}
+.section h2 {
+  margin-bottom: calc(var(--brand-unit) * 3);
+  font-size: clamp(1.25rem, 2.2vw, 1.5rem);
+  font-weight: 650;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+}
+.section p {
+  max-width: 68ch;
+  color: var(--muted);
+  line-height: 1.75;
+}
+.section p + p {
+  margin-top: calc(var(--brand-unit) * 4);
+}
+.section a,
+.seller a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: calc(var(--brand-unit) * 0.75);
+  overflow-wrap: anywhere;
+}
+.seller {
+  display: grid;
+  gap: calc(var(--brand-unit) * 1);
+  padding: calc(var(--brand-unit) * 2) calc(var(--brand-unit) * 1);
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+@media screen and (max-width: 760px) {
+  .section {
+    padding: calc(var(--brand-unit) * 5);
+  }
+}
+@media print {
+  .section {
+    padding: 0;
+    border: 0;
+    background: none;
+  }
+}

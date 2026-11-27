@@ -1,7 +1,7 @@
 import { shiftMonth } from "../data/months";
-import { parseCountText, sumIntervals } from "../data/published-count";
+import { sumIntervals } from "../data/published-count";
+import { stateInvitedCell, type StateInvitedCell } from "../data/state-totals";
 import type {
-  Interval,
   MonthKey,
   OccupationCore,
   StateKey,
@@ -25,24 +25,6 @@ const STATE_KEYS: readonly StateKey[] = [
   "ANY",
 ];
 
-type Cell = { total: Interval; masked: number };
-
-/** One occupation's INVITED cells for a state in a month; undefined when not fetched. */
-function occupationCell(
-  core: OccupationCore,
-  visa: StateVisa,
-  state: StateKey,
-  month: MonthKey,
-): Cell | undefined {
-  const counts = core.stateInvited[visa]?.[state]?.[month];
-  if (counts === undefined) return undefined;
-  const texts = Object.values(counts);
-  return {
-    total: sumIntervals(texts.map(parseCountText)),
-    masked: texts.filter((text) => text === "<20").length,
-  };
-}
-
 function stateFigure(
   cores: readonly OccupationCore[],
   previousCores: readonly OccupationCore[],
@@ -51,7 +33,7 @@ function stateFigure(
   month: MonthKey,
 ): StateFigure {
   const rows = cores.flatMap((core) => {
-    const cell = occupationCell(core, visa, state, month);
+    const cell = stateInvitedCell(core, visa, state, month);
     return cell ? [{ core, cell }] : [];
   });
   if (rows.length === 0) {
@@ -59,8 +41,8 @@ function stateFigure(
   }
   const total = sumIntervals(rows.map((row) => row.cell.total));
   const previous = previousCores
-    .map((core) => occupationCell(core, visa, state, shiftMonth(month, -1)))
-    .filter((cell): cell is Cell => cell !== undefined);
+    .map((core) => stateInvitedCell(core, visa, state, shiftMonth(month, -1)))
+    .filter((cell): cell is StateInvitedCell => cell !== undefined);
   const top = rows
     .filter((row) => row.cell.total.min > 0)
     .sort(

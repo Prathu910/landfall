@@ -2,37 +2,30 @@
 import { useRef, useState } from "react";
 import type { KeyboardEvent } from "react";
 import { occupationIndex } from "@/components/data/occupation-index";
-import type { ReportSource } from "@/lib/data/report-source";
-import type { Profile } from "@/lib/migration";
+import type { ReportPayload } from "@/lib/report-issue/payload";
 import type { OccupationEvidence } from "@/lib/report-evidence";
-import { Report } from "../report";
 import type { ReportOccupation } from "../data/report-occupation";
+import { ReportView } from "./report-renderer";
 import styles from "./sample-tabs.module.css";
 
 export type SampleExample = {
   id: string;
   tab: string;
-  profile: Profile;
   occupation: ReportOccupation;
+  /** Built at build time: the client only shows it. */
+  payload: ReportPayload;
 };
 
 type Props = {
   examples: SampleExample[];
-  asOf: string;
   fixedComparisons: OccupationEvidence[];
-  source: ReportSource;
 };
 
 /**
  * The four example reports as tabs. The choice lives in memory only, and only
  * the selected report is mounted, so printing prints that example alone.
  */
-export function SampleTabs({
-  examples,
-  asOf,
-  fixedComparisons,
-  source,
-}: Props) {
+export function SampleTabs({ examples, fixedComparisons }: Props) {
   const [selected, setSelected] = useState(0);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const current = examples[selected];
@@ -84,15 +77,13 @@ export function SampleTabs({
         aria-labelledby={`sample-tab-${current.id}`}
         tabIndex={0}
       >
-        <Report
+        <ReportView
           key={current.id}
-          profile={current.profile}
-          asOf={asOf}
-          sample
+          payload={current.payload}
+          mode="sample"
           occupation={current.occupation}
           comparisonIndex={occupationIndex}
           fixedComparisons={fixedComparisons}
-          source={source}
         />
       </div>
     </>

@@ -2,26 +2,60 @@ import type { Metadata } from "next";
 import { occupationIndex } from "@/components/data/occupation-index";
 import { OccupationSearch } from "@/components/occupation/occupation-search";
 import { Guilloche } from "@/components/guilloche/guilloche";
+import Link from "next/link";
+import { LargestPools } from "@/components/occupation/largest-pools";
 import { occupationPath } from "@/lib/occupation-page/slug";
-import { loadManifest } from "@/lib/data/load-server";
+import { loadManifest, loadOccupationCore } from "@/lib/data/load-server";
+import {
+  currentEntries,
+  directoryAnswer,
+  largest189Pools,
+} from "@/lib/occupation-page/directory";
+import { loadLatestRound } from "@/lib/updates/load-server";
 import { formatDate } from "@/lib/migration";
 import { formatMonth } from "@/lib/report/copy";
 import styles from "@/components/occupation/occupation-shell.module.css";
+import { monthEnd } from "@/lib/data/report-source";
+import { sitePageMetadata } from "@/lib/seo/page-meta";
+import { occupationsPage, sitePageJsonLd } from "@/lib/seo/site-pages";
+import { JsonLd } from "@/components/seo/json-ld";
 import { SITE_INDEXABLE } from "@/lib/site";
-
-export const metadata: Metadata = {
-  title: "Occupations: 189, 190 and 491 data for every skilled occupation",
-  alternates: { canonical: "/occupations/" },
-  robots: SITE_INDEXABLE ? undefined : { index: false, follow: false },
-};
 
 const ITEMS = [...occupationIndex]
   .sort((a, b) => a.name.localeCompare(b.name))
   .map((e) => ({ ...e, path: occupationPath(e) }));
 
+// Counts and rankings read only the occupations still in the snapshot.
+const CURRENT = currentEntries(ITEMS);
+const PUBLISHED = CURRENT.filter((item) => item.hasData);
+
+const PAGE = occupationsPage(
+  PUBLISHED.length,
+  formatDate(monthEnd(loadManifest().asAt)),
+);
+
+export const metadata: Metadata = sitePageMetadata(
+  PAGE,
+  SITE_INDEXABLE ? {} : { robots: { index: false, follow: false } },
+);
+
 export default function OccupationsPage() {
   const manifest = loadManifest();
-  const published = ITEMS.filter((item) => item.hasData).length;
+  const published = PUBLISHED.length;
+  const round = loadLatestRound();
+  const answer = directoryAnswer({
+    total: CURRENT.length,
+    withData: published,
+    asAt: monthEnd(manifest.asAt),
+    round,
+  });
+  const pools = largest189Pools(
+    PUBLISHED.flatMap((item) => {
+      const core = loadOccupationCore(item.code);
+      return core ? [{ core, path: item.path }] : [];
+    }),
+    manifest.asAt,
+  );
   return (
     <main id="main" className={styles.page}>
       <div className={styles.inner}>
@@ -32,17 +66,27 @@ export default function OccupationsPage() {
           />
           <h1>Start with your occupation.</h1>
           <p className={styles.intro}>
-            Look beyond the minimum points. Explore published EOI pools, 189
-            invitation rounds and state nomination evidence for Australian
-            skilled migration.
+            {answer} Each page shows the published EOI pools by points, recent
+            189 cut-offs and state nomination evidence; every occupation’s
+            recent cut-offs are also in{" "}
+            <Link href="/occupations/189-cut-offs/">one table</Link>.
           </p>
           <div className={styles.directoryMeta}>
             <span>{published} occupations with published data</span>
-            <span>Snapshot · {formatMonth(manifest.asAt)}</span>
-            <span>Checked · {formatDate(manifest.checkedAt)}</span>
+            <span>
+              Snapshot ·{" "}
+              <time dateTime={manifest.asAt}>{formatMonth(manifest.asAt)}</time>
+            </span>
+            <span>
+              Checked ·{" "}
+              <time dateTime={manifest.checkedAt}>
+                {formatDate(manifest.checkedAt)}
+              </time>
+            </span>
           </div>
         </header>
         <OccupationSearch items={ITEMS} />
+        <LargestPools pools={pools} month={formatMonth(manifest.asAt)} />
         <aside className={styles.directoryNote}>
           <h2>A starting point for your PR research.</h2>
           <p>
@@ -55,6 +99,13 @@ export default function OccupationsPage() {
           </a>
         </aside>
       </div>
+      <JsonLd
+        data={sitePageJsonLd(PAGE, {
+          type: "CollectionPage",
+          breadcrumb: false,
+          dateModified: manifest.checkedAt,
+        })}
+      />
     </main>
   );
 }

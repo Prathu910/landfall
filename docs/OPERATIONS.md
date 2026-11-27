@@ -1,6 +1,6 @@
 # MigrateLens forms: deployment and operations
 
-The frontend remains a Cloudflare Pages static export. Calculations and feedback are posted directly to Supabase Edge Functions. Keep the occupation-page release on `roadmap/occupation-pages` until it is reviewed and integrated into the production branch. The backend must be ready before enabling the required-email frontend in production.
+The frontend remains a Cloudflare Pages static export. Calculations and feedback are posted directly to Supabase Edge Functions. Keep the occupation-page release on `roadmap/occupation-pages` until it is reviewed and integrated into the production branch. The backend must be ready before the checkout is offered in production.
 
 ## Public frontend settings
 
@@ -12,7 +12,11 @@ Set these independently for Cloudflare Production and Preview builds. Changing t
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Public managed Turnstile widget key for the corresponding frontend hostname            |
 | `NEXT_PUBLIC_PRIVACY_EMAIL`      | Working monitored mailbox for privacy questions and deletion requests                  |
 
-Missing or invalid public settings leave both submission forms unavailable; no save is simulated. The personal report still requires email and a successful write. The public sample and occupation pages keep working. The email field is held in memory and excluded from local profile saving and printed reports.
+Missing or invalid public settings leave the feedback form unavailable; no save is simulated. The public sample and occupation pages keep working.
+
+### The paid report checkout
+
+`NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_TURNSTILE_SITE_KEY` now also power the checkout on `/check/` and the `/report/` page: the quote, the founding code, the Razorpay order, the report link and corrections all go to the report Functions at `${NEXT_PUBLIC_SUPABASE_URL}/functions/v1/`, and the checkout's Turnstile uses the action `report`. Without them the free result still works and the checkout says something went wrong. The frontend needs **no Razorpay value**: the public key ID arrives with each `report-order` reply, and Razorpay's `checkout.js` loads only when the reader presses Pay. The free check sends nothing; the profile and email reach the server only after the reader asks for the report and ticks the consent box. The email is held in memory and never saved on the device. The checkout and report pages are rehearsed against a local stub before any deploy, never against live keys (see the founder checklist at the top of `docs/HANDOFF.md`).
 
 No Supabase secret/service-role key, database password or Turnstile secret belongs in a `NEXT_PUBLIC_` value or frontend environment file.
 
@@ -20,9 +24,13 @@ No Supabase secret/service-role key, database password or Turnstile secret belon
 
 Follow [the backend runbook](OPERATIONS-BACKEND.md) for the exact migrations, Edge Function secrets, allowed origins, tests, deployment commands, SQL views and deletion procedures. Use separate Supabase staging and production projects. An unauthenticated visitor can submit only through the validated functions; browser REST/table/RPC access must remain denied.
 
-In Cloudflare Turnstile, create managed widgets with explicit frontend hostnames. Use production `migratelens.com`, and only specifically needed staging hosts. Avoid authorizing all `pages.dev` hosts. Set the private verification key in Supabase secrets. The expected actions are `calculation` and `feedback`; custom submission handlers validate them directly, independently of Supabase Auth settings.
+In Cloudflare Turnstile, create managed widgets with explicit frontend hostnames. Use production `migratelens.com`, and only specifically needed staging hosts. Avoid authorizing all `pages.dev` hosts. Set the private verification key in Supabase secrets. The expected actions are `report` (the checkout), `feedback`, and `calculation` (the retired email gate, kept for its stored rows); custom submission handlers validate them directly, independently of Supabase Auth settings.
 
 For local UI development, run `npm run dev`. For an integrated local backend use the Supabase CLI stack separately (see the backend runbook), set public local URL and test widget values in an ignored `.env.local`, and rebuild/restart the frontend. Never send real user data in local smoke tests.
+
+## Paid reports
+
+The paid report (Razorpay orders, Founding 100 codes, the report link and its emailed PDF) runs on eight more Supabase Functions and a pg_cron delivery job. Its founder setup, secrets list, test-mode rehearsal and switch to live keys are in [the backend runbook, "Paid reports"](OPERATIONS-BACKEND.md#paid-reports). It needs Razorpay, Resend and Cloudflare Browser Rendering accounts; none is live until that rehearsal passes.
 
 ## Verification commands
 
@@ -63,7 +71,7 @@ Supabase Free may pause inactive projects. Review current plan limits before ena
 
 ## Data and contact handling
 
-The project has no email delivery service, login, verified email ownership, paid access or alert subscription. Collected report addresses are not marketing permissions. Distinct submitted addresses are not verified unique people.
+The project has no login or alert subscription. The paid report (founding code emails, report emails, payments) is built but not live until the founder finishes the checklist in `docs/HANDOFF.md`; its data handling is in `docs/OPERATIONS-BACKEND.md`, "Paid reports". Collected report addresses are not marketing permissions. Distinct submitted addresses are not verified unique people.
 
 Use the restricted Supabase dashboard for records and operator queries. Treat exports as private, keep them outside git and `out`, and delete them after their task. Daily cleanup removes records older than 180 days at its next run; backup expiry follows the provider's configured policy. Monitor the scheduled job history. Deletion requests arrive at the configured privacy mailbox; browser “Clear my answers” does not delete server submissions. Verify the requester's authority before deleting or disclosing records, and do not send profile records to an unverified address.
 
@@ -75,7 +83,7 @@ The privacy section discloses Cloudflare Web Analytics, but nothing in the code 
 
 **Fix it in the Cloudflare dashboard** (pick one):
 
-1. **Keep analytics (recommended).** Dashboard → **Analytics & Logs → Web Analytics**. If a site for `migratelens.com` is listed, open **Manage site** and check its hostname is exactly `migratelens.com`; otherwise choose **Add a site**, enter `migratelens.com` and pick **Enable automatic setup** (the zone is proxied by Cloudflare, so no snippet is needed). Then **Workers & Pages → the MigrateLens project → Metrics → Web Analytics**: if it shows enabled with an old site, **Disable** it, so only one beacon is injected. Purge the cache (**Caching → Configuration → Purge Everything**).
+1. **Keep analytics (recommended).** Dashboard → **Analytics & Logs → Web Analytics**. If a site for `migratelens.com` is listed, open **Manage site** and check its hostname is exactly `migratelens.com`; otherwise choose **Add a site**, enter `migratelens.com` and pick **Enable automatic setup** (the zone is proxied by Cloudflare, so no snippet is needed). Then **Workers & Pages → the MigrateLens project → Metrics → Web Analytics**: if it shows enabled with an old site, **Disable** it, so only one beacon is injected. Purge the cache (**Caching → Configuration → Purge Everything**). **Before it goes back on, keep the paid report's link token out of it:** the beacon is injected on `/report/` too, and the token is the part of the link after `#`. Exclude `/report/*` in the Web Analytics site's rules, or open a `/report/#…` link with DevTools open and confirm the `cdn-cgi/rum` POST carries no `#` fragment; if it does and the rule can't be set, choose option 2.
 2. **Turn it off.** Disable Web Analytics in both places above and purge the cache. The privacy sentence about Cloudflare Web Analytics in `src/components/methodology/method-privacy.tsx` then needs removing in a release.
 
 **Check it worked.** `curl -s https://migratelens.com/ | grep -o 'data-cf-beacon=[^>]*'` shows a new token (or nothing, if turned off); in Chrome DevTools the Console has no CORS error and the Network tab's `rum` request succeeds; then `npm run lighthouse -- --base-url https://migratelens.com --only / --runs 1` shows Best Practices 100. Don't paste a manual beacon snippet into the code while automatic setup is on: two beacons would double-count.

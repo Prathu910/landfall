@@ -4,12 +4,10 @@ import { FeedbackForm } from "@/components/feedback/feedback-form";
 import { FormTheme } from "@/components/forms/form-theme-provider";
 import shell from "@/components/info-page/info-page.module.css";
 import { PageHead } from "@/components/info-page/page-head";
-export const metadata: Metadata = {
-  title: "Help shape MigrateLens",
-  description:
-    "Share a suggestion, report a problem, or tell us what you would like to see next in MigrateLens.",
-  alternates: { canonical: "/feedback/" },
-};
+import { sitePageMetadata } from "@/lib/seo/page-meta";
+import { FEEDBACK_PAGE, sitePageJsonLd } from "@/lib/seo/site-pages";
+import { JsonLd } from "@/components/seo/json-ld";
+export const metadata: Metadata = sitePageMetadata(FEEDBACK_PAGE);
 export default function FeedbackPage() {
   return (
     <main id="main" className={shell.page}>
@@ -25,6 +23,7 @@ export default function FeedbackPage() {
           <FeedbackForm />
         </FormTheme>
       </div>
+      <JsonLd data={sitePageJsonLd(FEEDBACK_PAGE)} />
     </main>
   );
 }

@@ -18,3 +18,25 @@ export function markSvgBody(colour: string = MARK_COLOURS.ink): string {
 export function faviconSvg(): string {
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${MARK_VIEWBOX}"><rect width="48" height="48" rx="12" fill="${SHELL_PALETTE.sage}"/>${markSvgBody()}</svg>\n`;
 }
+
+/**
+ * A raster icon's source: the mark on sage at `size` pixels. `rounded`
+ * keeps the favicon's corners (transparent outside them); `markScale`
+ * shrinks the mark about the centre, for a maskable icon's safe zone.
+ */
+export function iconSvg({
+  size,
+  rounded,
+  markScale = 1,
+}: {
+  size: number;
+  rounded: boolean;
+  markScale?: number;
+}): string {
+  const corner = rounded ? ' rx="12"' : "";
+  const mark =
+    markScale === 1
+      ? markSvgBody()
+      : `<g transform="translate(24 24) scale(${markScale}) translate(-24 -24)">${markSvgBody()}</g>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="${MARK_VIEWBOX}"><rect width="48" height="48"${corner} fill="${SHELL_PALETTE.sage}"/>${mark}</svg>`;
+}

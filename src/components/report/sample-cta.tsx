@@ -92,7 +92,10 @@ export function SampleCta() {
       <PassportPage />
       <div className={styles.copy}>
         <h2 id="sample-cta-title">Check your own points</h2>
-        <p>The free check builds this report from your own answers.</p>
+        <p>
+          The free check shows your points and three visa stamps. A full report
+          like this one, built from your own answers, is one step further.
+        </p>
         <HomeAction href="/check/">Start my free check</HomeAction>
       </div>
     </section>

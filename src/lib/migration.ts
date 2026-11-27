@@ -179,6 +179,13 @@ function finiteYears(value: number): number {
   return Number.isFinite(value) ? Math.min(10, Math.max(0, value)) : 0;
 }
 
+/**
+ * Points a state or territory nomination adds to the federal score (Home
+ * Affairs points table). calculatePoints keeps its literals so the server's
+ * report engine bundle stays byte-identical; a test holds the two equal.
+ */
+export const NOMINATION_POINTS = { "190": 5, "491": 15 } as const;
+
 /** A self-reported federal points estimate. `eligible` covers age, English and assessment only, never full visa eligibility. */
 export function calculatePoints(profile: Profile, asOf: string): PointsResult {
   const today = parseDate(asOf);

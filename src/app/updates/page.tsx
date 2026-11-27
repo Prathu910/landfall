@@ -7,7 +7,7 @@ import hero from "@/components/updates/recap-hero.module.css";
 import parts from "@/components/updates/recap-parts.module.css";
 import { RoundStamp } from "@/components/updates/round-stamp";
 import { serializeJsonLd } from "@/lib/seo/json-ld";
-import { SITE_NAME } from "@/lib/site";
+import { pageMetadata, SITE_OG_IMAGE } from "@/lib/seo/page-meta";
 import {
   buildUpdatesIndex,
   UPDATES_INDEX_H1,
@@ -30,22 +30,13 @@ function indexView(): UpdatesIndexView {
 
 export function generateMetadata(): Metadata {
   const description = updatesIndexDescription(indexView());
-  return {
+  return pageMetadata({
+    path: UPDATES_INDEX_PATH,
     // The layout's "· MigrateLens" template would repeat the brand (R20).
     title: { absolute: UPDATES_INDEX_TITLE },
     description,
-    alternates: { canonical: UPDATES_INDEX_PATH },
-    openGraph: {
-      type: "website",
-      siteName: SITE_NAME,
-      title: UPDATES_INDEX_TITLE,
-      description,
-      url: UPDATES_INDEX_PATH,
-      images: [
-        { url: "/og.png", width: 1200, height: 630, alt: UPDATES_INDEX_H1 },
-      ],
-    },
-  };
+    image: { ...SITE_OG_IMAGE, alt: UPDATES_INDEX_H1 },
+  });
 }
 
 /** The newest month: its passport stamp, headline and three figures. */

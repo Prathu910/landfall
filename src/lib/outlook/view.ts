@@ -1,11 +1,12 @@
 import type { OccupationCore, OccupationDetail } from "../data/types";
-import { addYearsToDate, calculatePoints, formatDate } from "../migration";
+import { calculatePoints, formatDate } from "../migration";
 import type { PointsResult } from "../migration";
 import { formatMonth } from "../report/copy";
 import { cutoffColumns } from "./charts";
 import type { CutoffColumns } from "./charts";
 import { evaluateProfile } from "./evaluate-profile";
 import type { OutlookInput, ProfileOutlook } from "./evaluate-profile";
+import { eoiExpiry } from "./eoi-expiry";
 import { buildEvidence } from "./evidence";
 import type { Evidence } from "./evidence";
 import { buildFacts } from "./facts";
@@ -89,13 +90,16 @@ const LOAD_FAILED_LINE =
   "We couldn't load the published data. Reload to try again.";
 const NO_OCCUPATION = "No occupation chosen";
 const COMBINED_RING = "189 • 190 • 491";
-const EOI_YEARS = 2;
+
+/** Builder-only: the bundle lock looks for it in pages that only render (sentinels.ts). */
+export const FOOTER_CAVEAT =
+  "Home Affairs and the states can change round sizes, cut-offs and rules at any time, so your real result may be different.";
 
 function footerText(month: string): string {
   return (
     "This is our best reading of the data, not a guarantee. " +
     `It comes from published SkillSelect figures up to ${month}. ` +
-    "Home Affairs and the states can change round sizes, cut-offs and rules at any time, so your real result may be different. " +
+    `${FOOTER_CAVEAT} ` +
     "MigrateLens isn't a registered migration agent; for advice on your own case, talk to one."
   );
 }
@@ -111,13 +115,6 @@ function stampBottom(input: OutlookInput, o: ProfileOutlook): string {
   const month = formatMonth(dataMonthKey(input)).toUpperCase();
   const points = o.stamp.kind === "single" ? o.stamp.points : o.points.base;
   return `${month} • ${points} POINTS`;
-}
-
-/** The day a two-year EOI lapsed, if it has (calculatePoints warns the same). */
-function eoiExpiry(input: OutlookInput): string | null {
-  const { eoiDate } = input.profile;
-  const end = eoiDate ? addYearsToDate(eoiDate, EOI_YEARS) : null;
-  return end && end <= input.asOf ? end : null;
 }
 
 function whoDetail(

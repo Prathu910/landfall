@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ChevronDown, Globe2, ShieldCheck } from "lucide-react";
 import type { PointsResult } from "@/lib/migration";
 import { PassportBackground } from "../report/passport-background";
@@ -78,8 +79,10 @@ export function CheckPointsPreview({ result }: { result: PointsResult }) {
       <div className={styles.privacy}>
         <ShieldCheck size={18} aria-hidden />
         <p>
-          Your full answers stay in this browser. To view your personal report,
-          we save your email and a limited calculation summary.
+          Your free result is calculated in this browser and sends us nothing.
+          If you claim or buy the full report, your answers and email go to our
+          server to build it: see our{" "}
+          <Link href="/privacy/">privacy policy</Link>.
         </p>
       </div>
     </aside>

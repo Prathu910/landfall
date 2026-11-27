@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { FEES } from "../../data/guide/fees";
-import { compareRows } from "./compare";
+import { compareRows, differenceAnswer } from "./compare";
 
 describe("compareRows", () => {
   it("takes each visa's charge from the sourced fees", () => {
@@ -23,5 +23,13 @@ describe("compareRows", () => {
     expect(
       compareRows(FEES, null).some((r) => r.label.includes("Occupations")),
     ).toBe(false);
+  });
+});
+
+describe("differenceAnswer", () => {
+  it("says which visas are permanent and what nomination adds", () => {
+    expect(differenceAnswer(5, 15)).toBe(
+      "The 189 and 190 are permanent; the 491 is a 5-year provisional regional visa with a path to the permanent 191. The 190 adds 5 points for state nomination and the 491 adds 15 for state nomination or family sponsorship; the 189 has no nomination.",
+    );
   });
 });

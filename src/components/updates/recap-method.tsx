@@ -30,6 +30,13 @@ export function RecapMethod({
         {method.notes.join(" ")}{" "}
         <Link href={method.link.href}>{method.link.text}</Link>
       </p>
+      <p className={styles.notes}>
+        Terms on this page: <Link href="/guide/glossary/#eoi">EOI</Link>,{" "}
+        <Link href="/guide/glossary/#masked-count">“&lt;20”</Link>,{" "}
+        <Link href="/guide/glossary/#cut-off">cut-off</Link>,{" "}
+        <Link href="/guide/glossary/#tie-break-date">tie-break date</Link> and{" "}
+        <Link href="/guide/glossary/#invited">invited</Link>, in the glossary.
+      </p>
     </RecapBand>
   );
 }

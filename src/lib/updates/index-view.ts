@@ -1,4 +1,4 @@
-import { pageDescription } from "../occupation-page/meta";
+import { splitSentences, wholeSentences } from "../seo/description";
 import { breadcrumbLd, collectionPageLd } from "../seo/json-ld";
 import { SITE_NAME, SITE_URL } from "../site";
 import { dayText, formatLongMonth, longDayText, monthEnd } from "./format";
@@ -10,7 +10,7 @@ import type { RecapFacts } from "./types";
 export const UPDATES_INDEX_PATH = "/updates/";
 export const UPDATES_INDEX_H1 = "SkillSelect monthly updates";
 /** Set as `title.absolute` (R20), so the layout template adds no brand. */
-export const UPDATES_INDEX_TITLE = `SkillSelect monthly updates: 189 rounds, 190 and 491 by state | ${SITE_NAME}`;
+export const UPDATES_INDEX_TITLE = `SkillSelect monthly updates: 189, 190 and 491 · ${SITE_NAME}`;
 export const UPDATES_INDEX_INTRO =
   "One page for each SkillSelect data month: the 189 invitation round, the 189 pool by points, and 190 and 491 invitations by state, from published Home Affairs data.";
 
@@ -82,15 +82,12 @@ export function buildUpdatesIndex(recaps: RecapFacts[]): UpdatesIndexView {
   };
 }
 
-/** The dated answer and what each page covers, cut at a word boundary. */
+/** The dated answer and what each page covers, in whole sentences. */
 export function updatesIndexDescription(view: UpdatesIndexView): string {
-  return pageDescription(
-    [
-      view.answer,
-      "Monthly pages on 189 rounds, the 189 pool by points, and 190 and 491 invitations by state.",
-    ],
-    155,
-  );
+  return wholeSentences([
+    ...splitSentences(view.answer),
+    "Monthly pages on 189 rounds, the 189 pool by points, and 190 and 491 invitations by state.",
+  ]);
 }
 
 /** CollectionPage with an ItemList of every recap, and the breadcrumb. */

@@ -1,0 +1,292 @@
+/* The order summary (paid-report-3.html: .receipt, .cur, .line, .tear,
+   .total, .seats, .meter, .agree, .trust), on the check's tokens. The head
+   is an always-dark panel, like the ink ticket. */
+.receipt {
+  overflow: hidden;
+  border: 1px solid var(--check-line);
+  border-radius: 1rem;
+  background: var(--check-paper);
+  color: var(--check-ink);
+  box-shadow: 0 18px 40px -24px
+    color-mix(in srgb, var(--shadow-ink) 70%, transparent);
+}
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  color-scheme: light;
+  background: var(--brand-deep, var(--brand-ink));
+  color: var(--brand-paper);
+}
+.k {
+  font-family: var(--font-stamp);
+  font-size: 0.9375rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+}
+.no {
+  color: var(--brand-on-dark);
+  font-size: 0.75rem;
+}
+.body {
+  display: grid;
+  gap: 0;
+  padding: 1.125rem 1.25rem 1.25rem;
+}
+.currency {
+  display: inline-flex;
+  justify-self: start;
+  margin-bottom: 0.75rem;
+  padding: 3px;
+  border: 1px solid var(--check-line);
+  border-radius: 999px;
+}
+.currency button {
+  min-height: 2rem;
+  padding: 0.25rem 0.75rem;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--check-ink);
+  font: inherit;
+  font-size: 0.8125rem;
+  cursor: pointer;
+}
+.currency button[aria-pressed="true"] {
+  background: var(--brand-ink-fill);
+  color: var(--brand-on-fill);
+}
+.currency button:focus-visible,
+.textButton:focus-visible,
+.retry:focus-visible,
+.input:focus-visible,
+.agree input:focus-visible {
+  outline: 3px solid var(--check-focus);
+  outline-offset: 2px;
+}
+.currency button:disabled {
+  cursor: default;
+}
+.line {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+  font-size: 0.90625rem;
+}
+.line small {
+  display: block;
+  color: var(--check-muted);
+  font-size: 0.78125rem;
+}
+.discount {
+  color: var(--label-strong-ink);
+}
+.discount small {
+  color: inherit;
+}
+.num {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+/* The tear-off edge: the desk shows through a row of punched holes. */
+.tear {
+  height: 0.875rem;
+  margin: 0.5rem -1.25rem;
+  background: radial-gradient(
+      circle at 7px 7px,
+      var(--check-sage) 6px,
+      transparent 6.5px
+    ) -7px
+    0 / 20px 14px repeat-x;
+}
+.total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.375rem 0 0.75rem;
+}
+.amount {
+  font-size: 2.125rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+.seats {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin: 2px 0 0.875rem;
+  font-size: 0.8125rem;
+}
+.meter {
+  flex: 1;
+  height: 6px;
+  overflow: hidden;
+  border-radius: 6px;
+  background: var(--check-line);
+}
+.meter i {
+  display: block;
+  height: 100%;
+  background: var(--label-strong-ink);
+}
+.skeleton {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.5rem 0 1rem;
+}
+.skeleton i,
+.ticketSkeleton {
+  display: block;
+  height: 1rem;
+  border-radius: 0.375rem;
+  background: var(--check-soft);
+}
+.skeleton i:nth-child(2) {
+  width: 70%;
+}
+.skeleton i:nth-child(3) {
+  height: 2.25rem;
+  width: 45%;
+}
+.ticketSkeleton {
+  height: 5.25rem;
+  border-radius: 0.75rem;
+}
+.form,
+.codeRow {
+  display: grid;
+  gap: 0.75rem;
+}
+.label {
+  display: block;
+  margin: 0.375rem 0;
+  font-size: 0.84375rem;
+  font-weight: 600;
+}
+.input {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.75rem 0.875rem;
+  border: 1px solid var(--input-border, var(--check-line));
+  border-radius: 0.625rem;
+  background: var(--check-paper);
+  color: var(--check-ink);
+  font: inherit;
+}
+.code {
+  font-size: 1.25rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.3em;
+}
+.codeRow .label {
+  margin-bottom: 0;
+}
+.codeActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  margin: 0;
+  color: var(--check-muted);
+  font-size: 0.8125rem;
+}
+.textButton {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--check-ink);
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+.textButton:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+.agree {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  color: var(--check-muted);
+  font-size: 0.78125rem;
+  line-height: 1.5;
+}
+.agree input {
+  flex: none;
+  width: 1.125rem;
+  height: 1.125rem;
+  margin: 0.125rem 0 0;
+  accent-color: var(--check-green);
+}
+.agree a {
+  color: var(--check-ink);
+}
+.message {
+  margin: 0;
+  padding: 0.625rem 0.75rem;
+  border-radius: 0.5rem;
+  background: var(--check-soft);
+  color: var(--check-ink);
+  font-size: 0.84375rem;
+  line-height: 1.5;
+}
+.outcome {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0.5rem 0 0;
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--check-line);
+  border-radius: 0.75rem;
+  background: var(--check-soft);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+.outcome p {
+  margin: 0;
+}
+.outcome svg {
+  color: var(--check-green);
+}
+.retry {
+  justify-self: start;
+  min-height: 2.75rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--check-line);
+  border-radius: 0.5rem;
+  background: var(--check-paper);
+  color: var(--check-ink);
+  font: inherit;
+  cursor: pointer;
+}
+.trust {
+  display: grid;
+  gap: 0.375rem;
+  margin: 0.875rem 0 0;
+  padding: 0;
+  color: var(--check-muted);
+  font-size: 0.78125rem;
+  list-style: none;
+}
+.trust li {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.trust svg {
+  flex: none;
+  color: var(--check-green);
+}
+.fine {
+  margin: 0.625rem 0 0;
+  color: var(--check-muted);
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+.fine + .fine {
+  margin-top: 0.125rem;
+}

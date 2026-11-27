@@ -11,6 +11,8 @@ import { buildHomeExample } from "@/lib/home/example";
 import { buildHomeAtlas } from "@/lib/home/atlas";
 import { listed189, listed189Codes } from "@/lib/occupation-page/summary";
 import { formatMonth } from "@/lib/report/copy";
+import { latestRoundLine } from "@/lib/updates/latest-round";
+import { loadLatestRound } from "@/lib/updates/load-server";
 import { HomeAction } from "@/components/home/controls/home-action";
 import { HomePassport } from "@/components/home/home-passport";
 import { HomeAtlas } from "@/components/home/home-atlas";
@@ -19,14 +21,12 @@ import { HomeConditions } from "@/components/home/home-conditions";
 import { HomeGuideLink } from "@/components/home/home-guide-link";
 import { HomeQuestions } from "@/components/home/home-questions";
 import { HomeFinal } from "@/components/home/home-final";
+import { sitePageMetadata } from "@/lib/seo/page-meta";
+import { HOME_PAGE, sitePageJsonLd } from "@/lib/seo/site-pages";
+import { JsonLd } from "@/components/seo/json-ld";
 import styles from "./home.module.css";
 
-export const metadata: Metadata = {
-  title: "Australian PR: will my points get me invited?",
-  description:
-    "Understand your points, occupation and Australian outlook. Explore official SkillSelect evidence for the 189, 190 and provisional 491 pathways, then get your free personal report.",
-  alternates: { canonical: "/" },
-};
+export const metadata: Metadata = sitePageMetadata(HOME_PAGE);
 
 export default function Home() {
   const { snapshotId, asAt, checkedAt, sources } = loadManifest();
@@ -55,6 +55,7 @@ export default function Home() {
     rules: stateRuleData,
   });
   const date = formatMonth(asAt);
+  const round = loadLatestRound();
   const longDate = new Intl.DateTimeFormat("en-AU", {
     month: "long",
     year: "numeric",
@@ -75,8 +76,9 @@ export default function Home() {
               get me invited?
             </h1>
             <p className="lede">
-              Your points. Your occupation. Your Australian outlook. Understand
-              the 189, 190 and 491 pathways in one free, personal report.
+              Your points. Your occupation. Your Australian outlook. Check the
+              189, 190 and 491 pathways free, then get your full personal
+              report.
             </p>
             <div className="ctas">
               <HomeAction href="/check/">Check my points, free</HomeAction>
@@ -85,9 +87,16 @@ export default function Home() {
               </HomeAction>
             </div>
             <p className="fine">
-              Official data to {longDate}. No documents needed.
+              Official data to <time dateTime={asAt}>{longDate}</time>. No
+              documents needed.
+              {round && (
+                <>
+                  <br />
+                  {latestRoundLine(round)}
+                </>
+              )}
               <br />
-              Email required for your personal report; no account needed.
+              Your points and visa stamps are free, with no email or account.
             </p>
           </div>
           <HomePassport national={national} vic={vic} nt={nt} date={date} />
@@ -123,6 +132,7 @@ export default function Home() {
       <HomeConditions date={longDate} />
       <HomeQuestions />
       <HomeFinal />
+      <JsonLd data={sitePageJsonLd(HOME_PAGE)} />
     </main>
   );
 }

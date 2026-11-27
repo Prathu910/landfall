@@ -1,0 +1,49 @@
+/* The glossary: one white card of terms on the sage desk, a rule between
+   terms. The target term is marked when a link jumps to it. */
+.list {
+  margin: 0;
+  border: var(--brand-rule-width) solid var(--rule);
+  border-radius: calc(var(--brand-unit) * 3);
+  background: var(--card);
+}
+.term {
+  padding: calc(var(--brand-unit) * 5) calc(var(--brand-unit) * 6);
+  border-bottom: var(--brand-rule-width) solid var(--rule);
+  scroll-margin-top: calc(var(--brand-unit) * 24);
+}
+.term:last-child {
+  border-bottom: 0;
+}
+.term:target {
+  box-shadow: inset calc(var(--brand-unit) * 1) 0 0 var(--ink);
+}
+.term dt {
+  font-size: 1.125rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+.term dfn {
+  font-style: normal;
+}
+.term dd {
+  margin: calc(var(--brand-unit) * 2) 0 0;
+}
+.term dd p {
+  max-width: 68ch;
+  line-height: 1.65;
+}
+.source {
+  margin-top: calc(var(--brand-unit) * 1.5);
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+.source a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: var(--brand-unit);
+}
+@media screen and (max-width: 760px) {
+  .term {
+    padding: calc(var(--brand-unit) * 4);
+  }
+}

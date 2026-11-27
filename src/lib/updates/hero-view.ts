@@ -26,7 +26,8 @@ export type HeroView = {
   h1: string;
   /** The dated 2–3 sentence direct answer. */
   answer: string;
-  dateline: { label: string; value: string }[];
+  /** `dateTime` (YYYY-MM-DD) marks a value that is a single date. */
+  dateline: { label: string; value: string; dateTime?: string }[];
   /** Shown once under the hero while the month's data isn't published. */
   pendingDataNote: string | null;
   actions: { label: string; href: string }[];
@@ -52,14 +53,15 @@ type Round = { date: string; section: RoundSection };
 function spreadClause(section: RoundSection): string {
   const { lowest, highest } = cutoffBounds(section);
   return lowest.score === highest
-    ? `with ${highest} points as the lowest score invited for each`
-    : `with the lowest score invited ranging from ${lowest.score} to ${highest} points by occupation`;
+    ? `${highest} points was the lowest score invited for each`
+    : `the lowest score invited ranged from ${lowest.score} to ${highest} points by occupation`;
 }
 
 function roundSentence(round: Round, asAt: boolean): string {
   const { date, section } = round;
   const total = formatNumber(round189Total(section));
-  const across = `across ${occupationsText(section.occupations.length)}, ${spreadClause(section)}.`;
+  // "; " joins whole clauses, so a meta description can stop at it.
+  const across = `across ${occupationsText(section.occupations.length)}; ${spreadClause(section)}.`;
   return asAt
     ? `Home Affairs invited ${total} EOIs for the 189 visa on ${longDayText(date)}, ${across}`
     : `On ${longDayText(date)}, Home Affairs invited ${total} EOIs for the 189 visa, ${across}`;
@@ -105,19 +107,34 @@ function dateline(facts: RecapFacts, rounds: Round[]): HeroView["dateline"] {
     ...(facts.data ? [facts.data.sources.checkedAt] : []),
   ].sort();
   return [
-    { label: "Updated", value: dayText(facts.updatedAt) },
+    {
+      label: "Updated",
+      value: dayText(facts.updatedAt),
+      dateTime: facts.updatedAt,
+    },
     ...(rounds.length > 0
       ? [
           {
             label: rounds.length === 1 ? "189 round" : "189 rounds",
             value: rounds.map((r) => dayText(r.date)).join(" and "),
+            ...(rounds.length === 1 ? { dateTime: rounds[0].date } : {}),
           },
         ]
       : []),
     ...(facts.data
-      ? [{ label: "Data as at", value: dayText(monthEnd(facts.month)) }]
+      ? [
+          {
+            label: "Data as at",
+            value: dayText(monthEnd(facts.month)),
+            dateTime: monthEnd(facts.month),
+          },
+        ]
       : []),
-    { label: "Sources checked", value: dayText(checked[checked.length - 1]) },
+    {
+      label: "Sources checked",
+      value: dayText(checked[checked.length - 1]),
+      dateTime: checked[checked.length - 1],
+    },
   ];
 }
 

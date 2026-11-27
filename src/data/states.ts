@@ -99,7 +99,7 @@ export const statePrograms: StateProgram[] = [
     name: "Northern Territory",
     system: "Territory nomination pathways",
     summary:
-      "The NT has both 190 and 491 nomination allocations. Local residents, graduates and offshore applicants have different requirements and possible nomination outcomes.",
+      "The NT has both 190 and 491 nomination allocations. Local residents, graduates and offshore candidates have different requirements and possible nomination outcomes.",
     considerations:
       "Allocation availability does not establish personal eligibility. Current cohort criteria, occupation requirements and opening status must be confirmed with MigrationNT.",
     cohorts: ["onshore", "offshore"],

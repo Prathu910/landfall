@@ -18,6 +18,8 @@ import {
   type RoundStatus,
 } from "../report/round-status";
 import type { FederalList } from "../state-outlook/rules-types";
+import { dated189Sentence, datedLead, statesSentence } from "./answer";
+import type { StateRow } from "./states";
 
 export type ChipTone = "red" | "amber" | "green" | "neutral";
 export type StatusChip = { label: string; tone: ChipTone };
@@ -157,23 +159,32 @@ export function listed189Codes(federal: FederalList | null): string[] | null {
   );
 }
 
+/**
+ * The opening answer: a 189 sentence dated by its rounds, with the code;
+ * the pool as at the snapshot; the 190 and 491 states (when `rows` are
+ * given) and, with detail, what happened to EOIs like these.
+ */
 export function occupationSummary(
   core: OccupationCore,
   detail: OccupationDetail | null,
   federal: FederalList | null = null,
+  rows: StateRow[] | null = null,
 ): string[] {
   const { name } = core;
   const offList = listed189(core.code, federal) === false;
+  const states = rows ? statesSentence(core, rows) : null;
   // Without a 189 pool the page leads with 190/491; recent 189 rounds follow.
   const sentences: (string | null)[] = core.pool["189"]
     ? [
-        roundsSentence(name, core.rounds189),
-        poolSentence(name, core),
+        dated189Sentence(core),
+        datedLead(core, poolSentence(name, core)),
+        states,
         likeTheseSentence(name, core, detail),
       ]
     : [
-        poolSentence(name, core, offList),
+        datedLead(core, poolSentence(name, core, offList)),
         has189Rounds(core) ? roundsSentence(name, core.rounds189) : null,
+        states,
       ];
   return sentences.filter((s): s is string => s !== null);
 }

@@ -33,5 +33,10 @@ scripts/page-watch/__fixtures__/
 # The user's local Claude Code settings (not project code).
 .claude/settings.local.json
 
+# The engine fixtures (written by build.test.ts with UPDATE_FIXTURES=1) and the
+# engine bundle (written by npm run engine:bundle).
+src/lib/report-issue/__fixtures__/
+supabase/functions/_shared/report-engine.js
+
 # Rendered Instagram sets and their set.json: written by social:render.
 public/social/

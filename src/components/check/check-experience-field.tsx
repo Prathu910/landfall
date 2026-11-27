@@ -1,4 +1,5 @@
 import { NumberInput } from "@mantine/core";
+import { toExperienceYears } from "@/lib/profile-guard";
 import type { CheckStepProps } from "./types";
 
 type CheckExperienceFieldProps = Pick<CheckStepProps, "profile" | "update"> & {
@@ -21,9 +22,7 @@ export function CheckExperienceField({
       step={0.5}
       decimalScale={1}
       value={profile[key]}
-      onChange={(value) =>
-        update(key, Math.min(10, Math.max(0, Number(value) || 0)))
-      }
+      onChange={(value) => update(key, toExperienceYears(value))}
       size="md"
       radius="md"
     />

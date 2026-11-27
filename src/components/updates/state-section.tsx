@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { StateSectionView, StateTile } from "@/lib/updates/state-view";
 import { OccupationLink } from "./occupation-link";
 import { RecapBand, type BandTone } from "./recap-band";
@@ -8,11 +9,24 @@ import styles from "./state-section.module.css";
 
 const STAMP_BOTTOM = { "190": "NOMINATED", "491": "REGIONAL" } as const;
 
+function TileName({ tile }: { tile: StateTile }) {
+  if (!tile.href) return <span>{tile.name}</span>;
+  return (
+    <Link
+      href={tile.href}
+      className={styles.stateLink}
+      aria-current={tile.current ? "page" : undefined}
+    >
+      {tile.name}
+    </Link>
+  );
+}
+
 function Tile({ tile }: { tile: StateTile }) {
   return (
-    <li className={styles.tile}>
+    <li className={`${styles.tile} ${tile.current ? styles.current : ""}`}>
       <p className={styles.state}>
-        <span>{tile.name}</span>
+        <TileName tile={tile} />
         <i className={styles[`swatch${tile.shade}`]} aria-hidden="true" />
       </p>
       <p className={styles.figure}>{tile.figure}</p>

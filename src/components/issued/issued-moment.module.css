@@ -1,0 +1,137 @@
+/* The issued moment (paid-report-1.html: .issued), on the check's tokens. */
+.issued {
+  position: relative;
+  display: grid;
+  gap: 0.5rem;
+  overflow: hidden;
+  padding: 1.75rem;
+  border: 1px solid var(--check-line);
+  border-radius: 1.25rem;
+  background: var(--check-paper);
+  color: var(--check-ink);
+  font-family: var(--check-font);
+}
+.stamp {
+  position: absolute;
+  top: 0.75rem;
+  right: 1.125rem;
+  width: 10rem;
+  color: var(--label-strong-ink);
+  rotate: -9deg;
+}
+.arc,
+.word {
+  fill: currentColor;
+  font-family: var(--font-stamp);
+  font-weight: 900;
+}
+.arc {
+  font-size: 15px;
+  letter-spacing: 0.18em;
+}
+.word {
+  font-size: 40px;
+  letter-spacing: 0.06em;
+}
+.eyebrow {
+  margin: 0;
+  color: var(--check-green);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+.title {
+  max-width: 35rem;
+  margin: 0;
+  padding-right: 11rem;
+  font-family: var(--check-font);
+  font-size: clamp(1.625rem, 3.4vw, 2rem);
+  font-stretch: 90%;
+  font-weight: 750;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+}
+.title:focus {
+  outline: none;
+}
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem 1.25rem;
+  margin: 0.25rem 0 0;
+  padding: 0;
+  color: var(--check-muted);
+  font-size: 0.875rem;
+  list-style: none;
+}
+.meta b {
+  color: var(--check-ink);
+  font-variant-numeric: tabular-nums;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+  margin-top: 0.75rem;
+}
+.read,
+.copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0.625rem 1.125rem;
+  border: 1px solid var(--check-line);
+  border-radius: 999px;
+  background: var(--check-paper);
+  color: var(--check-ink);
+  font: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.read {
+  border-color: transparent;
+  background: var(--brand-ink-fill);
+  color: var(--brand-on-fill);
+}
+.read:focus-visible,
+.copy:focus-visible {
+  outline: 3px solid var(--check-focus);
+  outline-offset: 2px;
+}
+.copied {
+  margin: 0;
+  min-height: 1.25rem;
+  color: var(--check-muted);
+  font-size: 0.8125rem;
+}
+@media (max-width: 640px) {
+  .issued {
+    padding: 1.25rem;
+  }
+  .stamp {
+    position: static;
+    justify-self: center;
+    width: 8.5rem;
+    margin-bottom: 0.25rem;
+  }
+  .title {
+    padding-right: 0;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .stamp {
+    animation: thump 0.5s cubic-bezier(0.2, 1.6, 0.4, 1) 0.3s both;
+  }
+}
+@keyframes thump {
+  from {
+    opacity: 0;
+    scale: 1.6;
+  }
+}
+@media print {
+  .issued {
+    display: none;
+  }
+}

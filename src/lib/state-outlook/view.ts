@@ -48,7 +48,9 @@ const GROUP_LABELS: Record<Group, string> = {
   "not-open": "Not open to you now",
 };
 
-const FOOTER = "Not advice to apply. Rules change; check the official page.";
+/** Builder-only: also a bundle-lock sentinel (report-issue/sentinels.ts). */
+export const STATE_PANEL_FOOTER =
+  "Not advice to apply. Rules change; check the official page.";
 const ANY_STATE_NOTE =
   "EOIs not tied to one state; not counted in any state's group";
 
@@ -127,6 +129,6 @@ export function buildStatePanel(
             href: rules.resultsUrl,
             text: `${name} published results (past results, not a prediction)`,
           },
-    footer: FOOTER,
+    footer: STATE_PANEL_FOOTER,
   };
 }

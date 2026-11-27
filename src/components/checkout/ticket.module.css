@@ -1,0 +1,214 @@
+/* The boarding-pass and ink ticket buttons (paid-report-3.html: .pass, .tk,
+   .tk.ink, .free), on tokens. The stub is always the daylight green with
+   white text, as approved for both themes; the ink ticket is an always-dark
+   panel (color-scheme: light inside). */
+.ticket {
+  --tk-bg: var(--check-paper);
+  --tk-ink: var(--check-ink);
+  --tk-muted: var(--check-muted);
+  --tk-edge: color-mix(in srgb, var(--saffron) 55%, var(--check-line));
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  width: 100%;
+  overflow: hidden;
+  padding: 0;
+  border: 0;
+  border-radius: 0.875rem;
+  background: var(--tk-bg);
+  color: var(--tk-ink);
+  font: inherit;
+  font-family: var(--check-font);
+  text-align: left;
+  cursor: pointer;
+  box-shadow:
+    0 0 0 1px var(--tk-edge),
+    0 12px 28px -14px color-mix(in srgb, var(--shadow-ink) 70%, transparent);
+}
+.ticket:focus-visible {
+  outline: 3px solid var(--check-focus);
+  outline-offset: 3px;
+}
+.ticket:disabled {
+  cursor: default;
+}
+.ticket:disabled:not([aria-busy]) {
+  opacity: 0.6;
+}
+.pass {
+  grid-template-columns: 3.5rem minmax(0, 1fr);
+  min-height: 8.25rem;
+  max-width: 25rem;
+}
+.wide {
+  max-width: none;
+}
+.ink {
+  --tk-bg: var(--brand-deep, var(--brand-ink));
+  --tk-ink: var(--brand-paper);
+  --tk-muted: var(--brand-on-dark);
+  --tk-edge: color-mix(in srgb, var(--saffron) 65%, transparent);
+  grid-template-columns: 3rem minmax(0, 1fr);
+  min-height: 5.25rem;
+  border-radius: 0.75rem;
+  color-scheme: light;
+}
+.stub {
+  position: relative;
+  display: grid;
+  place-items: center;
+  color-scheme: light;
+  background: var(--brand-green);
+  color: var(--brand-paper);
+}
+.stub > span {
+  writing-mode: vertical-rl;
+  rotate: 180deg;
+  font-family: var(--font-stamp);
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  white-space: nowrap;
+}
+/* The perforation between stub and ticket. */
+.stub::after {
+  content: "";
+  position: absolute;
+  top: 0.375rem;
+  right: -1px;
+  bottom: 0.375rem;
+  border-right: 3px dotted var(--tk-bg);
+}
+.main {
+  display: grid;
+  min-width: 0;
+  gap: 0.125rem;
+  align-content: center;
+  padding: 0.875rem 1rem;
+}
+.ink .main {
+  gap: 1px;
+  padding: 0.75rem 1.25rem 0.75rem 1rem;
+}
+.title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.1875rem;
+  font-weight: 750;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+}
+.ink .title {
+  font-size: 1.09375rem;
+}
+.sub {
+  color: var(--tk-muted);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+.meta {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin-top: 0.375rem;
+  color: var(--tk-muted);
+  font-size: 0.8125rem;
+}
+.punch {
+  position: absolute;
+  top: 50%;
+  right: -0.5625rem;
+  width: 1.125rem;
+  height: 1.125rem;
+  border-radius: 50%;
+  translate: 0 -50%;
+  background: var(--check-paper);
+  box-shadow: inset 0 0 0 1px var(--tk-edge);
+}
+/* The ink ticket is a light-scheme panel, so its punched hole takes the
+   page's scheme back to match the receipt paper at night. */
+:global([data-mantine-color-scheme="dark"]) .punch {
+  color-scheme: dark;
+}
+.spinner {
+  flex: none;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+}
+.free {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.5rem 1px;
+  border: 1.5px solid currentColor;
+  border-radius: 0.375rem;
+  background: var(--label-strong-bg);
+  color: var(--label-strong-ink);
+  font-family: var(--font-stamp);
+  font-size: 0.875rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  rotate: -3deg;
+}
+@media (prefers-reduced-motion: no-preference) {
+  /* The foil sheen: a slow gold sweep every few seconds. */
+  .ticket::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background: linear-gradient(
+      105deg,
+      transparent 35%,
+      color-mix(in srgb, var(--saffron) 30%, transparent) 50%,
+      transparent 65%
+    );
+    translate: -120% 0;
+    animation: sheen 3.6s ease-in-out 1s infinite;
+  }
+  .ink::after {
+    background: linear-gradient(
+      105deg,
+      transparent 35%,
+      color-mix(in srgb, var(--saffron) 34%, transparent) 50%,
+      transparent 65%
+    );
+    animation-delay: 1.6s;
+  }
+  .ticket:disabled::after {
+    animation: none;
+  }
+  .ticket:not(:disabled):hover {
+    transform: translateY(-1px);
+  }
+  .spinner {
+    animation: spin 0.8s linear infinite;
+  }
+}
+@keyframes sheen {
+  0%,
+  55% {
+    translate: -120% 0;
+  }
+  85%,
+  100% {
+    translate: 120% 0;
+  }
+}
+@keyframes spin {
+  to {
+    rotate: 360deg;
+  }
+}
+@media print {
+  .ticket {
+    display: none;
+  }
+}

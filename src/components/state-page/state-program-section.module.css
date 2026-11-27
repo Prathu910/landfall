@@ -1,0 +1,36 @@
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+  gap: calc(var(--brand-unit) * 6);
+  align-items: start;
+  margin-top: calc(var(--brand-unit) * 7);
+}
+.detail {
+  display: grid;
+  gap: calc(var(--brand-unit) * 5);
+}
+/* The recap table wrap's own top margin is for a band; here the grid gap spaces it. */
+.detail > div {
+  margin-top: 0;
+}
+.selection p {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+}
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--brand-unit) * 2) calc(var(--brand-unit) * 5);
+  margin-top: calc(var(--brand-unit) * 2);
+}
+.links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--brand-target);
+  font-weight: 600;
+}
+@media screen and (max-width: 900px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

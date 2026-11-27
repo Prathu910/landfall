@@ -1,3 +1,4 @@
+import { GUIDE_PUBLISHED_AT } from "../../data/guide/sources";
 import type { Visa } from "../data/types";
 import { formatDate } from "../migration";
 import {
@@ -8,6 +9,8 @@ import {
   type FaqEntry,
 } from "../seo/json-ld";
 import { SITE_NAME, SITE_URL } from "../site";
+import { dayText } from "../updates/format";
+import { cutoffSpanText, type LatestRound } from "../updates/latest-round";
 import { PATHWAY_191 } from "./faq";
 import type { GuideStep } from "./types";
 
@@ -30,7 +33,7 @@ export const GUIDE_PAGES: Record<GuidePageId, GuidePage> = {
   hub: {
     id: "hub",
     path: "/guide/",
-    title: "How to get Australian PR: the 189, 190 and 491 skilled visa guide",
+    title: "Australian PR guide: 189, 190 and 491 visas",
     description:
       "Step by step to Australian skilled PR: occupation, skills assessment, English, points, EOI, nomination, invitation and fees, from official pages.",
     heading:
@@ -40,7 +43,7 @@ export const GUIDE_PAGES: Record<GuidePageId, GuidePage> = {
   "189": {
     id: "189",
     path: "/guide/189/",
-    title: "189 Skilled Independent visa: requirements, steps and costs",
+    title: "189 visa: requirements, steps and costs",
     description:
       "The 189 Skilled Independent visa: who it suits, the official requirements, how invitations work and what it costs, checked against Home Affairs pages.",
     heading: "The 189 Skilled Independent visa",
@@ -49,8 +52,7 @@ export const GUIDE_PAGES: Record<GuidePageId, GuidePage> = {
   "190": {
     id: "190",
     path: "/guide/190/",
-    title:
-      "190 Skilled Nominated visa: state nomination, requirements and costs",
+    title: "190 visa: nomination, requirements and costs",
     description:
       "The 190 Skilled Nominated visa: state nomination, the official requirements, the 5 nomination points and what it costs, checked against Home Affairs.",
     heading: "The 190 Skilled Nominated visa",
@@ -59,8 +61,7 @@ export const GUIDE_PAGES: Record<GuidePageId, GuidePage> = {
   "491": {
     id: "491",
     path: "/guide/491/",
-    title:
-      "491 Skilled Work Regional visa: requirements, 191 PR pathway and costs",
+    title: "491 visa: requirements, 191 pathway and costs",
     description:
       "The 491 Skilled Work Regional visa: regional living, 15 nomination points, the 191 permanent pathway and what it costs, checked against Home Affairs.",
     heading: "The 491 Skilled Work Regional (Provisional) visa",
@@ -68,11 +69,15 @@ export const GUIDE_PAGES: Record<GuidePageId, GuidePage> = {
   },
 };
 
-/** The dated 2–3 sentence answer that opens each guide page. */
+/**
+ * The dated 2–3 sentence answer that opens each guide page (the 189 adds a
+ * fourth, dated by the latest round itself).
+ */
 export function directAnswer(
   id: GuidePageId,
   checkedAt: string,
   counts: Record<Visa, number> | null,
+  round: LatestRound | null = null,
 ): string {
   const date = formatDate(checkedAt);
   const listed = (visa: Visa) =>
@@ -84,7 +89,7 @@ export function directAnswer(
     case "hub":
       return `As at ${date}, Australia’s points-tested routes to skilled PR are the 189 (independent and permanent), the 190 (state-nominated and permanent) and the 491 (regional, provisional for 5 years, then the permanent 191). Each needs an occupation on the Home Affairs list, ${basics}, and you apply only after an invitation through a SkillSelect EOI. ${source}`;
     case "189":
-      return `As at ${date}, the 189 is a permanent visa you can apply for only after Home Affairs invites your SkillSelect EOI; no state, employer or family sponsor is involved. You need an occupation on the 189 list${listed("189")}, ${basics}. ${source}`;
+      return `As at ${date}, the 189 is a permanent visa you can apply for only after Home Affairs invites your SkillSelect EOI; no state, employer or family sponsor is involved. You need an occupation on the 189 list${listed("189")}, ${basics}.${round ? ` The latest 189 round, on ${dayText(round.date)}, invited at ${cutoffSpanText(round)} depending on the occupation (SkillSelect invitation rounds).` : ""} ${source}`;
     case "190":
       return `As at ${date}, the 190 is a permanent visa for people nominated by a state or territory, and the nomination adds 5 points. You need an occupation on the 190 list${listed("190")}, the nominating state’s own criteria, ${basics}. ${source}`;
     case "491":
@@ -111,6 +116,7 @@ export function guideJsonLd(
       headline: page.heading,
       description: page.description,
       url,
+      datePublished: GUIDE_PUBLISHED_AT,
       dateModified: checkedAt,
       citations,
     }),

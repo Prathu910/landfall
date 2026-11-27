@@ -5,6 +5,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { isManifest, isOccupationCore, isOccupationDetail } from "./guards";
+import { isRoundsFile, type RoundsFile } from "./rounds-file";
 import type { Manifest, OccupationCore, OccupationDetail } from "./types";
 
 const DATA_DIR = path.join(process.cwd(), "src", "data");
@@ -17,6 +18,13 @@ function readJson(file: string): unknown {
 export function loadManifest(): Manifest {
   const value = readJson(path.join(DATA_DIR, "manifest.json"));
   if (!isManifest(value)) throw new Error("src/data/manifest.json is invalid");
+  return value;
+}
+
+/** src/data/rounds.json: every parsed 189 round, newest first. */
+export function loadRounds(): RoundsFile {
+  const value = readJson(path.join(DATA_DIR, "rounds.json"));
+  if (!isRoundsFile(value)) throw new Error("src/data/rounds.json is invalid");
   return value;
 }
 

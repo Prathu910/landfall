@@ -1,0 +1,107 @@
+/* The checkout's three beats (paid-report-3.html: .beat, .n, .inc, .ic,
+   .facts), on the check's tokens. */
+.beats {
+  display: grid;
+  gap: 0.875rem;
+  min-width: 0;
+}
+.beat {
+  min-width: 0;
+  padding: 1.375rem 1.5rem;
+  border: 1px solid var(--check-line);
+  border-radius: 1.125rem;
+  background: var(--check-paper);
+  color: var(--check-ink);
+}
+.n {
+  margin: 0;
+  color: var(--check-green);
+  font-family: var(--font-stamp);
+  font-size: 0.9375rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+.title {
+  margin: 0.125rem 0 0.75rem;
+  font-size: 1.375rem;
+  font-stretch: 92%;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.items {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.items li {
+  display: grid;
+  grid-template-columns: 1.875rem minmax(0, 1fr);
+  gap: 0.625rem;
+}
+.icon {
+  display: grid;
+  width: 1.875rem;
+  height: 1.875rem;
+  place-items: center;
+  border-radius: 0.5rem;
+  background: var(--label-strong-bg);
+  color: var(--label-strong-ink);
+}
+.items b {
+  display: block;
+  font-size: 0.9375rem;
+}
+.items span {
+  color: var(--check-muted);
+  font-size: 0.84375rem;
+  line-height: 1.45;
+}
+.facts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.625rem;
+  margin: 0;
+}
+.facts div {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  min-width: 0;
+  padding: 0.75rem;
+  border: 1px solid var(--check-line);
+  border-radius: 0.75rem;
+  background: var(--check-soft);
+}
+.facts dd {
+  margin: 0;
+  font-size: 1.625rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+.facts dt {
+  color: var(--check-muted);
+  font-size: 0.78125rem;
+  line-height: 1.35;
+}
+.note {
+  margin: 0;
+  color: var(--check-muted);
+  font-size: 0.8125rem;
+}
+.note a {
+  color: var(--check-ink);
+}
+@media (max-width: 860px) {
+  .facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 480px) {
+  .beat {
+    padding: 1.125rem 1rem;
+  }
+}

@@ -1,5 +1,138 @@
 # Resume here
 
+**Merge gate: merging `staging` to `main` is going live, founding-only (founder decision, 27 November 2026).** `main` deploys migratelens.com, whose build already has `NEXT_PUBLIC_SUPABASE_URL` and the Turnstile key, so `/check/` shows the checkout at once. The production backend is set up (secrets except the three `RAZORPAY_*`, migrations, the eight report functions, the cron job and `report_settings`; quote, CORS and the deliver secret checked on 27 Nov), and the Web Analytics beacon on `/report/#…` was checked on staging to carry no `#` token (ruling R15). With no Razorpay keys on production the paid path fails safely: `report-order` stops before any Razorpay order or database row and the reader sees "you haven't been charged", so "Buy another" and every order after the 100th fail that way until step 11. Never put test keys on production (ruling R16). Right after the deploy, claim one founding report with your own email on migratelens.com (code email, report, PDF email), then raise `founding_limit` to 101 if all 100 should stay for readers; watch the count, and raise the limit if it nears 100 before live keys. A build without `NEXT_PUBLIC_SUPABASE_URL` or the Turnstile key shows the free result with a contact line and no ticket (ruling R12).
+
+## SEO, GEO and AEO audit: what was built overnight (27 November 2026)
+
+Branch `seo/site-audit`, cut from `origin/staging` (cb71a10: the paid report plus the report retheme). It is pushed with no pull request; you open the PR yourself. Its upstream was unset on purpose, so a bare `git push` can't reach `staging`. Merging it into `staging` and then `main` follows the paid-report merge gate above, because it contains that branch. The ledger, with every ruling (R1–R11), audit, brief, report and review, is in `.superpowers/sdd/2026-11-26-seo-audit/`.
+
+- **Audit.** Three read-only passes on the built site: a technical audit, an AEO/GEO audit with research, and a spec for the state pages.
+  - Main gaps found:
+    - occupation titles were 73–122 characters long, and descriptions were cut mid-sentence;
+    - several pages had no canonical, and `/check/` was missing from the sitemap;
+    - there was no Organization or WebSite structured data, no favicon.ico or app icons, and no About page;
+    - the methodology FAQ answers were hidden in JavaScript;
+    - answers carried no dated figures;
+    - there was no points table, glossary or cut-offs hub.
+- **Technical and entity work (WP1).** Every page has:
+  - a title of 60 characters or fewer;
+  - a description of 120–160 characters, in whole sentences, unique across the site;
+  - a canonical URL;
+  - full Open Graph (`en_AU`).
+
+  Also in this work:
+  - favicon.ico, PNG and Apple icons and a web app manifest (`npm run icons:render`);
+  - one Organization (`#organization`) and one WebSite (`#website`), referred to by `@id` from every Article and Dataset;
+  - BreadcrumbList, FAQPage, Dataset and Article markup where each fits;
+  - the methodology FAQ rendered on the server, and `<time>` dates;
+  - a `robots.txt` that names the AI search and training crawlers (allowed, each still with `Disallow: /report/`);
+  - `/llms.txt`, built from the data.
+
+- **Answer pages (WP2).**
+  - New pages:
+    - `/about/`: independence, how the site earns, data and editorial policy, corrections. No names or user counts.
+    - `/guide/points-table/`: checked against `calculatePoints` by a test.
+    - `/guide/glossary/`: DefinedTermSet markup.
+    - `/occupations/189-cut-offs/`: every occupation in the last four 189 rounds, with "Not listed" and never 0.
+  - Changes to existing pages:
+    - `/check/` has a points explainer.
+    - Occupation pages open with an answer dated by the latest round, then 189, 190 and 491 facts. They use question-shaped headings and have more FAQs: the latest cut-off, the points needed, the 190 and 491 pools, and "Can I get PR with {name} as my occupation?".
+    - The guide answers and the homepage quote the newest 189 round from data, never from a hand-typed figure.
+    - `/occupations/` opens with a dated answer and the 20 largest 189 pools.
+- **State pages (WP3).** `/states/new-south-wales/` and seven more pages, one per state and territory. Each shows, for the 190 and 491:
+  - the month-end count of EOIs holding the state's invitation over the last 12 months. This is a stock: it is never called "invitations issued" and never summed across months, and "<20" stays a range;
+  - points and occupations in the data month;
+  - the pool naming the state;
+  - the Home Affairs nominations table, labelled as a different measure;
+  - the 2026–27 rules;
+  - a call to action linking to `/check/`, with no price and no checkout.
+
+  The pages are linked from `/states/`, occupation pages, recaps, `/guide/190/`, `/guide/491/`, the sitemap and `llms.txt`.
+
+- **Review.** One whole-branch review found one serious issue and six smaller ones:
+  - The serious issue: 138 occupation descriptions ended in fragments such as "For 2026–27." This came from a cut at a comma.
+  - The smaller issues:
+    - the dated answer could contradict a newer round;
+    - the PR question had the wrong article on plural ANZSCO names;
+    - "who held an invitation" was used where it should say which EOIs held one;
+    - a hand-typed pass mark and program year;
+    - `/occupations/` counting dropped occupations;
+    - the cut-offs hub having only 3 inbound links.
+
+  All were fixed in one wave and confirmed by a scoped re-review. That re-review found one more issue: 23 descriptions kept only part of the state list, so they read as naming every state. The fix keeps the state list whole or drops it. The guide's 189 answer now dates the latest round in its own sentence. The data checks in the review were clean throughout:
+  - the state sums were re-computed from the cores;
+  - the cut-offs match `rounds.json`;
+  - the points table matches Home Affairs;
+  - 0 broken links across 513 pages;
+  - every JSON-LD `@id` resolves;
+  - 2,990 FAQ questions and answers match the visible text.
+
+- **Tests at the end.** `npm run check` passes with 2,383 tests (2,188 before). `npm run build` produces 513 pages and the bundle lock is clean. The sitemap has 379 URLs. Lighthouse scores 100 in all four categories on every row, mobile and desktop, including the new pages and two state rows. After the fixes, an occupation page, `/occupations/` and NSW were re-run. The last two fixes were text only, so Lighthouse was not re-run for them. All 379 indexable descriptions were checked in `out/`: each is 120–160 characters, unique, matches its `og:description`, and contains no partial state list. The report engine bundle is unchanged.
+
+### Founder: after this branch (not code)
+
+- [ ] **www.migratelens.com returns 522.** In Cloudflare DNS, add a proxied `www` record, for example a CNAME to the apex. Then add a Redirect Rule from `www.migratelens.com/*` to `https://migratelens.com/${1}` with a 301.
+- [ ] **AI crawlers.** In Cloudflare (Security → Bots, and the AI Crawl Control / "Block AI bots" setting), check that AI-bot blocking and the Managed robots.txt are **off**. Otherwise Cloudflare overrides our `robots.txt`, and AI search can't read or quote the site (ruling R4).
+- [ ] **Search Console.** After the deploy, resubmit `sitemap.xml`, then use URL Inspection → "Request indexing" on these pages:
+  - `/`, `/check/` and `/about/`;
+  - `/guide/points-table/` and `/guide/glossary/`;
+  - `/occupations/189-cut-offs/`;
+  - the 8 `/states/<state>/` pages;
+  - your 5 most important occupation pages.
+- [ ] **Bing Webmaster Tools.** Import the site from Search Console and submit the sitemap. Bing feeds ChatGPT search and Copilot.
+- [ ] **Points table source.** It was checked against the Home Affairs points table on 23 Nov 2026. The page returned 403 when re-read and was not retried. When you next open the Home Affairs points page, confirm the rows match `src/data/guide/points-table.ts`.
+- [ ] **Publish dates.** The state pages, points table and glossary carry `datePublished` 26 Nov 2026. If the branch goes live much later, set them to the deploy day (`STATE_PAGES_PUBLISHED_AT` and the guide's checked date).
+- [ ] **Analytics snippet** (skipped tonight): if you later want staging excluded from Web Analytics, use a production-only manual snippet with the site token instead of automatic injection.
+
+### Deferred or parked
+
+- **Deferred:**
+  - per-page Open Graph images (needs an image pipeline);
+  - a points-test reform tracker (speculative content);
+  - the `/404.html` double robots tag (Next's own, harmless).
+- **Parked:**
+  - Many occupation descriptions carry the round's date rather than the snapshot's: the pool sentence with "As at" doesn't fit. The page itself shows both dates.
+  - Older pass-mark and "2026–27" literals predating this branch remain, three of them in the report engine. They were left so the bundle stays unchanged.
+  - State pages are about 94 KB gzipped HTML, mostly three copies of the map. Performance is still 100.
+- **Optional:** the "Buy another" button on a founding-used email is easy to miss (found during the staging test). A clearer placement is a small checkout change for a later pass.
+
+## Founder: before the paid report goes live (26 November 2026)
+
+The paid report is built on branch `roadmap/paid-report` (plans 1 to 3: engine, backend, checkout and `/report/`). Nothing is live: no payment, code email or report email works until you finish this list, in order. The detail for steps 1 to 8 is in [`docs/OPERATIONS-BACKEND.md`, "Paid reports"](OPERATIONS-BACKEND.md#paid-reports); this list is the order to do them in. Do it all on the staging Supabase project and the preview deployment first, then repeat steps 1, 4, 5, 6, 7 and 10 on production.
+
+- [ ] **1. Razorpay test keys and webhook.** Dashboard in test mode: generate an API key (key ID and secret). Add a webhook with the URL `https://<project-ref>.supabase.co/functions/v1/razorpay-webhook`, a strong secret of your own, and only the events `payment.captured`, `order.paid` and `refund.processed`. Keep auto-capture on. (Runbook step 1.)
+- [ ] **2. Resend domain DNS.** Add `migratelens.com` in Resend, put its SPF, DKIM and return-path MX records in Cloudflare DNS, wait for "Verified", and create a sending-only API key. Keep click and open tracking off for the domain: click tracking would send the report link's `#` token through Resend's redirect. (Step 2.)
+- [ ] **3. Cloudflare Browser Rendering token.** A custom API token with only Account → Browser Rendering → Edit, plus the account ID. (Step 3.)
+- [ ] **4. Supabase secrets.** Set every variable the functions read, from a private env file, never in git or chat: `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `RAZORPAY_WEBHOOK_SECRET`, `RESEND_API_KEY`, `REPORT_EMAIL_FROM`, `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_BR_TOKEN`, `REPORT_SITE_URL`, `REPORT_DELIVER_SECRET`, `REPORT_TOKEN_KEY`, and the existing `ALLOWED_ORIGINS` and `TURNSTILE_SECRET_KEY` (the Turnstile widget must allow the action `report`). `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are provided by Supabase. The AI read's `ANTHROPIC_API_KEY`, `READ_*` variables stay as they are. (Step 4.)
+- [ ] **5. Migrations and functions.** `npx supabase db push --remote`, then deploy the eight report functions. (Step 5.)
+- [ ] **6. pg_cron.** Enable pg_cron and pg_net, create the two Vault secrets, apply `supabase/cron/20261125000300_report_delivery.sql`, and confirm a run returns 200. (Step 6.)
+- [ ] **7. `report_settings`.** One row: `founding_enabled` true, `founding_limit` 100, `price_inr` 69900, `price_usd` 1400, `usd_enabled` false. (Step 7.)
+- [ ] **8. Frontend settings.** On the Cloudflare Pages preview (then production) build: `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_TURNSTILE_SITE_KEY` for the matching project and hostname, then rebuild. No Razorpay value goes in the frontend: the key ID arrives with each order. (`docs/OPERATIONS.md`, "Public frontend settings".)
+- [ ] **9. Test-mode rehearsal** on the preview, with Razorpay test cards or test UPI and your own email (runbook step 8):
+  - a founding claim (code email, a wrong code shows tries left, the right code opens the report, the report email arrives with the PDF);
+  - a paid INR order (set `founding_limit` to the issued count first);
+  - a dismissed Checkout, then payment on the second try: one report, one charge;
+  - a closed tab after payment: the webhook issues it and the email arrives;
+  - a refund in the Dashboard: the link then says the report was refunded;
+  - the checks the offline tests couldn't make (ruling R8): the Cloudflare PDF is the print layout on A4; Resend shows one link email and at most one PDF email per report, also when a retry reuses an `Idempotency-Key` with a different body; and the Razorpay webhook deliveries all got 200 with the payload fields the fixtures assume;
+  - also: a delivery alert reaches hello@migratelens.com after 5 failures, and `/report/` opened on a second device after the 7-day window shows the report with "This report is final" and no Edit button;
+  - Cloudflare Web Analytics and the link token (ruling R15): before turning Web Analytics on (or back on), exclude `/report/*` in its rules, or open a `/report/#…` link with DevTools and confirm the beacon's `cdn-cgi/rum` POST carries no `#` fragment. The token after `#` must never reach analytics (`docs/OPERATIONS.md`, "Cloudflare Web Analytics").
+- [ ] **10. International payments.** Once the legal pages are live on production, request International Payments in Razorpay (link PayPal if asked). When it is active, set `usd_enabled` true.
+- [ ] **11. The live switch.** Razorpay live mode: live keys, a live webhook with a new secret, the three `RAZORPAY_*` secrets on production, then one real ₹699 payment end to end and its refund. (Step 9.)
+- [ ] **12. After the lawyer review,** set `LEGAL_REVIEWED = true` in `src/lib/legal/copy.ts` (this removes the "Drafted for review" line from the legal pages), rebuild and deploy. Read the privacy page in that review: it was rewritten for the paid flow.
+
+## Paid report: what was built (26 November 2026)
+
+Branch `roadmap/paid-report`, 35 commits on `origin/main` f7587f1, pushed, no pull request (the founder opens it). Spec `docs/superpowers/specs/2026-11-25-paid-report-design.md`; plans `docs/superpowers/plans/2026-11-25-paid-report-{1-engine,2-backend,3-checkout}.md`; ledgers (every ruling, outcome and parked item) in `.superpowers/sdd/2026-11-25-paid-report-*/progress.md`.
+
+- **Plan 1, engine.** The report is built once into a `ReportPayload` (`src/lib/report-issue/`) and only rendered by `ReportView`; the server builds it from the committed Deno bundle (`npm run engine:bundle`); the postbuild bundle lock keeps the builder out of `/sample/`, `/check/` and `/report/` and scans every chunk.
+- **Plan 2, backend.** Migrations for orders, reports, founding claims, delivery, order data snapshots, stuck-order alerts and duplicate payments; Functions `report-quote`, `report-order`, `report-verify`, `report-confirm`, `report-get`, `report-revise`, `razorpay-webhook`, `report-deliver` (pg_cron). Paid reports are built from the data the reader was quoted, so a monthly deploy can't fail a paid order; a paid order that can't be built retries and alerts you once; a refund before issue blocks the report; refunding a duplicate payment keeps the paid report.
+- **Plan 3, frontend.** Terms, Refunds, Delivery, Contact and Privacy pages (with the "Drafted for review" line until `LEGAL_REVIEWED`); the free result as a passport spread with no email gate; the boarding-pass and ink-ticket buttons; the three-beat checkout with the founding code, Razorpay Checkout, waits that keep the code step, "buy another" for a founding-used email; `/report/` with the issued moment, corrections for 7 days (3 revisions), revoked/expired states and print.
+- **Reviews.** Each plan had one batch review and fix rounds (plan 1: 1, plan 2: 2, plan 3: 1); the final whole-branch review found 2 Critical and 4 Important issues (half-year experience refused, stale "free report" copy, duplicate-payment refunds, webhook-first confirm, the merge gate, analytics and the link token), all fixed and re-reviewed.
+- **Tests at the end.** `npm run check` 2188 tests; `npm run build` 503 pages with the bundle lock clean; `backend:check` clean; Deno 125 passed; SQL 30 PASS on PostgreSQL 14 (17 not installed here: checked by reading); Lighthouse 100 on every gated row (7 mobile rows slowed by the machine scored 100 on re-run).
+- **Not verifiable offline (in the step 9 rehearsal):** the Cloudflare PDF request shape, Resend `Idempotency-Key` reuse, Razorpay webhook payloads, pg_net's 150 s timeout, Web Analytics and the `#` token.
+- **Parked for your next pass** (ledger lines starting "Parked"): the `asOf` clamp, the experience field showing 7.3 while 7 is used, old saved profiles with e.g. 2.3 years, the pending copy "within a few minutes", a duplicate-payment alert with no database record, and a theoretical refund ordering.
+
 ## Founder: set up the scheduled jobs (25 November 2026)
 
 The three workflows (`monthly-data`, `round-189`, `page-watch`) are on branch `roadmap/monthly-updates` and run only after the merge to `main`. Details are in `docs/OPERATIONS.md`, "Monthly data pipeline".

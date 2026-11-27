@@ -27,7 +27,10 @@ export const AUDIT_PAGES: readonly AuditPage[] = [
   { path: "/guide/189/", gated: ALL },
   { path: "/guide/190/", gated: ALL },
   { path: "/guide/491/", gated: ALL },
+  { path: "/guide/points-table/", gated: ALL },
+  { path: "/guide/glossary/", gated: ALL },
   { path: "/occupations/", gated: ALL },
+  { path: "/occupations/189-cut-offs/", gated: ALL },
   { path: "/occupations/registered-nurses-nec-254499/", gated: ALL },
   { path: "/occupations/software-engineer-261313/", gated: ALL },
   { path: "/occupations/cook-351411/", gated: ALL },
@@ -36,13 +39,26 @@ export const AUDIT_PAGES: readonly AuditPage[] = [
     gated: ALL,
   },
   { path: "/states/", gated: ALL },
+  // State pages: the fullest (NSW) and the sparsest (Tasmania, whose 491
+  // counts are all hidden).
+  { path: "/states/new-south-wales/", gated: ALL },
+  { path: "/states/tasmania/", gated: ALL },
   { path: "/updates/", gated: ALL },
   ...listRecapMonths()
     .slice(0, 1)
     .map((month) => ({ path: `/updates/${month}/`, gated: ALL })),
   { path: "/methodology/", gated: ALL },
+  { path: "/about/", gated: ALL },
   { path: "/sample/", gated: ALL },
+  // The free result and checkout appear only after the form, so /check/
+  // is audited as it loads. /report/ is not audited: it is noindex and
+  // shows nothing without a link token.
   { path: "/check/", gated: ALL },
+  { path: "/terms/", gated: ALL },
+  { path: "/refunds/", gated: ALL },
+  { path: "/delivery/", gated: ALL },
+  { path: "/contact/", gated: ALL },
+  { path: "/privacy/", gated: ALL },
   { path: "/feedback/", gated: QUALITY_ONLY },
   // The 404 page itself: Lighthouse won't audit a response with a 404
   // status, so it loads the file Cloudflare serves for a missing path.

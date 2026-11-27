@@ -20,7 +20,10 @@ import {
   loadManifest,
   loadOccupationCore,
   loadOccupationDetail,
+  loadRounds,
 } from "@/lib/data/load-server";
+import { tieBreakFor } from "@/lib/occupation-page/cutoffs";
+import { summarise189Rounds } from "@/lib/report/round-status";
 import type { OccupationCore, Visa } from "@/lib/data/types";
 import { applyLinks } from "@/lib/guide/apply-links";
 import { formatDate } from "@/lib/migration";
@@ -37,6 +40,7 @@ import { occupationFaq } from "@/lib/occupation-page/faq";
 import {
   isIndexable,
   occupationJsonLd,
+  occupationRobots,
   pageDescription,
   pageTitle,
   relatedOccupations,
@@ -57,6 +61,7 @@ import {
 import { occupationVerdict } from "@/lib/occupation-page/verdict";
 import { formatMonth } from "@/lib/report/copy";
 import { serializeJsonLd } from "@/lib/seo/json-ld";
+import { pageMetadata } from "@/lib/seo/page-meta";
 import { SITE_INDEXABLE } from "@/lib/site";
 import styles from "./page.module.css";
 
@@ -81,17 +86,19 @@ function requireCore(slug: string): OccupationCore {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const core = requireCore((await params).slug);
   const detail = loadOccupationDetail(core.code);
-  return {
-    title: pageTitle(core),
+  const entry = occupationIndex.find((e) => e.code === core.code);
+  const rows = stateRows(core.code, core, stateRuleData);
+  return pageMetadata({
+    path: occupationPath(core),
+    title: { absolute: pageTitle(core) },
     description: pageDescription(
-      occupationSummary(core, detail, stateRuleData.federal),
+      core,
+      occupationSummary(core, detail, stateRuleData.federal, rows),
     ),
-    alternates: { canonical: occupationPath(core) },
-    robots:
-      !SITE_INDEXABLE || !isIndexable(core)
-        ? { index: false, follow: false }
-        : undefined,
-  };
+    type: "article",
+    modifiedTime: entry?.lastCheckedAt ?? loadManifest().checkedAt,
+    robots: occupationRobots(SITE_INDEXABLE, isIndexable(core)),
+  });
 }
 
 export default async function OccupationPage({ params }: Props) {
@@ -105,8 +112,17 @@ export default async function OccupationPage({ params }: Props) {
   const checkedAt = entry?.lastCheckedAt ?? manifest.checkedAt;
   const figuresFrom = note ? formatMonth(core.asAt) : undefined;
   const rows = stateRows(code, core, stateRuleData);
-  const sentences = occupationSummary(core, detail, stateRuleData.federal);
-  const faq = occupationFaq(core, rows);
+  const sentences = occupationSummary(
+    core,
+    detail,
+    stateRuleData.federal,
+    rows,
+  );
+  const latest = summarise189Rounds(core.rounds189).latestCutoff;
+  const faq = occupationFaq(core, rows, {
+    federal: stateRuleData.federal,
+    tieBreak: latest ? tieBreakFor(loadRounds(), code, latest.date) : null,
+  });
   const cohorts = cohortRows(detail, core.asAt);
   const pools = Object.fromEntries(
     VISAS.map((v) => [v, core.pool[v] ? poolBars(core.pool[v]) : null]),
@@ -134,11 +150,15 @@ export default async function OccupationPage({ params }: Props) {
           <dl className={styles.recordDate}>
             <div>
               <dt>Data snapshot</dt>
-              <dd>{formatMonth(core.asAt)}</dd>
+              <dd>
+                <time dateTime={core.asAt}>{formatMonth(core.asAt)}</time>
+              </dd>
             </div>
             <div>
               <dt>Last updated</dt>
-              <dd>{formatDate(checkedAt)}</dd>
+              <dd>
+                <time dateTime={checkedAt}>{formatDate(checkedAt)}</time>
+              </dd>
             </div>
           </dl>
         </header>
@@ -149,6 +169,7 @@ export default async function OccupationPage({ params }: Props) {
           sourceLine={sourceLine(core)}
         />
         <OccupationVerdict
+          name={name}
           verdict={occupationVerdict(core, stateRuleData.federal)}
           figuresFrom={figuresFrom}
         />
@@ -167,10 +188,13 @@ export default async function OccupationPage({ params }: Props) {
           </aside>
           <div className={styles.main}>
             <section aria-labelledby="pool-heading" className={styles.block}>
-              <h2 id="pool-heading">Where the points sit.</h2>
+              <h2 id="pool-heading">How many {name} EOIs are in the pool?</h2>
               <p className={styles.sectionIntro}>
-                Submitted EOIs by points score, as at {formatMonth(core.asAt)}.
-                Each visa has its own pool; EOIs can appear in more than one.
+                Submitted <Link href="/guide/glossary/#eoi">EOIs</Link> by
+                points score, as at {formatMonth(core.asAt)}. Each visa has its
+                own pool; EOIs can appear in more than one. A{" "}
+                <Link href="/guide/glossary/#masked-count">“&lt;20”</Link> count
+                is 0 to 19, which may be zero.
               </p>
               <PoolTabs pools={pools} totals={totals} />
             </section>
@@ -179,10 +203,18 @@ export default async function OccupationPage({ params }: Props) {
                 aria-labelledby="rounds-heading"
                 className={styles.block}
               >
-                <h2 id="rounds-heading">Recent 189 rounds.</h2>
+                <h2 id="rounds-heading">
+                  What were the recent 189 cut-offs for {name}?
+                </h2>
                 <p className={styles.sectionIntro}>
-                  Published minimum points for this occupation. “Not listed” is
-                  an absent occupation row, not a zero-point cut-off.
+                  Each round’s{" "}
+                  <Link href="/guide/glossary/#cut-off">cut-off</Link>: the
+                  lowest points invited for this occupation. “Not listed” is an
+                  absent occupation row, not a zero-point cut-off. See{" "}
+                  <Link href="/occupations/189-cut-offs/">
+                    every occupation’s cut-offs in one table
+                  </Link>
+                  .
                 </p>
                 <RoundCards
                   cards={roundCards(core.rounds189)}
@@ -195,7 +227,9 @@ export default async function OccupationPage({ params }: Props) {
                 aria-labelledby="cohort-heading"
                 className={styles.block}
               >
-                <h2 id="cohort-heading">Where recent 189 EOIs stand.</h2>
+                <h2 id="cohort-heading">
+                  What happened to recent {name} 189 EOIs?
+                </h2>
                 <p className={styles.sectionIntro}>
                   {cohortNote(name, cohorts)}
                 </p>
@@ -212,7 +246,9 @@ export default async function OccupationPage({ params }: Props) {
             )}
             <section aria-labelledby="states-heading" className={styles.block}>
               <p className={styles.sectionLabel}>190 and provisional 491</p>
-              <h2 id="states-heading">Look at the state evidence.</h2>
+              <h2 id="states-heading">
+                Which states nominate {name} for 190 and 491?
+              </h2>
               <p className={styles.sectionIntro}>
                 A list entry is one part of the rules, not a finding that you
                 are eligible. State nomination has separate residence, work and
@@ -230,7 +266,7 @@ export default async function OccupationPage({ params }: Props) {
               </details>
             </section>
             <section aria-labelledby="faq-heading" className={styles.block}>
-              <h2 id="faq-heading">Common questions.</h2>
+              <h2 id="faq-heading">{name}: common questions</h2>
               <OccupationFaq items={faq} />
             </section>
             <RelatedOccupations
@@ -247,7 +283,13 @@ export default async function OccupationPage({ params }: Props) {
           snapshotId={core.snapshotId}
           federalCheckedAt={stateRuleData.federal?.checkedAt}
         />
-        {occupationJsonLd(core, faq, sentences, checkedAt).map((obj, i) => (
+        {occupationJsonLd(
+          core,
+          faq,
+          sentences,
+          checkedAt,
+          Object.values(manifest.sources),
+        ).map((obj, i) => (
           <script
             key={i}
             type="application/ld+json"

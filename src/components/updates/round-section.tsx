@@ -126,6 +126,15 @@ export function RoundSection({
       {notable && <NotableTable notable={notable} />}
       {notListed && <NotListedCard notListed={notListed} />}
       {newest && <RoundTable round={newest} />}
+      {newest && (
+        <p className={styles.hubLink}>
+          Each occupation’s cut-off across the last four rounds:{" "}
+          <Link href="/occupations/189-cut-offs/">
+            189 cut-offs by occupation
+          </Link>
+          .
+        </p>
+      )}
       {earlier.map((round) => (
         <RoundBlock key={round.date} round={round} first={false} aside={null} />
       ))}

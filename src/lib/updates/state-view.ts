@@ -50,6 +50,10 @@ const TABLE_ORDER: readonly StateCode[] = [
 export type StateTile = {
   state: StateCode;
   name: string;
+  /** The state's own page; null when the caller links none. */
+  href: string | null;
+  /** The page is this state's own page. */
+  current: boolean;
   figure: string;
   shade: ShadeBand;
   hidden: string | null;
@@ -133,11 +137,14 @@ function tile(
   figure: StateFigure,
   previousEnd: string,
   link: LinkOccupation,
+  options: StateSectionOptions,
 ): StateTile {
   const [top] = figure.top;
   return {
     state,
     name: STATE_NAMES[state],
+    href: options.stateHref?.(state) ?? null,
+    current: options.current === state,
     figure: stateFigureText(figure),
     shade: shadeBand(figure.floor),
     hidden: hiddenCountsText(figure.maskedCells),
@@ -190,12 +197,22 @@ function nominationsView(
   };
 }
 
+export type StateSectionOptions = {
+  /** Links each state's tile to its own page. */
+  stateHref?: (state: StateCode) => string;
+  /** The state whose page shows the section: its tile is marked. */
+  current?: StateCode;
+  /** Replaces the recap's heading. */
+  heading?: string;
+};
+
 /** The 190 or 491 by-state part of a recap, from the month's data section. */
 export function buildStateSection(
   visa: StateVisa,
-  data: DataSection,
+  data: Pick<DataSection, "states" | "nominations">,
   month: MonthKey,
   link: LinkOccupation,
+  options: StateSectionOptions = {},
 ): StateSectionView {
   const figures = data.states[visa];
   const previousEnd = monthEnd(shiftMonth(month, -1));
@@ -203,14 +220,16 @@ export function buildStateSection(
   return {
     visa,
     label: VISA_LABELS[visa],
-    heading: `${visa} invitations by state, ${formatLongMonth(month)}`,
+    heading:
+      options.heading ??
+      `${visa} invitations by state, ${formatLongMonth(month)}`,
     lead: lead(visa, figures, month),
     map: Object.fromEntries(
       STATE_ORDER.map((state) => [state, mapLabel(figures[state])]),
     ) as StateSectionView["map"],
     legend: LEGEND,
     tiles: STATE_ORDER.map((state) =>
-      tile(state, figures[state], previousEnd, link),
+      tile(state, figures[state], previousEnd, link, options),
     ),
     notRecorded: {
       label: "State not recorded",

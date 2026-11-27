@@ -143,6 +143,7 @@ Rules that follow:
 
 - **Multi-visa EOIs.** One EOI can select 189, 190 and 491 and appears in each visa's rows. How a 190 invitation affects the same EOI's 189 row cannot be determined from aggregates. Analyse each visa separately. Never sum or subtract across visas.
 - **States overlap.** An EOI can select several states, so state pools are never summed or checked against national totals. `ANY` is reported separately and never summed with a named state: an `ANY` EOI may or may not compete for a given state's places. Invitations under `ANY` mean the nominating state was not recorded (130 nurse 190 invitations in 10/2026). Report them nationally as "invited, state not recorded".
+- **State INVITED is a month-end stock.** `stateInvited[visa][state][month]` counts EOIs holding an unused invitation from the state at the month's end, not the invitations issued that month. The state pages (`/states/<state>/`, `src/lib/state-page/`) chart it as "EOIs holding a {state} 190 invitation at each month end" and never add or difference months. A state's month figure is the interval sum of its occupation-by-score cells: floor = published cells, ceiling = floor + 19 × hidden cells.
 - **CLOSED is mixed**: expired, withdrawn or finalised. It is not a rejection count.
 - **No onshore/offshore field** exists on the dashboard.
 - **Masking.** Every count below 20 is `<20`. Small occupations and fine slices are mostly masked, and a masked cell is never narrowed.

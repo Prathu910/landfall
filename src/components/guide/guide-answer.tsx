@@ -9,7 +9,8 @@ export function GuideAnswer({
 }: {
   answer: string;
   checkedAt: string;
-  feesAsAt: string;
+  /** Pages without fees (the points table, the glossary) leave it out. */
+  feesAsAt?: string;
 }) {
   return (
     <section className={styles.answer} aria-labelledby="answer-heading">
@@ -20,12 +21,18 @@ export function GuideAnswer({
       <dl className={styles.dates}>
         <div>
           <dt>Last checked</dt>
-          <dd>{formatDate(checkedAt)}</dd>
+          <dd>
+            <time dateTime={checkedAt}>{formatDate(checkedAt)}</time>
+          </dd>
         </div>
-        <div>
-          <dt>Fees as at</dt>
-          <dd>{formatDate(feesAsAt)}</dd>
-        </div>
+        {feesAsAt && (
+          <div>
+            <dt>Fees as at</dt>
+            <dd>
+              <time dateTime={feesAsAt}>{formatDate(feesAsAt)}</time>
+            </dd>
+          </div>
+        )}
       </dl>
       <p className={styles.caveat}>
         General information, not migration advice. MigrateLens isn’t a

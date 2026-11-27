@@ -40,10 +40,14 @@ describe("buildRecapView, October 2026", () => {
 
   it("dates the page by its last update, round, data and sources", () => {
     expect(view.hero.dateline).toEqual([
-      { label: "Updated", value: "24 Nov 2026" },
-      { label: "189 round", value: "15 Oct 2026" },
-      { label: "Data as at", value: "31 Oct 2026" },
-      { label: "Sources checked", value: "17 Nov 2026" },
+      { label: "Updated", value: "24 Nov 2026", dateTime: "2026-11-24" },
+      { label: "189 round", value: "15 Oct 2026", dateTime: "2026-10-15" },
+      { label: "Data as at", value: "31 Oct 2026", dateTime: "2026-10-31" },
+      {
+        label: "Sources checked",
+        value: "17 Nov 2026",
+        dateTime: "2026-11-17",
+      },
     ]);
     expect(view.hero.actions).toEqual([
       { label: "Check my points free", href: "/check/" },

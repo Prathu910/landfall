@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Info, MapPinned } from "lucide-react";
 import { stateRuleData } from "@/components/data/state-rule-data";
@@ -7,13 +8,21 @@ import { StateCard } from "@/components/states/state-card";
 import { StateMap } from "@/components/states/state-map";
 import { statePrograms } from "@/data/states";
 import { buildStateCards } from "@/lib/states-page/state-cards";
+import { STATE_PAGES, statePage, statePath } from "@/lib/state-page/slug";
+import { SITE_URL } from "@/lib/site";
+import { sitePageMetadata } from "@/lib/seo/page-meta";
+import { sitePageJsonLd, statesPage } from "@/lib/seo/site-pages";
+import { JsonLd } from "@/components/seo/json-ld";
 import styles from "./states-page.module.css";
 
-export const metadata = { title: "State and territory pathways" };
+const PROGRAM_YEAR = stateRuleData.rules.programYear.replace("-", "–");
+
+const PAGE = statesPage(PROGRAM_YEAR);
+
+export const metadata: Metadata = sitePageMetadata(PAGE);
 
 export default function StatesPage() {
   const cards = buildStateCards(statePrograms, stateRuleData);
-  const year = stateRuleData.rules.programYear.replace("-", "–");
   return (
     <main id="main" className={shell.page}>
       <div className={shell.inner}>
@@ -25,7 +34,7 @@ export default function StatesPage() {
           intro="Federal points are one part. Each state and territory has its own criteria, priorities and selection process for nomination."
           meta={[
             `${cards.length} states and territories`,
-            `${year} program year`,
+            `${PROGRAM_YEAR} program year`,
           ]}
         />
         <div className={styles.layout}>
@@ -60,11 +69,26 @@ export default function StatesPage() {
           </aside>
           <div className={styles.cards}>
             {cards.map((card) => (
-              <StateCard key={card.code} card={card} />
+              <StateCard
+                key={card.code}
+                card={card}
+                dataLink={{
+                  href: statePath(card.code),
+                  text: `${statePage(card.code).searchName} 190 and 491 invitation data, last 12 months`,
+                }}
+              />
             ))}
           </div>
         </div>
       </div>
+      <JsonLd
+        data={sitePageJsonLd(PAGE, {
+          items: STATE_PAGES.map((page) => ({
+            name: `${page.fullName} 190 and 491 invitation data`,
+            url: SITE_URL + statePath(page.code),
+          })),
+        })}
+      />
     </main>
   );
 }

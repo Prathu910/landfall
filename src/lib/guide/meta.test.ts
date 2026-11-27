@@ -103,3 +103,43 @@ describe("guide FAQ", () => {
     expect(steps).toContain("10. Visa decision");
   });
 });
+
+describe("the guide's dated round figures", () => {
+  const round = {
+    date: "2026-10-15",
+    invited: 20000,
+    occupations: 159,
+    lowest: 65,
+    highest: 100,
+    atLowest: 44,
+    month: "2026-10" as const,
+  };
+  it("adds the latest round's cut-off span to the 189 answer as its own dated sentence", () => {
+    const answer = directAnswer("189", GUIDE_CHECKED_AT, counts, round);
+    expect(answer).toContain(
+      "at least 65 points. The latest 189 round, on 15 Oct 2026, invited at 65 to 100 points depending on the occupation",
+    );
+    // Its own sentence, so the page's "As at" date never heads a newer round.
+    expect(answer.split(/(?<=\.)\s+(?=[A-Z])/).length).toBe(4);
+    expect(directAnswer("190", GUIDE_CHECKED_AT, counts, round)).not.toContain(
+      "latest round",
+    );
+  });
+  it("answers 'Is 65 points enough?' with the round's own figures on the hub and the 189 guide", () => {
+    const expected =
+      "65 points is the pass mark to be invited, not a promise of an invitation. In the 15 Oct 2026 189 round, Home Affairs invited 20,000 EOIs across 159 occupations; the lowest score invited ranged from 65 to 100 points by occupation, and 44 occupations were invited at 65. Source: SkillSelect invitation rounds.";
+    const hub = hubFaq(FEES, GUIDE_STEPS, GUIDE_CHECKED_AT, round);
+    const visa = visaFaq("189", FEES, counts, round);
+    for (const faq of [hub, visa]) {
+      expect(faq.find((f) => f.question.includes("65 points"))?.answer).toBe(
+        expected,
+      );
+    }
+  });
+  it("keeps the rule-only answer when no round has been published", () => {
+    const hub = hubFaq(FEES, GUIDE_STEPS, GUIDE_CHECKED_AT, null);
+    const answer = hub.find((f) => f.question.includes("65 points"))?.answer;
+    expect(answer).toContain("differ by occupation and round");
+    expect(answer).not.toMatch(/\d{1,3},\d{3}/);
+  });
+});

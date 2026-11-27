@@ -59,7 +59,8 @@ const BANNERS = {
   closedAll:
     "Points won't change this. No visa is inviting your occupation right now.",
 };
-const LODGED_NOTE =
+/** Builder-only: also a bundle-lock sentinel (sentinels.ts). */
+export const LODGED_NOTE =
   " Updating your EOI with new points resets your date of effect to that day.";
 
 function shiftOf(outlook: ProfileOutlook): Shift {

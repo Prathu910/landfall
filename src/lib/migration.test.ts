@@ -5,6 +5,7 @@ import {
   emptyProfile,
   formatDate,
   localToday,
+  NOMINATION_POINTS,
   sampleProfile,
   type Profile,
 } from "./migration";
@@ -27,6 +28,15 @@ describe("federal points estimate", () => {
     expect(result.base).toBe(90);
     expect(result.subclass190).toBe(95);
     expect(result.subclass491).toBe(105);
+  });
+
+  it("adds exactly NOMINATION_POINTS for the 190 and 491", () => {
+    const result = calculatePoints(sampleProfile, "2026-11-17");
+    expect(result.subclass190 - result.base).toBe(NOMINATION_POINTS["190"]);
+    expect(result.subclass491 - result.base).toBe(NOMINATION_POINTS["491"]);
+    const invalid = calculatePoints(sampleProfile, "not a date");
+    expect(invalid.subclass190).toBe(NOMINATION_POINTS["190"]);
+    expect(invalid.subclass491).toBe(NOMINATION_POINTS["491"]);
   });
 
   it("changes age points on the 33rd birthday", () => {

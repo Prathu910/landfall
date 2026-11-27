@@ -1,0 +1,74 @@
+/* The /check/ explainer under the form: the check's white paper on its
+   sage desk, copy beside a short points table (one column on phones). */
+.explainer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: calc(var(--check-unit) * 10);
+  margin-top: calc(var(--check-unit) * 14);
+  padding: calc(var(--check-unit) * 10);
+  border: 1px solid var(--check-line);
+  border-radius: var(--check-radius);
+  background: var(--check-paper);
+  color: var(--check-ink);
+}
+.copy h2 {
+  margin-bottom: calc(var(--check-unit) * 3);
+  font: 650 clamp(1.375rem, 2.4vw, 1.75rem) / 1.2 var(--check-font);
+  letter-spacing: -0.03em;
+}
+.copy p {
+  max-width: 34rem;
+  color: var(--check-muted);
+  font-size: var(--check-text);
+  line-height: 1.7;
+}
+.copy p + p {
+  margin-top: calc(var(--check-unit) * 3);
+}
+.copy a {
+  color: var(--check-green);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: var(--check-unit);
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--check-text-sm);
+}
+.table caption {
+  margin-bottom: calc(var(--check-unit) * 2);
+  color: var(--check-muted);
+  font-weight: 600;
+  text-align: left;
+}
+.table th,
+.table td {
+  padding: calc(var(--check-unit) * 2.5) 0;
+  border-bottom: 1px solid var(--check-line);
+  text-align: left;
+  vertical-align: top;
+}
+.table th {
+  padding-right: calc(var(--check-unit) * 4);
+  font-weight: 450;
+}
+.table td {
+  font-weight: 650;
+  white-space: nowrap;
+}
+@media screen and (max-width: 760px) {
+  .explainer {
+    grid-template-columns: minmax(0, 1fr);
+    gap: calc(var(--check-unit) * 6);
+    padding: calc(var(--check-unit) * 6);
+  }
+  .table td {
+    white-space: normal;
+  }
+}
+@media print {
+  .explainer {
+    display: none;
+  }
+}

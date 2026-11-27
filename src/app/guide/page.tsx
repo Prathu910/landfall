@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Route } from "lucide-react";
 import { stateRuleData } from "@/components/data/state-rule-data";
 import { GuideAnswer } from "@/components/guide/guide-answer";
@@ -22,24 +23,30 @@ import { POINTS_CHANGES } from "@/data/guide/points-changes";
 import { GUIDE_CHECKED_AT, SOURCE_LABELS, SOURCES } from "@/data/guide/sources";
 import { GUIDE_STEPS } from "@/data/guide/steps";
 import { VISA_GUIDES } from "@/data/guide/visas";
-import { compareRows } from "@/lib/guide/compare";
+import { compareRows, differenceAnswer } from "@/lib/guide/compare";
+import { POINTS_TABLE } from "@/data/guide/points-table";
+import { rowPoints } from "@/lib/guide/points-table";
 import { federalCounts, hubFaq } from "@/lib/guide/faq";
 import { GUIDE_PAGES, directAnswer, guideJsonLd } from "@/lib/guide/meta";
 import { sourceList } from "@/lib/guide/sources-list";
 import { formatDate, localToday } from "@/lib/migration";
 import { serializeJsonLd } from "@/lib/seo/json-ld";
+import { pageMetadata } from "@/lib/seo/page-meta";
+import { loadLatestRound } from "@/lib/updates/load-server";
 
 const PAGE = GUIDE_PAGES.hub;
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
+  path: PAGE.path,
   title: PAGE.title,
   description: PAGE.description,
-  alternates: { canonical: PAGE.path },
-};
+  type: "article",
+  modifiedTime: GUIDE_CHECKED_AT,
+});
 
 const CONTENTS = [
   { id: "path", label: "Which path fits you" },
-  { id: "visas", label: "The three visas" },
+  { id: "visas", label: "189 vs 190 vs 491" },
   { id: "steps", label: "Step by step" },
   { id: "points", label: "Points and basics" },
   { id: "costs", label: "Costs" },
@@ -50,7 +57,7 @@ const CONTENTS = [
 
 export default function GuideHubPage() {
   const counts = federalCounts(stateRuleData.federal);
-  const faq = hubFaq(FEES, GUIDE_STEPS, GUIDE_CHECKED_AT);
+  const faq = hubFaq(FEES, GUIDE_STEPS, GUIDE_CHECKED_AT, loadLatestRound());
   const pages = (Object.keys(SOURCES) as (keyof typeof SOURCES)[]).map(
     (key) => ({ label: SOURCE_LABELS[key], href: SOURCES[key] }),
   );
@@ -73,8 +80,16 @@ export default function GuideHubPage() {
           title={PAGE.heading}
           intro="Three visas, one points test. The route from choosing your occupation to a visa decision, with the official rule, who runs each step and what it costs."
           meta={[
-            `Checked ${formatDate(GUIDE_CHECKED_AT)}`,
-            `Fees as at ${formatDate(FEES.feesAsAt)}`,
+            <>
+              Checked{" "}
+              <time dateTime={GUIDE_CHECKED_AT}>
+                {formatDate(GUIDE_CHECKED_AT)}
+              </time>
+            </>,
+            <>
+              Fees as at{" "}
+              <time dateTime={FEES.feesAsAt}>{formatDate(FEES.feesAsAt)}</time>
+            </>,
             "Sources: Home Affairs and official bodies",
           ]}
         />
@@ -95,11 +110,15 @@ export default function GuideHubPage() {
           </div>
         </section>
         <section id="visas" className={page.section} aria-labelledby="visas-h">
-          <h2 id="visas-h">The three visas</h2>
+          <h2 id="visas-h">189 vs 190 vs 491: what’s the difference?</h2>
           <p className={page.sectionIntro}>
-            All three use the same points test and the same SkillSelect EOI.
-            They differ in who nominates you, where you live and when you become
-            permanent.
+            {differenceAnswer(
+              rowPoints(POINTS_TABLE, "nomination-190"),
+              rowPoints(POINTS_TABLE, "nomination-491"),
+            )}{" "}
+            All three use the same{" "}
+            <Link href="/guide/points-table/">points test</Link> and the same
+            SkillSelect EOI.
           </p>
           <VisaCompare rows={compareRows(FEES, counts)} />
           <h3 className={page.subhead}>Read a visa guide</h3>
@@ -122,7 +141,8 @@ export default function GuideHubPage() {
           <p className={page.sectionIntro}>
             A quick estimate with the current Home Affairs points table, and the
             basic federal requirements: age, English, skills assessment,
-            occupation list and 65 points.
+            occupation list and 65 points. Every factor and its points are in{" "}
+            <Link href="/guide/points-table/">the points table</Link>.
           </p>
           <div className={page.panel}>
             <LazyHubQuickCheck buildDate={buildDate} />
@@ -164,6 +184,8 @@ export default function GuideHubPage() {
           <h2 id="sources-h">Sources</h2>
           <p className={page.sectionIntro}>
             Every rule and fee on this page comes from these official pages.
+            Terms such as EOI, invitation round and cut-off are defined in{" "}
+            <Link href="/guide/glossary/">the glossary</Link>.
           </p>
           <GuideSources sources={sources} />
         </section>

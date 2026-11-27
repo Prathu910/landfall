@@ -52,8 +52,8 @@ export function HomeFinal() {
         <div>
           <h2 id="fin-h">Get your own stamp</h2>
           <p>
-            Four short steps, then your personal report. Email required; no
-            account needed.
+            Four short steps, then your points and three visa stamps, free. No
+            email or account needed.
           </p>
           <div className="ctas">
             <HomeAction href="/check/">Check my points, free</HomeAction>

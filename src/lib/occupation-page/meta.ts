@@ -1,19 +1,35 @@
 import { cohortWindowStart } from "../data/months";
 import type { OccupationCore, OccupationIndexEntry } from "../data/types";
 import { SITE_NAME, SITE_URL } from "../site";
+import { monthEnd } from "../data/report-source";
+import { formatDate } from "../migration";
 import { formatMonth } from "../report/copy";
+import { wholeSentences } from "../seo/description";
+import { BRAND_SUFFIX, fitTitle } from "../seo/title";
 import { breadcrumbLd, datasetLd, faqPageLd } from "../seo/json-ld";
+import { isStateListSentence } from "./answer";
 import type { Faq } from "./faq";
 import { occupationPath } from "./slug";
+import { has189Rounds } from "./summary";
 
 /** The PR guide's pages, dated by the day their official sources were read. */
-const GUIDE_PATHS = ["/guide/", "/guide/189/", "/guide/190/", "/guide/491/"];
+const GUIDE_PATHS = [
+  "/guide/",
+  "/guide/189/",
+  "/guide/190/",
+  "/guide/491/",
+  "/guide/points-table/",
+  "/guide/glossary/",
+];
 const STATIC_PAGES = [
   "/",
+  "/check/",
   "/sample/",
   "/states/",
   "/methodology/",
+  "/about/",
   "/occupations/",
+  "/occupations/189-cut-offs/",
   "/feedback/",
 ];
 
@@ -41,38 +57,109 @@ export function isIndexable(core: OccupationCore): boolean {
   );
 }
 
+/**
+ * The full `<title>` (routes set it as `title.absolute`), at most 60
+ * characters: the longest topic that fits, then the bare name. The code and
+ * month live in the h1 and the description, so the title never goes stale.
+ */
+/**
+ * An all-"<20" page stays out of the index but its links are followed, so
+ * related occupations still get crawled (audit T-P2-4). With the site
+ * switch off, nothing is indexed or followed.
+ */
+export function occupationRobots(
+  siteIndexable: boolean,
+  pageIndexable: boolean,
+): { index: boolean; follow: boolean } | undefined {
+  if (!siteIndexable) return { index: false, follow: false };
+  return pageIndexable ? undefined : { index: false, follow: true };
+}
+
 export function pageTitle(core: OccupationCore): string {
+  const { name } = core;
+  const rounds = has189Rounds(core);
+  const candidates = [
+    rounds
+      ? `${name}: 189, 190 and 491 EOIs and cut-offs${BRAND_SUFFIX}`
+      : `${name}: 189, 190 and 491 EOI data${BRAND_SUFFIX}`,
+    rounds
+      ? `${name}: 189 cut-offs and EOI pools${BRAND_SUFFIX}`
+      : `${name}: 189, 190 and 491 EOI pools${BRAND_SUFFIX}`,
+    rounds
+      ? `${name}: 189 cut-offs and EOIs${BRAND_SUFFIX}`
+      : `${name}: EOI pools${BRAND_SUFFIX}`,
+    `${name}${BRAND_SUFFIX}`,
+  ];
+  return fitTitle([...candidates, name]);
+}
+
+/** The Dataset's name: the long form, with the code and the snapshot month. */
+export function datasetName(core: OccupationCore): string {
   return `${core.name} (${core.code}): 189, 190 and 491 EOIs and cut-offs, ${formatMonth(core.asAt)}`;
 }
 
-/** The sentences joined, cut at a word boundary to `limit` characters with "…". */
-export function pageDescription(summary: string[], limit = 160): string {
-  const text = summary.join(" ");
-  if (text.length <= limit) return text;
-  const cut = text.slice(0, limit - 1);
-  const space = cut.lastIndexOf(" ");
-  const trimmed = (space > 0 ? cut.slice(0, space) : cut).replace(
-    /[\s,;:.]+$/,
-    "",
-  );
-  return `${trimmed}…`;
+/** Fixed sentences that are true of every occupation page, in fill order. */
+export function descriptionExtras(core: OccupationCore): string[] {
+  const asAt = formatDate(monthEnd(core.asAt));
+  return [
+    `ANZSCO ${core.code}, from SkillSelect data as at ${asAt}.`,
+    has189Rounds(core)
+      ? "See EOIs by points, recent 189 rounds and state evidence."
+      : "See EOIs by points and the state nomination evidence.",
+    "Check your own points free.",
+  ];
 }
 
+/**
+ * The meta description: the summary's whole sentences (120–160 characters),
+ * topped up with `descriptionExtras`.
+ */
+export function pageDescription(
+  core: OccupationCore,
+  summary: string[],
+): string {
+  return wholeSentences(summary, descriptionExtras(core), {
+    uncut: isStateListSentence,
+  });
+}
+
+/** What an occupation's Dataset measures (docs/DATA.md). */
+export const OCCUPATION_VARIABLES = [
+  "EOIs by points score (189, 190 and 491 pools)",
+  "189 invitation round cut-offs (lowest points invited)",
+  "EOIs in invited status at month-end, by state (190 and 491)",
+  "189 EOI statuses by submission month",
+];
+
+/** `sources` are the published pages the snapshot was read from. */
 export function occupationJsonLd(
   core: OccupationCore,
   faq: Faq[],
   summary: string[],
   checkedAt: string,
+  sources: string[],
 ): object[] {
   const url = SITE_URL + occupationPath(core);
   return [
     datasetLd({
-      name: pageTitle(core),
-      description: pageDescription(summary),
+      name: datasetName(core),
+      description: summary.join(" "),
       url,
+      identifier: `ANZSCO ${core.code}`,
+      version: core.snapshotId,
       // From the oldest stored submission month to the snapshot (docs/DATA.md R8).
       temporalCoverage: `${cohortWindowStart(core.asAt)}/${core.asAt}`,
       dateModified: checkedAt,
+      isBasedOn: sources,
+      variableMeasured: OCCUPATION_VARIABLES,
+      catalog: {
+        name: `${SITE_NAME} SkillSelect occupation data`,
+        url: `${SITE_URL}/occupations/`,
+      },
+      distribution: {
+        contentUrl: `${SITE_URL}/data/occupations/${core.code}.json`,
+        description: `${SITE_NAME}'s import of the published SkillSelect counts for this occupation; masked counts are kept as "<20".`,
+      },
     }),
     faqPageLd(faq),
     breadcrumbLd([

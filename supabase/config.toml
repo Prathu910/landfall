@@ -24,3 +24,35 @@ entrypoint = "./functions/submit-feedback/index.ts"
 [functions.write-read]
 verify_jwt = false
 entrypoint = "./functions/write-read/index.ts"
+
+[functions.report-quote]
+verify_jwt = false
+entrypoint = "./functions/report-quote/index.ts"
+
+[functions.report-order]
+verify_jwt = false
+entrypoint = "./functions/report-order/index.ts"
+
+[functions.report-verify]
+verify_jwt = false
+entrypoint = "./functions/report-verify/index.ts"
+
+[functions.report-confirm]
+verify_jwt = false
+entrypoint = "./functions/report-confirm/index.ts"
+
+[functions.razorpay-webhook]
+verify_jwt = false
+entrypoint = "./functions/razorpay-webhook/index.ts"
+
+[functions.report-get]
+verify_jwt = false
+entrypoint = "./functions/report-get/index.ts"
+
+[functions.report-revise]
+verify_jwt = false
+entrypoint = "./functions/report-revise/index.ts"
+
+[functions.report-deliver]
+verify_jwt = false
+entrypoint = "./functions/report-deliver/index.ts"

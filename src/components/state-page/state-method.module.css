@@ -1,0 +1,26 @@
+.notes {
+  display: grid;
+  gap: calc(var(--brand-unit) * 2.5);
+  max-width: 50rem;
+  margin: calc(var(--brand-unit) * 5) 0 0;
+  padding-left: calc(var(--brand-unit) * 5);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+}
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--brand-unit) * 1) calc(var(--brand-unit) * 5);
+  margin-top: calc(var(--brand-unit) * 5);
+  font-size: 0.9375rem;
+}
+.links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--brand-target);
+}
+.subhead {
+  margin-top: calc(var(--brand-unit) * 7);
+  font-size: 1.125rem;
+  font-weight: 700;
+}

@@ -33,3 +33,12 @@
   dominant-baseline: middle;
   pointer-events: none;
 }
+/* A state page's own state: filled green, its label on paper. */
+.face.highlight,
+.region:hover .face.highlight {
+  fill: var(--brand-green);
+  print-color-adjust: exact;
+}
+.label.highlightLabel {
+  font-weight: 800;
+}

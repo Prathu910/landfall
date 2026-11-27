@@ -21,7 +21,8 @@ export function CheckReviewStep({
   save: boolean;
   allowSave: boolean;
   onSave: (save: boolean) => void;
-  children: ReactNode;
+  /** The sample run's note, shown under the save option. */
+  children?: ReactNode;
 }) {
   return (
     <>
@@ -47,13 +48,13 @@ export function CheckReviewStep({
         ))}
       </div>
       <Alert icon={<ShieldCheck size={18} />} color="ink" radius="md">
-        Your answers are self-reported. This overview explains points and
-        published data; it does not establish visa eligibility or guarantee an
-        invitation.
+        Your answers are self-reported. Your free result shows your points and
+        your outlook for each visa from published data; it does not establish
+        visa eligibility or guarantee an invitation.
       </Alert>
       <Checkbox
         label="Save my progress on this device"
-        description="Optional. Anyone using this browser may see saved answers. Clear them below at any time. Your email is not saved on this device."
+        description="Optional. Anyone using this browser may see saved answers. Clear them below at any time."
         disabled={!allowSave}
         checked={save}
         onChange={(e) => onSave(e.currentTarget.checked)}

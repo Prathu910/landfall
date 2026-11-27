@@ -16,31 +16,43 @@ const OG = "/social/2026-10/og.png";
 type Ld = Record<string, unknown>;
 
 describe("recapTitle", () => {
+  it("fits 60 characters", () => {
+    for (const facts of [oct, dataOnly, roundOnly]) {
+      expect(recapTitle(facts).length).toBeLessThanOrEqual(60);
+    }
+  });
+
   it("names the round and the states, or the states alone", () => {
     expect(recapTitle(oct)).toBe(
-      "SkillSelect October 2026 update: 189 round, 190 and 491 by state | MigrateLens",
+      "SkillSelect October 2026 update: 189 round, 190 and 491",
     );
     expect(recapTitle(dataOnly)).toBe(
-      "SkillSelect December 2026 update: 190 and 491 invitations by state | MigrateLens",
+      "SkillSelect December 2026 update: 190 and 491 by state",
     );
   });
 
   it("names only the round until the month's data arrives", () => {
     expect(roundOnly.data).toBeNull();
     expect(recapTitle(roundOnly)).toBe(
-      "SkillSelect November 2026 update: 189 round results | MigrateLens",
+      "SkillSelect November 2026: 189 round results · MigrateLens",
     );
   });
 });
 
 describe("recapDescription", () => {
-  it("cuts the direct answer at a word boundary", () => {
+  it("keeps whole sentences or clauses of the direct answer", () => {
+    for (const facts of [oct, dataOnly, roundOnly]) {
+      const view = buildRecapView(facts, ctx);
+      const description = recapDescription(view);
+      expect(description.length).toBeLessThanOrEqual(160);
+      expect(description.length).toBeGreaterThanOrEqual(120);
+      expect(description).not.toContain("…");
+      expect(description.endsWith(".")).toBe(true);
+    }
     const view = buildRecapView(oct, ctx);
-    const description = recapDescription(view);
-    expect(description.length).toBeLessThanOrEqual(155);
-    expect(description).toMatch(/^As at 31 October 2026: Home Affairs/);
-    expect(description.endsWith("…")).toBe(true);
-    expect(view.hero.answer.startsWith(description.slice(0, -1))).toBe(true);
+    expect(recapDescription(view)).toMatch(
+      /^As at 31 October 2026: Home Affairs/,
+    );
   });
 });
 
@@ -71,8 +83,18 @@ describe("recapJsonLd", () => {
     expect(ld[1]).toMatchObject({
       temporalCoverage: "2026-10",
       license: "https://creativecommons.org/licenses/by/3.0/au/",
-      creator: { "@type": "Organization", name: "Department of Home Affairs" },
+      creator: {
+        "@type": "GovernmentOrganization",
+        name: "Department of Home Affairs",
+      },
+      version: oct.data?.sources.snapshotId,
+      publisher: { "@id": `${SITE_URL}/#organization` },
+      includedInDataCatalog: { url: `${SITE_URL}/updates/` },
     });
+  });
+
+  it("dates the Dataset and the Article by the same day", () => {
+    expect(ld[1].dateModified).toBe(ld[0].dateModified);
   });
 
   it("breadcrumbs Home › Updates › the month with absolute URLs", () => {

@@ -4,6 +4,10 @@ Reviewed against `docs/original-references/landfall-sample.html` on 17 November 
 
 The first implementation covered the federal points audit, a submitted 189 pool snapshot, score comparisons, personal dates, state summaries and sources. It did **not** support the entire reference report. Later iterations added verified invitation history, monthly pool history, three visa pool comparisons, credential scenarios, occupation comparisons and preparation tools. Roadmap step 2 (18 November 2026) opens the report with a reality check across 189, 190 and 491, followed by a detail panel for each visa; the old pool and invitation-history sections are folded into the 189 panel. The table below records the remaining boundaries rather than treating the sketch as a completed feature list.
 
+## Paid report (26 November 2026)
+
+The full report is now paid (free for the Founding 100) and issued by the server; `/check/` shows only the free result (points and the three visa stamps). Its sections are unchanged: the issued report at `/report/` renders the same `ReportView` and print tree as `/sample/`, from the payload stored at issue. What is new around it: the 7-day correction window (Edit answers and the Sharpen questions go through `report-revise`, rebuilt on version 1's data month), and the final line after it. A full report built from the stored payload printed 5 A4 pages in the local check.
+
 ## Report redesign (21 to 22 November 2026)
 
 The approved passport security-line artwork is restored behind the opening outlook in both screen and PDF layouts, shared by sample and personal reports. It is decorative and prints independently of the browser background-graphics setting.

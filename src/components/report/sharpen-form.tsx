@@ -204,8 +204,7 @@ export function SharpenForm({
     <details id="sharpen" className={styles.form} open>
       <summary className={styles.summary}>Sharpen my state outlook</summary>
       <p className={styles.intro}>
-        Optional. Answers stay in this browser and change which states we can
-        check for you.
+        Optional. Your answers change which states we can check for you.
       </p>
       {readOnly && (
         <p className={styles.note}>Sample answers can&apos;t be changed.</p>

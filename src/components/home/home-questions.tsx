@@ -1,7 +1,10 @@
-const questions = [
+import type { ReactNode } from "react";
+import Link from "next/link";
+
+const questions: [string, ReactNode][] = [
   [
-    "Is it really free?",
-    "Yes. The check and your report are free. We ask for an email to show your report, and there’s no account.",
+    "Is it free?",
+    "Your points and your three visa stamps are free, with no email or account. The full personal report is a one-off purchase, free for founding readers while places last, with a 7-day no-questions refund.",
   ],
   [
     "What do the labels mean?",
@@ -17,7 +20,12 @@ const questions = [
   ],
   [
     "Where do my answers go?",
-    "Your full profile stays in your browser. We keep only your email and a short summary: occupation, age band, onshore or offshore, points and the data snapshot. We don’t subscribe you to marketing.",
+    <>
+      The free check runs in your browser and sends us nothing. When you claim
+      or buy the full report, your answers and email go to our server to build
+      it, and we don’t subscribe you to marketing. Our{" "}
+      <Link href="/privacy/">privacy policy</Link> says how long we keep them.
+    </>,
   ],
 ];
 export function HomeQuestions() {

@@ -7,6 +7,7 @@ import path from "node:path";
 import type { MonthKey } from "../data/types";
 import { isRecapFacts } from "./guards";
 import type { RecapFacts } from "./types";
+import { latestRound, type LatestRound } from "./latest-round";
 
 export const UPDATES_DIR = path.join(process.cwd(), "src", "data", "updates");
 const FILE_PATTERN = /^(\d{4}-\d{2})\.json$/;
@@ -32,4 +33,11 @@ export function loadRecap(
     throw new Error(`${file} is not a valid facts file for ${month}`);
   }
   return value;
+}
+
+/** The newest 189 round in the facts files, for pages that quote it. */
+export function loadLatestRound(dir: string = UPDATES_DIR): LatestRound | null {
+  return latestRound(
+    listRecapMonths(dir).map((month) => loadRecap(month, dir)),
+  );
 }

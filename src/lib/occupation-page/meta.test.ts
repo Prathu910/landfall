@@ -5,8 +5,10 @@ import { allMaskedCore } from "../report/__fixtures__/scorecard";
 import { SITE_URL } from "../site";
 import { occupationFaq } from "./faq";
 import {
+  datasetName,
   isIndexable,
   occupationJsonLd,
+  occupationRobots,
   pageDescription,
   pageTitle,
   relatedOccupations,
@@ -51,24 +53,52 @@ describe("isIndexable", () => {
 });
 
 describe("pageTitle and pageDescription", () => {
-  it("builds the title", () => {
+  it("leads with the name and keeps the brand when it fits", () => {
     expect(pageTitle(core)).toBe(
-      "Software Engineer (261313): 189, 190 and 491 EOIs and cut-offs, Oct 2026",
+      "Software Engineer: 189 cut-offs and EOI pools · MigrateLens",
+    );
+    expect(pageTitle({ ...core, name: "Chef" })).toBe(
+      "Chef: 189, 190 and 491 EOIs and cut-offs · MigrateLens",
     );
   });
-  it("trims at a word boundary only when needed", () => {
-    expect(pageDescription(["Short one.", "Two."])).toBe("Short one. Two.");
-    const long = pageDescription(["word ".repeat(60).trim()]);
-    expect(long.length).toBeLessThanOrEqual(160);
-    expect(long.endsWith("word…")).toBe(true);
+  it("falls back to the bare name when nothing else fits", () => {
+    const long = "Architectural, Building and Surveying Technicians nec";
+    expect(pageTitle({ ...core, name: long })).toBe(long);
+  });
+  it("keeps whole sentences and tops up short ones", () => {
+    const text = pageDescription(core, ["Short one."]);
+    expect(text.startsWith("Short one. ANZSCO 261313, from SkillSelect")).toBe(
+      true,
+    );
+    expect(text.length).toBeGreaterThanOrEqual(120);
+    expect(text.length).toBeLessThanOrEqual(160);
+    expect(text).not.toContain("…");
+  });
+});
+
+describe("occupationRobots", () => {
+  it("keeps links followed on a noindex page", () => {
+    expect(occupationRobots(true, true)).toBeUndefined();
+    expect(occupationRobots(true, false)).toEqual({
+      index: false,
+      follow: true,
+    });
+    expect(occupationRobots(false, true)).toEqual({
+      index: false,
+      follow: false,
+    });
   });
 });
 
 describe("occupationJsonLd", () => {
-  const ld = occupationJsonLd(core, faq, summary, "2026-11-17") as Record<
-    string,
-    unknown
-  >[];
+  const sources = ["https://example.gov.au/dashboard"];
+  const ld = occupationJsonLd(
+    core,
+    faq,
+    summary,
+    "2026-11-17",
+    sources,
+  ) as Record<string, unknown>[];
   it("returns Dataset, FAQPage and BreadcrumbList", () => {
     expect(ld.map((o) => o["@type"])).toEqual([
       "Dataset",
@@ -86,9 +116,34 @@ describe("occupationJsonLd", () => {
     expect(ld[0].temporalCoverage).toBe("2023-11/2026-10");
     expect(ld[0].isAccessibleForFree).toBe(true);
   });
-  it("uses absolute site URLs", () => {
-    const urls = JSON.stringify(ld).match(/"(?:url|item)":"([^"]+)"/g)!;
-    for (const u of urls) expect(u).toContain(`"${SITE_URL}`);
+  it("uses absolute site URLs for the page and its breadcrumbs", () => {
+    expect(ld[0].url).toBe(SITE_URL + occupationPath(core));
+    const items = JSON.stringify(ld[2]).match(/"item":"([^"]+)"/g)!;
+    for (const u of items) expect(u).toContain(`"${SITE_URL}`);
+  });
+  it("describes the dataset for Dataset Search", () => {
+    expect(ld[0]).toMatchObject({
+      identifier: "ANZSCO 261313",
+      version: core.snapshotId,
+      description: summary.join(" "),
+      isBasedOn: sources,
+      spatialCoverage: { "@type": "Place", name: "Australia" },
+      creator: {
+        "@type": "GovernmentOrganization",
+        name: "Department of Home Affairs",
+      },
+      publisher: { "@id": `${SITE_URL}/#organization` },
+      includedInDataCatalog: { url: `${SITE_URL}/occupations/` },
+      distribution: [
+        {
+          "@type": "DataDownload",
+          encodingFormat: "application/json",
+          contentUrl: `${SITE_URL}/data/occupations/261313.json`,
+        },
+      ],
+    });
+    expect((ld[0].variableMeasured as string[]).length).toBeGreaterThan(0);
+    expect(String(ld[0].description)).not.toContain("…");
   });
 });
 
@@ -99,10 +154,20 @@ describe("sitemapEntries", () => {
     "2026-11-17",
     "2026-11-23",
   );
-  const guide = ["/guide/", "/guide/189/", "/guide/190/", "/guide/491/"];
+  const guide = [
+    "/guide/",
+    "/guide/189/",
+    "/guide/190/",
+    "/guide/491/",
+    "/guide/points-table/",
+    "/guide/glossary/",
+  ];
   const urls = entries.map((e) => e.url);
   it("lists indexable pages only", () => {
     expect(urls).toContain(`${SITE_URL}/occupations/`);
+    expect(urls).toContain(`${SITE_URL}/check/`);
+    expect(urls).toContain(`${SITE_URL}/about/`);
+    expect(urls).toContain(`${SITE_URL}/occupations/189-cut-offs/`);
     expect(urls).toContain(SITE_URL + occupationPath(core));
     expect(urls).not.toContain(SITE_URL + occupationPath(maskedCore));
   });
@@ -120,13 +185,8 @@ describe("sitemapEntries", () => {
     ).find((e) => e.url === SITE_URL + occupationPath(core));
     expect(dropped?.lastModified).toBe("2026-10-20");
   });
-  it("lists the PR guide and its three visa pages", () => {
-    for (const path of [
-      "/guide/",
-      "/guide/189/",
-      "/guide/190/",
-      "/guide/491/",
-    ]) {
+  it("lists the PR guide, its three visa pages and its reference pages", () => {
+    for (const path of guide) {
       expect(urls).toContain(SITE_URL + path);
     }
   });
@@ -142,7 +202,7 @@ describe("sitemapEntries", () => {
       guide.some((path) => e.url === SITE_URL + path),
     );
     expect(dated.map((e) => e.lastModified)).toEqual(
-      Array(4).fill("2026-11-23"),
+      Array(guide.length).fill("2026-11-23"),
     );
   });
 });
@@ -154,8 +214,14 @@ describe("a dropped occupation's own snapshot", () => {
     snapshotId: "skillselect-2026-09-30",
   };
   it("takes its title and coverage from its core, not the current month", () => {
-    expect(pageTitle(old)).toMatch(/Sep 2026$/);
-    const dataset = occupationJsonLd(old, faq, summary, "2026-10-20")[0] as {
+    expect(datasetName(old)).toMatch(/Sep 2026$/);
+    const dataset = occupationJsonLd(
+      old,
+      faq,
+      summary,
+      "2026-10-20",
+      [],
+    )[0] as {
       temporalCoverage: string;
       dateModified: string;
     };

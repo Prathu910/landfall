@@ -13,7 +13,7 @@ import { RoundSection } from "@/components/updates/round-section";
 import { StateSection } from "@/components/updates/state-section";
 import type { MonthKey } from "@/lib/data/types";
 import { serializeJsonLd } from "@/lib/seo/json-ld";
-import { SITE_NAME } from "@/lib/site";
+import { pageMetadata } from "@/lib/seo/page-meta";
 import { formatLongMonth } from "@/lib/updates/format";
 import { listRecapMonths, loadRecap } from "@/lib/updates/load-server";
 import {
@@ -79,21 +79,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     height: 630,
     alt: view.hero.h1,
   };
-  return {
+  return pageMetadata({
+    path: view.path,
     // The layout's "· MigrateLens" template would repeat the brand (R20).
     title: { absolute: title },
     description,
-    alternates: { canonical: view.path },
-    openGraph: {
-      type: "article",
-      siteName: SITE_NAME,
-      title,
-      description,
-      url: view.path,
-      images: [image],
-    },
-    twitter: { card: "summary_large_image", images: [image] },
-  };
+    type: "article",
+    publishedTime: facts.firstGeneratedAt,
+    modifiedTime: facts.updatedAt,
+    image,
+  });
 }
 
 type SectionKind =

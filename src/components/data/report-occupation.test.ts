@@ -5,6 +5,7 @@ import {
 } from "../../lib/data/__fixtures__/occupation";
 import { toOccupationEvidence } from "../../lib/data/legacy";
 import {
+  occupationState,
   toReportOccupation,
   toScorecardData,
   unavailableReason,
@@ -116,6 +117,60 @@ describe("toScorecardData", () => {
     expect(toScorecardData(unavailable, "261313", index)).toEqual({
       kind: "none",
       reason: "loadFailed",
+    });
+  });
+});
+
+describe("occupationState", () => {
+  const index = [
+    { code: "111111", name: "Loaded", hasData: true },
+    { code: "222222", name: "Never published", hasData: false },
+  ];
+  const evidence = toOccupationEvidence(coreFixture);
+
+  it("passes a ready detail through and drops a loading one", () => {
+    const ready = occupationState(
+      coreFixture.code,
+      {
+        status: "ready",
+        evidence,
+        core: coreFixture,
+        detail: { status: "ready", detail: detailFixture },
+      },
+      index,
+    );
+    expect(ready).toEqual({
+      status: "ready",
+      core: coreFixture,
+      detail: detailFixture,
+    });
+    const loading = occupationState(
+      coreFixture.code,
+      {
+        status: "ready",
+        evidence,
+        core: coreFixture,
+        detail: { status: "loading" },
+      },
+      index,
+    );
+    expect(loading).toEqual({
+      status: "ready",
+      core: coreFixture,
+      detail: null,
+    });
+  });
+
+  it("tells a failed load from an occupation with no data", () => {
+    const unavailable = { status: "unavailable" } as const;
+    expect(occupationState("111111", unavailable, index)).toEqual({
+      status: "load-failed",
+    });
+    expect(occupationState("222222", unavailable, index)).toEqual({
+      status: "unavailable",
+    });
+    expect(occupationState("111111", { status: "loading" }, index)).toEqual({
+      status: "loading",
     });
   });
 });

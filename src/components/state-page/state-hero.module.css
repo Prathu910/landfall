@@ -1,0 +1,81 @@
+/* The state page hero, on the recap hero's grid: the map and stamp are
+   decorative and sit after the text, so the h1 stays the first paint. */
+.hero {
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+}
+/* Normal width: the metric-matched fallback can't stretch, so a 110% face
+   would rewrap the title when the web font arrives (CLS). */
+.title {
+  font-size: clamp(2rem, 4.2vw, 3.125rem);
+  font-stretch: 100%;
+}
+/* The dates sit under the subtitle, above the answer, so a rewrap in the
+   answer when the web font arrives moves as little as possible. */
+.dateline {
+  margin-top: calc(var(--brand-unit) * 3);
+}
+/* The answer's first sentence on its own lines: where a bold line ends
+   differs between the fallback and the web font, and the text after it
+   would otherwise jump a line when the font loads (CLS). */
+.lead {
+  display: block;
+  margin-bottom: calc(var(--brand-unit) * 2);
+}
+.subtitle {
+  max-width: 40rem;
+  margin-top: calc(var(--brand-unit) * 3);
+  color: var(--brand-muted);
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+.source {
+  max-width: 40rem;
+  margin-top: calc(var(--brand-unit) * 5);
+  color: var(--brand-muted);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+/* The links on their own line, after the buttons: a rewrap in the text
+   above them when the web font arrives moves nothing else (CLS). */
+.sourceLinks {
+  display: block;
+}
+.sourceLinks a {
+  display: inline-block;
+  min-height: 1.5rem;
+  line-height: 1.5rem;
+}
+.source a {
+  color: var(--brand-ink);
+}
+.art {
+  display: flex;
+  flex-direction: column;
+  padding: calc(var(--brand-unit) * 4);
+  border: var(--brand-rule-width) solid var(--brand-line);
+  border-radius: calc(var(--brand-unit) * 4);
+  background: var(--brand-paper);
+}
+.map {
+  max-width: 28rem;
+  margin-inline: auto;
+}
+/* Overlaps the map's lower corner on the side away from the state; 230px
+   keeps the ring text at 12px or more (BIG_STAMP.minWidth). */
+.stamp {
+  display: block;
+  align-self: flex-start;
+  width: 14.375rem;
+  height: auto;
+  margin-top: calc(var(--brand-unit) * -16);
+  color: var(--brand-green);
+  filter: var(--stamp-glow);
+}
+.right {
+  align-self: flex-end;
+}
+@media screen and (max-width: 900px) {
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

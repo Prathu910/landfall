@@ -1,0 +1,210 @@
+/* Twelve month ends. Wide screens: columns, oldest left, bars rising from
+   the base. Phones: rows, bars growing from the left. Shares come from
+   --min (the published floor) and --max (the hidden ceiling). */
+.chart {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: calc(var(--brand-unit) * 1.5);
+  margin: calc(var(--brand-unit) * 6) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.month {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 9rem auto;
+  gap: calc(var(--brand-unit) * 1.5);
+  min-width: 0;
+  padding: 0 calc(var(--brand-unit) * 0.5);
+  border-radius: calc(var(--brand-unit) * 1.5);
+}
+/* Fixed label rows, so every column's base line sits at the same height. */
+.value {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: 2.25rem;
+  color: var(--brand-muted);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  line-height: 1.05;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.floor .value {
+  color: var(--brand-ink);
+  font-family: var(--font-stamp);
+  font-size: 1rem;
+  font-weight: 900;
+}
+.track {
+  position: relative;
+  border-bottom: var(--brand-rule-width) solid var(--brand-line);
+}
+.min,
+.max {
+  position: absolute;
+  inset: auto 15% 0;
+  border-radius: 2px 2px 0 0;
+  print-color-adjust: exact;
+}
+.min {
+  height: calc(var(--min) * 100%);
+  background: var(--brand-green);
+}
+.max {
+  height: calc(var(--max) * 100%);
+  background: repeating-linear-gradient(
+    135deg,
+    var(--homepage-bar) 0 2px,
+    transparent 2px 6px
+  );
+}
+.not-published .track {
+  border-bottom-style: dashed;
+}
+.when {
+  min-height: 2.4em;
+  color: var(--brand-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+}
+.when small {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+.latest {
+  box-shadow: 0 0 0 1.5px var(--brand-ink);
+}
+.latest .when {
+  color: var(--brand-ink);
+}
+/* A program year starts in July: a rule before the column, labelled. */
+.yearStart::before {
+  content: "";
+  position: absolute;
+  inset: calc(var(--brand-unit) * -1) auto 0 calc(var(--brand-unit) * -1.25);
+  border-left: 1.5px dashed var(--brand-muted);
+}
+.yearStart::after {
+  content: attr(data-year);
+  position: absolute;
+  top: calc(var(--brand-unit) * -5);
+  left: calc(var(--brand-unit) * -1);
+  color: var(--brand-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--brand-unit) * 2) calc(var(--brand-unit) * 4.5);
+  margin-top: calc(var(--brand-unit) * 4);
+  color: var(--brand-muted);
+  font-size: 0.8125rem;
+}
+.key i {
+  display: inline-block;
+  width: calc(var(--brand-unit) * 5);
+  height: 11px;
+  margin-right: calc(var(--brand-unit) * 1.5);
+  border-radius: 2px;
+  vertical-align: -1px;
+  print-color-adjust: exact;
+}
+.keyMin {
+  background: var(--brand-green);
+}
+.keyMax {
+  background: repeating-linear-gradient(
+    135deg,
+    var(--homepage-bar) 0 2px,
+    transparent 2px 6px
+  );
+}
+.details {
+  margin-top: calc(var(--brand-unit) * 4);
+}
+.details summary {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--brand-target);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+@media screen and (max-width: 700px) {
+  .chart {
+    grid-template-columns: minmax(0, 1fr);
+    gap: calc(var(--brand-unit) * 1.25);
+  }
+  .month {
+    grid-template-columns: 3.25rem minmax(0, 1fr) 4.75rem;
+    grid-template-rows: auto;
+    grid-template-areas: "when track value";
+    align-items: center;
+    gap: calc(var(--brand-unit) * 2);
+    padding: calc(var(--brand-unit) * 0.75) calc(var(--brand-unit) * 1);
+  }
+  .value {
+    grid-area: value;
+    justify-content: flex-end;
+    align-self: center;
+    height: auto;
+    text-align: right;
+  }
+  .floor .value {
+    font-size: 0.9375rem;
+  }
+  .track {
+    grid-area: track;
+    height: calc(var(--brand-unit) * 4);
+    border-bottom: 0;
+    border-left: var(--brand-rule-width) solid var(--brand-line);
+  }
+  .not-published .track {
+    border-left-style: dashed;
+  }
+  .min,
+  .max {
+    inset: 0 auto 0 0;
+    height: auto;
+    border-radius: 0 2px 2px 0;
+  }
+  .min {
+    width: calc(var(--min) * 100%);
+  }
+  .max {
+    width: calc(var(--max) * 100%);
+  }
+  .when {
+    grid-area: when;
+    display: flex;
+    min-height: 0;
+    gap: var(--brand-unit);
+    align-items: baseline;
+    text-align: left;
+  }
+  .when small {
+    display: inline;
+  }
+  .yearStart {
+    margin-top: calc(var(--brand-unit) * 6);
+  }
+  .yearStart::before {
+    inset: calc(var(--brand-unit) * -2) 0 auto;
+    border-left: 0;
+    border-top: 1.5px dashed var(--brand-muted);
+  }
+  .yearStart::after {
+    top: calc(var(--brand-unit) * -6.5);
+    left: 0;
+  }
+}

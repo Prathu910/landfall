@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { StateLinks } from "@/components/state-page/state-links";
 import Link from "next/link";
 import { BadgeCheck } from "lucide-react";
 import { stateRuleData } from "@/components/data/state-rule-data";
@@ -34,6 +35,8 @@ import {
 import { sourceList } from "@/lib/guide/sources-list";
 import { formatDate, localToday } from "@/lib/migration";
 import { serializeJsonLd } from "@/lib/seo/json-ld";
+import { pageMetadata } from "@/lib/seo/page-meta";
+import { loadLatestRound } from "@/lib/updates/load-server";
 
 export const dynamicParams = false;
 
@@ -51,11 +54,13 @@ function requireVisa(value: string): Visa {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const guide = GUIDE_PAGES[requireVisa((await params).visa)];
-  return {
+  return pageMetadata({
+    path: guide.path,
     title: guide.title,
     description: guide.description,
-    alternates: { canonical: guide.path },
-  };
+    type: "article",
+    modifiedTime: GUIDE_CHECKED_AT,
+  });
 }
 
 /** The official pages a visa guide cites. */
@@ -84,7 +89,8 @@ export default async function VisaGuidePage({ params }: Props) {
   const meta = GUIDE_PAGES[visa];
   const guide = VISA_GUIDES[visa];
   const counts = federalCounts(stateRuleData.federal);
-  const faq = visaFaq(visa, FEES, counts);
+  const round = loadLatestRound();
+  const faq = visaFaq(visa, FEES, counts, round);
   const steps = GUIDE_STEPS.filter((s) => s.appliesTo.includes(visa));
   const sources = sourceList(visaSources(visa), null, GUIDE_CHECKED_AT);
   const buildDate = localToday();
@@ -116,13 +122,21 @@ export default async function VisaGuidePage({ params }: Props) {
           title={meta.heading}
           intro={guide.what}
           meta={[
-            `Checked ${formatDate(GUIDE_CHECKED_AT)}`,
-            `Fees as at ${formatDate(FEES.feesAsAt)}`,
+            <>
+              Checked{" "}
+              <time dateTime={GUIDE_CHECKED_AT}>
+                {formatDate(GUIDE_CHECKED_AT)}
+              </time>
+            </>,
+            <>
+              Fees as at{" "}
+              <time dateTime={FEES.feesAsAt}>{formatDate(FEES.feesAsAt)}</time>
+            </>,
             ...(counts ? [`${counts[visa]} occupations listed`] : []),
           ]}
         />
         <GuideAnswer
-          answer={directAnswer(visa, GUIDE_CHECKED_AT, counts)}
+          answer={directAnswer(visa, GUIDE_CHECKED_AT, counts, round)}
           checkedAt={GUIDE_CHECKED_AT}
           feesAsAt={FEES.feesAsAt}
         />
@@ -172,8 +186,17 @@ export default async function VisaGuidePage({ params }: Props) {
               "The 189 is the independent route; the 190 and 491 add nomination points."
             )}
           </p>
+          {nominated && (
+            <>
+              <p className={page.sectionIntro}>
+                Each state’s {visa} invitation data for the last 12 months, by
+                points and occupation:
+              </p>
+              <StateLinks />
+            </>
+          )}
           <VisaRules rules={[...guide.nomination, ...guide.after]} />
-          <h3 className={page.subhead}>The three visas compared</h3>
+          <h3 className={page.subhead}>189 vs 190 vs 491 compared</h3>
           <VisaCompare rows={compareRows(FEES, counts)} current={visa} />
         </section>
         <section id="steps" className={page.section} aria-labelledby="steps-h">
@@ -196,7 +219,18 @@ export default async function VisaGuidePage({ params }: Props) {
           <p className={page.sectionIntro}>
             Pick your occupation to see its published {visa} evidence on its
             occupation page, or browse{" "}
-            <Link href="/occupations/">every occupation</Link>.
+            <Link href="/occupations/">every occupation</Link>
+            {visa === "189" && (
+              <>
+                {" "}
+                or{" "}
+                <Link href="/occupations/189-cut-offs/">
+                  the 189 cut-offs for every occupation
+                </Link>
+              </>
+            )}
+            . The <Link href="/guide/points-table/">points table</Link> lists
+            every factor and its points.
           </p>
           <div className={page.panel}>
             <LazyQuickCheck
