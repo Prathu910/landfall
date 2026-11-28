@@ -173,6 +173,11 @@ export function articleLd(page: {
   };
 }
 
+/** A dated policy or fee update, with the same publisher and evidence as guides. */
+export function newsArticleLd(page: Parameters<typeof articleLd>[0]): object {
+  return { ...articleLd(page), "@type": "NewsArticle" };
+}
+
 export type DatasetInput = {
   name: string;
   /** The full summary (Google allows 50 to 5,000 characters), not a cut snippet. */
