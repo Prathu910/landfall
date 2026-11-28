@@ -10,6 +10,7 @@ import { loadStatePageViews } from "../lib/state-page/load-server";
 import { stateSitemapEntries } from "../lib/state-page/meta";
 import { listRecapMonths, loadRecap } from "../lib/updates/load-server";
 import { updatesSitemapEntries } from "../lib/updates/sitemap";
+import { newsSitemapEntries } from "../lib/news/meta";
 
 export const dynamic = "force-static";
 
@@ -26,6 +27,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ),
     ...stateSitemapEntries(loadStatePageViews()),
     ...updatesSitemapEntries(listRecapMonths().map((m) => loadRecap(m))),
+    ...newsSitemapEntries(),
     // The legal pages are dated by their last revision, not the data.
     ...LEGAL_SLUGS.map((slug) => ({
       url: `${SITE_URL}/${slug}/`,

@@ -3,6 +3,7 @@ export const SITE_NAVIGATION = [
   { href: "/occupations/", label: "Occupations" },
   { href: "/sample/", label: "Sample report" },
   { href: "/states/", label: "States" },
+  { href: "/news/", label: "News" },
   { href: "/methodology/", label: "Method" },
 ] as const;
 

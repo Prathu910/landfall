@@ -44,6 +44,8 @@ export const AUDIT_PAGES: readonly AuditPage[] = [
   { path: "/states/new-south-wales/", gated: ALL },
   { path: "/states/tasmania/", gated: ALL },
   { path: "/updates/", gated: ALL },
+  { path: "/news/", gated: ALL },
+  { path: "/news/onshore-visa-fee-increase-2026/", gated: ALL },
   ...listRecapMonths()
     .slice(0, 1)
     .map((month) => ({ path: `/updates/${month}/`, gated: ALL })),
