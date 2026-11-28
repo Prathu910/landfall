@@ -36,6 +36,7 @@ export function SiteFooter() {
               <Link href="/occupations/189-cut-offs/">189 cut-offs</Link>
               <Link href="/states/">States</Link>
               <Link href="/updates/">Monthly updates</Link>
+              <Link href="/news/">Visa news</Link>
             </div>
             <div>
               <h2>About the data</h2>

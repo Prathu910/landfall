@@ -1,5 +1,15 @@
 # Resume here
 
+## News index and onshore fee article (28 November 2026)
+
+Branch `feat/news-visa-fees` targets `staging` and is built in the isolated `news-visa-fees` worktree. Release follows `staging` → `main`. The original `roadmap/report-redesign` checkout and its uncommitted state-page work are preserved.
+
+- `/news/` lists the new article as a linked passport-style card; `/news/onshore-visa-fee-increase-2026/` is the exact URL used in the reel.
+- Typed, hand-sourced fee examples and government links live in `src/data/news/`; catalogue and SEO helpers are in `src/lib/news/`; static UI and illustrations are in `src/components/news/`.
+- Navigation, footer, sitemap and `/llms.txt` include News. The article has dated NewsArticle, breadcrumb and visible FAQ markup, a canonical and an Open Graph PNG. Regenerate that image with `npm run news:og` when its figures change.
+- Adding another article requires reviewed source data, its static route and a `NEWS_ARTICLES` catalogue entry. Do not turn `/updates/` monthly recaps into general news.
+- Verified: `npm run check` (2,391 tests), static build (522 routes), desktop/mobile/light/dark/reduced-motion browser checks, and Lighthouse 100 in all four categories for both new routes on mobile and desktop. Dark accessibility also scores 100. Details are in the implementation plan and `output/playwright/`. This branch is for review; it has not been deployed.
+
 **Merge gate: merging `staging` to `main` is going live, founding-only (founder decision, 27 November 2026).** `main` deploys migratelens.com, whose build already has `NEXT_PUBLIC_SUPABASE_URL` and the Turnstile key, so `/check/` shows the checkout at once. The production backend is set up (secrets except the three `RAZORPAY_*`, migrations, the eight report functions, the cron job and `report_settings`; quote, CORS and the deliver secret checked on 27 Nov), and the Web Analytics beacon on `/report/#…` was checked on staging to carry no `#` token (ruling R15). With no Razorpay keys on production the paid path fails safely: `report-order` stops before any Razorpay order or database row and the reader sees "you haven't been charged", so "Buy another" and every order after the 100th fail that way until step 11. Never put test keys on production (ruling R16). Right after the deploy, claim one founding report with your own email on migratelens.com (code email, report, PDF email), then raise `founding_limit` to 101 if all 100 should stay for readers; watch the count, and raise the limit if it nears 100 before live keys. A build without `NEXT_PUBLIC_SUPABASE_URL` or the Turnstile key shows the free result with a contact line and no ticket (ruling R12).
 
 ## SEO, GEO and AEO audit: what was built overnight (27 November 2026)

@@ -2,7 +2,7 @@
 
 **Read this first.** This is the current source of truth for product direction. Where it disagrees with `PRODUCT.md`, `REPORT-COVERAGE.md`, `HANDOFF.md` or `docs/original-references/`, this file wins. Record every new founder decision in the decision log at the bottom, with its date.
 
-Last updated: 24 November 2026.
+Last updated: 28 November 2026.
 
 ## Why Landfall exists
 
@@ -149,6 +149,8 @@ Also planned:
 - `PRODUCT.md` phase 4 put occupation pages and SEO last. SEO for all occupations now comes before monetisation (roadmap step 4).
 
 ## Decision log
+
+28 November 2026 — **Visa news and the onshore fee article.** The founder approved `/news/onshore-visa-fee-increase-2026/` as the reel's destination and requested an illustrated, easy-to-read, SEO-friendly article plus a `/news/` index whose article card links to it. Use the established passport theme (white, sage, navy ink, green accents and Archivo), matching the Instagram pack. News is separate from monthly SkillSelect `/updates/` recaps. The article cites government legislation, shows before-and-after main-applicant examples, exemptions and per-applicant scope, and is built before the reel is published. No production deployment is included in this implementation request.
 
 20 November 2026 — The founder confirmed `hello@migratelens.com` as the working contact mailbox and supplied Turnstile configuration for setup. Supabase secrets and both submission Functions were configured/deployed to their linked project; public values were added locally. The founder explicitly deferred retention scheduling (step 6); complete it before public launch. No Cloudflare frontend release, indexing change or marketing subscription was authorized by this setup.
 

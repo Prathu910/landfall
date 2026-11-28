@@ -6,6 +6,7 @@ import { formatLongMonth } from "../report/copy";
 import { SITE_NAME, SITE_URL } from "../site";
 import { CONTACT_EMAIL } from "./json-ld";
 import { STATE_PAGES, statePath } from "../state-page/slug";
+import { NEWS_ARTICLES, NEWS_INDEX } from "../news/catalogue";
 
 export type LlmsTxtInput = {
   /** The data month, e.g. "2026-10". */
@@ -61,6 +62,17 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
         ]
       : []),
     link("All monthly updates", "/updates/"),
+    "",
+    "## Visa news",
+    "",
+    link(
+      NEWS_INDEX.title,
+      NEWS_INDEX.path,
+      "dated fee and policy changes, explained from official sources",
+    ),
+    ...NEWS_ARTICLES.map((article) =>
+      link(article.title, article.path, `reviewed ${article.updatedAt}`),
+    ),
     "",
     "## Guides",
     "",
